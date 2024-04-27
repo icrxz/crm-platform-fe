@@ -1,6 +1,6 @@
-import CardWrapper from '@/app/components/dashboard/cards';
-import { CardsSkeleton } from '@/app/components/dashboard/skeletons';
-import { lusitana } from '@/app/ui/fonts';
+import CardWrapper from '@/src/app/components/dashboard/cards';
+import { CardsSkeleton } from '@/src/app/components/dashboard/skeletons';
+import { lusitana } from '@/src/app/ui/fonts';
 import { Suspense } from 'react';
 
 export default async function Page() {

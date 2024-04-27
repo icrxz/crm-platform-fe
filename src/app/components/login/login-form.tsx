@@ -8,9 +8,9 @@ import {
 } from '@heroicons/react/24/outline';
 import { useFormState, useFormStatus } from 'react-dom';
 
-import { Button } from '@/app/components/button/button';
-import { authenticate } from '@/app/services/actions';
-import { lusitana } from '@/app/ui/fonts';
+import { Button } from '@/src/app/components/button/button';
+import { authenticate } from '@/src/app/services/actions';
+import { lusitana } from '@/src/app/ui/fonts';
 
 export default function LoginForm() {
   const [errorMessage, dispatch] = useFormState(authenticate, undefined);
