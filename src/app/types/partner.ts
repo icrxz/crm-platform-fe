@@ -1,17 +1,16 @@
+import { User } from "./user";
+
 export type Customer = {
   id: string;
-  owner_id: string;
-  first_name: string;
-  last_name: string;
-  company_name: string;
-  legal_name: string;
+  owner_id: User;
+  name: string;
   document: string;
   type: string;
   shipping_street: string;
   shipping_city: string;
   shipping_state: string;
   shipping_zip_code: string;
-  shipping: string;
+  shipping_country: string;
   billing_street: string;
   billing_city: string;
   billing_state: string;
@@ -25,5 +24,4 @@ export type Customer = {
   created_by: string;
   updated_date: string;
   updated_by: string;
-  cases: string[];
 }

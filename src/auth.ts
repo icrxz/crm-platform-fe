@@ -15,7 +15,7 @@ async function getUser(email: string): Promise<User | undefined> {
     } as User
   } catch (error) {
     console.error('Failed to fetch user:', error);
-    throw new Error('Failed to fetch user.');
+    throw new Error('erro ao buscar usuário.');
   }
 }
 
@@ -38,7 +38,7 @@ export const { auth, signIn, signOut } = NextAuth({
           if (passwordsMatch) return user;
         }
 
-        console.log('Invalid credentials');
+        console.log('credenciais inválidas');
         return null;
       },
     }),
