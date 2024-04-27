@@ -6,10 +6,10 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | Thavanna CRM",
-    default: "Thavanna CRM",
+    template: "%s | RD CRM",
+    default: "RD CRM",
   },
-  description: "CRM platform from Thavanna systems",
+  description: "CRM platform from RD systems",
 };
 
 export default function RootLayout({
