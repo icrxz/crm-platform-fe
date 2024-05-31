@@ -1,8 +1,8 @@
-"use server";
-
-import { cookies } from "next/headers";
+import { getServerSession } from "next-auth";
+import { getSession } from "next-auth/react";
+import { cookies } from 'next/headers';
 import { redirect } from "next/navigation";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 const crmCoreEndpoint = process.env.CRM_CORE_ENDPOINT
 const crmCoreApiKey = process.env.CRM_CORE_ENDPOINT
@@ -34,9 +34,11 @@ export async function POST(request: NextRequest) {
   const reqBody = await request.json();
   const url = `${crmCoreEndpoint}/crm/core/api/v1/contractors`;
   const jwt = cookies().get("jwt");
+  console.log("jwt", jwt);
 
   const response = await fetch(url, {
     method: "POST",
+    body: JSON.stringify(reqBody),
     headers: {
       "Content-Type": 'application/json',
       "X-API-Key": crmCoreApiKey || '',
@@ -44,12 +46,26 @@ export async function POST(request: NextRequest) {
     }
   });
 
+  console.log("resposta da api", response)
+
   if (response.status !== 201) {
     if (response.status === 401) {
-      redirect("/login");
+      const resData = JSON.stringify({message: "unauthorized"})
+      return new NextResponse(resData, {
+        status: 401,
+      });
     }
-    return null;
+
+    const resData = JSON.stringify({message: "client unavailable"})
+    return new NextResponse(resData, {
+      status: 424,
+    });
   }
+
+  const resData = await response.json()
+  return new NextResponse(JSON.stringify(resData), {
+    status: 201,
+  });
 }
 
 const buildQueryParams = (queryParams: URLSearchParams): string => {

@@ -1,15 +1,15 @@
 "use client";
 import React, { Dispatch, SetStateAction } from 'react';
 
-import Search from '../common/search';
-import { Button } from '../common/button';
+import Search from '@/app/_components/common/search';
+import { Button } from '@/app/_components/common/button';
 
 interface ContractorsSearchBarProps {
   setIsFilterModalOpen: Dispatch<SetStateAction<boolean>>;
   setIsCreationModalOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-const ContractorsSearchBar: React.FC<ContractorsSearchBarProps> = ({ setIsCreationModalOpen, setIsFilterModalOpen }) => {
+export default function ContractorsSearchBar({ setIsCreationModalOpen, setIsFilterModalOpen }: ContractorsSearchBarProps) {
   return (
     <div className="flex items-center p-4 bg-gray-100 rounded-lg shadow-md">
       <Search placeholder="Buscar contratantes..." />
@@ -28,5 +28,3 @@ const ContractorsSearchBar: React.FC<ContractorsSearchBarProps> = ({ setIsCreati
     </div>
   )
 }
-
-export default ContractorsSearchBar;

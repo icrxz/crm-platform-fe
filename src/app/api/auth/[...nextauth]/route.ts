@@ -39,13 +39,13 @@ const handler = NextAuth({
             }
 
             const authData = await result.json();
-            console.log(authData)
             if (!authData.token || !authData.user) {
               return null
             };
 
+            console.log("jwt recebido", authData.token)
             cookies().set("jwt", authData.token, {
-              httpOnly: true,
+              // httpOnly: true,
               secure: process.env.NODE_ENV === 'production',
               maxAge: 60 * 60 * 12, // 12 hours
             })

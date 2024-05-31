@@ -1,16 +1,20 @@
+"use client";
 import Modal from '@/app/_components/common/modal';
 import ContractorsSearchBar from '@/app/_components/contractors/search-bar';
 import {
   Contractor
 } from '@/app/_types/contractor';
 import { lusitana } from '@/app/_ui/fonts';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import CreateContractorModal from './create-contractor';
 
-export default async function ContractorsTable({
-  contractors,
-}: {
+interface ContractorsTableProps {
   contractors: Contractor[];
-}) {
+}
+
+export default function ContractorsTable({
+  contractors,
+}: ContractorsTableProps) {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
@@ -77,11 +81,7 @@ export default async function ContractorsTable({
         </div>
       </Modal>
 
-      <Modal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)}>
-        <div>
-          Criação
-        </div>
-      </Modal>
+      <CreateContractorModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
     </div>
   );
 }
