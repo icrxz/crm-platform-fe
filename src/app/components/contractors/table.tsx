@@ -1,20 +1,31 @@
-import { lusitana } from '@/app/ui/fonts';
-import Search from '@/app/ui/search';
+"use client";
+import Modal from '@/app/components/common/modal';
+import ContractorsSearchBar from '@/app/components/contractors/search-bar';
 import {
-Contractor
+  Contractor
 } from '@/app/types/contractor';
+import { lusitana } from '@/app/_ui/fonts';
+import React, { useState } from 'react';
+import CreateContractorModal from './create-contractor';
 
-export default async function ContractorsTable({
-  contractors,
-}: {
+interface ContractorsTableProps {
   contractors: Contractor[];
-}) {
+}
+
+export default function ContractorsTable({
+  contractors,
+}: ContractorsTableProps) {
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+
   return (
     <div className="w-full">
       <h1 className={`${lusitana.className} mb-8 text-xl md:text-2xl`}>
         Contratantes
       </h1>
-      <Search placeholder="Buscar contratantes..." />
+
+      <ContractorsSearchBar setIsCreationModalOpen={setIsCreateModalOpen} setIsFilterModalOpen={setIsFilterModalOpen} />
+
       <div className="mt-6 flow-root">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
@@ -63,6 +74,14 @@ export default async function ContractorsTable({
           </div>
         </div>
       </div>
+
+      <Modal isOpen={isFilterModalOpen} onClose={() => setIsFilterModalOpen(false)}>
+        <div>
+          Filtro
+        </div>
+      </Modal>
+
+      <CreateContractorModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
     </div>
   );
 }

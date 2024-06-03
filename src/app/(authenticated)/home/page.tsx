@@ -1,9 +1,18 @@
-import CardWrapper from '@/app/components/dashboard/cards';
-import { CardsSkeleton } from '@/app/components/dashboard/skeletons';
-import { lusitana } from '@/app/ui/fonts';
 import { Suspense } from 'react';
 
+import CardWrapper from '@/app/components/dashboard/cards';
+import { CardsSkeleton } from '@/app/components/dashboard/skeletons';
+import { lusitana } from '@/app/_ui/fonts';
+import { getServerSession } from 'next-auth';
+import { redirect } from 'next/navigation';
+
 export default async function Page() {
+  const session = await getServerSession()
+
+  if (!session) {
+    redirect("/login");
+  }
+
   return (
     <main>
       <h1 className={`${lusitana.className} mb-4 text-xl md:text-2xl`}>

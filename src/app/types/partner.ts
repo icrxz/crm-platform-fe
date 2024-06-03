@@ -1,6 +1,6 @@
 import { User } from "./user";
 
-export type Customer = {
+export type Partner = {
   id: string;
   owner_id: User;
   name: string;

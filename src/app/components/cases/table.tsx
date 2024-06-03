@@ -1,5 +1,5 @@
-import { lusitana } from '@/app/ui/fonts';
-import Search from '@/app/ui/search';
+import { lusitana } from '@/app/_ui/fonts';
+import Search from '@/app/components/common/search';
 import {
 Case
 } from '@/app/types/case';
