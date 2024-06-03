@@ -1,7 +1,7 @@
 'use client';
 
-import { Button } from '@/app/_components/common/button';
-import { login } from '@/app/_services/authentication';
+import { Button } from '@/app/components/common/button';
+import { login } from '@/app/services/authentication';
 import { lusitana } from '@/app/_ui/fonts';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import {

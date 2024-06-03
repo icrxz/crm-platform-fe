@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
-import { fetchCustomers } from '@/app/_services/customers';
-import CustomersTable from '@/app/_components/customers/table';
+import { fetchCustomers } from '@/app/services/customers';
+import CustomersTable from '@/app/components/customers/table';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 

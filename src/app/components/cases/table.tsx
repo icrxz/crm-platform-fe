@@ -1,31 +1,20 @@
-"use client";
-import Modal from '@/app/_components/common/modal';
-import ContractorsSearchBar from '@/app/_components/contractors/search-bar';
-import {
-  Contractor
-} from '@/app/_types/contractor';
 import { lusitana } from '@/app/_ui/fonts';
-import React, { useState } from 'react';
-import CreateContractorModal from './create-contractor';
+import Search from '@/app/components/common/search';
+import {
+Case
+} from '@/app/types/case';
 
-interface ContractorsTableProps {
-  contractors: Contractor[];
-}
-
-export default function ContractorsTable({
-  contractors,
-}: ContractorsTableProps) {
-  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-
+export default async function CasesTable({
+  cases,
+}: {
+  cases: Case[];
+}) {
   return (
     <div className="w-full">
       <h1 className={`${lusitana.className} mb-8 text-xl md:text-2xl`}>
-        Contratantes
+        Casos
       </h1>
-
-      <ContractorsSearchBar setIsCreationModalOpen={setIsCreateModalOpen} setIsFilterModalOpen={setIsFilterModalOpen} />
-
+      <Search placeholder="Buscar casos..." />
       <div className="mt-6 flow-root">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
@@ -34,37 +23,51 @@ export default function ContractorsTable({
               <table className="hidden min-w-full rounded-md text-gray-900 md:table">
                 <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
                   <tr>
+                  <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
+                      ID
+                    </th>
                     <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                      Nome
+                      Cliente
                     </th>
                     <th scope="col" className="px-3 py-5 font-medium">
-                      Documento
+                      Parceiro
                     </th>
                     <th scope="col" className="px-3 py-5 font-medium">
-                      Data de criação
+                      Status
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium">
-                      Total de casos
+                      Prioridade
+                    </th>
+                    <th scope="col" className="px-4 py-5 font-medium">
+                      Vencimento
                     </th>
                   </tr>
                 </thead>
 
                 <tbody className="divide-y divide-gray-200 text-gray-900">
-                  {contractors.map((contractor) => (
-                    <tr key={contractor.contractor_id} className="group">
+                  {cases.map((case_rd) => (
+                    <tr key={case_rd.id} className="group">
                       <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
-                          <p>{`${contractor.legal_name}`}</p>
+                          <p>{case_rd.id}</p>
+                        </div>
+                      </td>
+                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                        <div className="flex items-center gap-3">
+                          <p>{case_rd.customer_id}</p>
                         </div>
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {contractor.document}
+                        {case_rd.partner_id}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {contractor.created_at}
+                        {case_rd.status}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                        {contractor.cases.length}
+                        {case_rd.priority}
+                      </td>
+                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
+                        {case_rd.due_date}
                       </td>
                     </tr>
                   ))}
@@ -74,14 +77,6 @@ export default function ContractorsTable({
           </div>
         </div>
       </div>
-
-      <Modal isOpen={isFilterModalOpen} onClose={() => setIsFilterModalOpen(false)}>
-        <div>
-          Filtro
-        </div>
-      </Modal>
-
-      <CreateContractorModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
     </div>
   );
 }

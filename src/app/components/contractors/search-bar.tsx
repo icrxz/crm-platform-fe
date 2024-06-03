@@ -1,8 +1,8 @@
 "use client";
 import React, { Dispatch, SetStateAction } from 'react';
 
-import Search from '@/app/_components/common/search';
-import { Button } from '@/app/_components/common/button';
+import Search from '@/app/components/common/search';
+import { Button } from '@/app/components/common/button';
 
 interface ContractorsSearchBarProps {
   setIsFilterModalOpen: Dispatch<SetStateAction<boolean>>;

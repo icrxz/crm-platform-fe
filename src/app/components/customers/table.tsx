@@ -1,9 +1,9 @@
 import Image from 'next/image';
 import { lusitana } from '@/app/_ui/fonts';
-import Search from '@/app/_components/common/search';
+import Search from '@/app/components/common/search';
 import {
 Customer
-} from '@/app/_types/customer';
+} from '@/app/types/customer';
 
 export default async function CustomersTable({
   customers,

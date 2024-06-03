@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
-import { fetchCases } from '@/app/_services/cases';
-import CasesTable from '@/app/_components/cases/table';
+import { fetchCases } from '@/app/services/cases';
+import CasesTable from '@/app/components/cases/table';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 

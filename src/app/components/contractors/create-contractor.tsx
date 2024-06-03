@@ -1,6 +1,6 @@
-import { Button } from "@/app/_components/common/button";
-import Modal from "@/app/_components/common/modal";
-import { createContractor } from "@/app/_services/contractors";
+import { Button } from "@/app/components/common/button";
+import Modal from "@/app/components/common/modal";
+import { createContractor } from "@/app/services/contractors";
 import { lusitana } from "@/app/_ui/fonts";
 import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { signOut } from "next-auth/react";

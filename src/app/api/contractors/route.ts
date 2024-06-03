@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { NextRequest, NextResponse } from "next/server";
 
 const crmCoreEndpoint = process.env.CRM_CORE_ENDPOINT
-const crmCoreApiKey = process.env.CRM_CORE_ENDPOINT
+const crmCoreApiKey = process.env.CRM_CORE_API_KEY
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams

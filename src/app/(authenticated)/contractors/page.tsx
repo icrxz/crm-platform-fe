@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
-import ContractorsTable from '@/app/_components/contractors/table';
-import { fetchContractors } from '@/app/_services/contractors';
+import ContractorsTable from '@/app/components/contractors/table';
+import { fetchContractors } from '@/app/services/contractors';
 import { Suspense } from 'react';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
