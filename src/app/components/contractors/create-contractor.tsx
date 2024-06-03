@@ -1,9 +1,8 @@
-import { Button } from "@/app/_components/common/button";
-import Modal from "@/app/_components/common/modal";
-import { createContractor } from "@/app/_services/contractors";
-import { lusitana } from "@/app/_ui/fonts";
+import { Button } from "../../components/common/button";
+import Modal from "../../components/common/modal";
+import { createContractor } from "../../services/contractors";
+import { lusitana } from "../../ui/fonts";
 import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
-import { signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 
@@ -26,7 +25,7 @@ export default function CreateContractorModal({ isOpen, onClose }: CreateContrac
       }
       setErrorMessage(state?.message)
     }
-  }, [state])
+  }, [onClose, state])
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>

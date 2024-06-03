@@ -1,4 +1,4 @@
-import { Case } from "../_types/case";
+import { Case } from "../types/case";
 
 export async function fetchCases(query: string): Promise<Case[]> {
   return [

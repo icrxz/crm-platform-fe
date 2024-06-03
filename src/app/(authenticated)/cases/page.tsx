@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
-import { fetchCases } from '@/app/_services/cases';
-import CasesTable from '@/app/_components/cases/table';
+import { fetchCases } from '../../services/cases';
+import CasesTable from '../../components/cases/table';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 
@@ -20,7 +20,7 @@ export default async function Page({
   const session = await getServerSession()
 
   if (!session) {
-    redirect("/login");
+    // redirect("/login");
   }
 
   const query = searchParams?.query || '';

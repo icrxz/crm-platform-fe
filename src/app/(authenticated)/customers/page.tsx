@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
-import { fetchCustomers } from '@/app/_services/customers';
-import CustomersTable from '@/app/_components/customers/table';
+import { fetchCustomers } from '../../services/customers';
+import CustomersTable from '../../components/customers/table';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 
@@ -20,7 +20,7 @@ export default async function Page({
   const session = await getServerSession()
 
   if (!session) {
-    redirect("/login");
+    // redirect("/login");
   }
   
   const query = searchParams?.query || '';

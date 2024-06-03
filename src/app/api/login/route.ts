@@ -1,4 +1,4 @@
-import { Credentials, LoginResponse } from "@/app/_types/auth";
+import { Credentials, LoginResponse } from "../../types/auth";
 import { cookies } from "next/headers";
 
 export async function POST(request: Request) {

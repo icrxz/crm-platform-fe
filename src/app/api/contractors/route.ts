@@ -1,13 +1,10 @@
-import { getServerSession } from "next-auth";
-import { getSession } from "next-auth/react";
 import { cookies } from 'next/headers';
-import { redirect } from "next/navigation";
 import { NextRequest, NextResponse } from "next/server";
 
 const crmCoreEndpoint = process.env.CRM_CORE_ENDPOINT
-const crmCoreApiKey = process.env.CRM_CORE_ENDPOINT
+const crmCoreApiKey = process.env.CRM_CORE_API_KEY
 
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest): Promise<Response> {
   const searchParams = request.nextUrl.searchParams
   const url = `${crmCoreEndpoint}/crm/core/api/v1/contractors?${buildQueryParams(searchParams)}`
 
@@ -24,13 +21,25 @@ export async function GET(request: NextRequest) {
 
   if (response.status !== 200) {
     if (response.status === 401) {
-      redirect("/login")
+      const resData = JSON.stringify({message: "unauthorized"})
+      return new NextResponse(resData, {
+        status: 401,
+      });
     }
-    return null
+
+    const resData = JSON.stringify({message: "client unavailable"})
+    return new NextResponse(resData, {
+      status: 424,
+    });
   }
+
+  const resData = await response.json()
+  return new NextResponse(JSON.stringify(resData), {
+    status: 200,
+  });
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<Response> {
   const reqBody = await request.json();
   const url = `${crmCoreEndpoint}/crm/core/api/v1/contractors`;
   const jwt = cookies().get("jwt");

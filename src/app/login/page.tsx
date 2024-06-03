@@ -1,5 +1,5 @@
-import AcmeLogo from '@/app/_ui/acme-logo';
-import LoginForm from '@/app/_components/login/login-form';
+import AcmeLogo from '../ui/acme-logo';
+import LoginForm from '../components/login/login-form';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 

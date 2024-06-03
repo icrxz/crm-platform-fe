@@ -1,31 +1,21 @@
-"use client";
-import Modal from '@/app/_components/common/modal';
-import ContractorsSearchBar from '@/app/_components/contractors/search-bar';
+import Image from 'next/image';
+import { lusitana } from '../../ui/fonts';
+import Search from '../../components/common/search';
 import {
-  Contractor
-} from '@/app/_types/contractor';
-import { lusitana } from '@/app/_ui/fonts';
-import React, { useState } from 'react';
-import CreateContractorModal from './create-contractor';
+Customer
+} from '../../types/customer';
 
-interface ContractorsTableProps {
-  contractors: Contractor[];
-}
-
-export default function ContractorsTable({
-  contractors,
-}: ContractorsTableProps) {
-  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-
+export default async function CustomersTable({
+  customers,
+}: {
+  customers: Customer[];
+}) {
   return (
     <div className="w-full">
       <h1 className={`${lusitana.className} mb-8 text-xl md:text-2xl`}>
-        Contratantes
+        Clientes
       </h1>
-
-      <ContractorsSearchBar setIsCreationModalOpen={setIsCreateModalOpen} setIsFilterModalOpen={setIsFilterModalOpen} />
-
+      <Search placeholder="Buscar clientes..." />
       <div className="mt-6 flow-root">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
@@ -36,6 +26,9 @@ export default function ContractorsTable({
                   <tr>
                     <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
                       Nome
+                    </th>
+                    <th scope="col" className="px-3 py-5 font-medium">
+                      Email
                     </th>
                     <th scope="col" className="px-3 py-5 font-medium">
                       Documento
@@ -50,21 +43,24 @@ export default function ContractorsTable({
                 </thead>
 
                 <tbody className="divide-y divide-gray-200 text-gray-900">
-                  {contractors.map((contractor) => (
-                    <tr key={contractor.contractor_id} className="group">
+                  {customers.map((customer) => (
+                    <tr key={customer.id} className="group">
                       <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
-                          <p>{`${contractor.legal_name}`}</p>
+                          <p>{`${customer.first_name} ${customer.last_name}`}</p>
                         </div>
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {contractor.document}
+                        {customer.personal_email}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {contractor.created_at}
+                        {customer.document}
+                      </td>
+                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                        {customer.created_date}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                        {contractor.cases.length}
+                        {customer.cases.length}
                       </td>
                     </tr>
                   ))}
@@ -74,14 +70,6 @@ export default function ContractorsTable({
           </div>
         </div>
       </div>
-
-      <Modal isOpen={isFilterModalOpen} onClose={() => setIsFilterModalOpen(false)}>
-        <div>
-          Filtro
-        </div>
-      </Modal>
-
-      <CreateContractorModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
     </div>
   );
 }

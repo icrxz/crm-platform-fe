@@ -1,4 +1,4 @@
-import { Customer } from "../_types/customer";
+import { Customer } from "../types/customer";
 
 export async function fetchCustomers(query: string): Promise<Customer[]> {
   return [

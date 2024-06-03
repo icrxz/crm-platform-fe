@@ -1,6 +1,6 @@
 "use server";
 import { getServerSession } from "next-auth";
-import { Contractor, CreateContractor } from "../_types/contractor";
+import { Contractor, CreateContractor } from "../types/contractor";
 import { revalidatePath } from "next/cache";
 
 export async function fetchContractors(query: string): Promise<Contractor[]> {

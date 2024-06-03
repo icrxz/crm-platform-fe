@@ -1,4 +1,4 @@
-import { Partner } from "../_types/partner";
+import { Partner } from "../types/partner";
 
 export async function fetchPartners(query: string): Promise<Partner[]> {
   return [

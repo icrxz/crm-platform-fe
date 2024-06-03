@@ -1,21 +1,20 @@
-import Image from 'next/image';
-import { lusitana } from '@/app/_ui/fonts';
-import Search from '@/app/_components/common/search';
+import { lusitana } from '../../ui/fonts';
+import Search from '../../components/common/search';
 import {
-Customer
-} from '@/app/_types/customer';
+Case
+} from '../../types/case';
 
-export default async function CustomersTable({
-  customers,
+export default async function CasesTable({
+  cases,
 }: {
-  customers: Customer[];
+  cases: Case[];
 }) {
   return (
     <div className="w-full">
       <h1 className={`${lusitana.className} mb-8 text-xl md:text-2xl`}>
-        Clientes
+        Casos
       </h1>
-      <Search placeholder="Buscar clientes..." />
+      <Search placeholder="Buscar casos..." />
       <div className="mt-6 flow-root">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
@@ -24,43 +23,51 @@ export default async function CustomersTable({
               <table className="hidden min-w-full rounded-md text-gray-900 md:table">
                 <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
                   <tr>
+                  <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
+                      ID
+                    </th>
                     <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                      Nome
+                      Cliente
                     </th>
                     <th scope="col" className="px-3 py-5 font-medium">
-                      Email
+                      Parceiro
                     </th>
                     <th scope="col" className="px-3 py-5 font-medium">
-                      Documento
-                    </th>
-                    <th scope="col" className="px-3 py-5 font-medium">
-                      Data de criação
+                      Status
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium">
-                      Total de casos
+                      Prioridade
+                    </th>
+                    <th scope="col" className="px-4 py-5 font-medium">
+                      Vencimento
                     </th>
                   </tr>
                 </thead>
 
                 <tbody className="divide-y divide-gray-200 text-gray-900">
-                  {customers.map((customer) => (
-                    <tr key={customer.id} className="group">
+                  {cases.map((case_rd) => (
+                    <tr key={case_rd.id} className="group">
                       <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
-                          <p>{`${customer.first_name} ${customer.last_name}`}</p>
+                          <p>{case_rd.id}</p>
+                        </div>
+                      </td>
+                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                        <div className="flex items-center gap-3">
+                          <p>{case_rd.customer_id}</p>
                         </div>
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {customer.personal_email}
+                        {case_rd.partner_id}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {customer.document}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {customer.created_date}
+                        {case_rd.status}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                        {customer.cases.length}
+                        {case_rd.priority}
+                      </td>
+                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
+                        {case_rd.due_date}
                       </td>
                     </tr>
                   ))}
