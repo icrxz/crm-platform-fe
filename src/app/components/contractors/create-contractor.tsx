@@ -23,7 +23,7 @@ export default function CreateContractorModal({ isOpen, onClose }: CreateContrac
       if (state?.unauthorized) {
         // signOut();
       }
-      setErrorMessage(state?.message)
+      setErrorMessage(state?.message || "")
     }
   }, [onClose, state])
 

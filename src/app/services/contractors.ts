@@ -2,6 +2,15 @@
 import { getServerSession } from "next-auth";
 import { Contractor, CreateContractor } from "../types/contractor";
 import { revalidatePath } from "next/cache";
+import { ok } from "assert";
+
+const hostname = process.env.NEXT_API_URL
+
+interface AnyResp {
+  success: boolean;
+  message: string;
+  unauthorized?: boolean;
+}
 
 export async function fetchContractors(query: string): Promise<Contractor[]> {
   return [
@@ -23,55 +32,59 @@ export async function fetchContractors(query: string): Promise<Contractor[]> {
   ];
 }
 
-export async function createContractor(_currentState: unknown, formData: FormData) {
-  // console.log(formData);
-  // const session = await getServerSession();
-  // const hostname = 'http://localhost:3000';
+export async function createContractor(_currentState: unknown, formData: FormData): Promise<AnyResp> {
+  console.log(formData);
+  const session = await getServerSession();
 
-  // if (!session) {
-  //   throw Error("shit, here we go again")
-  // }
+  const payload: CreateContractor = {
+    company_name: formData.get("company_name")?.toString() || '',
+    legal_name: formData.get("legal_name")?.toString() || '',
+    business_contact: {
+      email: formData.get("email")?.toString() || '',
+      phone_number: formData.get("phone")?.toString() || '',
+    },
+    document: formData.get("document")?.toString() || '',
+  };
 
-  // const payload: CreateContractor = {
-  //   company_name: formData.get("company_name")?.toString() || '',
-  //   legal_name: formData.get("legal_name")?.toString() || '',
-  //   business_contact: {
-  //     email: formData.get("email")?.toString() || '',
-  //     phone_number: formData.get("phone")?.toString() || '',
-  //   },
-  //   document: formData.get("document")?.toString() || '',
-  // };
+  try {
+    // const response = await fetch(new URL(`${hostname}/api/contractors`), {
+    //   method: "POST",
+    //   body: JSON.stringify(payload),
+    //   headers: {
+    //     "Content-Type": 'application/json',
+    //   }
+    // })
+    const response = {
+      ok: true,
+      json: async () => {
+        return {
+          message: "teste",
+        }
+      },
+      status: 400,
+    }
 
-  // try {
-  //   const response = await fetch(new URL(`${hostname}/api/contractors`), {
-  //     method: "POST",
-  //     body: JSON.stringify(payload),
-  //     headers: {
-  //       "Content-Type": 'application/json',
-  //     }
-  //   })
+    console.log("resposta", response)
 
-  //   console.log("resposta", response)
+    if (response.ok) {
+      // revalidatePath("/contractors");
+      return {
+        success: true,
+        message: "contractor created successfully"
+      }
+    }
 
-  //   if (response.ok) {
-  //     revalidatePath("/contractors");
-  //     return {
-  //       success: true,
-  //       message: "contractor created successfully"
-  //     }
-  //   } else {
-  //     const error = await response.json();
-  //     return {
-  //       success: false,
-  //       message: error.message,
-  //       unauthorized: response.status === 401,
-  //     };
-  //   }
-  // } catch (ex) {
-  //   console.log(ex)
-  //   return {
-  //     success: false,
-  //     message: "something went wrong",
-  //   }
-  // }
+    const error = await response.json();
+    return {
+      success: false,
+      message: error.message,
+      unauthorized: response.status === 401,
+    };
+  } catch (ex) {
+    console.log(ex)
+    return {
+      success: false,
+      message: "something went wrong",
+    }
+  }
 }
