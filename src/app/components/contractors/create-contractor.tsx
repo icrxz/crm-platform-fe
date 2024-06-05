@@ -1,3 +1,4 @@
+import { signOut } from "next-auth/react";
 import { Button } from "../../components/common/button";
 import Modal from "../../components/common/modal";
 import { createContractor } from "../../services/contractors";
@@ -21,7 +22,7 @@ export default function CreateContractorModal({ isOpen, onClose }: CreateContrac
       onClose();
     } else {
       if (state?.unauthorized) {
-        // signOut();
+        signOut();
       }
       setErrorMessage(state?.message || "")
     }

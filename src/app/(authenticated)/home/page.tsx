@@ -10,7 +10,7 @@ export default async function Page() {
   const session = await getServerSession()
 
   if (!session) {
-    // redirect("/login");
+    redirect("/login");
   }
 
   return (
