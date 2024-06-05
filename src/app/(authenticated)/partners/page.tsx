@@ -7,7 +7,7 @@ import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
-  title: 'Seguradoras',
+  title: 'Parceiros',
 };
 
 export default async function Page({

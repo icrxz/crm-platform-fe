@@ -19,7 +19,7 @@ const links = [
     icon: DocumentDuplicateIcon,
   },
   { name: 'Clientes', href: '/customers', icon: UserGroupIcon },
-  // { name: 'Parceiros', href: '/home/partners', icon: UserGroupIcon },
+  { name: 'Parceiros', href: '/partners', icon: UserGroupIcon },
   { name: 'Contratantes', href: '/contractors', icon: UserGroupIcon },
 ];
 
