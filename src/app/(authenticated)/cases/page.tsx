@@ -4,6 +4,7 @@ import { fetchCases } from '../../services/cases';
 import CasesTable from '../../components/cases/table';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
+import { Suspense } from 'react';
 
 export const metadata: Metadata = {
   title: 'Casos',
@@ -29,7 +30,9 @@ export default async function Page({
 
   return (
     <main>
-      <CasesTable cases={cases} />
+      <Suspense fallback={<p>carregando casos...</p>} >
+        <CasesTable cases={cases} />
+      </Suspense>
     </main>
   );
 }

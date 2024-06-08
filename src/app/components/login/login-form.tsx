@@ -12,7 +12,7 @@ import {
 import { useFormState, useFormStatus } from 'react-dom';
 
 export default function LoginForm() {
-  const [errorMessage, dispatch] = useFormState(login, undefined)
+  const [errorMessage, dispatch] = useFormState(login, null)
 
   return (
     <form action={dispatch} className="space-y-3">

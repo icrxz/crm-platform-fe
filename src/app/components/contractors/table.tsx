@@ -37,14 +37,14 @@ export default function ContractorsTable({
                     <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
                       Nome
                     </th>
+                    <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
+                      Razão social
+                    </th>
                     <th scope="col" className="px-3 py-5 font-medium">
                       Documento
                     </th>
                     <th scope="col" className="px-3 py-5 font-medium">
                       Data de criação
-                    </th>
-                    <th scope="col" className="px-4 py-5 font-medium">
-                      Total de casos
                     </th>
                   </tr>
                 </thead>
@@ -52,6 +52,11 @@ export default function ContractorsTable({
                 <tbody className="divide-y divide-gray-200 text-gray-900">
                   {contractors.map((contractor) => (
                     <tr key={contractor.contractor_id} className="group">
+                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                        <div className="flex items-center gap-3">
+                          <p>{`${contractor.company_name}`}</p>
+                        </div>
+                      </td>
                       <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
                           <p>{`${contractor.legal_name}`}</p>
@@ -62,9 +67,6 @@ export default function ContractorsTable({
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                         {contractor.created_at}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                        {contractor.cases.length}
                       </td>
                     </tr>
                   ))}

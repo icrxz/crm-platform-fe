@@ -2,11 +2,13 @@ import AcmeLogo from '../ui/acme-logo';
 import LoginForm from '../components/login/login-form';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 
 export default async function LoginPage() {
   const session = await getServerSession()
-
-  if (!!session) {
+  const jwt = cookies().get("jwt")?.value
+  
+  if (session && jwt) {
     redirect("/home")
   }
 

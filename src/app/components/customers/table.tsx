@@ -1,21 +1,27 @@
-import Image from 'next/image';
+"use client";
 import { lusitana } from '../../ui/fonts';
-import Search from '../../components/common/search';
-import {
-Customer
-} from '../../types/customer';
+import { Customer } from '../../types/customer';
+import CreateCustomerModal from './create-customer';
+import { useState } from 'react';
+import CustomersSearchBar from './search-bar';
+import Modal from '../common/modal';
 
-export default async function CustomersTable({
+export default function CustomersTable({
   customers,
 }: {
   customers: Customer[];
 }) {
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  
   return (
     <div className="w-full">
       <h1 className={`${lusitana.className} mb-8 text-xl md:text-2xl`}>
         Clientes
       </h1>
-      <Search placeholder="Buscar clientes..." />
+
+      <CustomersSearchBar setIsCreationModalOpen={setIsCreateModalOpen} setIsFilterModalOpen={setIsFilterModalOpen} />
+      
       <div className="mt-6 flow-root">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
@@ -70,6 +76,14 @@ export default async function CustomersTable({
           </div>
         </div>
       </div>
+
+      <Modal isOpen={isFilterModalOpen} onClose={() => setIsFilterModalOpen(false)}>
+        <div>
+          Filtro
+        </div>
+      </Modal>
+
+      <CreateCustomerModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
     </div>
   );
 }

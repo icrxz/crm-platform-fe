@@ -1,13 +1,13 @@
 import { Metadata } from 'next';
 
-import ContractorsTable from '../../components/contractors/table';
-import { fetchContractors } from '../../services/contractors';
 import { Suspense } from 'react';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
+import PartnersTable from '@/app/components/partners/table';
+import { fetchPartners } from '@/app/services/partners';
 
 export const metadata: Metadata = {
-  title: 'Seguradoras',
+  title: 'Técnicos',
 };
 
 export default async function Page({
@@ -26,12 +26,12 @@ export default async function Page({
 
   const query = searchParams?.query || '';
 
-  const contractors = await fetchContractors(query);
+  const partners = await fetchPartners(query);
 
   return (
     <main>
-      <Suspense fallback={<p>Carregando seguradoras</p>}>
-        <ContractorsTable contractors={contractors} />
+      <Suspense fallback={<p>Carregando técnicos...</p>}>
+        <PartnersTable partners={partners}/>
       </Suspense>
     </main>
   );

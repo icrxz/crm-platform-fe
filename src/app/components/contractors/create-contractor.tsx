@@ -6,6 +6,8 @@ import { lusitana } from "../../ui/fonts";
 import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
+import { useSnackbar } from "@/app/context/SnackbarProvider";
+import { useRouter } from "next/navigation";
 
 interface CreateContractorModalProps {
   isOpen: boolean;
@@ -13,12 +15,18 @@ interface CreateContractorModalProps {
 }
 
 export default function CreateContractorModal({ isOpen, onClose }: CreateContractorModalProps) {
-  const [state, dispatch] = useFormState(createContractor, undefined)
+  const [state, dispatch] = useFormState(createContractor, null)
   const { pending } = useFormStatus();
+  const { showSnackbar } = useSnackbar();
+  const { refresh } = useRouter();
+
   const [errorMessage, setErrorMessage] = useState("");
+  const [shouldRefresh, setShouldRefresh] = useState(false)
 
   useEffect(() => {
     if (state?.success) {
+      showSnackbar(state.message, 'success')
+      setShouldRefresh(true);
       onClose();
     } else {
       if (state?.unauthorized) {
@@ -27,6 +35,12 @@ export default function CreateContractorModal({ isOpen, onClose }: CreateContrac
       setErrorMessage(state?.message || "")
     }
   }, [onClose, state])
+
+  useEffect(() => {
+    if (shouldRefresh) {
+      refresh();
+    }
+  }, [shouldRefresh])
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -40,9 +54,29 @@ export default function CreateContractorModal({ isOpen, onClose }: CreateContrac
             <div>
               <label
                 className="mb-3 mt-5 block text-xs font-medium text-gray-900"
-                htmlFor="legal_name"
+                htmlFor="company_name"
               >
                 Nome da seguradora
+              </label>
+
+              <div className="relative">
+                <input
+                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
+                  id="company_name"
+                  type="text"
+                  name="company_name"
+                  placeholder="Digite o nome da empresa"
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label
+                className="mb-3 mt-5 block text-xs font-medium text-gray-900"
+                htmlFor="legal_name"
+              >
+                Razão Social
               </label>
 
               <div className="relative">
@@ -51,7 +85,7 @@ export default function CreateContractorModal({ isOpen, onClose }: CreateContrac
                   id="legal_name"
                   type="text"
                   name="legal_name"
-                  placeholder="Digite o nome da empresa"
+                  placeholder="Digite a razão social"
                   required
                 />
               </div>

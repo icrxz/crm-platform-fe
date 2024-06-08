@@ -1,7 +1,9 @@
 'use client';
 
 import {
+  BuildingOffice2Icon,
   UserGroupIcon,
+  WrenchIcon,
   HomeIcon,
   DocumentDuplicateIcon,
 } from '@heroicons/react/24/outline';
@@ -9,8 +11,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 
-// Map of links to display in the side navigation.
-// Depending on the size of the application, this would be stored in a database.
 const links = [
   { name: 'Home', href: '/home', icon: HomeIcon },
   {
@@ -19,8 +19,8 @@ const links = [
     icon: DocumentDuplicateIcon,
   },
   { name: 'Clientes', href: '/customers', icon: UserGroupIcon },
-  { name: 'Parceiros', href: '/partners', icon: UserGroupIcon },
-  { name: 'Contratantes', href: '/contractors', icon: UserGroupIcon },
+  { name: 'Técnicos', href: '/partners', icon: WrenchIcon },
+  { name: 'Seguradoras', href: '/contractors', icon: BuildingOffice2Icon },
 ];
 
 export default function NavLinks() {

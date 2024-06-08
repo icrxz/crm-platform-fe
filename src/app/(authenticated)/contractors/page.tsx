@@ -7,7 +7,7 @@ import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
-  title: 'Parceiros',
+  title: 'Seguradoras',
 };
 
 export default async function Page({
@@ -30,8 +30,8 @@ export default async function Page({
 
   return (
     <main>
-      <Suspense fallback={<p>Carregando seguradoras</p>}>
-        <ContractorsTable contractors={contractors} />
+      <Suspense fallback={<p>Carregando seguradoras...</p>}>
+        <ContractorsTable contractors={contractors.data || []} />
       </Suspense>
     </main>
   );

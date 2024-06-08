@@ -1,40 +1,57 @@
 "use server";
 import { getServerSession } from "next-auth";
-import { Contractor, CreateContractor } from "../types/contractor";
+import { Contractor, CreateContractor, CreateContractorResponse } from "../types/contractor";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
-import { NextResponse } from "next/server";
+import { ServiceResponse } from "../types/service";
 
 const crmCoreEndpoint = process.env.CRM_CORE_ENDPOINT
 const crmCoreApiKey = process.env.CRM_CORE_API_KEY
 
-interface AnyResp {
-  success: boolean;
-  message: string;
-  unauthorized?: boolean;
+export async function fetchContractors(query: string): Promise<ServiceResponse<Contractor[]>> {
+  console.log("query", query)
+
+  try {
+    const jwt = cookies().get("jwt")?.value
+    const url = `${crmCoreEndpoint}/crm/core/api/v1/contractors`;
+
+    const resp = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": 'application/json',
+        "X-API-Key": crmCoreApiKey || '',
+        "Authorization": `Bearer ${jwt}`
+      }
+    })
+
+    if (!resp.ok) {
+      const unauthorized = resp.status === 401
+      const errorMessage = unauthorized ? "usuário não autorizado" : "falha na busca das seguradoras"
+      return {
+        success: false,
+        message: errorMessage,
+        unauthorized: unauthorized,
+      };
+    }
+
+    const respData = await resp.json() as Contractor[];
+    console.log(respData)
+    return {
+      message: "",
+      success: true,
+      data: respData,
+    }
+  } catch (ex) {
+    console.error(ex)
+
+    return {
+      success: false,
+      message: "algo de errado aconteceu, contate o suporte!",
+    }
+  }
 }
 
-export async function fetchContractors(query: string): Promise<Contractor[]> {
-  return [
-    {
-      contractor_id: "1",
-      legal_name: "Luizaseg",
-      document: "123.456.789-00",
-      cases: [
-        "123",
-        "456",
-        "789"
-      ],
-      created_at: "27/04/2024",
-      company_name: "",
-      created_by: "",
-      updated_at: "",
-      updated_by: "",
-    } as Contractor
-  ];
-}
-
-export async function createContractor(_currentState: unknown, formData: FormData): Promise<AnyResp> {
+export async function createContractor(_currentState: unknown, formData: FormData): Promise<ServiceResponse<CreateContractorResponse>> {
   console.log(formData);
   const session = await getServerSession();
   console.log("session", session)
@@ -52,7 +69,6 @@ export async function createContractor(_currentState: unknown, formData: FormDat
   try {
     const url = `${crmCoreEndpoint}/crm/core/api/v1/contractors`;
     const jwt = cookies().get("jwt");
-    console.log("jwt", jwt);
   
     const response = await fetch(url, {
       method: "POST",
@@ -63,34 +79,29 @@ export async function createContractor(_currentState: unknown, formData: FormDat
         "Authorization": `Bearer ${jwt?.value}`
       }
     });
-  
-    console.log("resposta da api", response)
-  
-    if (response.status !== 201) {
-      if (response.status === 401) {
-        return {
-          success: false,
-          message: "unauthorized",
-          unauthorized: response.status === 401,
-        };
-      }
-  
+
+    if (!response.ok) {
+      const unauthorized = response.status === 401
+      const errorMessage = unauthorized ? "usuário não autorizado" : "falha na criação dos técnicos"
       return {
         success: false,
-        message: "client failed"
+        message: errorMessage,
+        unauthorized: unauthorized,
       };
     }
   
-    const resData = await response.json()
+    const resData = await response.json() as CreateContractorResponse;
     return {
       success: true,
-      message: resData,
+      message: "técnico criado com sucesso",
+      data: resData
     };
   } catch (ex) {
-    console.log(ex)
+    console.error(ex)
+
     return {
       success: false,
-      message: "something went wrong",
+      message: "algo de errado aconteceu, contate o suporte!",
     }
   }
 }

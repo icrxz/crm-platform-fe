@@ -9,6 +9,10 @@ const handler = NextAuth({
   pages: {
     signIn: '/login',
   },
+  session: {
+    strategy: 'jwt',
+    maxAge: 60 * 60 * 12,
+  },
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -34,27 +38,18 @@ const handler = NextAuth({
               headers: { "Content-Type": "application/json" }
             });
 
-            if (result.status !== 200) {
-              return null;
-            }
-
             const authData = await result.json();
-            if (!authData.token || !authData.user) {
+            if (!result.ok || !authData.token || !authData.user) {
               return null
             };
 
-            console.log("jwt recebido", authData.token)
             cookies().set("jwt", authData.token, {
               // httpOnly: true,
               secure: process.env.NODE_ENV === 'production',
               maxAge: 60 * 60 * 12, // 12 hours
             })
 
-            return {
-              email: authData.user.email,
-              id: authData.user.user_id,
-              name: authData.user.name
-            } as User;
+            return authData.user;
           } catch (e) {
             return null;
           }
@@ -64,6 +59,19 @@ const handler = NextAuth({
       },
     }),
   ],
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.user = user as any;
+      }
+      return token
+    }
+  },
+  events: {
+    async signOut({ session, token }) {
+      cookies().delete("jwt");
+    }
+  }
 });
 
 export { handler as GET, handler as POST }

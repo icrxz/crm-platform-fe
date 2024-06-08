@@ -1,8 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import NavLinks from '../../components/dashboard/nav-links';
-import AcmeLogo from '../../ui/acme-logo';
+import NavLinks from './nav-links';
 import { PowerIcon } from '@heroicons/react/24/outline';
 import { signOut } from 'next-auth/react';
 import Image from 'next/image'
