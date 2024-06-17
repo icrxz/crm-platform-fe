@@ -17,7 +17,6 @@ export async function fetchCustomers(query: string): Promise<ServiceResponse<Cus
       url = `${url}?${query}`
     }
 
-
     const resp = await fetch(url, {
       method: "GET",
       headers: {

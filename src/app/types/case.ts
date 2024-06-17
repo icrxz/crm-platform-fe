@@ -34,7 +34,7 @@ export type Case = {
   origin_channel: string;
   case_type: string;
   subject: string;
-  priority: string;
+  priority: CasePriority;
   status: CaseStatus;
   created_at: string
   created_by: string;
@@ -55,7 +55,7 @@ export interface CaseFull extends Case {
   owner?: User;
 }
 
-enum CaseStatus {
+export enum CaseStatus {
   NEW = "New",
   CUSTOMER_INFO = "CustomerInfo",
   WAITING_PARTNER = "WaitingPartner",
@@ -64,6 +64,12 @@ enum CaseStatus {
   PAYMENT = "Payment",
   CLOSED = "Closed",
   CANCELED = "Canceled",
+}
+
+export enum CasePriority {
+  LOW = "Low",
+  MEDIUM = "Medium",
+  HIGH = "High",
 }
 
 export const caseStatusMap: Record<CaseStatus, string> = {
@@ -75,4 +81,10 @@ export const caseStatusMap: Record<CaseStatus, string> = {
 	Payment: "Pagamento",
 	Closed: "Encerrado",
 	Canceled: "Cancelado",
+}
+
+export const casePriorityMap: Record<CasePriority, string> = {
+  Low: "Baixa",
+  Medium: "Média",
+  High: "Alta",
 }

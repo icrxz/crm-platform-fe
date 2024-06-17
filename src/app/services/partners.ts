@@ -9,10 +9,12 @@ const crmCoreApiKey = process.env.CRM_CORE_API_KEY
 
 export async function fetchPartners(query: string): Promise<ServiceResponse<Partner[]>> {
   console.log("query", query)
-
   try {
     const jwt = cookies().get("jwt")?.value
-    const url = `${crmCoreEndpoint}/crm/core/api/v1/partners`;
+    let url = `${crmCoreEndpoint}/crm/core/api/v1/partners`;
+    if (query) {
+      url = `${url}?${query}`
+    }
 
     const resp = await fetch(url, {
       method: "GET",
@@ -95,10 +97,7 @@ export async function getPartnerByID(partnerID: string): Promise<ServiceResponse
 
 export async function createPartner(_currentState: unknown, formData: FormData): Promise<ServiceResponse<any>> {
   try {
-    console.log("form-data", formData)
     const session = await getServerSession();
-    console.log("session", session)
-
     const jwt = cookies().get("jwt")?.value
     const url = `${crmCoreEndpoint}/crm/core/api/v1/partners`;
 

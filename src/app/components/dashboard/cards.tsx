@@ -5,6 +5,7 @@ import {
   InboxIcon,
 } from '@heroicons/react/24/outline';
 import { lusitana } from '../../ui/fonts';
+import { Card } from '../common/card';
 
 const iconMap = {
   collected: BanknotesIcon,
@@ -26,43 +27,56 @@ export default async function CardWrapper() {
     totalPendingInvoices: 4,
   };
 
-  return (
-    <>
-      <Card title="Casos" value={totalPaidInvoices} type="collected" />
-      <Card title="Clientes" value={totalPendingInvoices} type="pending" />
-      <Card title="Casos completados" value={numberOfInvoices} type="invoices" />
-      <Card
-        title="Casos vencidos"
-        value={numberOfCustomers}
-        type="customers"
-      />
-    </>
-  );
-}
-
-export function Card({
-  title,
-  value,
-  type,
-}: {
-  title: string;
-  value: number | string;
-  type: 'invoices' | 'customers' | 'pending' | 'collected';
-}) {
-  const Icon = iconMap[type];
-
-  return (
-    <div className="rounded-xl bg-gray-50 p-2 shadow-sm">
+  function getTitle(title: "collected" | "customers" | "pending" | "invoices"): React.ReactNode {
+    const Icon = iconMap[title];
+    return (
       <div className="flex p-4">
         {Icon ? <Icon className="h-5 w-5 text-gray-700" /> : null}
         <h3 className="ml-2 text-sm font-medium">{title}</h3>
       </div>
-      <p
-        className={`${lusitana.className}
+    )
+  }
+
+  return (
+    <>
+      <Card title={getTitle("collected")}>
+        <p
+          className={`${lusitana.className}
           truncate rounded-xl bg-white px-4 py-8 text-center text-2xl`}
-      >
-        {value}
-      </p>
-    </div>
+        >
+          {totalPaidInvoices}
+        </p>
+      </Card>
+
+      <Card title={getTitle("pending")}>
+        <p
+          className={`${lusitana.className}
+          truncate rounded-xl bg-white px-4 py-8 text-center text-2xl`}
+        >
+          {totalPendingInvoices}
+        </p>
+      </Card>
+
+      <Card title={getTitle("invoices")}>
+        <p
+          className={`${lusitana.className}
+          truncate rounded-xl bg-white px-4 py-8 text-center text-2xl`}
+        >
+          {numberOfInvoices}
+        </p>
+      </Card>
+
+
+      <Card title={getTitle("customers")}>
+        <p
+          className={`${lusitana.className}
+          truncate rounded-xl bg-white px-4 py-8 text-center text-2xl`}
+        >
+          {numberOfCustomers}
+        </p>
+      </Card>
+    </>
   );
 }
+
+
