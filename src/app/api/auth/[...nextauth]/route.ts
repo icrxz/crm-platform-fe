@@ -44,7 +44,7 @@ const handler = NextAuth({
             };
 
             cookies().set("jwt", authData.token, {
-              // httpOnly: true,
+              httpOnly: true,
               secure: process.env.NODE_ENV === 'production',
               maxAge: 60 * 60 * 12, // 12 hours
             })

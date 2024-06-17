@@ -1,20 +1,27 @@
+"use client";
 import { lusitana } from '../../ui/fonts';
-import Search from '../../components/common/search';
-import {
-Case
-} from '../../types/case';
+import { Case } from '../../types/case';
+import CasesSearchBar from './search-bar';
+import { useState } from 'react';
+import CreateCaseModal from './create-case';
+import Modal from '../common/modal';
 
-export default async function CasesTable({
-  cases,
-}: {
+interface CasesTableProps {
   cases: Case[];
-}) {
+}
+
+export default function CasesTable({ cases }: CasesTableProps) {
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
   return (
     <div className="w-full">
       <h1 className={`${lusitana.className} mb-8 text-xl md:text-2xl`}>
         Casos
       </h1>
-      <Search placeholder="Buscar casos..." />
+
+      <CasesSearchBar setIsCreationModalOpen={setIsCreateModalOpen} setIsFilterModalOpen={setIsFilterModalOpen} />
+
       <div className="mt-6 flow-root">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
@@ -23,7 +30,7 @@ export default async function CasesTable({
               <table className="hidden min-w-full rounded-md text-gray-900 md:table">
                 <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
                   <tr>
-                  <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
+                    <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
                       ID
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
@@ -77,6 +84,14 @@ export default async function CasesTable({
           </div>
         </div>
       </div>
+
+      {isFilterModalOpen && <Modal isOpen={isFilterModalOpen} onClose={() => setIsFilterModalOpen(false)}>
+        <div>
+          Filtro
+        </div>
+      </Modal>}
+
+      {isCreateModalOpen && <CreateCaseModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />}
     </div>
   );
 }
