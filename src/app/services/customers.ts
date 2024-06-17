@@ -1,6 +1,6 @@
 "use server";
 import { cookies } from "next/headers";
-import { CreateCustomer, Customer, EditCustomer } from "../types/customer";
+import { CreateCustomer, CreateCustomerResponse, Customer, EditCustomer } from "../types/customer";
 import { getServerSession } from "next-auth/next";
 import { ServiceResponse } from "../types/service";
 
@@ -102,7 +102,7 @@ export async function getCustomerByID(customerID: string): Promise<ServiceRespon
   }
 }
 
-export async function createCustomer(_currentState: unknown, formData: FormData): Promise<any> {
+export async function createCustomer(_currentState: unknown, formData: FormData): Promise<ServiceResponse<CreateCustomerResponse>> {
   try {
     console.log("form-data", formData)
     const session = await getServerSession();
@@ -152,10 +152,13 @@ export async function createCustomer(_currentState: unknown, formData: FormData)
       };
     }
 
+    const respData = await resp.json() as CreateCustomerResponse;
+
     return {
       success: true,
       message: "cliente criado com sucesso!!",
       unauthorized: false,
+      data: respData,
     };
   } catch (ex) {
     console.error(ex)

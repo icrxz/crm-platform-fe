@@ -13,6 +13,10 @@ export type CreateCustomer = {
   created_by: string;
 }
 
+export type CreateCustomerResponse = {
+  customer_id: string;
+}
+
 export type EditCustomer = {
   first_name?: string;
   last_name?: string;

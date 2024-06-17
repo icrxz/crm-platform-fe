@@ -1,18 +1,25 @@
 "use client";
 import { lusitana } from '../../ui/fonts';
-import { Case } from '../../types/case';
+import { CaseFull, caseStatusMap } from '../../types/case';
 import CasesSearchBar from './search-bar';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import CreateCaseModal from './create-case';
 import Modal from '../common/modal';
+import { parseDateTime } from '../../libs/date';
+import { useRouter } from 'next/navigation';
 
 interface CasesTableProps {
-  cases: Case[];
+  cases: CaseFull[];
 }
 
 export default function CasesTable({ cases }: CasesTableProps) {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const router = useRouter();
+
+  const handleRowClick = (caseID: string) => {
+    router.push(`/cases/${caseID}`);
+  }
 
   return (
     <div className="w-full">
@@ -31,19 +38,25 @@ export default function CasesTable({ cases }: CasesTableProps) {
                 <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
                   <tr>
                     <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                      ID
+                      Sinistro
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
                       Cliente
                     </th>
                     <th scope="col" className="px-3 py-5 font-medium">
-                      Parceiro
+                      Cidade
                     </th>
                     <th scope="col" className="px-3 py-5 font-medium">
+                      Seguradora
+                    </th>
+                    <th scope="col" className="px-4 py-5 font-medium">
+                      Técnico
+                    </th>
+                    <th scope="col" className="px-4 py-5 font-medium">
                       Status
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium">
-                      Prioridade
+                      Criação
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium">
                       Vencimento
@@ -52,29 +65,39 @@ export default function CasesTable({ cases }: CasesTableProps) {
                 </thead>
 
                 <tbody className="divide-y divide-gray-200 text-gray-900">
-                  {cases.map((case_rd) => (
-                    <tr key={case_rd.id} className="group">
+                  {cases.map((crmCase) => (
+                    <tr
+                      key={crmCase.case_id}
+                      className="group hover:bg-gray-300 cursor-pointer"
+                      onClick={() => handleRowClick(crmCase.case_id)}
+                    >
                       <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
-                          <p>{case_rd.id}</p>
+                          <p>{crmCase.external_reference}</p>
                         </div>
                       </td>
                       <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
-                          <p>{case_rd.customer_id}</p>
+                          <p>{`${crmCase.customer?.first_name} ${crmCase.customer?.last_name}`}</p>
                         </div>
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {case_rd.partner_id}
+                        {crmCase.customer?.shipping.city || ''}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {case_rd.status}
+                        {crmCase.contractor?.company_name || ''}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                        {case_rd.priority}
+                        {crmCase.partner_id || ''}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                        {case_rd.due_date}
+                        {caseStatusMap[crmCase.status]}
+                      </td>
+                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
+                        {parseDateTime(crmCase.created_at)}
+                      </td>
+                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
+                        {parseDateTime(crmCase.due_date, "dd/MM/yyyy")}
                       </td>
                     </tr>
                   ))}

@@ -216,7 +216,7 @@ export default function CaseForm({ onSubmit, submitState, onClose }: CaseFormPro
                             </label>
 
                             <input
-                                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
+                                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500 disabled:cursor-not-allowed disabled:bg-gray-100"
                                 id="first_name"
                                 type="text"
                                 name="first_name"
@@ -233,7 +233,7 @@ export default function CaseForm({ onSubmit, submitState, onClose }: CaseFormPro
                             </label>
 
                             <input
-                                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
+                                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500 disabled:cursor-not-allowed disabled:bg-gray-100"
                                 id="last_name"
                                 type="text"
                                 name="last_name"
@@ -241,6 +241,42 @@ export default function CaseForm({ onSubmit, submitState, onClose }: CaseFormPro
                                 required
                                 disabled={!hasSearchedCustomer || !!customer}
                                 defaultValue={customer?.last_name || ''}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="columns-2 my-4">
+                        <div>
+                            <label className="mb-3 block text-xs font-medium text-gray-900" htmlFor="first_name">
+                                Cidade
+                            </label>
+
+                            <input
+                                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500 disabled:cursor-not-allowed disabled:bg-gray-100"
+                                id="city"
+                                type="text"
+                                name="city"
+                                placeholder="Digite a cidade"
+                                required
+                                disabled={!hasSearchedCustomer || !!customer}
+                                defaultValue={customer?.shipping.city || ''}
+                            />
+                        </div>
+
+                        <div>
+                            <label className="mb-3 block text-xs font-medium text-gray-900" htmlFor="last_name">
+                                Estado
+                            </label>
+
+                            <input
+                                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500 disabled:cursor-not-allowed disabled:bg-gray-100"
+                                id="state"
+                                type="text"
+                                name="state"
+                                placeholder="Digite o estado"
+                                required
+                                disabled={!hasSearchedCustomer || !!customer}
+                                defaultValue={customer?.shipping.state || ''}
                             />
                         </div>
                     </div>
