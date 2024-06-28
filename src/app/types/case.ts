@@ -19,11 +19,11 @@ export type CreateCase = {
   product_description?: string;
   value?: number;
   serial_number?: string;
-}
+};
 
 export type CreateCaseResponse = {
   case_id: string;
-}
+};
 
 export type Case = {
   case_id: string;
@@ -36,7 +36,7 @@ export type Case = {
   subject: string;
   priority: CasePriority;
   status: CaseStatus;
-  created_at: string
+  created_at: string;
   created_by: string;
   updated_at: string;
   updated_by: string;
@@ -45,7 +45,7 @@ export type Case = {
   region: number;
   external_reference: string;
   product_id: string;
-}
+};
 
 export interface CaseFull extends Case {
   customer?: Customer;
@@ -75,16 +75,16 @@ export enum CasePriority {
 export const caseStatusMap: Record<CaseStatus, string> = {
   New: "Novo",
   CustomerInfo: "Informações cliente",
-	WaitingPartner: "Aguardando técnico",
-	Ongoing: "Em andamento",
-	Report: "Laudo",
-	Payment: "Pagamento",
-	Closed: "Encerrado",
-	Canceled: "Cancelado",
-}
+  WaitingPartner: "Aguardando técnico",
+  Ongoing: "Em andamento",
+  Report: "Laudo",
+  Payment: "Pagamento",
+  Closed: "Encerrado",
+  Canceled: "Cancelado",
+};
 
 export const casePriorityMap: Record<CasePriority, string> = {
   Low: "Baixa",
   Medium: "Média",
   High: "Alta",
-}
+};

@@ -1,13 +1,13 @@
 import { Suspense } from 'react';
 
+import { getServerSession } from 'next-auth';
+import { redirect } from 'next/navigation';
 import CardWrapper from '../../components/dashboard/cards';
 import { CardsSkeleton } from '../../components/dashboard/skeletons';
 import { lusitana } from '../../ui/fonts';
-import { getServerSession } from 'next-auth';
-import { redirect } from 'next/navigation';
 
 export default async function Page() {
-  const session = await getServerSession()
+  const session = await getServerSession();
 
   if (!session) {
     redirect("/login");

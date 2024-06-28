@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, ReactNode, useContext, useState } from 'react';
 
 type SnackbarType = 'info' | 'success' | 'error' | 'warning';
 
@@ -25,7 +25,7 @@ export const useSnackbar = (): SnackbarContextProps => {
   return context;
 };
 
-export const SnackbarProvider = ({ children }: { children: ReactNode }) => {
+export const SnackbarProvider = ({ children }: { children: ReactNode; }) => {
   const [snackbar, setSnackbar] = useState<SnackbarState>({
     message: '',
     type: 'info',

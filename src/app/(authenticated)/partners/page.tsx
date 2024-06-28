@@ -1,10 +1,10 @@
 import { Metadata } from 'next';
 
-import { Suspense } from 'react';
-import { getServerSession } from 'next-auth';
-import { redirect } from 'next/navigation';
 import PartnersTable from '@/app/components/partners/table';
 import { fetchPartners } from '@/app/services/partners';
+import { getServerSession } from 'next-auth';
+import { redirect } from 'next/navigation';
+import { Suspense } from 'react';
 
 export const metadata: Metadata = {
   title: 'Técnicos',
@@ -18,7 +18,7 @@ export default async function Page({
     page?: string;
   };
 }) {
-  const session = await getServerSession()
+  const session = await getServerSession();
 
   if (!session) {
     redirect("/login");
@@ -31,7 +31,7 @@ export default async function Page({
   return (
     <main>
       <Suspense fallback={<p>Carregando técnicos...</p>}>
-        <PartnersTable partners={partners.data || []}/>
+        <PartnersTable partners={partners.data || []} />
       </Suspense>
     </main>
   );

@@ -1,8 +1,5 @@
 'use client';
 
-import { Button } from '../../components/common/button';
-import { login } from '../../services/authentication';
-import { lusitana } from '../../ui/fonts';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import {
   AtSymbolIcon,
@@ -10,9 +7,12 @@ import {
   KeyIcon,
 } from '@heroicons/react/24/outline';
 import { useFormState, useFormStatus } from 'react-dom';
+import { Button } from '../../components/common/button';
+import { login } from '../../services/authentication';
+import { lusitana } from '../../ui/fonts';
 
 export default function LoginForm() {
-  const [errorMessage, dispatch] = useFormState(login, null)
+  const [errorMessage, dispatch] = useFormState(login, null);
 
   return (
     <form action={dispatch} className="space-y-3">

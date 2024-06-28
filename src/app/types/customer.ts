@@ -11,11 +11,11 @@ export type CreateCustomer = {
   shipping: Address;
   personal_contact?: Contact;
   created_by: string;
-}
+};
 
 export type CreateCustomerResponse = {
   customer_id: string;
-}
+};
 
 export type EditCustomer = {
   first_name?: string;
@@ -27,7 +27,7 @@ export type EditCustomer = {
   shipping: Address;
   personal_contact?: Contact;
   updated_by: string;
-}
+};
 
 export type Customer = {
   customer_id: string;
@@ -47,4 +47,4 @@ export type Customer = {
   updated_by: string;
   cases: string[];
   active: boolean;
-}
+};

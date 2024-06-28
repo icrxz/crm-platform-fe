@@ -1,4 +1,5 @@
 import { fetchContractors } from "@/app/services/contractors";
+import { fetchCustomers } from "@/app/services/customers";
 import { Case } from "@/app/types/case";
 import { Contractor } from "@/app/types/contractor";
 import { Customer } from "@/app/types/customer";
@@ -8,7 +9,6 @@ import { InputMask } from "@react-input/mask";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { Button } from "../common/button";
-import { fetchCustomers } from "@/app/services/customers";
 
 interface CaseFormProps {
     case?: Case;
@@ -18,20 +18,20 @@ interface CaseFormProps {
 }
 
 export default function CaseForm({ onSubmit, submitState, onClose }: CaseFormProps) {
-    const [state, dispatch] = useFormState(onSubmit, null)
+    const [state, dispatch] = useFormState(onSubmit, null);
     const [contractors, setContractors] = useState<Contractor[]>([]);
     const [userDocument, setUserDocument] = useState<string>("");
     const [searchingUser, setSearchingUser] = useState<boolean>(false);
-    const [customer, setCustomer] = useState<Customer | undefined>()
+    const [customer, setCustomer] = useState<Customer | undefined>();
     const [hasSearchedCustomer, setHasSearchedCustomer] = useState<boolean>(false);
 
     const { pending } = useFormStatus();
 
     async function handleSearchUser() {
         setSearchingUser(true);
-        console.log('handleSearchUser', userDocument)
-        const foundCustomer = await fetchCustomers(`document=${userDocument}`)
-        console.log('foundCustomer', foundCustomer)
+        console.log('handleSearchUser', userDocument);
+        const foundCustomer = await fetchCustomers(`document=${userDocument}`);
+        console.log('foundCustomer', foundCustomer);
         if (foundCustomer.success && foundCustomer.data) {
             setCustomer(foundCustomer.data[0]);
         }
@@ -47,13 +47,13 @@ export default function CaseForm({ onSubmit, submitState, onClose }: CaseFormPro
         }
 
         fetchCaseForm();
-    }, [])
+    }, []);
 
     useEffect(() => {
         if (submitState) {
             submitState(state);
         }
-    }, [state, submitState])
+    }, [state, submitState]);
 
     return (
         <form action={dispatch} className="space-y-3">

@@ -1,19 +1,19 @@
 "use client";
+import { parseDateTime } from '@/app/libs/date';
+import { EyeIcon } from '@heroicons/react/24/outline';
+import PencilIcon from '@heroicons/react/24/outline/PencilIcon';
+import TrashIcon from '@heroicons/react/24/outline/TrashIcon';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import Modal from '../../components/common/modal';
 import ContractorsSearchBar from '../../components/contractors/search-bar';
 import {
   Contractor
 } from '../../types/contractor';
 import { lusitana } from '../../ui/fonts';
-import React, { useState } from 'react';
 import CreateContractorModal from './create-contractor';
-import { parseDateTime } from '@/app/libs/date';
-import PencilIcon from '@heroicons/react/24/outline/PencilIcon';
-import EditContractorModal from './edit-contractor';
 import { DeleteContractorModal } from './delete-contractor';
-import { useRouter } from 'next/navigation';
-import TrashIcon from '@heroicons/react/24/outline/TrashIcon';
-import { EyeIcon } from '@heroicons/react/24/outline';
+import EditContractorModal from './edit-contractor';
 
 interface ContractorsTableProps {
   contractors: Contractor[];
@@ -22,21 +22,21 @@ interface ContractorsTableProps {
 export default function ContractorsTable({
   contractors,
 }: ContractorsTableProps) {
-  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [contractorID, setContractorID] = useState("");
   const router = useRouter();
 
   function handleEdit(contractorID: string) {
-    setContractorID(contractorID)
-    setIsEditModalOpen(true)
+    setContractorID(contractorID);
+    setIsEditModalOpen(true);
   }
 
   function handleDelete(contractorID: string) {
-    setContractorID(contractorID)
-    setIsDeleteModalOpen(true)
+    setContractorID(contractorID);
+    setIsDeleteModalOpen(true);
   }
 
   function handleRowClick(partnerID: string) {

@@ -1,12 +1,12 @@
-import { signOut } from "next-auth/react";
-import Modal from "../common/modal";
-import { createPartner } from "../../services/partners";
-import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
-import { useEffect, useState } from "react";
 import { useSnackbar } from "@/app/context/SnackbarProvider";
-import PartnerForm from "./partner-form";
 import { ServiceResponse } from "@/app/types/service";
+import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { createPartner } from "../../services/partners";
+import Modal from "../common/modal";
+import PartnerForm from "./partner-form";
 
 interface CreatePartnerModalProps {
   isOpen: boolean;
@@ -25,16 +25,16 @@ export default function CreatePartnerModal({ isOpen, onClose }: CreatePartnerMod
     }
 
     if (state?.success) {
-      showSnackbar(state.message, 'success')
+      showSnackbar(state.message, 'success');
       refresh();
       onClose();
     } else {
       if (state?.unauthorized) {
         signOut();
       }
-      setErrorMessage(state?.message || "")
+      setErrorMessage(state?.message || "");
     }
-  }, [state])
+  }, [state]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -53,5 +53,5 @@ export default function CreatePartnerModal({ isOpen, onClose }: CreatePartnerMod
         )}
       </div>
     </Modal>
-  )
+  );
 }

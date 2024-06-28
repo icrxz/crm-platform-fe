@@ -1,7 +1,7 @@
 import { Address } from "./address";
 import { Contact } from "./contact";
 
-export type CreatePartner =  {
+export type CreatePartner = {
   first_name?: string;
   last_name?: string;
   document: string;
@@ -10,9 +10,9 @@ export type CreatePartner =  {
   shipping: Address;
   personal_contact?: Contact;
   created_by: string;
-}
+};
 
-export type EditPartner =  {
+export type EditPartner = {
   first_name?: string;
   last_name?: string;
   document: string;
@@ -21,7 +21,7 @@ export type EditPartner =  {
   shipping: Address;
   personal_contact?: Contact;
   updated_by: string;
-}
+};
 
 export type Partner = {
   partner_id: string;
@@ -42,4 +42,4 @@ export type Partner = {
   updated_at: string;
   updated_by: string;
   active: boolean;
-}
+};

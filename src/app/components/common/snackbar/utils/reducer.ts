@@ -2,17 +2,17 @@ import { SnackbarType } from "../../../../types/snackbar";
 
 export type TAction =
   | {
-      type: "ADD_SNACKBAR";
-      payload: {
-        current: SnackbarType;
-      };
-    }
-  | {
-      type: "REMOVE_SNACKBAR";
-      payload: {
-        key: string;
-      };
+    type: "ADD_SNACKBAR";
+    payload: {
+      current: SnackbarType;
     };
+  }
+  | {
+    type: "REMOVE_SNACKBAR";
+    payload: {
+      key: string;
+    };
+  };
 
 type TStateType = {
   queue: SnackbarType[];

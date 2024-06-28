@@ -1,6 +1,6 @@
 "use client";
-import { useSnackbar } from '../../../context/SnackbarProvider';
 import { useEffect } from 'react';
+import { useSnackbar } from '../../../context/SnackbarProvider';
 
 const Snackbar = () => {
   const { snackbar, closeSnackbar } = useSnackbar();

@@ -4,7 +4,7 @@ export type Address = {
   city: string;
   country: string;
   zip_code: string;
-}
+};
 
 export const brazilStates = [
   "Acre",
@@ -34,4 +34,4 @@ export const brazilStates = [
   "São Paulo",
   "Sergipe",
   "Tocantins",
-]
+];

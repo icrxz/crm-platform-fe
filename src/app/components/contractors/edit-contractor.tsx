@@ -1,13 +1,13 @@
-import { Contractor } from "@/app/types/contractor";
-import { ContractorForm } from "./contractor-form";
-import { Suspense, useEffect, useState } from "react";
-import { ServiceResponse } from "@/app/types/service";
-import { useRouter } from "next/navigation";
 import { useSnackbar } from "@/app/context/SnackbarProvider";
-import { editContractor, getContractorByID } from "@/app/services/contractors";
+import { getContractorByID, updateContractor } from "@/app/services/contractors";
+import { Contractor } from "@/app/types/contractor";
+import { ServiceResponse } from "@/app/types/service";
 import ExclamationCircleIcon from "@heroicons/react/24/outline/esm/ExclamationCircleIcon";
-import Modal from "../common/modal";
 import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import Modal from "../common/modal";
+import { ContractorForm } from "./contractor-form";
 
 interface EditContractorModalProps {
     isOpen: boolean;
@@ -32,7 +32,7 @@ export default function EditContractorModal({ isOpen, onClose, contractorID }: E
         async function getPartner() {
             const contractor = await getContractorByID(contractorID);
             if (!contractor.success) {
-                showSnackbar(contractor.message, 'error')
+                showSnackbar(contractor.message, 'error');
                 onClose();
             }
 
@@ -40,7 +40,7 @@ export default function EditContractorModal({ isOpen, onClose, contractorID }: E
         }
 
         getPartner();
-    }, [contractorID])
+    }, [contractorID]);
 
     useEffect(() => {
         if (!state) {
@@ -48,22 +48,22 @@ export default function EditContractorModal({ isOpen, onClose, contractorID }: E
         }
 
         if (state?.success) {
-            showSnackbar(state.message, 'success')
+            showSnackbar(state.message, 'success');
             refresh();
             onClose();
         } else {
             if (state?.unauthorized) {
                 signOut();
             }
-            setErrorMessage(state?.message || "")
+            setErrorMessage(state?.message || "");
         }
-    }, [state])
+    }, [state]);
 
     return (
         <Modal isOpen={isOpen} onClose={handleClose}>
             <div>
                 <Suspense fallback={<div>Loading...</div>}>
-                    {contractor && <ContractorForm onClose={handleClose} onSubmit={editContractor} submitState={setState} contractor={contractor} />}
+                    {contractor && <ContractorForm onClose={handleClose} onSubmit={updateContractor} submitState={setState} contractor={contractor} />}
                 </Suspense>
 
                 {errorMessage && (
@@ -78,5 +78,5 @@ export default function EditContractorModal({ isOpen, onClose, contractorID }: E
                 )}
             </div>
         </Modal>
-    )
+    );
 }

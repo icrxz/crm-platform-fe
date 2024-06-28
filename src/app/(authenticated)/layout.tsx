@@ -2,7 +2,11 @@ import Snackbar from '../components/common/snackbar';
 import SideNav from '../components/sidebar/sidenav';
 import { SnackbarProvider } from '../context/SnackbarProvider';
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+interface LayoutProps {
+  children: React.ReactNode;
+}
+
+export default function Layout({ children }: LayoutProps) {
   return (
     <SnackbarProvider>
       <div className="flex h-screen flex-col md:flex-row md:overflow-hidden">

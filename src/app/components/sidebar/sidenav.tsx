@@ -1,11 +1,11 @@
 "use client";
 
-import Link from 'next/link';
-import NavLinks from './nav-links';
 import { PowerIcon } from '@heroicons/react/24/outline';
 import { signOut } from 'next-auth/react';
-import Image from 'next/image'
-import logoPic from './logo-rd.jpg'
+import Image from 'next/image';
+import Link from 'next/link';
+import logoPic from './logo-rd.jpg';
+import NavLinks from './nav-links';
 
 export default function SideNav() {
   return (
@@ -15,7 +15,7 @@ export default function SideNav() {
         href="/"
       >
         <div className="w-32 text-white md:w-40 ml-5 mb-1">
-        <Image src={logoPic} width={500} height={500} alt='rd logo png image' />
+          <Image src={logoPic} width={500} height={500} alt='rd logo png image' />
         </div>
       </Link>
       <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">

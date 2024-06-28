@@ -1,14 +1,14 @@
 "use client";
+import { EyeIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import Modal from '../../components/common/modal';
 import { Partner } from '../../types/partner';
 import { lusitana } from '../../ui/fonts';
-import React, { useState } from 'react';
-import PartnersSearchBar from './search-bar';
 import CreatePartnerModal from './create-partner';
-import EditPartnerModal from './edit-partner';
-import { EyeIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { DeletePartnerModal } from './delete-partner';
-import { useRouter } from 'next/navigation';
+import EditPartnerModal from './edit-partner';
+import PartnersSearchBar from './search-bar';
 
 interface PartnersTableProps {
   partners: Partner[];
@@ -25,13 +25,13 @@ export default function PartnersTable({
   const router = useRouter();
 
   function handlePartnerEdit(partnerID: string) {
-    setPartnerID(partnerID)
-    setIsEditModalOpen(true)
+    setPartnerID(partnerID);
+    setIsEditModalOpen(true);
   }
 
   function handlePartnerDelete(partnerID: string) {
-    setPartnerID(partnerID)
-    setIsDeleteModalOpen(true)
+    setPartnerID(partnerID);
+    setIsDeleteModalOpen(true);
   }
 
   function handleRowClick(partnerID: string) {
@@ -97,7 +97,7 @@ export default function PartnersTable({
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                         <div className='flex gap-2'>
-                        <button
+                          <button
                             className="text-green-500 hover:text-green-700"
                             onClick={() => handleRowClick(partner.partner_id)}>
                             <EyeIcon className="h-5 w-5" />

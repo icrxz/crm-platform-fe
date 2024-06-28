@@ -2,14 +2,15 @@
 
 import {
   BuildingOffice2Icon,
+  CreditCardIcon,
+  DocumentDuplicateIcon,
+  HomeIcon,
   UserGroupIcon,
   WrenchIcon,
-  HomeIcon,
-  DocumentDuplicateIcon,
 } from '@heroicons/react/24/outline';
+import clsx from 'clsx';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import clsx from 'clsx';
 
 const links = [
   { name: 'Home', href: '/home', icon: HomeIcon },
@@ -21,6 +22,8 @@ const links = [
   { name: 'Clientes', href: '/customers', icon: UserGroupIcon },
   { name: 'Técnicos', href: '/partners', icon: WrenchIcon },
   { name: 'Seguradoras', href: '/contractors', icon: BuildingOffice2Icon },
+  { name: 'Pagamentos', href: '/payments', icon: CreditCardIcon },
+  { name: 'Usuários', href: '/users', icon: UserGroupIcon },
 ];
 
 export default function NavLinks() {

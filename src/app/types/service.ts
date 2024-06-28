@@ -3,4 +3,4 @@ export type ServiceResponse<DataType> = {
   message: string;
   unauthorized?: boolean;
   data?: DataType;
-}
+};

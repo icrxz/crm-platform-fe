@@ -1,8 +1,8 @@
 "use client";
-import React, { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 
-import Search from '../../components/common/search';
 import { Button } from '../../components/common/button';
+import Search from '../../components/common/search';
 
 interface ContractorsSearchBarProps {
   setIsFilterModalOpen: Dispatch<SetStateAction<boolean>>;
@@ -26,5 +26,5 @@ export default function ContractorsSearchBar({ setIsCreationModalOpen, setIsFilt
         Criar
       </Button>
     </div>
-  )
+  );
 }

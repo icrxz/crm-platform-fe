@@ -1,8 +1,8 @@
 import {
   BanknotesIcon,
   ClockIcon,
-  UserGroupIcon,
   InboxIcon,
+  UserGroupIcon,
 } from '@heroicons/react/24/outline';
 import { lusitana } from '../../ui/fonts';
 import { Card } from '../common/card';
@@ -34,7 +34,7 @@ export default async function CardWrapper() {
         {Icon ? <Icon className="h-5 w-5 text-gray-700" /> : null}
         <h3 className="ml-2 text-sm font-medium">{title}</h3>
       </div>
-    )
+    );
   }
 
   return (

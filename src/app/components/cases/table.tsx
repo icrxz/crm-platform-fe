@@ -1,12 +1,12 @@
 "use client";
-import { lusitana } from '../../ui/fonts';
-import { CaseFull, caseStatusMap } from '../../types/case';
-import CasesSearchBar from './search-bar';
-import { useEffect, useState } from 'react';
-import CreateCaseModal from './create-case';
-import Modal from '../common/modal';
-import { parseDateTime } from '../../libs/date';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { parseDateTime } from '../../libs/date';
+import { CaseFull, caseStatusMap } from '../../types/case';
+import { lusitana } from '../../ui/fonts';
+import Modal from '../common/modal';
+import CreateCaseModal from './create-case';
+import CasesSearchBar from './search-bar';
 
 interface CasesTableProps {
   cases: CaseFull[];
@@ -19,7 +19,7 @@ export default function CasesTable({ cases }: CasesTableProps) {
 
   const handleRowClick = (caseID: string) => {
     router.push(`/cases/${caseID}`);
-  }
+  };
 
   return (
     <div className="w-full">

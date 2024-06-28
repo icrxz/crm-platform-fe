@@ -1,9 +1,9 @@
-import NextAuth, { User } from 'next-auth';
+import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { cookies } from 'next/headers';
 import { z } from 'zod';
 
-const crmCoreEndpoint = process.env.CRM_CORE_ENDPOINT
+const crmCoreEndpoint = process.env.CRM_CORE_ENDPOINT;
 
 const handler = NextAuth({
   pages: {
@@ -40,14 +40,14 @@ const handler = NextAuth({
 
             const authData = await result.json();
             if (!result.ok || !authData.token || !authData.user) {
-              return null
+              return null;
             };
 
             cookies().set("jwt", authData.token, {
               httpOnly: true,
               secure: process.env.NODE_ENV === 'production',
               maxAge: 60 * 60 * 12, // 12 hours
-            })
+            });
 
             return authData.user;
           } catch (e) {
@@ -64,7 +64,7 @@ const handler = NextAuth({
       if (user) {
         token.user = user as any;
       }
-      return token
+      return token;
     }
   },
   events: {
@@ -74,4 +74,4 @@ const handler = NextAuth({
   }
 });
 
-export { handler as GET, handler as POST }
+export { handler as GET, handler as POST };

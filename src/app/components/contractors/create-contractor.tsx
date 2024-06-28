@@ -1,12 +1,12 @@
+import { useSnackbar } from "@/app/context/SnackbarProvider";
+import { ServiceResponse } from "@/app/types/service";
+import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import Modal from "../../components/common/modal";
 import { createContractor } from "../../services/contractors";
-import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
-import { useEffect, useState } from "react";
-import { useSnackbar } from "@/app/context/SnackbarProvider";
-import { useRouter } from "next/navigation";
 import { ContractorForm } from "./contractor-form";
-import { ServiceResponse } from "@/app/types/service";
 
 interface CreateContractorModalProps {
   isOpen: boolean;
@@ -24,18 +24,18 @@ export default function CreateContractorModal({ isOpen, onClose }: CreateContrac
     if (!state) {
       return;
     }
-    
+
     if (state?.success) {
-      showSnackbar(state.message, 'success')
+      showSnackbar(state.message, 'success');
       refresh();
       onClose();
     } else {
       if (state?.unauthorized) {
         signOut();
       }
-      setErrorMessage(state?.message || "")
+      setErrorMessage(state?.message || "");
     }
-  }, [state])
+  }, [state]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -54,5 +54,5 @@ export default function CreateContractorModal({ isOpen, onClose }: CreateContrac
         )}
       </div>
     </Modal>
-  )
+  );
 }

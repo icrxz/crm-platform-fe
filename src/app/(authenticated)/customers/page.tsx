@@ -1,10 +1,10 @@
 import { Metadata } from 'next';
 
-import { fetchCustomers } from '../../services/customers';
-import CustomersTable from '../../components/customers/table';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
+import CustomersTable from '../../components/customers/table';
+import { fetchCustomers } from '../../services/customers';
 
 export const metadata: Metadata = {
   title: 'Clientes',
@@ -18,7 +18,7 @@ export default async function Page({
     page?: string;
   };
 }) {
-  const session = await getServerSession()
+  const session = await getServerSession();
 
   if (!session) {
     redirect("/login");

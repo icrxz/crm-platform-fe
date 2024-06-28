@@ -1,12 +1,12 @@
 import { useSnackbar } from "@/app/context/SnackbarProvider";
+import { createCase } from "@/app/services/cases";
 import { ServiceResponse } from "@/app/types/service";
+import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Modal from "../common/modal";
 import CaseForm from "./case-form";
-import { createCase } from "@/app/services/cases";
-import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 
 interface CreateCaseModalProps {
     isOpen: boolean;
@@ -25,16 +25,16 @@ export default function CreateCaseModal({ isOpen, onClose }: CreateCaseModalProp
         }
 
         if (state?.success) {
-            showSnackbar(state.message, 'success')
+            showSnackbar(state.message, 'success');
             refresh();
             onClose();
         } else {
             if (state?.unauthorized) {
                 signOut();
             }
-            setErrorMessage(state?.message || "")
+            setErrorMessage(state?.message || "");
         }
-    }, [state])
+    }, [state]);
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>

@@ -1,10 +1,10 @@
 import { Metadata } from 'next';
 
-import ContractorsTable from '../../components/contractors/table';
-import { fetchContractors } from '../../services/contractors';
-import { Suspense } from 'react';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
+import { Suspense } from 'react';
+import ContractorsTable from '../../components/contractors/table';
+import { fetchContractors } from '../../services/contractors';
 
 export const metadata: Metadata = {
   title: 'Seguradoras',
@@ -18,7 +18,7 @@ export default async function Page({
     page?: string;
   };
 }) {
-  const session = await getServerSession()
+  const session = await getServerSession();
 
   if (!session) {
     redirect("/login");

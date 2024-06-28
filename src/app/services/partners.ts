@@ -1,19 +1,19 @@
 "use server";
+import { getServerSession } from "next-auth/next";
 import { cookies } from "next/headers";
 import { CreatePartner, EditPartner, Partner } from "../types/partner";
-import { getServerSession } from "next-auth/next";
 import { ServiceResponse } from "../types/service";
 
-const crmCoreEndpoint = process.env.CRM_CORE_ENDPOINT
-const crmCoreApiKey = process.env.CRM_CORE_API_KEY
+const crmCoreEndpoint = process.env.CRM_CORE_ENDPOINT;
+const crmCoreApiKey = process.env.CRM_CORE_API_KEY;
 
 export async function fetchPartners(query: string): Promise<ServiceResponse<Partner[]>> {
-  console.log("query", query)
+  console.log("query", query);
   try {
-    const jwt = cookies().get("jwt")?.value
+    const jwt = cookies().get("jwt")?.value;
     let url = `${crmCoreEndpoint}/crm/core/api/v1/partners`;
     if (query) {
-      url = `${url}?${query}`
+      url = `${url}?${query}`;
     }
 
     const resp = await fetch(url, {
@@ -23,11 +23,11 @@ export async function fetchPartners(query: string): Promise<ServiceResponse<Part
         "X-API-Key": crmCoreApiKey || '',
         "Authorization": `Bearer ${jwt}`
       }
-    })
+    });
 
     if (!resp.ok) {
-      const unauthorized = resp.status === 401
-      const errorMessage = unauthorized ? "usuário não autorizado" : "falha na busca dos técnicos"
+      const unauthorized = resp.status === 401;
+      const errorMessage = unauthorized ? "usuário não autorizado" : "falha na busca dos técnicos";
       return {
         success: false,
         message: errorMessage,
@@ -35,27 +35,27 @@ export async function fetchPartners(query: string): Promise<ServiceResponse<Part
       };
     }
 
-    const respData = await resp.json() as Partner[]
+    const respData = await resp.json() as Partner[];
 
     return {
       message: "",
       success: true,
       data: respData,
-    }
+    };
 
   } catch (ex) {
-    console.error(ex)
+    console.error(ex);
 
     return {
       success: false,
       message: "algo de errado aconteceu, contate o suporte!",
-    }
+    };
   }
 }
 
 export async function getPartnerByID(partnerID: string): Promise<ServiceResponse<Partner>> {
   try {
-    const jwt = cookies().get("jwt")?.value
+    const jwt = cookies().get("jwt")?.value;
     const url = `${crmCoreEndpoint}/crm/core/api/v1/partners/${partnerID}`;
 
     const resp = await fetch(url, {
@@ -65,11 +65,11 @@ export async function getPartnerByID(partnerID: string): Promise<ServiceResponse
         "X-API-Key": crmCoreApiKey || '',
         "Authorization": `Bearer ${jwt}`
       }
-    })
+    });
 
     if (!resp.ok) {
-      const unauthorized = resp.status === 401
-      const errorMessage = unauthorized ? "usuário não autorizado" : "falha na busca do técnico"
+      const unauthorized = resp.status === 401;
+      const errorMessage = unauthorized ? "usuário não autorizado" : "falha na busca do técnico";
       return {
         success: false,
         message: errorMessage,
@@ -77,33 +77,33 @@ export async function getPartnerByID(partnerID: string): Promise<ServiceResponse
       };
     }
 
-    const respData = await resp.json() as Partner
+    const respData = await resp.json() as Partner;
 
     return {
       message: "",
       success: true,
       data: respData,
-    }
+    };
 
   } catch (ex) {
-    console.error(ex)
+    console.error(ex);
 
     return {
       success: false,
       message: "algo de errado aconteceu, contate o suporte!",
-    }
+    };
   }
 }
 
 export async function createPartner(_currentState: unknown, formData: FormData): Promise<ServiceResponse<any>> {
   try {
     const session = await getServerSession();
-    const jwt = cookies().get("jwt")?.value
+    const jwt = cookies().get("jwt")?.value;
     const url = `${crmCoreEndpoint}/crm/core/api/v1/partners`;
 
     const isCPF = true;
     const author = session?.user?.name || '';
-    let address = ''
+    let address = '';
     if (formData.get("address")) {
       address = `${formData.get('address')?.toString() || ''}, ${formData.get('number')?.toString() || ''} - ${formData.get('complement')?.toString() || ''}`;
     }
@@ -136,7 +136,7 @@ export async function createPartner(_currentState: unknown, formData: FormData):
         "X-API-Key": crmCoreApiKey || '',
         "Authorization": `Bearer ${jwt}`
       }
-    })
+    });
 
     if (!resp.ok) {
       return {
@@ -152,18 +152,18 @@ export async function createPartner(_currentState: unknown, formData: FormData):
       unauthorized: false,
     };
   } catch (ex) {
-    console.error(ex)
+    console.error(ex);
 
     return {
       success: false,
       message: "algo de errado aconteceu, contate o suporte!",
-    }
+    };
   }
 }
 
 export async function deletePartner(_currentState: unknown, formData: FormData): Promise<ServiceResponse<null>> {
   try {
-    const partnerID = formData.get('partner_id')?.toString() || ''
+    const partnerID = formData.get('partner_id')?.toString() || '';
     if (!partnerID) {
       return {
         success: false,
@@ -171,7 +171,7 @@ export async function deletePartner(_currentState: unknown, formData: FormData):
       };
     }
 
-    const jwt = cookies().get("jwt")?.value
+    const jwt = cookies().get("jwt")?.value;
     const url = `${crmCoreEndpoint}/crm/core/api/v1/partners/${partnerID}`;
 
     const resp = await fetch(url, {
@@ -180,11 +180,11 @@ export async function deletePartner(_currentState: unknown, formData: FormData):
         "X-API-Key": crmCoreApiKey || '',
         "Authorization": `Bearer ${jwt}`
       }
-    })
+    });
 
     if (!resp.ok) {
-      const unauthorized = resp.status === 401
-      const errorMessage = unauthorized ? "usuário não autorizado" : "falha na exclusão do técnico"
+      const unauthorized = resp.status === 401;
+      const errorMessage = unauthorized ? "usuário não autorizado" : "falha na exclusão do técnico";
       return {
         success: false,
         message: errorMessage,
@@ -195,21 +195,21 @@ export async function deletePartner(_currentState: unknown, formData: FormData):
     return {
       message: "técnico desativado com sucesso!",
       success: true,
-    }
+    };
 
   } catch (ex) {
-    console.error(ex)
+    console.error(ex);
 
     return {
       success: false,
       message: "algo de errado aconteceu, contate o suporte!",
-    }
+    };
   }
 }
 
 export async function editPartner(_currentState: unknown, formData: FormData) {
   try {
-    const partnerID = formData.get('partner_id')?.toString() || ''
+    const partnerID = formData.get('partner_id')?.toString() || '';
     if (!partnerID) {
       return {
         success: false,
@@ -217,11 +217,11 @@ export async function editPartner(_currentState: unknown, formData: FormData) {
       };
     }
 
-    const jwt = cookies().get("jwt")?.value
+    const jwt = cookies().get("jwt")?.value;
     const url = `${crmCoreEndpoint}/crm/core/api/v1/partners/${partnerID}`;
 
     const isCPF = true;
-    let address = ''
+    let address = '';
     if (formData.get("address")) {
       address = `${formData.get('address')?.toString() || ''}, ${formData.get('number')?.toString() || ''} - ${formData.get('complement')?.toString() || ''}`;
     }
@@ -253,11 +253,11 @@ export async function editPartner(_currentState: unknown, formData: FormData) {
         "X-API-Key": crmCoreApiKey || '',
         "Authorization": `Bearer ${jwt}`
       }
-    })
+    });
 
     if (!resp.ok) {
-      const unauthorized = resp.status === 401
-      const errorMessage = unauthorized ? "usuário não autorizado" : "falha na edição do técnico"
+      const unauthorized = resp.status === 401;
+      const errorMessage = unauthorized ? "usuário não autorizado" : "falha na edição do técnico";
       return {
         success: false,
         message: errorMessage,
@@ -268,14 +268,14 @@ export async function editPartner(_currentState: unknown, formData: FormData) {
     return {
       message: "técnico editado com sucesso!",
       success: true,
-    }
+    };
 
   } catch (ex) {
-    console.error(ex)
+    console.error(ex);
 
     return {
       success: false,
       message: "algo de errado aconteceu, contate o suporte!",
-    }
+    };
   }
 }

@@ -1,14 +1,14 @@
 import { Metadata } from 'next';
 
-import { fetchCases } from '../../services/cases';
-import CasesTable from '../../components/cases/table';
-import { getServerSession } from 'next-auth';
-import { redirect } from 'next/navigation';
-import { Suspense } from 'react';
 import { getContractorByID } from '@/app/services/contractors';
 import { getCustomerByID } from '@/app/services/customers';
 import { getPartnerByID } from '@/app/services/partners';
 import { Case, CaseFull } from '@/app/types/case';
+import { getServerSession } from 'next-auth';
+import { redirect } from 'next/navigation';
+import { Suspense } from 'react';
+import CasesTable from '../../components/cases/table';
+import { fetchCases } from '../../services/cases';
 
 export const metadata: Metadata = {
   title: 'Casos',
@@ -35,7 +35,7 @@ async function getData(query: string): Promise<CaseFull[]> {
       customer: customer.data,
       contractor: contractor.data,
       partner: partner && partner.data ? partner.data : undefined,
-    }
+    };
   }));
 
   return casesFull;
@@ -49,7 +49,7 @@ export default async function Page({
     page?: string;
   };
 }) {
-  const session = await getServerSession()
+  const session = await getServerSession();
 
   if (!session) {
     redirect("/login");

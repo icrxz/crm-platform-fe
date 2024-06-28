@@ -1,12 +1,12 @@
 "use client";
-import { CaseFull, caseStatusMap, casePriorityMap, CaseStatus } from "@/app/types/case";
-import { Card } from "../common/card";
-import { lusitana } from "@/app/ui/fonts";
-import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import { parseDateTime } from "@/app/libs/date";
 import { parseToCurrency } from "@/app/libs/parser";
-import { FormDetails } from "./form-details";
+import { CaseFull, casePriorityMap, CaseStatus, caseStatusMap } from "@/app/types/case";
+import { lusitana } from "@/app/ui/fonts";
+import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
+import { Card } from "../common/card";
+import { FormDetails } from "./form-details";
 
 interface CaseDetailsProps {
     crmCase: CaseFull;
@@ -131,7 +131,7 @@ export default function CaseDetails({ crmCase }: CaseDetailsProps) {
     );
 }
 
-function CardText({ title, text }: { title: string; text: string }) {
+function CardText({ title, text }: { title: string; text: string; }) {
     return (
         <div className="flex items-center space-x-2">
             <p className="text-sm font-medium text-gray-500">{title}</p>

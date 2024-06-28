@@ -18,7 +18,7 @@ export async function login(_currentState: unknown, formData: FormData) {
       case "CredentialsSignin":
         return 'Invalid credentials.';
       default:
-        return "something gone wrong"
+        return "something gone wrong";
     }
 
   }

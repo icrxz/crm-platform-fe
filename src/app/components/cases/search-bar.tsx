@@ -1,8 +1,8 @@
 "use client";
-import React, { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 
-import Search from '../../components/common/search';
 import { Button } from '../../components/common/button';
+import Search from '../../components/common/search';
 
 interface CasesSearchBarProps {
   setIsFilterModalOpen: Dispatch<SetStateAction<boolean>>;
@@ -28,5 +28,5 @@ export default function CasesSearchBar({ setIsCreationModalOpen, setIsFilterModa
         </Button>
       </div>
     </div>
-  )
+  );
 }

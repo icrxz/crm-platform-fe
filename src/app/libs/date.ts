@@ -7,15 +7,29 @@ export const API_PATTERN_DEFAULT = 'yyyy-MM-ddTHH:mm:ss.SSSSSS';
 const locales: Record<string, Locale> = { ptBR };
 
 function getFormat(date: string, pattern = PATTERN_DEFAULT) {
-    return format(parseISO(date), pattern, { locale: locales["ptBR"] });
-  }
+  return format(parseISO(date), pattern, { locale: locales["ptBR"] });
+}
 
 export function parseDateTime(date: string, pattern: string = PATTERN_DEFAULT) {
-    if (!date || date === '') return '';
+  if (!date || date === '') return '';
 
-    try {
-      return getFormat(date, pattern);
-    } catch (error) {
-      return '';
-    }
+  try {
+    return getFormat(date, pattern);
+  } catch (error) {
+    return '';
+  }
+}
+
+export function timeElapsed(startDate: Date, endDate: Date): string {
+  const diffInMs: number = endDate.getTime() - startDate.getTime();
+
+  const diffInHours: number = diffInMs / (1000 * 60 * 60);
+
+  if (diffInHours < 24) {
+    return `${diffInHours.toFixed(2)} horas`;
+  }
+
+  const diffInDays: number = diffInMs / (1000 * 60 * 60 * 24);
+
+  return `${diffInDays.toFixed(2)} dias`;
 }

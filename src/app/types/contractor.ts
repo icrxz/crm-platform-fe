@@ -6,7 +6,7 @@ export type CreateContractor = {
   document: string;
   business_contact: Contact;
   created_by: string;
-}
+};
 
 export type EditContractor = {
   company_name: string;
@@ -14,11 +14,11 @@ export type EditContractor = {
   document: string;
   business_contact: Contact;
   updated_by: string;
-}
+};
 
 export type CreateContractorResponse = {
   id: string;
-}
+};
 
 export type Contractor = {
   contractor_id: string;
@@ -31,4 +31,4 @@ export type Contractor = {
   updated_by: string;
   updated_at: string;
   active: boolean;
-}
+};

@@ -1,11 +1,11 @@
-import { Button } from "../common/button";
-import { lusitana } from "../../ui/fonts";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { useFormState, useFormStatus } from "react-dom";
-import { InputMask } from "@react-input/mask";
 import { brazilStates } from "@/app/types/address";
 import { Customer } from "@/app/types/customer";
 import { ServiceResponse } from "@/app/types/service";
+import { InputMask } from "@react-input/mask";
+import { Dispatch, SetStateAction, useEffect } from "react";
+import { useFormState, useFormStatus } from "react-dom";
+import { lusitana } from "../../ui/fonts";
+import { Button } from "../common/button";
 
 interface CustomerFormProps {
   customer?: Customer;
@@ -15,14 +15,14 @@ interface CustomerFormProps {
 }
 
 export default function CustomerForm({ onClose, onSubmit, customer, submitState }: CustomerFormProps) {
-  const [state, dispatch] = useFormState(onSubmit, null)
+  const [state, dispatch] = useFormState(onSubmit, null);
   const { pending } = useFormStatus();
 
   useEffect(() => {
     if (submitState) {
       submitState(state);
     }
-  }, [state, submitState])
+  }, [state, submitState]);
 
   return (
     <form action={dispatch} className="space-y-3">
@@ -286,5 +286,5 @@ export default function CustomerForm({ onClose, onSubmit, customer, submitState 
         </div>
       </div>
     </form>
-  )
+  );
 }

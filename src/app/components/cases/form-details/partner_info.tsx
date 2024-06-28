@@ -1,18 +1,19 @@
 "use client";
+import { fetchPartners } from "@/app/services/partners";
 import { CaseFull } from "@/app/types/case";
-import { Card } from "../../common/card";
 import { Partner } from "@/app/types/partner";
+import { InputMask } from "@react-input/mask";
+import { signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { Button } from "../../common/button";
-import { fetchPartners } from "@/app/services/partners";
-import { signOut } from "next-auth/react";
+import { Card } from "../../common/card";
 
-interface ClientInfoCaseProps {
+interface PartnerInfoFormProps {
     crmCase: CaseFull;
 }
 
-export function ClientInfoCase({ crmCase }: ClientInfoCaseProps) {
-    const [partners, setPartners] = useState<Partner[]>([])
+export function PartnerInfoStatusForm({ crmCase }: PartnerInfoFormProps) {
+    const [partners, setPartners] = useState<Partner[]>([]);
 
     useEffect(() => {
         const query = "active=true";
@@ -28,7 +29,7 @@ export function ClientInfoCase({ crmCase }: ClientInfoCaseProps) {
         }).catch(error => {
             console.error(error);
         });
-    }, [crmCase.customer_id]);
+    }, []);
 
     return (
         <Card title="Atribuir técnico" titleSize="text-xl">
@@ -47,13 +48,29 @@ export function ClientInfoCase({ crmCase }: ClientInfoCaseProps) {
                         {partners.map(partner => {
                             return <option key={partner.partner_id} value={partner.partner_id}>
                                 {`${partner.first_name} ${partner.last_name} - ${partner.shipping.city} / ${partner.shipping.state}`}
-                            </option>
+                            </option>;
                         })}
                     </select>
+                </div>
+
+                <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="visit_date">
+                        Data de visita
+                    </label>
+
+                    <InputMask
+                        type="date"
+                        id="visit_date"
+                        name="visit_date"
+                        className="w-full h-10 p-2 border border-gray-300 rounded-md"
+                        required
+                        mask="__/__/____"
+                        replacement={{ _: /\d/ }}
+                    />
                 </div>
 
                 <Button>Atribuir</Button>
             </form>
         </Card>
-    )
+    );
 }

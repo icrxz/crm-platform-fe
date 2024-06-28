@@ -12,46 +12,46 @@ import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 async function getData(caseID: string): Promise<CaseFull | null> {
-    const { success, unauthorized, data: crmCase } = await getCaseByID(caseID);
-    if (!success || !crmCase) {
-      if (unauthorized) {
-        redirect("/login");
-      }
-      return null;
+  const { success, unauthorized, data: crmCase } = await getCaseByID(caseID);
+  if (!success || !crmCase) {
+    if (unauthorized) {
+      redirect("/login");
     }
-  
-      const [customer, contractor, partner, owner, product] = await Promise.all([
-        getCustomerByID(crmCase.customer_id),
-        getContractorByID(crmCase.contractor_id),
-        crmCase.partner_id && getPartnerByID(crmCase.partner_id),
-        crmCase.owner_id && getUserByID(crmCase.owner_id),
-        getProductByID(crmCase.product_id)
-      ]);
-  
-      return {
-        ...crmCase,
-        customer: customer.data,
-        contractor: contractor.data,
-        partner: partner && partner.data ? partner.data : undefined,
-        owner: owner && owner.data ? owner.data : undefined,
-        product: product.data,
-      }
+    return null;
   }
 
-export default async function Page({ params: { caseID } }: { params: { caseID: string } }) {
-    const session = await getServerSession()
+  const [customer, contractor, partner, owner, product] = await Promise.all([
+    getCustomerByID(crmCase.customer_id),
+    getContractorByID(crmCase.contractor_id),
+    crmCase.partner_id && getPartnerByID(crmCase.partner_id),
+    crmCase.owner_id && getUserByID(crmCase.owner_id),
+    getProductByID(crmCase.product_id)
+  ]);
 
-    if (!session) {
-        redirect("/login");
-    }
+  return {
+    ...crmCase,
+    customer: customer.data,
+    contractor: contractor.data,
+    partner: partner && partner.data ? partner.data : undefined,
+    owner: owner && owner.data ? owner.data : undefined,
+    product: product.data,
+  };
+}
 
-    const crmCase = await getData(caseID);
+export default async function Page({ params: { caseID } }: { params: { caseID: string; }; }) {
+  const session = await getServerSession();
 
-    return (
-        <main>
-            <Suspense fallback={<p>Carregando caso...</p>}>
-                {crmCase && <CaseDetails crmCase={crmCase} />}
-            </Suspense>
-        </main>
-    );
+  if (!session) {
+    redirect("/login");
+  }
+
+  const crmCase = await getData(caseID);
+
+  return (
+    <main>
+      <Suspense fallback={<p>Carregando caso...</p>}>
+        {crmCase && <CaseDetails crmCase={crmCase} />}
+      </Suspense>
+    </main>
+  );
 }

@@ -1,38 +1,38 @@
 "use client";
-import { lusitana } from '../../ui/fonts';
-import { Customer } from '../../types/customer';
-import CreateCustomerModal from './create-customer';
-import { useState } from 'react';
-import CustomersSearchBar from './search-bar';
-import Modal from '../common/modal';
-import { useRouter } from 'next/navigation';
 import { parseDateTime } from '@/app/libs/date';
-import TrashIcon from '@heroicons/react/24/outline/TrashIcon';
-import PencilIcon from '@heroicons/react/24/outline/PencilIcon';
 import EyeIcon from '@heroicons/react/24/outline/EyeIcon';
-import EditCustomerModal from './edit-customer';
+import PencilIcon from '@heroicons/react/24/outline/PencilIcon';
+import TrashIcon from '@heroicons/react/24/outline/TrashIcon';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { Customer } from '../../types/customer';
+import { lusitana } from '../../ui/fonts';
+import Modal from '../common/modal';
+import CreateCustomerModal from './create-customer';
 import { DeleteCustomerModal } from './delete-customer';
+import EditCustomerModal from './edit-customer';
+import CustomersSearchBar from './search-bar';
 
 export default function CustomersTable({
   customers,
 }: {
   customers: Customer[];
 }) {
-  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [costumerID, setCostumerID] = useState("");
   const router = useRouter();
 
   function handleEdit(costumerID: string) {
-    setCostumerID(costumerID)
-    setIsEditModalOpen(true)
+    setCostumerID(costumerID);
+    setIsEditModalOpen(true);
   }
 
   function handleDelete(costumerID: string) {
-    setCostumerID(costumerID)
-    setIsDeleteModalOpen(true)
+    setCostumerID(costumerID);
+    setIsDeleteModalOpen(true);
   }
 
   function handleRowClick(costumerID: string) {
