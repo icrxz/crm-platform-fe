@@ -1,3 +1,4 @@
+import { parseDocument } from "@/app/libs/parser";
 import { Contractor } from "@/app/types/contractor";
 
 interface ContractorDetailsProps {
@@ -20,7 +21,7 @@ export default function ContractorDetails({ contractor }: ContractorDetailsProps
 
           <div className="flex items-center space-x-2">
             <p className="text-sm font-medium text-gray-500">Documento:</p>
-            <p className="text-sm font-medium text-gray-900">{contractor.document}</p>
+            <p className="text-sm font-medium text-gray-900">{parseDocument(contractor.document)}</p>
           </div>
         </div>
       </div>

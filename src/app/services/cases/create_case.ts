@@ -1,16 +1,19 @@
 "use server";
+import { parseCurrencyToNumber } from "@/app/libs/parser";
+import { getCurrentUser } from "@/app/libs/session";
 import { CreateCase, CreateCaseResponse } from "@/app/types/case";
 import { ServiceResponse } from "@/app/types/service";
-import { getServerSession } from "next-auth";
 import { cookies } from "next/headers";
 import { crmCoreApiKey, crmCoreEndpoint } from ".";
 import { createCustomer } from "../customers";
 
 export async function createCase(_currentState: unknown, formData: FormData): Promise<ServiceResponse<CreateCaseResponse>> {
   try {
-    const session = await getServerSession();
     const jwt = cookies().get("jwt")?.value;
     const url = `${crmCoreEndpoint}/crm/core/api/v1/cases`;
+
+    const session = await getCurrentUser();
+    const author = session?.user_id || '';
 
     let customerID = formData.get("customer_id")?.toString() || '';
 
@@ -30,7 +33,7 @@ export async function createCase(_currentState: unknown, formData: FormData): Pr
     const dueDate = new Date(formDueDate).toISOString();
 
     const formValue = formData.get("amount")?.toString() || '';
-    const productValue = Number(formValue);
+    const productValue = parseCurrencyToNumber(formValue);
 
     const payload: CreateCase = {
       contractor_id: formData.get("contractor")?.toString() || '',
@@ -39,7 +42,7 @@ export async function createCase(_currentState: unknown, formData: FormData): Pr
       case_type: "insurance",
       due_date: dueDate,
       subject: formData.get("description")?.toString() || '',
-      created_by: session?.user?.name || '',
+      created_by: author,
       brand: formData.get("brand")?.toString() || '',
       model: formData.get("model")?.toString() || '',
       external_reference: formData.get("claim")?.toString() || '',
@@ -63,6 +66,7 @@ export async function createCase(_currentState: unknown, formData: FormData): Pr
         success: false,
         message: errorMessage,
         unauthorized: unauthorized,
+        data: { customer_id: customerID } as CreateCaseResponse,
       };
     }
 

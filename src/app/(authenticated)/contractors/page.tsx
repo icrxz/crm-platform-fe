@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
-import { getServerSession } from 'next-auth';
-import { redirect } from 'next/navigation';
+import { getCurrentUser } from '@/app/libs/session';
+import { signOut } from 'next-auth/react';
 import { Suspense } from 'react';
 import ContractorsTable from '../../components/contractors/table';
 import { fetchContractors } from '../../services/contractors';
@@ -18,10 +18,9 @@ export default async function Page({
     page?: string;
   };
 }) {
-  const session = await getServerSession();
-
+  const session = await getCurrentUser();
   if (!session) {
-    redirect("/login");
+    signOut();
   }
 
   const query = searchParams?.query || '';

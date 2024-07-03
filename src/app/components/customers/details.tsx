@@ -1,3 +1,4 @@
+import { parseDocument } from "@/app/libs/parser";
 import { Customer } from "@/app/types/customer";
 
 interface CustomerDetailsProps {
@@ -20,7 +21,7 @@ export default function CustomerDetails({ customer }: CustomerDetailsProps) {
 
           <div className="flex items-center space-x-2">
             <p className="text-sm font-medium text-gray-500">Documento:</p>
-            <p className="text-sm font-medium text-gray-900">{customer.document}</p>
+            <p className="text-sm font-medium text-gray-900">{parseDocument(customer.document)}</p>
           </div>
         </div>
       </div>

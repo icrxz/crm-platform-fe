@@ -1,25 +1,27 @@
 "use server";
 
+import { removeDocumentSymbols } from "@/app/libs/parser";
+import { getCurrentUser } from "@/app/libs/session";
 import { CreateCustomer, CreateCustomerResponse } from "@/app/types/customer";
 import { ServiceResponse } from "@/app/types/service";
-import { getServerSession } from "next-auth";
 import { cookies } from "next/headers";
 import { crmCoreApiKey, crmCoreEndpoint } from ".";
 
 export async function createCustomer(_currentState: unknown, formData: FormData): Promise<ServiceResponse<CreateCustomerResponse>> {
   try {
-    console.log("form-data", formData);
-    const session = await getServerSession();
-    console.log("session", (session?.user as unknown as any)['user']);
+    const session = await getCurrentUser();
+    const author = session?.user_id || '';
 
-    const isCPF = true;
-    const author = session?.user?.name || '';
     const address = `${formData.get('address')?.toString() || ''}, ${formData.get('number')?.toString() || ''} - ${formData.get('complement')?.toString() || ''}`;
+
+    const formDocument = formData.get('document')?.toString() || '';
+    const document = removeDocumentSymbols(formDocument);
+    const isCPF = document.length === 11;
 
     const payload = {
       first_name: formData.get('first_name')?.toString() || '',
       last_name: formData.get('last_name')?.toString() || '',
-      document: formData.get('document')?.toString() || '',
+      document,
       document_type: isCPF ? "CPF" : "CNPJ",
       shipping: {
         address: address,

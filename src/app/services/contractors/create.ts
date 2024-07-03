@@ -1,15 +1,19 @@
 "use server";
 
+import { removeDocumentSymbols } from "@/app/libs/parser";
+import { getCurrentUser } from "@/app/libs/session";
 import { CreateContractor, CreateContractorResponse } from "@/app/types/contractor";
 import { ServiceResponse } from "@/app/types/service";
-import { getServerSession } from "next-auth";
 import { cookies } from "next/headers";
 import { crmCoreApiKey, crmCoreEndpoint } from ".";
 
 export async function createContractor(_currentState: unknown, formData: FormData): Promise<ServiceResponse<CreateContractorResponse>> {
   console.log(formData);
-  const session = await getServerSession();
-  console.log("session", session);
+  const session = await getCurrentUser();
+  const author = session?.user_id || '';
+
+  const formDocument = formData.get("document")?.toString() || '';
+  const document = removeDocumentSymbols(formDocument);
 
   const payload: CreateContractor = {
     company_name: formData.get("company_name")?.toString() || '',
@@ -18,8 +22,8 @@ export async function createContractor(_currentState: unknown, formData: FormDat
       email: formData.get("email")?.toString() || '',
       phone_number: formData.get("phone")?.toString() || '',
     },
-    document: formData.get("document")?.toString() || '',
-    created_by: session?.user?.name || '',
+    document,
+    created_by: author,
   };
 
   try {

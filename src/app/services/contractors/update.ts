@@ -1,6 +1,7 @@
 "use server";
+import { removeDocumentSymbols } from "@/app/libs/parser";
+import { getCurrentUser } from "@/app/libs/session";
 import { CreateContractorResponse, EditContractor } from "@/app/types/contractor";
-import { getServerSession } from "next-auth";
 import { cookies } from "next/headers";
 import { crmCoreApiKey, crmCoreEndpoint } from ".";
 
@@ -14,18 +15,23 @@ export async function updateContractor(_currentState: unknown, formData: FormDat
       };
     }
 
-    const session = await getServerSession();
+    const session = await getCurrentUser();
+    const author = session?.user_id || '';
+
     const jwt = cookies().get("jwt");
 
+    const formDocument = formData.get("document")?.toString() || '';
+    const document = removeDocumentSymbols(formDocument);
+
     const payload: EditContractor = {
-      company_name: formData.get("company_name")?.toString() || '',
-      legal_name: formData.get("legal_name")?.toString() || '',
+      company_name: formData.get("company_name")?.toString(),
+      legal_name: formData.get("legal_name")?.toString(),
       business_contact: {
         email: formData.get("email")?.toString() || '',
         phone_number: formData.get("phone")?.toString() || '',
       },
-      document: formData.get("document")?.toString() || '',
-      updated_by: session?.user?.name || '',
+      document: document,
+      updated_by: author,
     };
 
     const url = `${crmCoreEndpoint}/crm/core/api/v1/contractors/${contractorID}`;

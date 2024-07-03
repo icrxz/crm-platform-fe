@@ -1,8 +1,9 @@
 import { format, Locale, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
-const PATTERN_DEFAULT = 'dd/MM/yyyy HH:mm';
+export const PATTERN_DEFAULT = 'dd/MM/yyyy HH:mm';
 export const API_PATTERN_DEFAULT = 'yyyy-MM-ddTHH:mm:ss.SSSSSS';
+export const ONLY_DATE_PATTERN = 'dd/MM/yyyy';
 
 const locales: Record<string, Locale> = { ptBR };
 

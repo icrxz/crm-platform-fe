@@ -1,4 +1,5 @@
 "use client";
+import { parseDocument } from '@/app/libs/parser';
 import { EyeIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -84,7 +85,7 @@ export default function PartnersTable({
                         </div>
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {partner.document}
+                        {parseDocument(partner.document)}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                         {partner.shipping.city}

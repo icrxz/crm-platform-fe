@@ -1,5 +1,5 @@
 'use client';
-
+import { UserRole } from '@/app/types/user';
 import {
   BuildingOffice2Icon,
   CreditCardIcon,
@@ -13,25 +13,30 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const links = [
-  { name: 'Home', href: '/home', icon: HomeIcon },
+  { name: 'Home', href: '/home', icon: HomeIcon, onlyAdmin: false },
   {
     name: 'Casos',
     href: '/cases',
     icon: DocumentDuplicateIcon,
+    onlyAdmin: false
   },
-  { name: 'Clientes', href: '/customers', icon: UserGroupIcon },
-  { name: 'Técnicos', href: '/partners', icon: WrenchIcon },
-  { name: 'Seguradoras', href: '/contractors', icon: BuildingOffice2Icon },
-  { name: 'Pagamentos', href: '/payments', icon: CreditCardIcon },
-  { name: 'Usuários', href: '/users', icon: UserGroupIcon },
+  { name: 'Clientes', href: '/customers', icon: UserGroupIcon, onlyAdmin: false },
+  { name: 'Técnicos', href: '/partners', icon: WrenchIcon, onlyAdmin: false },
+  { name: 'Seguradoras', href: '/contractors', icon: BuildingOffice2Icon, onlyAdmin: false },
+  { name: 'Pagamentos', href: '/payments', icon: CreditCardIcon, onlyAdmin: true },
+  { name: 'Usuários', href: '/users', icon: UserGroupIcon, onlyAdmin: true },
 ];
 
-export default function NavLinks() {
+export default function NavLinks({ userRole }: { userRole: UserRole; }) {
   const pathname = usePathname();
 
   return (
     <>
       {links.map((link) => {
+        if (link.onlyAdmin && userRole !== UserRole.ADMIN && userRole !== UserRole.THAVANNA_ADMIN) {
+          return null;
+        }
+
         const LinkIcon = link.icon;
         return (
           <Link

@@ -7,7 +7,6 @@ import { crmCoreApiKey, crmCoreEndpoint } from ".";
 export async function deleteCustomer(_currentState: unknown, formData: FormData): Promise<any> {
   try {
     const session = await getServerSession();
-    console.log("session", (session?.user as unknown as any)['user']);
 
     const customerID = formData.get('customer_id')?.toString() || '';
     if (!customerID) {

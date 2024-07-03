@@ -1,6 +1,6 @@
 "use server";
-import { getServerSession } from "next-auth/next";
 import { cookies } from "next/headers";
+import { getCurrentUser } from "../libs/session";
 import { ServiceResponse } from "../types/service";
 import { CreateTransaction, CreateTransactionResponse, Transaction, TransactionType } from "../types/transaction";
 
@@ -103,9 +103,11 @@ export async function createTransaction(_currentState: unknown, formData: FormDa
       };
     }
 
-    const session = await getServerSession();
     const jwt = cookies().get("jwt")?.value;
     const url = `${crmCoreEndpoint}/crm/core/api/v1/cases/${caseID}/transactions`;
+
+    const session = await getCurrentUser();
+    const author = session?.user_id || '';
 
     const formTransactionValue = formData.get("value")?.toString();
     let transactionValue = 0;
@@ -116,7 +118,7 @@ export async function createTransaction(_currentState: unknown, formData: FormDa
     const payload: CreateTransaction = {
       type: formData.get("type")?.toString() as TransactionType || '',
       value: transactionValue,
-      created_by: session?.user?.name || '',
+      created_by: author,
     };
 
     const resp = await fetch(url, {

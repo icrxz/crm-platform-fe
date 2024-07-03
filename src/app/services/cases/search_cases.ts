@@ -29,7 +29,6 @@ export async function fetchCases(query: string): Promise<ServiceResponse<Case[]>
     }
 
     const respData = await resp.json() as Case[];
-    console.log(respData);
     return {
       message: "",
       success: true,

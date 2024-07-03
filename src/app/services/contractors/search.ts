@@ -31,7 +31,6 @@ export async function fetchContractors(query: string): Promise<ServiceResponse<C
     }
 
     const respData = await resp.json() as Contractor[];
-    console.log(respData);
     return {
       message: "",
       success: true,

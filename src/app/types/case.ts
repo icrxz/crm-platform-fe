@@ -1,3 +1,4 @@
+import { Comment } from './comment';
 import { Contractor } from "./contractor";
 import { Customer } from "./customer";
 import { Partner } from "./partner";
@@ -23,6 +24,7 @@ export type CreateCase = {
 
 export type CreateCaseResponse = {
   case_id: string;
+  customer_id?: string;
 };
 
 export type Case = {
@@ -45,6 +47,7 @@ export type Case = {
   region: number;
   external_reference: string;
   product_id: string;
+  target_date?: string;
 };
 
 export interface CaseFull extends Case {
@@ -53,6 +56,7 @@ export interface CaseFull extends Case {
   partner?: Partner;
   product?: Product;
   owner?: User;
+  comments?: Comment[];
 }
 
 export enum CaseStatus {
@@ -62,6 +66,7 @@ export enum CaseStatus {
   ONGOING = "Ongoing",
   REPORT = "Report",
   PAYMENT = "Payment",
+  RECEIPT = "Receipt",
   CLOSED = "Closed",
   CANCELED = "Canceled",
 }
@@ -79,6 +84,7 @@ export const caseStatusMap: Record<CaseStatus, string> = {
   Ongoing: "Em andamento",
   Report: "Laudo",
   Payment: "Pagamento",
+  Receipt: "Comprovante",
   Closed: "Encerrado",
   Canceled: "Cancelado",
 };

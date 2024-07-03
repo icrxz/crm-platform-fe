@@ -1,10 +1,11 @@
 import { Metadata } from 'next';
 
+import { getCurrentUser } from '@/app/libs/session';
 import { getContractorByID } from '@/app/services/contractors';
 import { getCustomerByID } from '@/app/services/customers';
 import { getPartnerByID } from '@/app/services/partners';
 import { Case, CaseFull } from '@/app/types/case';
-import { getServerSession } from 'next-auth';
+import { signOut } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import CasesTable from '../../components/cases/table';
@@ -49,10 +50,9 @@ export default async function Page({
     page?: string;
   };
 }) {
-  const session = await getServerSession();
-
+  const session = await getCurrentUser();
   if (!session) {
-    redirect("/login");
+    signOut();
   }
 
   const data = await getData(searchParams?.query || '');

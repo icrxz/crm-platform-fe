@@ -36,7 +36,6 @@ export async function getCaseByID(caseID: string): Promise<ServiceResponse<Case>
     }
 
     const respData = await resp.json() as Case;
-    console.log(respData);
     return {
       message: "",
       success: true,

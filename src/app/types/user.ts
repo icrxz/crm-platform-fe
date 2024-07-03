@@ -4,7 +4,7 @@ export type User = {
   first_name: string;
   last_name: string;
   email: string;
-  role: string;
+  role: UserRole;
   region: number;
   created_at: string;
   updated_at: string;
@@ -12,3 +12,9 @@ export type User = {
   updated_by: string;
   active: boolean;
 };
+
+export enum UserRole {
+  THAVANNA_ADMIN = "thavanna_admin",
+  ADMIN = "admin",
+  OPERATOR = "operator"
+}

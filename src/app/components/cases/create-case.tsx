@@ -1,5 +1,6 @@
 import { useSnackbar } from "@/app/context/SnackbarProvider";
 import { createCase } from "@/app/services/cases";
+import { CreateCaseResponse } from "@/app/types/case";
 import { ServiceResponse } from "@/app/types/service";
 import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { signOut } from "next-auth/react";
@@ -9,49 +10,62 @@ import Modal from "../common/modal";
 import CaseForm from "./case-form";
 
 interface CreateCaseModalProps {
-    isOpen: boolean;
-    onClose: () => void;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 export default function CreateCaseModal({ isOpen, onClose }: CreateCaseModalProps) {
-    const [errorMessage, setErrorMessage] = useState("");
-    const [state, setState] = useState<ServiceResponse<any> | null>(null);
-    const { showSnackbar } = useSnackbar();
-    const { refresh } = useRouter();
+  const [errorMessage, setErrorMessage] = useState("");
+  const [state, setState] = useState<ServiceResponse<CreateCaseResponse> | null>(null);
+  const [createdUser, setCreatedUser] = useState<string | null>(null);
+  const { showSnackbar } = useSnackbar();
+  const { refresh } = useRouter();
 
-    useEffect(() => {
-        if (!state) {
-            return;
-        }
+  useEffect(() => {
+    if (!state) {
+      return;
+    }
 
-        if (state?.success) {
-            showSnackbar(state.message, 'success');
-            refresh();
-            onClose();
-        } else {
-            if (state?.unauthorized) {
-                signOut();
-            }
-            setErrorMessage(state?.message || "");
-        }
-    }, [state]);
+    if (state?.success) {
+      showSnackbar(state.message, 'success');
+      refresh();
+      onClose();
+    } else {
+      if (state?.unauthorized) {
+        signOut();
+      }
+      setErrorMessage(state?.message || "");
 
-    return (
-        <Modal isOpen={isOpen} onClose={onClose}>
-            <div>
-                <CaseForm onClose={onClose} submitState={setState} onSubmit={createCase} />
+      if (state?.data?.customer_id) {
+        setCreatedUser(state.data.customer_id);
+      }
+    }
+  }, [state]);
 
-                {errorMessage && (
-                    <div
-                        className="flex h-8 items-end space-x-1"
-                        aria-live="polite"
-                        aria-atomic="true"
-                    >
-                        <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
-                        <p className="text-sm text-red-500">{errorMessage}</p>
-                    </div>
-                )}
-            </div>
-        </Modal>
-    );
+  const handleCreateCase = async (_currentState: any, formData: FormData) => {
+    if (createdUser && !formData.get("customer_id")) {
+      formData.set("customer_id", createdUser);
+    }
+
+    return await createCase(_currentState, formData);
+  };
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <div>
+        <CaseForm onClose={onClose} submitState={setState} onSubmit={handleCreateCase} />
+
+        {errorMessage && (
+          <div
+            className="flex h-8 items-end space-x-1"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
+            <p className="text-sm text-red-500">{errorMessage}</p>
+          </div>
+        )}
+      </div>
+    </Modal>
+  );
 }

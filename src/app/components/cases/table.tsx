@@ -1,5 +1,5 @@
 "use client";
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useState } from 'react';
 import { parseDateTime } from '../../libs/date';
 import { CaseFull, caseStatusMap } from '../../types/case';
@@ -15,11 +15,6 @@ interface CasesTableProps {
 export default function CasesTable({ cases }: CasesTableProps) {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const router = useRouter();
-
-  const handleRowClick = (caseID: string) => {
-    router.push(`/cases/${caseID}`);
-  };
 
   return (
     <div className="w-full">
@@ -56,9 +51,6 @@ export default function CasesTable({ cases }: CasesTableProps) {
                       Status
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium">
-                      Criação
-                    </th>
-                    <th scope="col" className="px-4 py-5 font-medium">
                       Vencimento
                     </th>
                   </tr>
@@ -68,12 +60,13 @@ export default function CasesTable({ cases }: CasesTableProps) {
                   {cases.map((crmCase) => (
                     <tr
                       key={crmCase.case_id}
-                      className="group hover:bg-gray-300 cursor-pointer"
-                      onClick={() => handleRowClick(crmCase.case_id)}
+                      className="group"
                     >
                       <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
-                          <p>{crmCase.external_reference}</p>
+                          <Link href={`/cases/${crmCase.case_id}`}>
+                            {crmCase.external_reference}
+                          </Link>
                         </div>
                       </td>
                       <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
@@ -88,13 +81,10 @@ export default function CasesTable({ cases }: CasesTableProps) {
                         {crmCase.contractor?.company_name || ''}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                        {crmCase.partner_id || ''}
+                        {crmCase.partner?.first_name || ''}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
                         {caseStatusMap[crmCase.status]}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                        {parseDateTime(crmCase.created_at)}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
                         {parseDateTime(crmCase.due_date, "dd/MM/yyyy")}

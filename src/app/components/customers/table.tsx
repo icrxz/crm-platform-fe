@@ -1,5 +1,6 @@
 "use client";
 import { parseDateTime } from '@/app/libs/date';
+import { parseDocument } from '@/app/libs/parser';
 import EyeIcon from '@heroicons/react/24/outline/EyeIcon';
 import PencilIcon from '@heroicons/react/24/outline/PencilIcon';
 import TrashIcon from '@heroicons/react/24/outline/TrashIcon';
@@ -85,7 +86,7 @@ export default function CustomersTable({
                         {customer.personal_contact?.email || '-'}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {customer.document}
+                        {parseDocument(customer.document)}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                         {parseDateTime(customer.created_at)}

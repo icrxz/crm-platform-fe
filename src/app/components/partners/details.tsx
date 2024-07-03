@@ -1,3 +1,4 @@
+import { parseDocument } from "@/app/libs/parser";
 import { Partner } from "@/app/types/partner";
 
 interface PartnerDetailsProps {
@@ -20,7 +21,7 @@ export default function PartnerDetails({ partner }: PartnerDetailsProps) {
 
           <div className="flex items-center space-x-2">
             <p className="text-sm font-medium text-gray-500">Documento:</p>
-            <p className="text-sm font-medium text-gray-900">{partner.document}</p>
+            <p className="text-sm font-medium text-gray-900">{parseDocument(partner.document)}</p>
           </div>
         </div>
       </div>

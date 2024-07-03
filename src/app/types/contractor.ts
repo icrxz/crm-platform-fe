@@ -9,10 +9,10 @@ export type CreateContractor = {
 };
 
 export type EditContractor = {
-  company_name: string;
-  legal_name: string;
-  document: string;
-  business_contact: Contact;
+  company_name?: string;
+  legal_name?: string;
+  document?: string;
+  business_contact?: Contact;
   updated_by: string;
 };
 

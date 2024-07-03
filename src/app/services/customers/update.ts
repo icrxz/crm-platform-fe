@@ -1,12 +1,15 @@
 "use server";
+import { removeDocumentSymbols } from "@/app/libs/parser";
+import { getCurrentUser } from "@/app/libs/session";
 import { EditCustomer } from "@/app/types/customer";
-import { getServerSession } from "next-auth";
 import { cookies } from "next/headers";
 import { crmCoreApiKey, crmCoreEndpoint } from ".";
 
 export async function editCustomer(_currentState: unknown, formData: FormData): Promise<any> {
   try {
-    const session = await getServerSession();
+    const session = await getCurrentUser();
+    const author = session?.user_id || '';
+
     const customerID = formData.get('customer_id')?.toString() || '';
     if (!customerID) {
       return {
@@ -15,14 +18,16 @@ export async function editCustomer(_currentState: unknown, formData: FormData): 
       };
     }
 
-    const isCPF = true;
-    const author = session?.user?.name || '';
     const address = `${formData.get('address')?.toString() || ''}, ${formData.get('number')?.toString() || ''} - ${formData.get('complement')?.toString() || ''}`;
+
+    const formDocument = formData.get('document')?.toString() || '';
+    const document = removeDocumentSymbols(formDocument);
+    const isCPF = document.length === 11;
 
     const payload: EditCustomer = {
       first_name: formData.get('first_name')?.toString() || '',
       last_name: formData.get('last_name')?.toString() || '',
-      document: formData.get('document')?.toString() || '',
+      document,
       document_type: isCPF ? "CPF" : "CNPJ",
       shipping: {
         address: address,

@@ -1,18 +1,9 @@
 import { Suspense } from 'react';
-
-import { getServerSession } from 'next-auth';
-import { redirect } from 'next/navigation';
 import CardWrapper from '../../components/dashboard/cards';
 import { CardsSkeleton } from '../../components/dashboard/skeletons';
 import { lusitana } from '../../ui/fonts';
 
 export default async function Page() {
-  const session = await getServerSession();
-
-  if (!session) {
-    redirect("/login");
-  }
-
   return (
     <main>
       <h1 className={`${lusitana.className} mb-4 text-xl md:text-2xl`}>

@@ -1,5 +1,6 @@
 "use client";
 import { parseDateTime } from '@/app/libs/date';
+import { parseDocument } from '@/app/libs/parser';
 import { EyeIcon } from '@heroicons/react/24/outline';
 import PencilIcon from '@heroicons/react/24/outline/PencilIcon';
 import TrashIcon from '@heroicons/react/24/outline/TrashIcon';
@@ -97,7 +98,7 @@ export default function ContractorsTable({
                         </div>
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {contractor.document}
+                        {parseDocument(contractor.document)}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                         {parseDateTime(contractor.created_at)}
