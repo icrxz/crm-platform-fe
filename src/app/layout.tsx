@@ -1,15 +1,18 @@
-import "@/app/ui/global.css";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import ProgressBarProvider from "./components/common/progress-bar/ProgressBarProvider";
+import { roboto } from './ui/fonts';
 
-const inter = Inter({ subsets: ["latin"] });
+import '@uppy/core/dist/style.min.css';
+import '@uppy/file-input/dist/style.css';
+import 'react-multi-carousel/lib/styles.css';
+import "./ui/global.css";
 
 export const metadata: Metadata = {
   title: {
     template: "%s | RD CRM",
     default: "RD CRM",
   },
-  description: "CRM platform from RD systems",
+  description: "CRM platform for RD systems",
 };
 
 export default function RootLayout({
@@ -19,7 +22,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body className={inter.className}>{children}</body>
+      <body className={roboto.className}>
+        <ProgressBarProvider>
+          {children}
+        </ProgressBarProvider>
+      </body>
     </html>
   );
 }

@@ -1,20 +1,29 @@
-import { lusitana } from '@/app/ui/fonts';
-import Search from '@/app/ui/search';
-import {
-Case
-} from '@/app/types/case';
+"use client";
+import Link from 'next/link';
+import { useState } from 'react';
+import { parseDateTime } from '../../libs/date';
+import { CaseFull, caseStatusMap } from '../../types/case';
+import { lusitana } from '../../ui/fonts';
+import Modal from '../common/modal';
+import CreateCaseModal from './create-case';
+import CasesSearchBar from './search-bar';
 
-export default async function CasesTable({
-  cases,
-}: {
-  cases: Case[];
-}) {
+interface CasesTableProps {
+  cases: CaseFull[];
+}
+
+export default function CasesTable({ cases }: CasesTableProps) {
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
   return (
     <div className="w-full">
       <h1 className={`${lusitana.className} mb-8 text-xl md:text-2xl`}>
         Casos
       </h1>
-      <Search placeholder="Buscar casos..." />
+
+      <CasesSearchBar setIsCreationModalOpen={setIsCreateModalOpen} setIsFilterModalOpen={setIsFilterModalOpen} />
+
       <div className="mt-6 flow-root">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
@@ -23,20 +32,23 @@ export default async function CasesTable({
               <table className="hidden min-w-full rounded-md text-gray-900 md:table">
                 <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
                   <tr>
-                  <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                      ID
+                    <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
+                      Sinistro
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
                       Cliente
                     </th>
                     <th scope="col" className="px-3 py-5 font-medium">
-                      Parceiro
+                      Cidade
                     </th>
                     <th scope="col" className="px-3 py-5 font-medium">
-                      Status
+                      Seguradora
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium">
-                      Prioridade
+                      Técnico
+                    </th>
+                    <th scope="col" className="px-4 py-5 font-medium">
+                      Status
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium">
                       Vencimento
@@ -45,29 +57,37 @@ export default async function CasesTable({
                 </thead>
 
                 <tbody className="divide-y divide-gray-200 text-gray-900">
-                  {cases.map((case_rd) => (
-                    <tr key={case_rd.id} className="group">
+                  {cases.map((crmCase) => (
+                    <tr
+                      key={crmCase.case_id}
+                      className="group"
+                    >
                       <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
-                          <p>{case_rd.id}</p>
+                          <Link href={`/cases/${crmCase.case_id}`}>
+                            {crmCase.external_reference}
+                          </Link>
                         </div>
                       </td>
                       <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
-                          <p>{case_rd.customer_id}</p>
+                          <p>{`${crmCase.customer?.first_name} ${crmCase.customer?.last_name}`}</p>
                         </div>
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {case_rd.partner_id}
+                        {crmCase.customer?.shipping.city || ''}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {case_rd.status}
+                        {crmCase.contractor?.company_name || ''}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                        {case_rd.priority}
+                        {crmCase.partner?.first_name || ''}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                        {case_rd.due_date}
+                        {caseStatusMap[crmCase.status]}
+                      </td>
+                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
+                        {parseDateTime(crmCase.due_date, "dd/MM/yyyy")}
                       </td>
                     </tr>
                   ))}
@@ -77,6 +97,14 @@ export default async function CasesTable({
           </div>
         </div>
       </div>
+
+      {isFilterModalOpen && <Modal isOpen={isFilterModalOpen} onClose={() => setIsFilterModalOpen(false)}>
+        <div>
+          Filtro
+        </div>
+      </Modal>}
+
+      {isCreateModalOpen && <CreateCaseModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />}
     </div>
   );
 }
