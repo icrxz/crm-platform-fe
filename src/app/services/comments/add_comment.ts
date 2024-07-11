@@ -1,11 +1,12 @@
 "use server";
 import { getCurrentUser } from "@/app/libs/session";
-import { Comment, CommentType } from "@/app/types/comment";
+import { CreateAttachment } from "@/app/types/attachments";
+import { Comment, CommentType, CreateComment } from "@/app/types/comment";
 import { ServiceResponse } from "@/app/types/service";
 import { cookies } from "next/headers";
 import { crmCoreApiKey, crmCoreEndpoint } from ".";
 
-export async function addComment(caseID: string, formData: FormData): Promise<ServiceResponse<any>> {
+export async function addComment(caseID: string, formData: FormData, attachments?: CreateAttachment[]): Promise<ServiceResponse<any>> {
   try {
     if (!caseID) {
       return {
@@ -20,13 +21,13 @@ export async function addComment(caseID: string, formData: FormData): Promise<Se
     const session = await getCurrentUser();
     const author = session?.user_id || '';
 
-    const payload: Comment = {
+    const payload: CreateComment = {
       content: formData.get("content")?.toString() || '',
       created_by: author,
       comment_type: CommentType.COMMENT,
-    } as Comment;
-
-    console.log("payload", payload);
+      case_id: caseID,
+      attachments: attachments,
+    };
 
     const response = await fetch(url, {
       method: 'POST',

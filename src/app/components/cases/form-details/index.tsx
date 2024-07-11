@@ -4,6 +4,7 @@ import { CustomerInfoStatusForm } from "./customer_info";
 import { NewCaseStatusForm } from "./new_case";
 import { OnGoingStatusForm } from "./ongoing_case";
 import { PartnerInfoStatusForm } from "./partner_info";
+import { ReceiptStatusForm } from "./receipt";
 import { ReportStatusForm } from "./report";
 import { TransactionStatusForm } from "./transactions";
 
@@ -25,6 +26,8 @@ export function FormDetails({ crmCase }: FormDetailsProps) {
       return <ReportStatusForm crmCase={crmCase} />;
     case CaseStatus.PAYMENT:
       return <TransactionStatusForm crmCase={crmCase} />;
+    case CaseStatus.RECEIPT:
+      return <ReceiptStatusForm crmCase={crmCase} />;
     default:
       return <></>;
   }

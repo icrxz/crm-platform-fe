@@ -1,17 +1,20 @@
 "use server";
-import { Case } from "@/app/types/case";
 import { ServiceResponse } from "@/app/types/service";
+import { Transaction } from "@/app/types/transaction";
 import { cookies } from "next/headers";
 import { crmCoreApiKey, crmCoreEndpoint } from ".";
 
-export async function fetchCases(query: string): Promise<ServiceResponse<Case[]>> {
+export async function getTransactionByID(transactionID: string): Promise<ServiceResponse<Transaction>> {
   try {
-    const jwt = cookies().get("jwt")?.value;
-    let url = `${crmCoreEndpoint}/crm/core/api/v1/cases`;
-    if (query) {
-      url = `${url}?${query}`;
+    if (transactionID == "") {
+      return {
+        success: false,
+        message: "ID da transação não informado",
+      };
     }
 
+    const jwt = cookies().get("jwt")?.value;
+    const url = `${crmCoreEndpoint}/crm/core/api/v1/transactions/${transactionID}`;
     const resp = await fetch(url, {
       method: "GET",
       headers: {
@@ -23,7 +26,7 @@ export async function fetchCases(query: string): Promise<ServiceResponse<Case[]>
 
     if (!resp.ok) {
       const unauthorized = resp.status === 401;
-      const errorMessage = unauthorized ? "usuário não autorizado" : "falha na busca das seguradoras";
+      const errorMessage = unauthorized ? "usuário não autorizado" : "falha na busca da transação";
       return {
         success: false,
         message: errorMessage,
@@ -31,18 +34,16 @@ export async function fetchCases(query: string): Promise<ServiceResponse<Case[]>
       };
     }
 
-    const respData = await resp.json() as Case[];
+    const respData = await resp.json() as Transaction;
     return {
-      message: "",
+      message: "transação encontrada com sucesso",
       success: true,
       data: respData,
     };
-  } catch (ex) {
-    console.error(ex);
-
+  } catch (error) {
     return {
       success: false,
       message: "algo de errado aconteceu, contate o suporte!",
     };
   }
-};
+}

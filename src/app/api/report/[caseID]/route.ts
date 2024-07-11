@@ -27,7 +27,6 @@ export async function GET(request: Request, { params }: { params: { caseID: stri
 
   const strMimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
   const strFileName = resp.headers.get("content-type")?.split(';')[1] || "";
-  console.log("file content type", strMimeType, strFileName);
 
   const respBlob = await resp.blob();
 

@@ -1,5 +1,4 @@
 "use client";
-import { useSnackbar } from "@/app/context/SnackbarProvider";
 import { parseDateTime } from "@/app/libs/date";
 import { parseDocument, parseToCurrency } from "@/app/libs/parser";
 import { CaseFull, casePriorityMap, CaseStatus, caseStatusMap } from "@/app/types/case";
@@ -8,12 +7,21 @@ import { lusitana } from "@/app/ui/fonts";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
 import { Card } from "../common/card";
+import { CardText } from "../common/card/card-text";
+import { DownloadReportButton } from "./download-report-button";
 import { FormDetails } from "./form-details";
+import { CommentDetails } from "./form-details/comments";
 
 interface CaseDetailsProps {
   crmCase: CaseFull;
   userRole: UserRole;
 }
+
+const showReportStatus = [
+  CaseStatus.PAYMENT,
+  CaseStatus.RECEIPT,
+  CaseStatus.CLOSED,
+];
 
 export default function CaseDetails({ crmCase, userRole }: CaseDetailsProps) {
   const { push } = useRouter();
@@ -22,15 +30,13 @@ export default function CaseDetails({ crmCase, userRole }: CaseDetailsProps) {
   const isAdminStatus = crmCase.status === CaseStatus.PAYMENT || crmCase.status === CaseStatus.CLOSED;
   const isAdminRole = userRole === UserRole.ADMIN || userRole === UserRole.THAVANNA_ADMIN;
   const isBeforeTargetDate = new Date() < new Date(crmCase.target_date!!);
+  const isShowReportStatus = showReportStatus.includes(crmCase.status);
 
   if (isAdminStatus && !isAdminRole) {
-    // console.log("n ta autorizado", userRole);
     push("/cases");
   }
 
   function getStatusColor(caseStatus: string, actualStatus: CaseStatus): string {
-
-
     const colorVar = "text-gray-500";
     if (caseStatus === caseStatusMap[actualStatus]) {
       if (caseStatus === caseStatusMap[CaseStatus.ONGOING] && isBeforeTargetDate) {
@@ -39,14 +45,13 @@ export default function CaseDetails({ crmCase, userRole }: CaseDetailsProps) {
       return "text-green-500";
     }
 
-    console.log("color", colorVar);
     return colorVar;
   }
 
   return (
     <>
       <div className="flex justify-center">
-        <div className="flex rounded-xl bg-gray-50 shadow-sm w-fit mb-6 p-4 gap-4 justify-center w-full">
+        <div className="flex rounded-xl bg-gray-50 shadow-sm mb-6 p-4 gap-4 justify-center w-full">
           {caseStatusList.map((status, idx) => {
             return (
               <div key={status} className="flex">
@@ -82,6 +87,12 @@ export default function CaseDetails({ crmCase, userRole }: CaseDetailsProps) {
               {crmCase.status == CaseStatus.ONGOING && crmCase.target_date && (
                 <CardText title="Data agendada:" text={parseDateTime(crmCase.target_date, "dd/MM/yyyy")} />
               )}
+
+              {isShowReportStatus && (
+                <div className="mt-4">
+                  <DownloadReportButton caseID={crmCase.case_id} />
+                </div>
+              )}
             </div>
           </Card>
         </div>
@@ -92,32 +103,7 @@ export default function CaseDetails({ crmCase, userRole }: CaseDetailsProps) {
       </div>
 
       <div className="flex gap-6 mb-8">
-        <div className="w-full h-fill">
-          <Card title="Detalhes" titleSize="text-xl">
-            <div className="mx-4">
-              <div className="items-center space-y-4">
-                <p className="text-sm font-medium text-gray-900">{crmCase.subject}</p>
-              </div>
-
-              {crmCase.comments && (
-                <div className="mt-4">
-                  <h2 className={`text-m font-semibold`}>
-                    Comentários
-                  </h2>
-
-                  {crmCase.comments.map(comment => {
-                    return (
-                      <div key={comment.comment_id} className="flex items-center ml-2 mt-2 gap-8">
-                        <CardText title="Data de criação:" text={parseDateTime(comment.created_at)} />
-                        <CardText title="Comentário:" text={comment.content} shouldCopy />
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          </Card>
-        </div>
+        <CommentDetails crmCase={crmCase} />
       </div>
 
       <div className="flex gap-6 mb-8">
@@ -150,27 +136,5 @@ export default function CaseDetails({ crmCase, userRole }: CaseDetailsProps) {
         </div>
       </div>
     </>
-  );
-}
-
-function CardText({ title, text, shouldCopy }: { title: string; text: string; shouldCopy?: boolean; }) {
-  const { showSnackbar } = useSnackbar();
-
-  return (
-    <div className="flex items-center space-x-2">
-      <p className="text-sm font-medium text-gray-500">{title}</p>
-      <p
-        className={`text-sm font-medium text-gray-900 ${shouldCopy ? "hover:cursor-pointer" : ""}`}
-        // className="text-sm font-medium text-gray-900 hover:cursor-pointer"
-        onClick={(e) => {
-          if (shouldCopy) {
-            navigator.clipboard.writeText(e.currentTarget.innerText);
-            showSnackbar("Texto copiado para a área de transferência", 'success');
-          }
-        }}
-      >
-        {text}
-      </p>
-    </div>
   );
 }

@@ -27,10 +27,10 @@ export function timeElapsed(startDate: Date, endDate: Date): string {
   const diffInHours: number = diffInMs / (1000 * 60 * 60);
 
   if (diffInHours < 24) {
-    return `${diffInHours.toFixed(2)} horas`;
+    return `${diffInHours.toFixed(0)} horas`;
   }
 
   const diffInDays: number = diffInMs / (1000 * 60 * 60 * 24);
 
-  return `${diffInDays.toFixed(2)} dias`;
+  return `${diffInDays.toFixed(0)} dias`;
 }

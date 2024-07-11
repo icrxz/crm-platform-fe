@@ -1,14 +1,16 @@
 "use client";
 import { useSnackbar } from "@/app/context/SnackbarProvider";
 import { changeStatus } from "@/app/services/cases";
+import { CreateAttachment } from "@/app/types/attachments";
 import { CaseFull, CaseStatus } from "@/app/types/case";
 import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import { Button } from "../../common/button";
 import { Card } from "../../common/card";
+import { FileUploaderGenericRef, GenericUploader } from "../../common/file-uploader";
 
 interface CustomerInfoStatusFormProps {
   crmCase: CaseFull;
@@ -16,13 +18,20 @@ interface CustomerInfoStatusFormProps {
 
 export function CustomerInfoStatusForm({ crmCase }: CustomerInfoStatusFormProps) {
   const [errorMessage, setErrorMessage] = useState("");
+  const fileUploaderRef = useRef<FileUploaderGenericRef>(null);
 
   const { refresh } = useRouter();
   const { showSnackbar } = useSnackbar();
   const [_, dispatch] = useFormState(onSubmit, null);
 
-  function onSubmit(_currentState: unknown, formData: FormData) {
-    changeStatus(crmCase.case_id, CaseStatus.WAITING_PARTNER, formData).then(response => {
+  async function onSubmit(_: unknown, formData: FormData) {
+    let attachments: CreateAttachment[] = [];
+
+    await fileUploaderRef.current?.submit().then(response => {
+      attachments = response || [];
+    });
+
+    changeStatus(crmCase.case_id, CaseStatus.WAITING_PARTNER, formData, attachments).then(response => {
       if (!response.success) {
         if (response.unauthorized) {
           signOut();
@@ -41,7 +50,7 @@ export function CustomerInfoStatusForm({ crmCase }: CustomerInfoStatusFormProps)
   return (
     <Card title="Detalhes" titleSize="text-xl">
       <form action={dispatch} className="px-5">
-        <div className="mb-4">
+        <div className="mb-2">
           <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="content">
             Descrição do caso
           </label>
@@ -54,6 +63,10 @@ export function CustomerInfoStatusForm({ crmCase }: CustomerInfoStatusFormProps)
             placeholder="Digite a descrição do caso"
             required
           />
+        </div>
+
+        <div className="mb-4">
+          <GenericUploader ref={fileUploaderRef} />
         </div>
 
         {errorMessage && (

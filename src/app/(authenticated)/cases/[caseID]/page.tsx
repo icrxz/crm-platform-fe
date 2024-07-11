@@ -21,8 +21,6 @@ async function getData(caseID: string): Promise<CaseFull | null> {
     redirect("/cases");
   }
 
-
-
   const [customer, contractor, partner, owner, product, comments] = await Promise.all([
     getCustomerByID(crmCase.customer_id),
     getContractorByID(crmCase.contractor_id),

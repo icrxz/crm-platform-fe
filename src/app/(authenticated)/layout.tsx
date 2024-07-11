@@ -10,7 +10,7 @@ interface LayoutProps {
 
 export default async function Layout({ children }: LayoutProps) {
   const user = await getCurrentUser();
-  console.log('user layout', user);
+
   if (!user) {
     signOut();
     return;

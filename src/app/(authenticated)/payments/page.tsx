@@ -1,8 +1,10 @@
 import PaymentTable from '@/app/components/payments/table';
+import { fetchCases } from '@/app/services/cases';
 import { fetchTransactions } from '@/app/services/transactions';
-import { TransactionItem } from '@/app/types/transaction';
+import { TransactionItem, TransactionStatus, TransactionType } from '@/app/types/transaction';
 import { Metadata } from 'next';
 import { getServerSession } from 'next-auth';
+import { signOut } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 
@@ -21,18 +23,34 @@ async function getData(): Promise<TransactionItem[]> {
     return [];
   }
 
-  const groupedTransactions = transactions.reduce((transactionByCase: Record<string, TransactionItem>, transaction) => {
-    transactionByCase[transaction.case_id] = {
-      value: transactionByCase[transaction.case_id].value + transaction.value,
-      case_id: transaction.case_id,
-      created_at: transaction.created_at,
-      status: transaction.status,
-    };
+  const casesInReceipt = await fetchCases(`status=Receipt`).then((resp) => {
+    if (resp.unauthorized) {
+      signOut();
+    }
+    return resp.data || [];
+  });
 
-    return transactionByCase;
-  }, {});
 
-  return Object.entries(groupedTransactions).map(([_, value]) => (value));
+  const outgoingCasesTransactions = await Promise.all(casesInReceipt.map(async (caseItem): Promise<TransactionItem> => {
+    const transactions = await fetchTransactions(`case_id=${caseItem.case_id}`).then((resp) => {
+      if (resp.unauthorized) {
+        signOut();
+      }
+      return resp.data || [];
+    });
+
+    const outgoingTransactions = transactions.filter((transaction) => transaction.type === TransactionType.OUTGOING) || [];
+    const transactionVal = outgoingTransactions.reduce((acc, transaction) => acc + transaction.value, 0);
+
+    return {
+      case_id: caseItem.external_reference,
+      created_at: caseItem.updated_at,
+      status: TransactionStatus.PENDING,
+      value: transactionVal,
+    } as TransactionItem;
+  }));
+
+  return outgoingCasesTransactions;
 }
 
 

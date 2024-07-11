@@ -2,6 +2,7 @@ export type CreateTransaction = {
   type: TransactionType;
   value: number;
   created_by: string;
+  description?: string;
 };
 
 export type CreateTransactionResponse = {
@@ -26,6 +27,7 @@ export type Transaction = {
   created_at: string;
   updated_by: string;
   updated_at: string;
+  description?: string;
 };
 
 export enum TransactionType {

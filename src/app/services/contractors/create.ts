@@ -8,7 +8,6 @@ import { cookies } from "next/headers";
 import { crmCoreApiKey, crmCoreEndpoint } from ".";
 
 export async function createContractor(_currentState: unknown, formData: FormData): Promise<ServiceResponse<CreateContractorResponse>> {
-  console.log(formData);
   const session = await getCurrentUser();
   const author = session?.user_id || '';
 

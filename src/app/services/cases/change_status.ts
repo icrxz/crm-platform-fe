@@ -1,12 +1,18 @@
 "use server";
 import { getCurrentUser } from "@/app/libs/session";
+import { CreateAttachment } from "@/app/types/attachments";
 import { CaseStatus } from "@/app/types/case";
 import { ChangeStatus } from "@/app/types/change_status";
 import { ServiceResponse } from "@/app/types/service";
 import { cookies } from "next/headers";
 import { crmCoreApiKey, crmCoreEndpoint } from ".";
 
-export async function changeStatus(caseID: string, newStatus: CaseStatus, formData?: FormData): Promise<ServiceResponse<any>> {
+export async function changeStatus(
+  caseID: string,
+  newStatus: CaseStatus,
+  formData?: FormData,
+  attachments?: CreateAttachment[],
+): Promise<ServiceResponse<any>> {
   try {
     if (!caseID) {
       return {
@@ -25,9 +31,8 @@ export async function changeStatus(caseID: string, newStatus: CaseStatus, formDa
       status: newStatus,
       content: formData?.get("content")?.toString(),
       updated_by: author,
+      attachments: attachments,
     };
-
-    console.log("payload", payload);
 
     const response = await fetch(url, {
       method: 'PATCH',

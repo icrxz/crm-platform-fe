@@ -1,20 +1,35 @@
 "use client";
+import { parseDateTime } from '@/app/libs/date';
+import { parseToCurrency } from '@/app/libs/parser';
 import { CheckIcon, EyeIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { TransactionItem, TransactionStatus } from '../../types/transaction';
 import { lusitana } from '../../ui/fonts';
+import { ConfirmPaymentModal } from './confirm-payment';
 
 interface PaymentTableProps {
   transactions: TransactionItem[];
 }
 
+const transactionStatusTranslate: Record<string, string> = {
+  [TransactionStatus.PENDING]: "Pendente",
+};
+
 export default function PaymentTable({
   transactions,
 }: PaymentTableProps) {
   const router = useRouter();
+  const [isConfirmPaymentModal, setIsConfirmPaymentModal] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState<TransactionItem | null>(null);
 
   function handleRowClick(paymentID: string) {
     router.push(`/payments/${paymentID}`);
+  }
+
+  function handleConfirmPayment(transaction: TransactionItem) {
+    setSelectedTransaction(transaction);
+    setIsConfirmPaymentModal(true);
   }
 
   return (
@@ -58,13 +73,13 @@ export default function PaymentTable({
                         </div>
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {transaction.value}
+                        {parseToCurrency(transaction.value)}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {transaction.status}
+                        {transactionStatusTranslate[transaction.status]}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {transaction.created_at}
+                        {parseDateTime(transaction.created_at)}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                         <div className='flex gap-2'>
@@ -77,6 +92,7 @@ export default function PaymentTable({
                           {transaction.status == TransactionStatus.PENDING &&
                             <button
                               className="text-green-500 hover:text-green-700"
+                              onClick={() => handleConfirmPayment(transaction)}
                             >
                               <CheckIcon className='w-5 md:w-6' />
                             </button>
@@ -92,7 +108,7 @@ export default function PaymentTable({
         </div>
       </div>
 
-      {/* {isDeleteModalOpen && <DeletePartnerModal isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)} partnerID={partnerID} />} */}
+      {isConfirmPaymentModal && <ConfirmPaymentModal isOpen={isConfirmPaymentModal} onClose={() => setIsConfirmPaymentModal(false)} caseId={selectedTransaction?.case_id || ''} />}
     </div>
   );
 }

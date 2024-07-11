@@ -1,11 +1,8 @@
 "use server";
-
+import { Product } from "@/app/types/product";
+import { ServiceResponse } from "@/app/types/service";
 import { cookies } from "next/headers";
-import { Product } from "../types/product";
-import { ServiceResponse } from "../types/service";
-
-const crmCoreEndpoint = process.env.CRM_CORE_ENDPOINT;
-const crmCoreApiKey = process.env.CRM_CORE_API_KEY;
+import { crmCoreApiKey, crmCoreEndpoint } from ".";
 
 export async function getProductByID(productID: string): Promise<ServiceResponse<Product>> {
   try {
