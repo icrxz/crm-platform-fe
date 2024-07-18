@@ -1,6 +1,6 @@
 "use client";
-import { uploadAttachments } from '@/app/services/attachments/upload-attachment';
-import { Attachment } from '@/app/types/attachments';
+import { uploadAttachments } from '@/app/services/attachments';
+import { Attachment, CreateAttachment } from '@/app/types/attachments';
 import Uppy from '@uppy/core';
 import Portuguese from '@uppy/locales/lib/pt_BR';
 import { FileInput } from '@uppy/react';
@@ -8,7 +8,7 @@ import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { Badge } from '../badge';
 
 export interface FileUploaderGenericRef {
-  submit: () => Promise<Attachment[] | undefined>;
+  submit: () => Promise<CreateAttachment[] | undefined>;
 }
 
 interface FileUploaderProps {

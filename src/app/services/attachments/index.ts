@@ -1,4 +1,5 @@
 import { S3Client } from "@aws-sdk/client-s3";
+import { uploadAttachments } from './upload-attachment';
 
 export const s3Client = new S3Client({
   region: process.env.AWS_REGION as string,
@@ -7,3 +8,7 @@ export const s3Client = new S3Client({
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
   },
 });
+
+export {
+  uploadAttachments
+};
