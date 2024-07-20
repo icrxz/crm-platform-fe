@@ -3,13 +3,13 @@ import { useSnackbar } from "@/app/context/SnackbarProvider";
 import { changeStatus } from "@/app/services/cases";
 import { CreateAttachment } from "@/app/types/attachments";
 import { CaseFull, CaseStatus } from "@/app/types/case";
-import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import { Button } from "../../common/button";
 import { Card } from "../../common/card";
+import { ErrorMessage } from "../../common/error-message";
 import { FileUploaderGenericRef, GenericUploader } from "../../common/file-uploader";
 
 interface CustomerInfoStatusFormProps {
@@ -66,18 +66,11 @@ export function CustomerInfoStatusForm({ crmCase }: CustomerInfoStatusFormProps)
         </div>
 
         <div className="mb-4">
-          <GenericUploader ref={fileUploaderRef} />
+          <GenericUploader ref={fileUploaderRef} minFiles={1} maxFiles={5} />
         </div>
 
         {errorMessage && (
-          <div
-            className="flex h-8 items-end space-x-1"
-            aria-live="polite"
-            aria-atomic="true"
-          >
-            <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
-            <p className="text-sm text-red-500">{errorMessage}</p>
-          </div>
+          <ErrorMessage message={errorMessage} />
         )}
 
         <Button>Enviar</Button>
