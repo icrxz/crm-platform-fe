@@ -2,10 +2,10 @@ import { useSnackbar } from "@/app/context/SnackbarProvider";
 import { createCase } from "@/app/services/cases";
 import { CreateCaseResponse } from "@/app/types/case";
 import { ServiceResponse } from "@/app/types/service";
-import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { ErrorMessage } from "../common/error-message";
 import Modal from "../common/modal";
 import CaseForm from "./case-form";
 
@@ -56,14 +56,7 @@ export default function CreateCaseModal({ isOpen, onClose }: CreateCaseModalProp
         <CaseForm onClose={onClose} submitState={setState} onSubmit={handleCreateCase} />
 
         {errorMessage && (
-          <div
-            className="flex h-8 items-end space-x-1"
-            aria-live="polite"
-            aria-atomic="true"
-          >
-            <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
-            <p className="text-sm text-red-500">{errorMessage}</p>
-          </div>
+          <ErrorMessage message={errorMessage} />
         )}
       </div>
     </Modal>

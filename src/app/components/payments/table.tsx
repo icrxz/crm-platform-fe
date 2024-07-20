@@ -1,7 +1,7 @@
 "use client";
 import { parseDateTime } from '@/app/libs/date';
-import { parseToCurrency } from '@/app/libs/parser';
-import { CheckIcon, EyeIcon } from '@heroicons/react/24/outline';
+import { parseDocument, parseToCurrency } from '@/app/libs/parser';
+import { CheckIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { TransactionItem, TransactionStatus } from '../../types/transaction';
@@ -49,16 +49,22 @@ export default function PaymentTable({
                     <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
                       Caso
                     </th>
-                    <th scope="col" className="px-3 py-5 font-medium">
+                    <th scope="col" className="px-4 py-5 font-medium">
+                      Técnico
+                    </th>
+                    <th scope="col" className="px-4 py-5 font-medium">
+                      Documento
+                    </th>
+                    <th scope="col" className="px-4 py-5 font-medium">
                       Valor
                     </th>
-                    <th scope="col" className="px-3 py-5 font-medium">
+                    <th scope="col" className="px-4 py-5 font-medium">
                       Status
                     </th>
-                    <th scope="col" className="px-3 py-5 font-medium">
+                    <th scope="col" className="px-4 py-5 font-medium">
                       Data de criação
                     </th>
-                    <th scope="col" className="px-3 py-5 font-medium">
+                    <th scope="col" className="px-4 py-5 font-medium">
                       Ações
                     </th>
                   </tr>
@@ -69,7 +75,17 @@ export default function PaymentTable({
                     <tr key={transaction.case_id} className="group">
                       <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
-                          <p>{transaction.case_id}</p>
+                          <p>{transaction.external_reference}</p>
+                        </div>
+                      </td>
+                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                        <div className="flex items-center gap-3">
+                          <p>{transaction.partner_name}</p>
+                        </div>
+                      </td>
+                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                        <div className="flex items-center gap-3">
+                          <p>{transaction.partner_document && parseDocument(transaction.partner_document)}</p>
                         </div>
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
@@ -83,11 +99,11 @@ export default function PaymentTable({
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                         <div className='flex gap-2'>
-                          <button
+                          {/* <button
                             className="text-blue-500 hover:text-blue-700"
                             onClick={() => handleRowClick(transaction.case_id)}>
                             <EyeIcon className="h-5 w-5" />
-                          </button>
+                          </button> */}
 
                           {transaction.status == TransactionStatus.PENDING &&
                             <button
@@ -108,7 +124,11 @@ export default function PaymentTable({
         </div>
       </div>
 
-      {isConfirmPaymentModal && <ConfirmPaymentModal isOpen={isConfirmPaymentModal} onClose={() => setIsConfirmPaymentModal(false)} caseId={selectedTransaction?.case_id || ''} />}
+      {isConfirmPaymentModal && <ConfirmPaymentModal
+        isOpen={isConfirmPaymentModal}
+        onClose={() => setIsConfirmPaymentModal(false)}
+        caseId={selectedTransaction?.case_id || ''}
+      />}
     </div>
   );
 }

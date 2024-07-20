@@ -28,6 +28,8 @@ export function FormDetails({ crmCase }: FormDetailsProps) {
       return <TransactionStatusForm crmCase={crmCase} />;
     case CaseStatus.RECEIPT:
       return <ReceiptStatusForm crmCase={crmCase} />;
+    case CaseStatus.CLOSED:
+      return <ReceiptStatusForm crmCase={crmCase} />;
     default:
       return <></>;
   }
