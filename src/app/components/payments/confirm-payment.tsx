@@ -2,7 +2,7 @@ import { useSnackbar } from "@/app/context/SnackbarProvider";
 import { changeStatus } from "@/app/services/cases";
 import { CreateAttachment } from "@/app/types/attachments";
 import { CaseStatus } from "@/app/types/case";
-import { lusitana } from "@/app/ui/fonts";
+import { roboto } from "@/app/ui/fonts";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
@@ -58,12 +58,12 @@ export function ConfirmPaymentModal({ isOpen, onClose, caseId }: ConfirmPaymentM
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <form action={dispatch} className="space-y-3">
-        <h1 className={`${lusitana.className} my-5 mx-5 text-xl`}>
+        <h1 className={`${roboto.className} my-5 mx-5 text-xl`}>
           Deseja confirmar o pagamento do caso?
         </h1>
 
         <div className="flex flex-col mb-4 items-center">
-          <label className="mb-1">Adicione o comprovante do pagamento</label>
+          <label className="mb-2">Adicione o comprovante do pagamento</label>
           <GenericUploader ref={fileUploaderRef} minFiles={1} maxFiles={1} />
         </div>
 
@@ -71,9 +71,9 @@ export function ConfirmPaymentModal({ isOpen, onClose, caseId }: ConfirmPaymentM
           <ErrorMessage message={errorMessage} />
         )}
 
-        <div className="flex justify-center space-x-2">
-          <Button type="submit" aria-disabled={pending} disabled={pending}>Sim</Button>
-          <Button onClick={onClose} aria-disabled={pending} disabled={pending}>Não</Button>
+        <div className="flex justify-center space-x-8">
+          <Button type="submit" className="min-w-24 place-content-center" aria-disabled={pending} disabled={pending}>Sim</Button>
+          <Button onClick={onClose} className="min-w-24 place-content-center" aria-disabled={pending} disabled={pending}>Não</Button>
         </div>
       </form>
     </Modal>

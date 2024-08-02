@@ -12,6 +12,8 @@ import { useFormState } from "react-dom";
 import { Button } from "../../common/button";
 import { Card } from "../../common/card";
 import { FileUploaderGenericRef, GenericUploader } from "../../common/file-uploader";
+import Modal from "../../common/modal";
+import TargetDateModal from "../target-date-modal";
 
 interface OnGoingStatusFormProps {
   crmCase: CaseFull;
@@ -21,9 +23,11 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
   const { refresh } = useRouter();
   const { showSnackbar } = useSnackbar();
   const [_, dispatch] = useFormState(onSubmit, null);
-  const [content, setContent] = useState("");
+
   const fileUploaderRef = useRef<FileUploaderGenericRef>(null);
+  const [content, setContent] = useState("");
   const [loadingComment, setLoadingComment] = useState(false);
+  const [openTargetDateModal, setOpenTargetDateModal] = useState(false);
 
   const isBeforeTargetDate = new Date() < new Date(crmCase.target_date!!);
 
@@ -83,6 +87,7 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
           <div className="flex items-center space-x-2 mb-2">
             <p className="text-sm font-medium text-gray-500">Data agendada:</p>
             <p className="text-sm font-medium text-gray-900">{parseDateTime(crmCase.target_date || '', ONLY_DATE_PATTERN)}</p>
+            <Button type="button" onClick={() => setOpenTargetDateModal(true)}>Alterar data de visita</Button>
           </div>
         ) : (
           <div className="flex items-center space-x-2 mb-2">
@@ -117,6 +122,14 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
           <Button type="submit" disabled={loadingComment}>Finalizar</Button>
         </div>
       </form>
+
+      {openTargetDateModal && (
+        <TargetDateModal
+          caseId={crmCase.case_id}
+          isOpen={openTargetDateModal}
+          onClose={() => setOpenTargetDateModal(false)}
+        />
+      )}
     </Card>
   );
 }

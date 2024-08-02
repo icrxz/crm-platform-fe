@@ -5,7 +5,7 @@ import { CheckIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { TransactionItem, TransactionStatus } from '../../types/transaction';
-import { lusitana } from '../../ui/fonts';
+import { roboto } from '../../ui/fonts';
 import { ConfirmPaymentModal } from './confirm-payment';
 
 interface PaymentTableProps {
@@ -34,7 +34,7 @@ export default function PaymentTable({
 
   return (
     <div className="w-full">
-      <h1 className={`${lusitana.className} mb-8 text-xl md:text-2xl`}>
+      <h1 className={`${roboto.className} mb-8 text-xl md:text-2xl`}>
         Pagamentos
       </h1>
 

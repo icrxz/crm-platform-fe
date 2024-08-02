@@ -1,6 +1,6 @@
 import { Contractor } from "@/app/types/contractor";
 import { ServiceResponse } from "@/app/types/service";
-import { lusitana } from "@/app/ui/fonts";
+import { roboto } from "@/app/ui/fonts";
 import { InputMask } from "@react-input/mask";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { useFormState, useFormStatus } from "react-dom";
@@ -26,7 +26,7 @@ export function ContractorForm({ onClose, onSubmit, contractor, submitState }: C
   return (
     <form action={dispatch} className="space-y-3">
       <div className="flex-1 rounded-lg">
-        <h1 className={`${lusitana.className} mb-5 text-2xl`}>
+        <h1 className={`${roboto.className} mb-5 text-2xl`}>
           {contractor ? 'Edite a seguradora' : 'Cadastre a seguradora'}
           <input type="hidden" name="partner_id" value={contractor?.contractor_id || ''} />
         </h1>
@@ -115,7 +115,7 @@ export function ContractorForm({ onClose, onSubmit, contractor, submitState }: C
                   id="phone"
                   type="text"
                   name="phone"
-                  placeholder="Digite o telefone do representante da empresa"
+                  placeholder="Digite o telefone do representante"
                   defaultValue={contractor?.business_contact?.phone_number || ''}
                 />
               </div>

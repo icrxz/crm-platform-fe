@@ -3,7 +3,7 @@ import { parseDateTime } from "@/app/libs/date";
 import { parseDocument, parseToCurrency } from "@/app/libs/parser";
 import { CaseFull, casePriorityMap, CaseStatus, caseStatusMap } from "@/app/types/case";
 import { UserRole } from "@/app/types/user";
-import { lusitana } from "@/app/ui/fonts";
+import { roboto } from "@/app/ui/fonts";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
 import { Card } from "../common/card";
@@ -56,7 +56,7 @@ export default function CaseDetails({ crmCase, userRole }: CaseDetailsProps) {
             return (
               <div key={status} className="flex">
                 <p
-                  className={`${lusitana.className} ${getStatusColor(status, crmCase.status)}`}
+                  className={`${roboto.className} ${getStatusColor(status, crmCase.status)}`}
                 >
                   {status}
                 </p>

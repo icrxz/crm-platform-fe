@@ -7,7 +7,7 @@ import TrashIcon from '@heroicons/react/24/outline/TrashIcon';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Customer } from '../../types/customer';
-import { lusitana } from '../../ui/fonts';
+import { roboto } from '../../ui/fonts';
 import Modal from '../common/modal';
 import CreateCustomerModal from './create-customer';
 import { DeleteCustomerModal } from './delete-customer';
@@ -42,7 +42,7 @@ export default function CustomersTable({
 
   return (
     <div className="w-full">
-      <h1 className={`${lusitana.className} mb-8 text-xl md:text-2xl`}>
+      <h1 className={`${roboto.className} mb-8 text-xl md:text-2xl`}>
         Clientes
       </h1>
 

@@ -2,7 +2,7 @@
 import { User, UserRole } from '@/app/types/user';
 import { EyeIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
-import { lusitana } from '../../ui/fonts';
+import { roboto } from '../../ui/fonts';
 
 interface UsersTableProps {
   users: User[];
@@ -25,7 +25,7 @@ export default function UsersTable({
 
   return (
     <div className="w-full">
-      <h1 className={`${lusitana.className} mb-8 text-xl md:text-2xl`}>
+      <h1 className={`${roboto.className} mb-8 text-xl md:text-2xl`}>
         Usuários
       </h1>
 

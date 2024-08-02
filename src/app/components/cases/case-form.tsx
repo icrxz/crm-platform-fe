@@ -6,7 +6,7 @@ import { Case } from "@/app/types/case";
 import { Contractor } from "@/app/types/contractor";
 import { Customer } from "@/app/types/customer";
 import { ServiceResponse } from "@/app/types/service";
-import { lusitana } from "@/app/ui/fonts";
+import { roboto } from "@/app/ui/fonts";
 import { InputMask } from "@react-input/mask";
 import { InputNumberFormat } from "@react-input/number-format";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
@@ -59,7 +59,7 @@ export default function CaseForm({ onSubmit, submitState, onClose }: CaseFormPro
   return (
     <form action={dispatch} className="space-y-3">
       <div className="flex-1">
-        <h1 className={`${lusitana.className} mb-5 text-2xl`}>
+        <h1 className={`${roboto.className} mb-5 text-2xl`}>
           Criar caso
         </h1>
 

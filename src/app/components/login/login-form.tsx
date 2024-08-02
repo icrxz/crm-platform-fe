@@ -9,7 +9,7 @@ import {
 import { useFormState, useFormStatus } from 'react-dom';
 import { Button } from '../../components/common/button';
 import { login } from '../../services/authentication';
-import { lusitana } from '../../ui/fonts';
+import { roboto } from '../../ui/fonts';
 
 export default function LoginForm() {
   const [errorMessage, dispatch] = useFormState(login, null);
@@ -17,7 +17,7 @@ export default function LoginForm() {
   return (
     <form action={dispatch} className="space-y-3">
       <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
-        <h1 className={`${lusitana.className} mb-3 text-2xl`}>
+        <h1 className={`${roboto.className} mb-3 text-2xl`}>
           Faça login para continuar.
         </h1>
         <div className="w-full">

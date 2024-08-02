@@ -4,7 +4,7 @@ import {
   InboxIcon,
   UserGroupIcon,
 } from '@heroicons/react/24/outline';
-import { lusitana } from '../../ui/fonts';
+import { roboto } from '../../ui/fonts';
 import { Card } from '../common/card';
 
 const iconMap = {
@@ -41,7 +41,7 @@ export default async function CardWrapper() {
     <>
       <Card title={getTitle("collected")}>
         <p
-          className={`${lusitana.className}
+          className={`${roboto.className}
           truncate rounded-xl bg-white px-4 py-8 text-center text-2xl`}
         >
           {totalPaidInvoices}
@@ -50,7 +50,7 @@ export default async function CardWrapper() {
 
       <Card title={getTitle("pending")}>
         <p
-          className={`${lusitana.className}
+          className={`${roboto.className}
           truncate rounded-xl bg-white px-4 py-8 text-center text-2xl`}
         >
           {totalPendingInvoices}
@@ -59,7 +59,7 @@ export default async function CardWrapper() {
 
       <Card title={getTitle("invoices")}>
         <p
-          className={`${lusitana.className}
+          className={`${roboto.className}
           truncate rounded-xl bg-white px-4 py-8 text-center text-2xl`}
         >
           {numberOfInvoices}
@@ -69,7 +69,7 @@ export default async function CardWrapper() {
 
       <Card title={getTitle("customers")}>
         <p
-          className={`${lusitana.className}
+          className={`${roboto.className}
           truncate rounded-xl bg-white px-4 py-8 text-center text-2xl`}
         >
           {numberOfCustomers}

@@ -4,7 +4,7 @@ import { ServiceResponse } from "@/app/types/service";
 import { InputMask } from "@react-input/mask";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { useFormState, useFormStatus } from "react-dom";
-import { lusitana } from "../../ui/fonts";
+import { roboto } from "../../ui/fonts";
 import { Button } from "../common/button";
 
 interface CustomerFormProps {
@@ -27,7 +27,7 @@ export default function CustomerForm({ onClose, onSubmit, customer, submitState 
   return (
     <form action={dispatch} className="space-y-3">
       <div className="flex-1">
-        <h1 className={`${lusitana.className} mb-5 text-2xl`}>
+        <h1 className={`${roboto.className} mb-5 text-2xl`}>
           {customer ? 'Edite o cliente' : 'Cadastre o cliente'}
           <input type="hidden" name="customer_id" value={customer?.customer_id || ''} />
         </h1>

@@ -1,6 +1,6 @@
 "use client";
 import { uploadAttachments } from '@/app/services/attachments';
-import { Attachment, CreateAttachment } from '@/app/types/attachments';
+import { CreateAttachment } from '@/app/types/attachments';
 import Uppy from '@uppy/core';
 import Portuguese from '@uppy/locales/lib/pt_BR';
 import { FileInput } from '@uppy/react';

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Modal from '../../components/common/modal';
 import { Partner } from '../../types/partner';
-import { lusitana } from '../../ui/fonts';
+import { roboto } from '../../ui/fonts';
 import CreatePartnerModal from './create-partner';
 import { DeletePartnerModal } from './delete-partner';
 import EditPartnerModal from './edit-partner';
@@ -41,7 +41,7 @@ export default function PartnersTable({
 
   return (
     <div className="w-full">
-      <h1 className={`${lusitana.className} mb-8 text-xl md:text-2xl`}>
+      <h1 className={`${roboto.className} mb-8 text-xl md:text-2xl`}>
         Técnicos
       </h1>
 
