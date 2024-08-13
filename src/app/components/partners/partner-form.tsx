@@ -1,7 +1,7 @@
 import { brazilStates } from "@/app/types/address";
 import { Partner } from "@/app/types/partner";
 import { ServiceResponse } from "@/app/types/service";
-import { lusitana } from "@/app/ui/fonts";
+import { roboto } from "@/app/ui/fonts";
 import { InputMask } from "@react-input/mask";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { useFormState, useFormStatus } from "react-dom";
@@ -27,7 +27,7 @@ export default function PartnerForm({ partner, onSubmit, submitState, onClose }:
   return (
     <form action={dispatch} className="space-y-3">
       <div className="flex-1">
-        <h1 className={`${lusitana.className} mb-5 text-2xl`}>
+        <h1 className={`${roboto.className} mb-5 text-2xl`}>
           {partner ? 'Edite o técnico' : 'Cadastre o técnico'}
           <input type="hidden" name="partner_id" value={partner?.partner_id || ''} />
         </h1>

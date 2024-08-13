@@ -1,6 +1,6 @@
 import { useSnackbar } from "@/app/context/SnackbarProvider";
 import { deleteContractor } from "@/app/services/contractors";
-import { lusitana } from "@/app/ui/fonts";
+import { roboto } from "@/app/ui/fonts";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -40,7 +40,7 @@ export function DeleteContractorModal({ isOpen, onClose, contractorID }: DeleteC
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <form action={dispatch} className="space-y-3">
-        <h1 className={`${lusitana.className} my-5 mx-5 text-xl`}>
+        <h1 className={`${roboto.className} my-5 mx-5 text-xl`}>
           Tem certeza que deseja desativar a seguradora?
         </h1>
 

@@ -3,6 +3,7 @@ import { ServiceResponse } from "@/app/types/service";
 import { User } from "@/app/types/user";
 import { cookies } from "next/headers";
 import { crmCoreApiKey, crmCoreEndpoint } from ".";
+import { SearchResponse } from "@/app/types/search_response";
 
 export async function fetchUsers(query: string): Promise<ServiceResponse<User[]>> {
   console.log("query", query);
@@ -33,6 +34,9 @@ export async function fetchUsers(query: string): Promise<ServiceResponse<User[]>
     }
 
     const respData = await resp.json() as User[];
+
+    console.log(respData)
+
     return {
       message: "usuários encontrados com sucesso",
       success: true,

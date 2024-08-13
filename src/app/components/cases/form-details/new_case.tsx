@@ -51,7 +51,7 @@ export function NewCaseStatusForm({ crmCase }: NewCaseStatusFormProps) {
         return;
       }
 
-      setUsers(response.data);
+      setUsers(response.data || []);
     }).catch(error => {
       console.error(error);
     });
@@ -71,11 +71,11 @@ export function NewCaseStatusForm({ crmCase }: NewCaseStatusFormProps) {
             id="owner"
           >
             <option value="0">Selecione um usuário</option>
-            {users.map(user => {
-              return <option key={user.user_id} value={user.user_id}>
+            {users.map(user => (
+              <option key={user.user_id} value={user.user_id}>
                 {`${user.first_name} ${user.last_name}`}
-              </option>;
-            })}
+              </option>
+            ))}
           </select>
         </div>
 

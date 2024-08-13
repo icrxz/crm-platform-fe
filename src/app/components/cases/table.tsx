@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { parseDateTime } from '../../libs/date';
 import { CaseFull, caseStatusMap } from '../../types/case';
-import { lusitana } from '../../ui/fonts';
+import { roboto } from '../../ui/fonts';
 import Modal from '../common/modal';
 import CreateCaseModal from './create-case';
 import CasesSearchBar from './search-bar';
@@ -18,7 +18,7 @@ export default function CasesTable({ cases }: CasesTableProps) {
 
   return (
     <div className="w-full">
-      <h1 className={`${lusitana.className} mb-8 text-xl md:text-2xl`}>
+      <h1 className={`${roboto.className} mb-8 text-xl md:text-2xl`}>
         Casos
       </h1>
 

@@ -1,5 +1,6 @@
 'use client';
 import { UserRole } from '@/app/types/user';
+import { roboto } from '@/app/ui/fonts';
 import {
   BuildingOffice2Icon,
   CreditCardIcon,
@@ -50,7 +51,7 @@ export default function NavLinks({ userRole }: { userRole: UserRole; }) {
             )}
           >
             <LinkIcon className="w-6" />
-            <p className="hidden md:block">{link.name}</p>
+            <p className={`hidden md:block ${roboto.className}`}>{link.name}</p>
           </Link>
         );
       })}

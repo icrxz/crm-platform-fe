@@ -11,7 +11,7 @@ import ContractorsSearchBar from '../../components/contractors/search-bar';
 import {
   Contractor
 } from '../../types/contractor';
-import { lusitana } from '../../ui/fonts';
+import { roboto } from '../../ui/fonts';
 import CreateContractorModal from './create-contractor';
 import { DeleteContractorModal } from './delete-contractor';
 import EditContractorModal from './edit-contractor';
@@ -46,7 +46,7 @@ export default function ContractorsTable({
 
   return (
     <div className="w-full">
-      <h1 className={`${lusitana.className} mb-8 text-xl md:text-2xl`}>
+      <h1 className={`${roboto.className} mb-8 text-xl md:text-2xl`}>
         Seguradoras
       </h1>
 

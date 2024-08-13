@@ -5,7 +5,7 @@ import { CreateCase, CreateCaseResponse } from "@/app/types/case";
 import { ServiceResponse } from "@/app/types/service";
 import { cookies } from "next/headers";
 import { crmCoreApiKey, crmCoreEndpoint } from ".";
-import { createCustomer } from "../customers";
+import { createCustomer } from "../customers/create";
 
 export async function createCase(_currentState: unknown, formData: FormData): Promise<ServiceResponse<CreateCaseResponse>> {
   try {
@@ -29,8 +29,7 @@ export async function createCase(_currentState: unknown, formData: FormData): Pr
       customerID = customerResp.data.customer_id;
     }
 
-    const formDueDate = formData.get("due_date")?.toString() || '';
-    const dueDate = new Date(formDueDate).toISOString();
+    const dueDate = getWorkingDays(new Date(), 7);
 
     const formValue = formData.get("amount")?.toString() || '';
     const productValue = parseCurrencyToNumber(formValue);
@@ -83,3 +82,16 @@ export async function createCase(_currentState: unknown, formData: FormData): Pr
     };
   }
 };
+
+function getWorkingDays(startDate: Date, days: number): string {
+  var currentDate = startDate;
+  for (let i = 0; i < days;) {
+    let weekDay = currentDate.getDay();
+
+    currentDate.setDate(currentDate.getDate() + 1);
+    if (weekDay != 0 && weekDay != 6) {
+      i++;
+    }
+  }
+  return currentDate.toISOString();
+}
