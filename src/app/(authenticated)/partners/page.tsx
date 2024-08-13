@@ -30,7 +30,7 @@ export default async function Page({
   return (
     <main>
       <Suspense fallback={<p>Carregando técnicos...</p>}>
-        <PartnersTable partners={partners.data || []} />
+        <PartnersTable partners={partners.data?.result || []} />
       </Suspense>
     </main>
   );

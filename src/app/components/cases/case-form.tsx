@@ -12,6 +12,7 @@ import { InputNumberFormat } from "@react-input/number-format";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { Button } from "../common/button";
+import { brazilStates } from "@/app/types/address";
 
 interface CaseFormProps {
   case?: Case;
@@ -36,7 +37,7 @@ export default function CaseForm({ onSubmit, submitState, onClose }: CaseFormPro
 
     fetchCustomers(`document=${document}`).then((res) => {
       if (res.success && res.data) {
-        setCustomer(res.data[0]);
+        setCustomer(res.data.result[0]);
       }
     }).finally(() => {
       setSearchingUser(false);
@@ -46,7 +47,7 @@ export default function CaseForm({ onSubmit, submitState, onClose }: CaseFormPro
 
   useEffect(() => {
     fetchContractors("active=true").then(res => {
-      setContractors(res.data || []);
+      setContractors(res.data?.result || []);
     });
   }, []);
 
@@ -64,7 +65,7 @@ export default function CaseForm({ onSubmit, submitState, onClose }: CaseFormPro
         </h1>
 
         <div className="w-full">
-          <div className="columns-3 mb-4">
+          <div className="columns-2 mb-4">
             <div>
               <label className="mb-3 block text-xs font-medium text-gray-900" htmlFor="claim">
                 Sinistro
@@ -91,22 +92,6 @@ export default function CaseForm({ onSubmit, submitState, onClose }: CaseFormPro
                   <option key={contractor.contractor_id} value={contractor.contractor_id}>{contractor.company_name}</option>
                 ))}
               </select>
-            </div>
-
-            <div>
-              <label className="mb-3 block text-xs font-medium text-gray-900" htmlFor="due_date">
-                Data de vencimento
-              </label>
-
-              <InputMask
-                type="date"
-                id="due_date"
-                name="due_date"
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                required
-                mask="__/__/____"
-                replacement={{ _: /\d/ }}
-              />
             </div>
           </div>
 
@@ -268,20 +253,27 @@ export default function CaseForm({ onSubmit, submitState, onClose }: CaseFormPro
             </div>
 
             <div>
-              <label className="mb-3 block text-xs font-medium text-gray-900" htmlFor="last_name">
+              <label
+                className="mb-3 block text-xs font-medium text-gray-900"
+                htmlFor="state"
+              >
                 Estado
               </label>
 
-              <input
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500 disabled:cursor-not-allowed disabled:bg-gray-100"
-                id="state"
-                type="text"
-                name="state"
-                placeholder="Digite o estado"
-                required
-                disabled={!hasSearchedCustomer || !!customer}
-                defaultValue={customer?.shipping.state || ''}
-              />
+              <div className="relative">
+                <select
+                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
+                  id="state"
+                  name="state"
+                  value={customer?.shipping.state}
+                  required
+                  disabled={!hasSearchedCustomer || !!customer}
+                >
+                  {brazilStates.map((state) => (
+                    <option key={`state-${state}`} value={state}>{state}</option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
         </div>

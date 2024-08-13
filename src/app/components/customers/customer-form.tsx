@@ -24,6 +24,18 @@ export default function CustomerForm({ onClose, onSubmit, customer, submitState 
     }
   }, [state, submitState]);
 
+  function getCustomerAddress(customer?: Customer) {
+    return customer?.shipping.address.split(',')[0] || ''
+  }
+
+  function getCustomerAddressNumber(customer?: Customer) {
+    return customer?.shipping.address.split(',')[1].split('-')[0] || ''
+  }
+
+  function getCustomerAddressComplement(customer?: Customer) {
+    return customer?.shipping.address.split('-')[1] || ''
+  }
+
   return (
     <form action={dispatch} className="space-y-3">
       <div className="flex-1">
@@ -117,6 +129,7 @@ export default function CustomerForm({ onClose, onSubmit, customer, submitState 
                   type="text"
                   name="address"
                   placeholder="Digite o endereço"
+                  defaultValue={getCustomerAddress(customer)}
                   required
                 />
               </div>
@@ -137,6 +150,7 @@ export default function CustomerForm({ onClose, onSubmit, customer, submitState 
                   type="text"
                   name="number"
                   placeholder="Digite o número do endereço"
+                  defaultValue={getCustomerAddressNumber(customer)}
                   required
                 />
               </div>
@@ -157,6 +171,7 @@ export default function CustomerForm({ onClose, onSubmit, customer, submitState 
                   type="text"
                   name="complement"
                   placeholder="Digite o complemento, se houver"
+                  defaultValue={getCustomerAddressComplement(customer)}
                 />
               </div>
             </div>

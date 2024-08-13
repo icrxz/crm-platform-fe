@@ -29,7 +29,7 @@ async function getData(): Promise<TransactionItem[]> {
     if (resp.unauthorized) {
       signOut();
     }
-    return resp.data || [];
+    return resp.data?.result || [];
   });
 
 

@@ -75,6 +75,8 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
 
       showSnackbar(response.message, 'success');
       refresh();
+    }).finally(() => {
+      setContent('');
     });
 
     setLoadingComment(false);
@@ -86,8 +88,8 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
         {isBeforeTargetDate ? (
           <div className="flex items-center space-x-2 mb-2">
             <p className="text-sm font-medium text-gray-500">Data agendada:</p>
-            <p className="text-sm font-medium text-gray-900">{parseDateTime(crmCase.target_date || '', ONLY_DATE_PATTERN)}</p>
-            <Button type="button" onClick={() => setOpenTargetDateModal(true)}>Alterar data de visita</Button>
+            <p className="text-sm font-medium text-gray-900 ml-4">{parseDateTime(crmCase.target_date || '', ONLY_DATE_PATTERN)}</p>
+            <Button type="button" size="sm" onClick={() => setOpenTargetDateModal(true)}>Alterar data de visita</Button>
           </div>
         ) : (
           <div className="flex items-center space-x-2 mb-2">
@@ -119,7 +121,7 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
 
         <div className="flex gap-4">
           <Button type="button" onClick={handleAddComment} disabled={loadingComment}>Enviar</Button>
-          <Button type="submit" disabled={loadingComment}>Finalizar</Button>
+          {!isBeforeTargetDate && <Button type="submit" disabled={loadingComment}>Finalizar</Button>}
         </div>
       </form>
 

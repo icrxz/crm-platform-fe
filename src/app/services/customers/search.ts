@@ -4,8 +4,9 @@ import { Customer } from "@/app/types/customer";
 import { ServiceResponse } from "@/app/types/service";
 import { cookies } from "next/headers";
 import { crmCoreApiKey, crmCoreEndpoint } from ".";
+import { SearchResponse } from "@/app/types/search_response";
 
-export async function fetchCustomers(query: string): Promise<ServiceResponse<Customer[]>> {
+export async function fetchCustomers(query: string): Promise<ServiceResponse<SearchResponse<Customer>>> {
   console.log("query", query);
 
   try {
@@ -34,7 +35,7 @@ export async function fetchCustomers(query: string): Promise<ServiceResponse<Cus
       };
     }
 
-    const respData = await resp.json() as Customer[];
+    const respData = await resp.json() as SearchResponse<Customer>;
 
     return {
       message: "",

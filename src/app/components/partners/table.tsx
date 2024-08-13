@@ -3,6 +3,7 @@ import { parseDocument } from '@/app/libs/parser';
 import { EyeIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+
 import Modal from '../../components/common/modal';
 import { Partner } from '../../types/partner';
 import { roboto } from '../../ui/fonts';

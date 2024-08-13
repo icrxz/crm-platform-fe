@@ -3,8 +3,9 @@ import { Partner } from "@/app/types/partner";
 import { ServiceResponse } from "@/app/types/service";
 import { cookies } from "next/headers";
 import { crmCoreApiKey, crmCoreEndpoint } from ".";
+import { SearchResponse } from "@/app/types/search_response";
 
-export async function fetchPartners(query: string): Promise<ServiceResponse<Partner[]>> {
+export async function fetchPartners(query: string): Promise<ServiceResponse<SearchResponse<Partner>>> {
   console.log("query", query);
   try {
     const jwt = cookies().get("jwt")?.value;
@@ -33,7 +34,7 @@ export async function fetchPartners(query: string): Promise<ServiceResponse<Part
       };
     }
 
-    const respData = await resp.json() as Partner[];
+    const respData = await resp.json() as SearchResponse<Partner>;
 
     return {
       message: "",

@@ -17,13 +17,15 @@ export const metadata: Metadata = {
 };
 
 async function getData(query: string, user: User): Promise<CaseFull[]> {
-  const { success, unauthorized, data: cases } = await fetchCases(query);
-  if (!success || !cases) {
+  const { success, unauthorized, data } = await fetchCases(query);
+  if (!success || !data) {
     if (unauthorized) {
       redirect("/login");
     }
     return [];
   }
+
+  const cases = data.result;
 
   let filteredCases = cases;
   if (user.role === UserRole.OPERATOR) {

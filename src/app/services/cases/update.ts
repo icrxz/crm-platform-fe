@@ -1,8 +1,8 @@
+"use server";
 import { ServiceResponse } from "@/app/types/service";
 import { crmCoreApiKey, crmCoreEndpoint } from ".";
 import { cookies } from "next/headers";
 import { getCurrentUser } from "@/app/libs/session";
-import { ChangeStatus } from "@/app/types/change_status";
 import { UpdateCase } from "@/app/types/update_case";
 
 export async function update(

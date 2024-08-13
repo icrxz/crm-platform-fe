@@ -30,7 +30,7 @@ export default async function Page({
   return (
     <main>
       <Suspense fallback={<p>Carregando seguradoras...</p>}>
-        <ContractorsTable contractors={contractors.data || []} />
+        <ContractorsTable contractors={contractors.data?.result || []} />
       </Suspense>
     </main>
   );

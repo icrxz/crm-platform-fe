@@ -36,7 +36,7 @@ export function PartnerInfoStatusForm({ crmCase }: PartnerInfoFormProps) {
         return;
       }
 
-      setPartners(response.data);
+      setPartners(response.data?.result);
     });
   }, []);
 

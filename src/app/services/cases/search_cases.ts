@@ -3,8 +3,9 @@ import { Case } from "@/app/types/case";
 import { ServiceResponse } from "@/app/types/service";
 import { cookies } from "next/headers";
 import { crmCoreApiKey, crmCoreEndpoint } from ".";
+import { SearchResponse } from "@/app/types/search_response";
 
-export async function fetchCases(query: string): Promise<ServiceResponse<Case[]>> {
+export async function fetchCases(query: string): Promise<ServiceResponse<SearchResponse<Case>>> {
   try {
     const jwt = cookies().get("jwt")?.value;
     let url = `${crmCoreEndpoint}/crm/core/api/v1/cases`;
@@ -31,7 +32,7 @@ export async function fetchCases(query: string): Promise<ServiceResponse<Case[]>
       };
     }
 
-    const respData = await resp.json() as Case[];
+    const respData = await resp.json() as SearchResponse<Case>;
     return {
       message: "",
       success: true,

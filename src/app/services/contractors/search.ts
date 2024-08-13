@@ -3,8 +3,9 @@ import { Contractor } from "@/app/types/contractor";
 import { ServiceResponse } from "@/app/types/service";
 import { cookies } from "next/headers";
 import { crmCoreApiKey, crmCoreEndpoint } from ".";
+import { SearchResponse } from "@/app/types/search_response";
 
-export async function fetchContractors(query: string): Promise<ServiceResponse<Contractor[]>> {
+export async function fetchContractors(query: string): Promise<ServiceResponse<SearchResponse<Contractor>>> {
   console.log("query", query);
 
   try {
@@ -30,7 +31,7 @@ export async function fetchContractors(query: string): Promise<ServiceResponse<C
       };
     }
 
-    const respData = await resp.json() as Contractor[];
+    const respData = await resp.json() as SearchResponse<Contractor>;
     return {
       message: "",
       success: true,
