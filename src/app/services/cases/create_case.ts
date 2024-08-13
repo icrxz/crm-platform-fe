@@ -5,7 +5,7 @@ import { CreateCase, CreateCaseResponse } from "@/app/types/case";
 import { ServiceResponse } from "@/app/types/service";
 import { cookies } from "next/headers";
 import { crmCoreApiKey, crmCoreEndpoint } from ".";
-import { createCustomer } from "../customers";
+import { createCustomer } from "../customers/create";
 
 export async function createCase(_currentState: unknown, formData: FormData): Promise<ServiceResponse<CreateCaseResponse>> {
   try {
