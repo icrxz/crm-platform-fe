@@ -6,7 +6,6 @@ import { ServiceResponse } from "@/app/types/service";
 import { cookies } from "next/headers";
 import { crmCoreApiKey, crmCoreEndpoint } from ".";
 import { createCustomer } from "../customers";
-import { DateTime } from "next-auth/providers/kakao";
 
 export async function createCase(_currentState: unknown, formData: FormData): Promise<ServiceResponse<CreateCaseResponse>> {
   try {
@@ -94,7 +93,5 @@ function getWorkingDays(startDate: Date, days: number): string {
       i++;
     }
   }
-  console.log('saiu daqui')
-
   return currentDate.toISOString();
 }
