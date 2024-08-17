@@ -27,7 +27,7 @@ export function PartnerInfoStatusForm({ crmCase }: PartnerInfoFormProps) {
 
   useEffect(() => {
     const query = "active=true";
-    fetchPartners(query).then(response => {
+    fetchPartners(query, 1, 1000).then(response => {
       if (!response.success || !response.data) {
         if (response.unauthorized) {
           signOut();
