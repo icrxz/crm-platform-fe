@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ProgressBarProvider from "./components/common/progress-bar/ProgressBarProvider";
+import { NextUIProvider } from "@nextui-org/react";
 import { roboto } from './ui/fonts';
 
 import '@uppy/core/dist/style.min.css';
@@ -23,9 +24,11 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={roboto.className}>
-        <ProgressBarProvider>
-          {children}
-        </ProgressBarProvider>
+        <NextUIProvider>
+          <ProgressBarProvider>
+            {children}
+          </ProgressBarProvider>
+        </NextUIProvider>
       </body>
     </html>
   );

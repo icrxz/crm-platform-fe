@@ -5,14 +5,14 @@ import { cookies } from "next/headers";
 import { crmCoreApiKey, crmCoreEndpoint } from ".";
 import { SearchResponse } from "@/app/types/search_response";
 
-export async function fetchPartners(query: string): Promise<ServiceResponse<SearchResponse<Partner>>> {
-  console.log("query", query);
+export async function fetchPartners(query: string, page: number, limit?: number): Promise<ServiceResponse<SearchResponse<Partner>>> {
   try {
+    page = page -1;
     const jwt = cookies().get("jwt")?.value;
-    let url = `${crmCoreEndpoint}/crm/core/api/v1/partners`;
+    let url = `${crmCoreEndpoint}/crm/core/api/v1/partners?offset=${page*(limit || 10)}&limit=${limit || 10}`;
 
     if (query) {
-      url = `${url}?${query}`;
+      url = `${url}&${query}`;
     }
 
     const resp = await fetch(url, {
