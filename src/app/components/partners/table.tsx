@@ -1,6 +1,7 @@
 "use client";
 import { parseDocument } from '@/app/libs/parser';
 import { EyeIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { Pagination } from "@nextui-org/pagination";
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -11,13 +12,16 @@ import CreatePartnerModal from './create-partner';
 import { DeletePartnerModal } from './delete-partner';
 import EditPartnerModal from './edit-partner';
 import PartnersSearchBar from './search-bar';
+import { SearchResponse } from '@/app/types/search_response';
 
 interface PartnersTableProps {
-  partners: Partner[];
+  partners?: SearchResponse<Partner>;
+  initialPage?: number;
 }
 
 export default function PartnersTable({
   partners,
+  initialPage = 1,
 }: PartnersTableProps) {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -40,6 +44,10 @@ export default function PartnersTable({
     router.push(`/partners/${partnerID}`);
   }
 
+  function handleChangePage(value: number) {
+    router.push(`?page=${value}`);
+  }
+
   return (
     <div className="w-full">
       <h1 className={`${roboto.className} mb-8 text-xl md:text-2xl`}>
@@ -60,6 +68,9 @@ export default function PartnersTable({
                       Nome
                     </th>
                     <th scope="col" className="px-3 py-5 font-medium">
+                      Tipo
+                    </th>
+                    <th scope="col" className="px-3 py-5 font-medium">
                       Documento
                     </th>
                     <th scope="col" className="px-3 py-5 font-medium">
@@ -78,12 +89,15 @@ export default function PartnersTable({
                 </thead>
 
                 <tbody className="divide-y divide-gray-200 text-gray-900">
-                  {partners.map((partner) => (
+                  {partners?.result.map((partner) => (
                     <tr key={partner.partner_id} className="group">
                       <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
                           <p>{`${partner.first_name} ${partner.last_name}`}</p>
                         </div>
+                      </td>
+                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                        {partner.partner_type}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                         {parseDocument(partner.document)}
@@ -129,6 +143,10 @@ export default function PartnersTable({
             </div>
           </div>
         </div>
+      </div>
+
+      <div className='mt-2'>
+        <Pagination onChange={handleChangePage} siblings={3} showControls total={Number((partners?.paging.total || 1) / (partners?.paging.limit || 1))} initialPage={Number(initialPage)} />
       </div>
 
       {isFilterModalOpen && <Modal isOpen={isFilterModalOpen} onClose={() => setIsFilterModalOpen(false)}>

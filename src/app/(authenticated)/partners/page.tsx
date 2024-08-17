@@ -15,7 +15,7 @@ export default async function Page({
 }: {
   searchParams?: {
     query?: string;
-    page?: string;
+    page?: number;
   };
 }) {
   const user = await getCurrentUser();
@@ -23,14 +23,12 @@ export default async function Page({
     redirect("/login");
   }
 
-  const query = searchParams?.query || '';
-
-  const partners = await fetchPartners(query);
+  const partners = await fetchPartners(searchParams?.query || '', searchParams?.page || 1);
 
   return (
     <main>
       <Suspense fallback={<p>Carregando técnicos...</p>}>
-        <PartnersTable partners={partners.data?.result || []} />
+        <PartnersTable partners={partners.data} initialPage={searchParams?.page} />
       </Suspense>
     </main>
   );
