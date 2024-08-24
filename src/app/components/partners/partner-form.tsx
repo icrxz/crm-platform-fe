@@ -33,7 +33,7 @@ export default function PartnerForm({ partner, onSubmit, submitState, onClose }:
         </h1>
 
         <div className="w-full">
-          <div className="columns-3 mb-4">
+          <div className="columns-2 mb-4">
             <div>
               <label
                 className="mb-3 block text-xs font-medium text-gray-900"
@@ -76,6 +76,9 @@ export default function PartnerForm({ partner, onSubmit, submitState, onClose }:
               </div>
             </div>
 
+          </div>
+
+          <div className="columns-2 mb-4">
             <div>
               <label
                 className="mb-3 block text-xs font-medium text-gray-900"
@@ -95,6 +98,27 @@ export default function PartnerForm({ partner, onSubmit, submitState, onClose }:
                   defaultValue={partner?.document || ''}
                   required
                 />
+              </div>
+            </div>
+
+            <div>
+              <label
+                className="mb-3 block text-xs font-medium text-gray-900"
+                htmlFor="partner_type"
+              >
+                Tipo
+              </label>
+
+              <div className="relative">
+                <select
+                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
+                id="partner_type"
+                name="partner_type"
+                defaultValue={partner?.partner_type || ''}
+                >
+                  <option value="Montador">Montador</option>
+                  <option value="Tapeceiro">Tapeceiro</option>
+                </select>
               </div>
             </div>
           </div>

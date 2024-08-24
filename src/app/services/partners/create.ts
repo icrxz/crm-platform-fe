@@ -28,7 +28,7 @@ export async function createPartner(_currentState: unknown, formData: FormData):
       last_name: formData.get('last_name')?.toString() || '',
       document,
       document_type: isCPF ? "CPF" : "CNPJ",
-      partner_type: isCPF ? "Natural" : "Legal",
+      partner_type: formData.get('partner_type')?.toString() || '',
       shipping: {
         address: address,
         city: formData.get('city')?.toString() || '',

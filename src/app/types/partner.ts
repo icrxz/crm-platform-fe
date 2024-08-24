@@ -42,4 +42,5 @@ export type Partner = {
   updated_at: string;
   updated_by: string;
   active: boolean;
+  description:string;
 };

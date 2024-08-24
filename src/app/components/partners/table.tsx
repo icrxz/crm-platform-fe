@@ -100,7 +100,7 @@ export default function PartnersTable({
                         {partner.partner_type}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {parseDocument(partner.document)}
+                        {parseDocument(partner.document) || '-'}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                         {partner.shipping.city}

@@ -35,7 +35,7 @@ export async function editPartner(_currentState: unknown, formData: FormData) {
       last_name: formData.get('last_name')?.toString() || '',
       document: formData.get('document')?.toString() || '',
       document_type: isCPF ? "CPF" : "CNPJ",
-      partner_type: isCPF ? "Natural" : "Legal",
+      partner_type: formData.get('partner_type')?.toString() || '',
       shipping: {
         address: address,
         city: formData.get('city')?.toString() || '',
