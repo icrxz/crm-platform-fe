@@ -8,7 +8,7 @@ import { crmCoreApiKey, crmCoreEndpoint } from ".";
 export async function editCustomer(_currentState: unknown, formData: FormData): Promise<any> {
   try {
     const session = await getCurrentUser();
-    const author = session?.user_id || '';
+    const author = session?.username || '';
 
     const customerID = formData.get('customer_id')?.toString() || '';
     if (!customerID) {

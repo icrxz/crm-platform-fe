@@ -10,14 +10,14 @@ export const metadata: Metadata = {
   title: 'Técnicos',
 };
 
-export default async function Page({
-  searchParams,
-}: {
+type PartnerPageParams = {
   searchParams?: {
     query?: string;
     page?: number;
   };
-}) {
+};
+
+export default async function Page({ searchParams }: PartnerPageParams) {
   const user = await getCurrentUser();
   if (!user) {
     redirect("/login");

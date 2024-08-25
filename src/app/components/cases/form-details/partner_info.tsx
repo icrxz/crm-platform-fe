@@ -35,8 +35,12 @@ export function PartnerInfoStatusForm({ crmCase }: PartnerInfoFormProps) {
         setErrorMessage(response.message || "");
         return;
       }
+      let partners = response.data.result;
+      partners = partners.
+        filter(partner => partner.region == crmCase.region).
+        sort((a, b) => a.first_name.localeCompare(b.first_name));
 
-      setPartners(response.data?.result);
+      setPartners(partners);
     });
   }, []);
 

@@ -2,6 +2,7 @@
 import { removeDocumentSymbols } from "@/app/libs/parser";
 import { fetchContractors } from "@/app/services/contractors";
 import { fetchCustomers } from "@/app/services/customers";
+import { brazilStates } from "@/app/types/address";
 import { Case } from "@/app/types/case";
 import { Contractor } from "@/app/types/contractor";
 import { Customer } from "@/app/types/customer";
@@ -12,7 +13,6 @@ import { InputNumberFormat } from "@react-input/number-format";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { Button } from "../common/button";
-import { brazilStates } from "@/app/types/address";
 
 interface CaseFormProps {
   case?: Case;
@@ -35,7 +35,7 @@ export default function CaseForm({ onSubmit, submitState, onClose }: CaseFormPro
     setSearchingUser(true);
     const document = removeDocumentSymbols(userDocument);
 
-    fetchCustomers(`document=${document}`).then((res) => {
+    fetchCustomers(`document=${document}`, 1, 1000).then((res) => {
       if (res.success && res.data) {
         setCustomer(res.data.result[0]);
       }

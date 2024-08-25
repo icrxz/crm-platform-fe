@@ -9,7 +9,7 @@ import { crmCoreApiKey, crmCoreEndpoint } from ".";
 export async function createPartner(_currentState: unknown, formData: FormData): Promise<ServiceResponse<any>> {
   try {
     const session = await getCurrentUser();
-    const author = session?.user_id || '';
+    const author = session?.username || '';
 
     const jwt = cookies().get("jwt")?.value;
     const url = `${crmCoreEndpoint}/crm/core/api/v1/partners`;

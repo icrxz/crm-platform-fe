@@ -1,15 +1,15 @@
 "use server";
+import { SearchResponse } from "@/app/types/search_response";
 import { ServiceResponse } from "@/app/types/service";
 import { User } from "@/app/types/user";
 import { cookies } from "next/headers";
 import { crmCoreApiKey, crmCoreEndpoint } from ".";
-import { SearchResponse } from "@/app/types/search_response";
 
-export async function fetchUsers(query: string): Promise<ServiceResponse<User[]>> {
-  console.log("query", query);
+export async function fetchUsers(query: string, page: number, limit: number = 10): Promise<ServiceResponse<SearchResponse<User>>> {
   try {
+    page = page - 1;
     const jwt = cookies().get("jwt")?.value;
-    let url = `${crmCoreEndpoint}/crm/core/api/v1/users`;
+    let url = `${crmCoreEndpoint}/crm/core/api/v1/users?offset=${page * (limit)}&limit=${limit}`;
     if (query) {
       url = `${url}?${query}`;
     }
@@ -33,9 +33,7 @@ export async function fetchUsers(query: string): Promise<ServiceResponse<User[]>
       };
     }
 
-    const respData = await resp.json() as User[];
-
-    console.log(respData)
+    const respData = await resp.json() as SearchResponse<User>;
 
     return {
       message: "usuários encontrados com sucesso",

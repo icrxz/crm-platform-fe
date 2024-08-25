@@ -1,9 +1,9 @@
 "use server";
-import { ServiceResponse } from "@/app/types/service";
-import { crmCoreApiKey, crmCoreEndpoint } from ".";
-import { cookies } from "next/headers";
 import { getCurrentUser } from "@/app/libs/session";
+import { ServiceResponse } from "@/app/types/service";
 import { UpdateCase } from "@/app/types/update_case";
+import { cookies } from "next/headers";
+import { crmCoreApiKey, crmCoreEndpoint } from ".";
 
 export async function update(
   caseID: string,
@@ -21,7 +21,7 @@ export async function update(
     const jwt = cookies().get("jwt")?.value;
 
     const session = await getCurrentUser();
-    const author = session?.user_id || '';
+    const author = session?.username || '';
 
     const formTargetDate = formData.get("target_date")?.toString() || '';
     const targetDate = new Date(formTargetDate).toISOString();

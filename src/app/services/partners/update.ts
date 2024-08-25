@@ -19,7 +19,7 @@ export async function editPartner(_currentState: unknown, formData: FormData) {
     const url = `${crmCoreEndpoint}/crm/core/api/v1/partners/${partnerID}`;
 
     const session = await getCurrentUser();
-    const author = session?.user_id || '';
+    const author = session?.username || '';
 
     let address = '';
     if (formData.get("address")) {

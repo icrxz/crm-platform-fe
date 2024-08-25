@@ -13,7 +13,7 @@ export async function createCase(_currentState: unknown, formData: FormData): Pr
     const url = `${crmCoreEndpoint}/crm/core/api/v1/cases`;
 
     const session = await getCurrentUser();
-    const author = session?.user_id || '';
+    const author = session?.username || '';
 
     let customerID = formData.get("customer_id")?.toString() || '';
 

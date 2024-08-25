@@ -5,6 +5,7 @@ import { Pagination } from "@nextui-org/pagination";
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import { SearchResponse } from '@/app/types/search_response';
 import Modal from '../../components/common/modal';
 import { Partner } from '../../types/partner';
 import { roboto } from '../../ui/fonts';
@@ -12,7 +13,6 @@ import CreatePartnerModal from './create-partner';
 import { DeletePartnerModal } from './delete-partner';
 import EditPartnerModal from './edit-partner';
 import PartnersSearchBar from './search-bar';
-import { SearchResponse } from '@/app/types/search_response';
 
 interface PartnersTableProps {
   partners?: SearchResponse<Partner>;
@@ -146,7 +146,13 @@ export default function PartnersTable({
       </div>
 
       <div className='mt-2'>
-        <Pagination onChange={handleChangePage} siblings={3} showControls total={Number((partners?.paging.total || 1) / (partners?.paging.limit || 1))} initialPage={Number(initialPage)} />
+        <Pagination
+          onChange={handleChangePage}
+          siblings={3}
+          showControls
+          total={Math.ceil(Number((partners?.paging.total || 1) / (partners?.paging.limit || 1)))}
+          initialPage={Number(initialPage || 1)}
+        />
       </div>
 
       {isFilterModalOpen && <Modal isOpen={isFilterModalOpen} onClose={() => setIsFilterModalOpen(false)}>

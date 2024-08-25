@@ -1,9 +1,11 @@
 "use client";
 import { parseDateTime } from '@/app/libs/date';
 import { parseDocument } from '@/app/libs/parser';
+import { SearchResponse } from '@/app/types/search_response';
 import EyeIcon from '@heroicons/react/24/outline/EyeIcon';
 import PencilIcon from '@heroicons/react/24/outline/PencilIcon';
 import TrashIcon from '@heroicons/react/24/outline/TrashIcon';
+import { Pagination } from '@nextui-org/pagination';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Customer } from '../../types/customer';
@@ -14,11 +16,12 @@ import { DeleteCustomerModal } from './delete-customer';
 import EditCustomerModal from './edit-customer';
 import CustomersSearchBar from './search-bar';
 
-export default function CustomersTable({
-  customers,
-}: {
-  customers: Customer[];
-}) {
+interface CustomersTableProps {
+  customers?: SearchResponse<Customer>;
+  initialPage?: number;
+}
+
+export default function CustomersTable({ customers, initialPage }: CustomersTableProps) {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -38,6 +41,10 @@ export default function CustomersTable({
 
   function handleRowClick(costumerID: string) {
     router.push(`/customers/${costumerID}`);
+  }
+
+  function handleChangePage(value: number) {
+    router.push(`?page=${value}`);
   }
 
   return (
@@ -75,7 +82,7 @@ export default function CustomersTable({
                 </thead>
 
                 <tbody className="divide-y divide-gray-200 text-gray-900">
-                  {customers.map((customer) => (
+                  {customers?.result.map((customer) => (
                     <tr key={customer.customer_id} className="group">
                       <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
@@ -123,6 +130,16 @@ export default function CustomersTable({
             </div>
           </div>
         </div>
+      </div>
+
+      <div className='mt-2'>
+        <Pagination
+          onChange={handleChangePage}
+          siblings={3}
+          showControls
+          total={Math.ceil(Number((customers?.paging.total || 1) / (customers?.paging.limit || 1)))}
+          initialPage={Number(initialPage || 1)}
+        />
       </div>
 
       {isFilterModalOpen && <Modal isOpen={isFilterModalOpen} onClose={() => setIsFilterModalOpen(false)}>

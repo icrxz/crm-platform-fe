@@ -19,7 +19,7 @@ export async function createTransaction(caseID: string, formData: FormData): Pro
     const url = `${crmCoreEndpoint}/crm/core/api/v1/cases/${caseID}/transactions`;
 
     const session = await getCurrentUser();
-    const author = session?.user_id || '';
+    const author = session?.username || '';
 
     const formValue = formData.get("amount")?.toString() || '';
     const transactionValue = parseCurrencyToNumber(formValue);
