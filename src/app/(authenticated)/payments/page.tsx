@@ -2,7 +2,9 @@ import PaymentTable from '@/app/components/payments/table';
 import { fetchCases } from '@/app/services/cases';
 import { getPartnerByID } from '@/app/services/partners';
 import { fetchTransactions } from '@/app/services/transactions';
+import { Case } from '@/app/types/case';
 import { Partner } from '@/app/types/partner';
+import { SearchResponse } from '@/app/types/search_response';
 import { TransactionItem, TransactionStatus, TransactionType } from '@/app/types/transaction';
 import { Metadata } from 'next';
 import { getServerSession } from 'next-auth';
@@ -14,7 +16,7 @@ export const metadata: Metadata = {
   title: 'Pagamentos',
 };
 
-async function getData(): Promise<TransactionItem[]> {
+async function getData(page: number): Promise<SearchResponse<TransactionItem>> {
   const query = "type=OUTGOING";
 
   const { success, unauthorized, data: transactions } = await fetchTransactions(query);
@@ -22,18 +24,18 @@ async function getData(): Promise<TransactionItem[]> {
     if (unauthorized) {
       redirect("/login");
     }
-    return [];
+    return { result: [], paging: { limit: 10, offset: page * 10, total: 0 } };
   }
 
-  const casesInReceipt = await fetchCases(`status=Receipt`).then((resp) => {
+  const casesInReceipt = await fetchCases(`status=Receipt`, page).then((resp) => {
     if (resp.unauthorized) {
       signOut();
     }
-    return resp.data?.result || [];
+    return resp.data || { result: [], paging: { limit: 10, offset: page * 10, total: 0 } };
   });
 
 
-  const outgoingCasesTransactions = await Promise.all(casesInReceipt.map(async (caseItem): Promise<TransactionItem> => {
+  const outgoingCasesTransactions = await Promise.all(casesInReceipt.result.map(async (caseItem): Promise<TransactionItem> => {
     const partner = caseItem.partner_id && await getPartnerByID(caseItem.partner_id).then((resp) => {
       if (resp.unauthorized) {
         signOut();
@@ -62,18 +64,27 @@ async function getData(): Promise<TransactionItem[]> {
     } as TransactionItem;
   }));
 
-  return outgoingCasesTransactions;
+  return {
+    result: outgoingCasesTransactions,
+    paging: casesInReceipt.paging,
+  };
 }
 
+type TransactionPageParams = {
+  searchParams?: {
+    query?: string;
+    page?: number;
+  };
+};
 
-export default async function Page() {
+export default async function Page({ searchParams }: TransactionPageParams) {
   const session = await getServerSession();
 
   if (!session) {
     redirect("/login");
   }
 
-  const payments = await getData();
+  const payments = await getData(searchParams?.page || 1);
 
   return (
     <main>

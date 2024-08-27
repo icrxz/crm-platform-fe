@@ -43,6 +43,7 @@ async function getData(caseID: string): Promise<CaseFull | null> {
 
 export default async function Page({ params: { caseID } }: { params: { caseID: string; }; }) {
   const user = await getCurrentUser();
+  console.log(user);
   if (!user) {
     redirect("/login");
   }

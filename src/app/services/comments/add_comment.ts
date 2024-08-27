@@ -19,7 +19,7 @@ export async function addComment(caseID: string, formData: FormData, attachments
     const jwt = cookies().get("jwt")?.value;
 
     const session = await getCurrentUser();
-    const author = session?.user_id || '';
+    const author = session?.username || '';
 
     const payload: CreateComment = {
       content: formData.get("content")?.toString() || '',

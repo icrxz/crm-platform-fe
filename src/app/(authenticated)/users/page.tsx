@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 type UserPageParams = {
   searchParams?: {
     query?: string;
-    page?: string;
+    page?: number;
   };
 };
 
@@ -25,12 +25,12 @@ export default async function Page({ searchParams }: UserPageParams) {
   }
 
   const query = searchParams?.query || '';
-  const users = await fetchUsers(query);
+  const { data: users } = await fetchUsers(query, (searchParams?.page || 1));
 
   return (
     <main>
       <Suspense fallback={<p>Carregando usuários...</p>}>
-        {users && <UsersTable users={users.data || []} />}
+        <UsersTable users={users} initialPage={searchParams?.page} />
       </Suspense>
     </main>
   );

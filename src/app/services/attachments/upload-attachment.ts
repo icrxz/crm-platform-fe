@@ -38,7 +38,7 @@ export async function uploadAttachments(formData: FormData): Promise<CreateAttac
       file_name: file.name,
       size: file.size,
       url: `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileKey}`,
-      created_by: author.user_id,
+      created_by: author.username,
       key: fileKey,
     } as CreateAttachment;
   }));

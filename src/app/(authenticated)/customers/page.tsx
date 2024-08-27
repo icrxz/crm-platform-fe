@@ -10,14 +10,14 @@ export const metadata: Metadata = {
   title: 'Clientes',
 };
 
-export default async function Page({
-  searchParams,
-}: {
+type CustomerPageParams = {
   searchParams?: {
     query?: string;
-    page?: string;
+    page?: number;
   };
-}) {
+};
+
+export default async function Page({ searchParams }: CustomerPageParams) {
   const session = await getServerSession();
 
   if (!session) {
@@ -25,13 +25,12 @@ export default async function Page({
   }
 
   const query = searchParams?.query || '';
-
-  const customers = await fetchCustomers(query);
+  const { data: customers } = await fetchCustomers(query, (searchParams?.page || 1));
 
   return (
     <main>
       <Suspense fallback={<p>Carregando clientes...</p>}>
-        <CustomersTable customers={customers.data?.result || []} />
+        <CustomersTable customers={customers} initialPage={searchParams?.page} />
       </Suspense>
     </main>
   );

@@ -15,11 +15,6 @@ export default function PartnersSearchBar({ setIsCreationModalOpen, setIsFilterM
       <Search placeholder="Buscar técnicos..." />
 
       <div className='flex w-1/2 justify-end'>
-        <Button className="p-2 mr-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          onClick={() => setIsFilterModalOpen(true)}>
-          Filtros
-        </Button>
-
         <Button
           className="p-2 text-white bg-green-500 rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
           onClick={() => setIsCreationModalOpen(true)}

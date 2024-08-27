@@ -43,7 +43,7 @@ export function NewCaseStatusForm({ crmCase }: NewCaseStatusFormProps) {
 
   useEffect(() => {
     const query = "active=true&role=operator";
-    fetchUsers(query).then(response => {
+    fetchUsers(query, 1, 1000).then(response => {
       if (!response.success || !response.data) {
         if (response.unauthorized) {
           signOut();
@@ -51,7 +51,7 @@ export function NewCaseStatusForm({ crmCase }: NewCaseStatusFormProps) {
         return;
       }
 
-      setUsers(response.data || []);
+      setUsers(response.data.result || []);
     }).catch(error => {
       console.error(error);
     });

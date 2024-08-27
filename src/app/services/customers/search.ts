@@ -1,19 +1,17 @@
 "use server";
-
 import { Customer } from "@/app/types/customer";
+import { SearchResponse } from "@/app/types/search_response";
 import { ServiceResponse } from "@/app/types/service";
 import { cookies } from "next/headers";
 import { crmCoreApiKey, crmCoreEndpoint } from ".";
-import { SearchResponse } from "@/app/types/search_response";
 
-export async function fetchCustomers(query: string): Promise<ServiceResponse<SearchResponse<Customer>>> {
-  console.log("query", query);
-
+export async function fetchCustomers(query: string, page: number, limit: number = 10): Promise<ServiceResponse<SearchResponse<Customer>>> {
   try {
+    page = page - 1;
     const jwt = cookies().get("jwt")?.value;
-    let url = `${crmCoreEndpoint}/crm/core/api/v1/customers`;
+    let url = `${crmCoreEndpoint}/crm/core/api/v1/customers?offset=${page * (limit)}&limit=${limit}`;
     if (query) {
-      url = `${url}?${query}`;
+      url = `${url}&${query}`;
     }
 
     const resp = await fetch(url, {

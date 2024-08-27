@@ -16,7 +16,7 @@ export async function assignOwner(formData: FormData, caseID: string): Promise<S
     const jwt = cookies().get("jwt")?.value;
 
     const session = await getCurrentUser();
-    const author = session?.user_id || '';
+    const author = session?.username || '';
 
     const payload: AssignOwner = {
       owner_id: formData.get("owner")?.toString() || '',

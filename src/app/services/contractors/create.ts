@@ -9,7 +9,7 @@ import { crmCoreApiKey, crmCoreEndpoint } from ".";
 
 export async function createContractor(_currentState: unknown, formData: FormData): Promise<ServiceResponse<CreateContractorResponse>> {
   const session = await getCurrentUser();
-  const author = session?.user_id || '';
+  const author = session?.username || '';
 
   const formDocument = formData.get("document")?.toString() || '';
   const document = removeDocumentSymbols(formDocument);

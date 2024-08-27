@@ -1,11 +1,14 @@
 "use client";
+import { SearchResponse } from '@/app/types/search_response';
 import { User, UserRole } from '@/app/types/user';
 import { EyeIcon } from '@heroicons/react/24/outline';
+import { Pagination } from '@nextui-org/pagination';
 import { useRouter } from 'next/navigation';
 import { roboto } from '../../ui/fonts';
 
 interface UsersTableProps {
-  users: User[];
+  users?: SearchResponse<User>;
+  initialPage?: number;
 }
 
 const roleMap: Record<UserRole, string> = {
@@ -16,11 +19,16 @@ const roleMap: Record<UserRole, string> = {
 
 export default function UsersTable({
   users,
+  initialPage = 1,
 }: UsersTableProps) {
   const router = useRouter();
 
   function handleRowClick(userID: string) {
     router.push(`/users/${userID}`);
+  }
+
+  function handleChangePage(value: number) {
+    router.push(`?page=${value}`);
   }
 
   return (
@@ -56,7 +64,7 @@ export default function UsersTable({
                 </thead>
 
                 <tbody className="divide-y divide-gray-200 text-gray-900">
-                  {users.filter((user) => user.role != UserRole.THAVANNA_ADMIN).map((user) => (
+                  {users?.result.filter((user) => user.role != UserRole.THAVANNA_ADMIN).map((user) => (
                     <tr key={user.user_id} className="group">
                       <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
@@ -88,6 +96,16 @@ export default function UsersTable({
             </div>
           </div>
         </div>
+      </div>
+
+      <div className='mt-2'>
+        <Pagination
+          onChange={handleChangePage}
+          siblings={3}
+          showControls
+          total={Math.ceil(Number((users?.paging.total || 1) / (users?.paging.limit || 1)))}
+          initialPage={Number(initialPage || 1)}
+        />
       </div>
 
       {/* {isDeleteModalOpen && <DeletePartnerModal isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)} partnerID={partnerID} />} */}

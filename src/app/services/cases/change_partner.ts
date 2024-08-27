@@ -17,7 +17,7 @@ export async function changePartner(caseID: string, formData: FormData): Promise
     const jwt = cookies().get("jwt")?.value;
 
     const session = await getCurrentUser();
-    const author = session?.user_id || '';
+    const author = session?.username || '';
 
     const formTargetDate = formData.get("target_date")?.toString() || '';
     const targetDate = new Date(formTargetDate).toISOString();

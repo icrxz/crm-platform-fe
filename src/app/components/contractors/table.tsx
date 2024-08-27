@@ -1,27 +1,29 @@
 "use client";
 import { parseDateTime } from '@/app/libs/date';
 import { parseDocument } from '@/app/libs/parser';
+import { SearchResponse } from '@/app/types/search_response';
 import { EyeIcon } from '@heroicons/react/24/outline';
 import PencilIcon from '@heroicons/react/24/outline/PencilIcon';
 import TrashIcon from '@heroicons/react/24/outline/TrashIcon';
+import { Pagination } from '@nextui-org/pagination';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Modal from '../../components/common/modal';
 import ContractorsSearchBar from '../../components/contractors/search-bar';
-import {
-  Contractor
-} from '../../types/contractor';
+import { Contractor } from '../../types/contractor';
 import { roboto } from '../../ui/fonts';
 import CreateContractorModal from './create-contractor';
 import { DeleteContractorModal } from './delete-contractor';
 import EditContractorModal from './edit-contractor';
 
 interface ContractorsTableProps {
-  contractors: Contractor[];
+  contractors?: SearchResponse<Contractor>;
+  initialPage?: number;
 }
 
 export default function ContractorsTable({
   contractors,
+  initialPage,
 }: ContractorsTableProps) {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -42,6 +44,10 @@ export default function ContractorsTable({
 
   function handleRowClick(partnerID: string) {
     router.push(`/contractors/${partnerID}`);
+  }
+
+  function handleChangePage(value: number) {
+    router.push(`?page=${value}`);
   }
 
   return (
@@ -82,7 +88,7 @@ export default function ContractorsTable({
                 </thead>
 
                 <tbody className="divide-y divide-gray-200 text-gray-900">
-                  {contractors.map((contractor) => (
+                  {contractors?.result.map((contractor) => (
                     <tr
                       key={contractor.contractor_id}
                       className="group"
@@ -138,6 +144,16 @@ export default function ContractorsTable({
             </div>
           </div>
         </div>
+      </div>
+
+      <div className='mt-2'>
+        <Pagination
+          onChange={handleChangePage}
+          siblings={3}
+          showControls
+          total={Math.ceil(Number((contractors?.paging.total || 1) / (contractors?.paging.limit || 1)))}
+          initialPage={Number(initialPage || 1)}
+        />
       </div>
 
       {isFilterModalOpen && <Modal isOpen={isFilterModalOpen} onClose={() => setIsFilterModalOpen(false)}>

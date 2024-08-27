@@ -2,11 +2,11 @@
 import { parseCurrencyToNumber } from "@/app/libs/parser";
 import { getCurrentUser } from "@/app/libs/session";
 import { ServiceResponse } from "@/app/types/service";
-import { CreateTransaction, CreateTransactionResponse, TransactionType } from "@/app/types/transaction";
+import { CreateTransaction, CreateTransactionResponse, Transaction, TransactionType } from "@/app/types/transaction";
 import { cookies } from "next/headers";
 import { crmCoreApiKey, crmCoreEndpoint } from ".";
 
-export async function createTransaction(caseID: string, formData: FormData): Promise<ServiceResponse<CreateTransactionResponse>> {
+export async function createTransactions(caseID: string, transactions: CreateTransaction[]): Promise<ServiceResponse<CreateTransactionResponse>> {
   try {
     if (!caseID) {
       return {
@@ -16,20 +16,13 @@ export async function createTransaction(caseID: string, formData: FormData): Pro
     }
 
     const jwt = cookies().get("jwt")?.value;
-    const url = `${crmCoreEndpoint}/crm/core/api/v1/cases/${caseID}/transactions`;
+    const url = `${crmCoreEndpoint}/crm/core/api/v1/cases/${caseID}/transactions/batch`;
 
     const session = await getCurrentUser();
-    const author = session?.user_id || '';
+    const author = session?.username || '';
 
-    const formValue = formData.get("amount")?.toString() || '';
-    const transactionValue = parseCurrencyToNumber(formValue);
+    const payload: CreateTransaction[] = transactions;
 
-    const payload: CreateTransaction = {
-      type: formData.get("transaction_type")?.toString() as TransactionType || '',
-      value: transactionValue,
-      created_by: author,
-      description: formData.get("description")?.toString(),
-    };
 
     const resp = await fetch(url, {
       method: "POST",

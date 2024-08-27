@@ -1,5 +1,8 @@
 "use client";
+import { SearchResponse } from '@/app/types/search_response';
+import { Pagination } from '@nextui-org/pagination';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { parseDateTime } from '../../libs/date';
 import { CaseFull, caseStatusMap } from '../../types/case';
@@ -9,12 +12,19 @@ import CreateCaseModal from './create-case';
 import CasesSearchBar from './search-bar';
 
 interface CasesTableProps {
-  cases: CaseFull[];
+  cases: SearchResponse<CaseFull>;
+  initialPage?: number;
 }
 
-export default function CasesTable({ cases }: CasesTableProps) {
+export default function CasesTable({ cases, initialPage }: CasesTableProps) {
+  const router = useRouter();
+
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  function handleChangePage(value: number) {
+    router.push(`?page=${value}`);
+  }
 
   return (
     <div className="w-full">
@@ -57,7 +67,7 @@ export default function CasesTable({ cases }: CasesTableProps) {
                 </thead>
 
                 <tbody className="divide-y divide-gray-200 text-gray-900">
-                  {cases.map((crmCase) => (
+                  {cases.result.map((crmCase) => (
                     <tr
                       key={crmCase.case_id}
                       className="group"
@@ -96,6 +106,16 @@ export default function CasesTable({ cases }: CasesTableProps) {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className='mt-2'>
+        <Pagination
+          onChange={handleChangePage}
+          siblings={3}
+          showControls
+          total={Math.ceil(Number((cases?.paging.total || 1) / (cases?.paging.limit || 1)))}
+          initialPage={Number(initialPage || 1)}
+        />
       </div>
 
       {isFilterModalOpen && <Modal isOpen={isFilterModalOpen} onClose={() => setIsFilterModalOpen(false)}>

@@ -5,12 +5,13 @@ import { cookies } from "next/headers";
 import { crmCoreApiKey, crmCoreEndpoint } from ".";
 import { SearchResponse } from "@/app/types/search_response";
 
-export async function fetchCases(query: string): Promise<ServiceResponse<SearchResponse<Case>>> {
+export async function fetchCases(query: string, page: number, limit: number = 10): Promise<ServiceResponse<SearchResponse<Case>>> {
   try {
+    page = page - 1;
     const jwt = cookies().get("jwt")?.value;
-    let url = `${crmCoreEndpoint}/crm/core/api/v1/cases`;
+    let url = `${crmCoreEndpoint}/crm/core/api/v1/cases?offset=${page * limit}&limit=${limit}`;
     if (query) {
-      url = `${url}?${query}`;
+      url = `${url}&${query}`;
     }
 
     const resp = await fetch(url, {
