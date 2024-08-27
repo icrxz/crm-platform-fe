@@ -5,12 +5,13 @@ import { cookies } from "next/headers";
 import { crmCoreApiKey, crmCoreEndpoint } from ".";
 import { SearchResponse } from "@/app/types/search_response";
 
-export async function fetchContractors(query: string): Promise<ServiceResponse<SearchResponse<Contractor>>> {
+export async function fetchContractors(query: string, page: number, limit: number = 10): Promise<ServiceResponse<SearchResponse<Contractor>>> {
   console.log("query", query);
 
   try {
+    page = page -1;
     const jwt = cookies().get("jwt")?.value;
-    const url = `${crmCoreEndpoint}/crm/core/api/v1/contractors`;
+    const url = `${crmCoreEndpoint}/crm/core/api/v1/contractors?offset=${page * (limit)}&limit=${limit}`;
 
     const resp = await fetch(url, {
       method: "GET",

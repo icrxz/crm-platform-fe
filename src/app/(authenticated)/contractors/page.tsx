@@ -10,14 +10,16 @@ export const metadata: Metadata = {
   title: 'Seguradoras',
 };
 
-export default async function Page({
-  searchParams,
-}: {
+type ContractorPageParams = {
   searchParams?: {
     query?: string;
-    page?: string;
+    page?: number;
   };
-}) {
+};
+
+export default async function Page({
+  searchParams,
+}: ContractorPageParams) {
   const session = await getCurrentUser();
   if (!session) {
     signOut();
@@ -25,12 +27,12 @@ export default async function Page({
 
   const query = searchParams?.query || '';
 
-  const contractors = await fetchContractors(query);
+  const contractors = await fetchContractors(query, searchParams?.page || 1);
 
   return (
     <main>
       <Suspense fallback={<p>Carregando seguradoras...</p>}>
-        <ContractorsTable contractors={contractors.data?.result || []} />
+        <ContractorsTable contractors={contractors.data}  initialPage={searchParams?.page} />
       </Suspense>
     </main>
   );

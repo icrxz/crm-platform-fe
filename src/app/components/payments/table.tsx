@@ -1,7 +1,9 @@
 "use client";
 import { parseDateTime } from '@/app/libs/date';
 import { parseDocument, parseToCurrency } from '@/app/libs/parser';
+import { SearchResponse } from '@/app/types/search_response';
 import { CheckIcon } from '@heroicons/react/24/outline';
+import { Pagination } from '@nextui-org/pagination';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { TransactionItem, TransactionStatus } from '../../types/transaction';
@@ -9,7 +11,8 @@ import { roboto } from '../../ui/fonts';
 import { ConfirmPaymentModal } from './confirm-payment';
 
 interface PaymentTableProps {
-  transactions: TransactionItem[];
+  transactions: SearchResponse<TransactionItem>;
+  initialPage?: number;
 }
 
 const transactionStatusTranslate: Record<string, string> = {
@@ -18,6 +21,7 @@ const transactionStatusTranslate: Record<string, string> = {
 
 export default function PaymentTable({
   transactions,
+  initialPage,
 }: PaymentTableProps) {
   const router = useRouter();
   const [isConfirmPaymentModal, setIsConfirmPaymentModal] = useState(false);
@@ -25,6 +29,10 @@ export default function PaymentTable({
 
   function handleRowClick(paymentID: string) {
     router.push(`/payments/${paymentID}`);
+  }
+
+  function handleChangePage(value: number) {
+    router.push(`?page=${value}`);
   }
 
   function handleConfirmPayment(transaction: TransactionItem) {
@@ -71,7 +79,7 @@ export default function PaymentTable({
                 </thead>
 
                 <tbody className="divide-y divide-gray-200 text-gray-900">
-                  {transactions.map((transaction) => (
+                  {transactions?.result.map((transaction) => (
                     <tr key={transaction.case_id} className="group">
                       <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
@@ -122,6 +130,16 @@ export default function PaymentTable({
             </div>
           </div>
         </div>
+      </div>
+
+      <div className='mt-2'>
+        <Pagination
+          onChange={handleChangePage}
+          siblings={3}
+          showControls
+          total={Math.ceil(Number((transactions?.paging.total || 1) / (transactions?.paging.limit || 1)))}
+          initialPage={Number(initialPage || 1)}
+        />
       </div>
 
       {isConfirmPaymentModal && <ConfirmPaymentModal

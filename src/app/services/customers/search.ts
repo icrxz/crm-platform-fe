@@ -11,7 +11,7 @@ export async function fetchCustomers(query: string, page: number, limit: number 
     const jwt = cookies().get("jwt")?.value;
     let url = `${crmCoreEndpoint}/crm/core/api/v1/customers?offset=${page * (limit)}&limit=${limit}`;
     if (query) {
-      url = `${url}?${query}`;
+      url = `${url}&${query}`;
     }
 
     const resp = await fetch(url, {

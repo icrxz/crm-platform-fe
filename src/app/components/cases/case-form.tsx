@@ -46,7 +46,7 @@ export default function CaseForm({ onSubmit, submitState, onClose }: CaseFormPro
   }
 
   useEffect(() => {
-    fetchContractors("active=true").then(res => {
+    fetchContractors("active=true", 1, 1000).then(res => {
       setContractors(res.data?.result || []);
     });
   }, []);
