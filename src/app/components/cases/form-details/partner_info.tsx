@@ -35,6 +35,7 @@ export function PartnerInfoStatusForm({ crmCase }: PartnerInfoFormProps) {
         setErrorMessage(response.message || "");
         return;
       }
+
       let partners = response.data.result;
       partners = partners.
         filter(partner => partner.region == crmCase.region).

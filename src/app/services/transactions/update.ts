@@ -1,14 +1,13 @@
 "use server";
-import { parseCurrencyToNumber } from "@/app/libs/parser";
 import { getCurrentUser } from "@/app/libs/session";
 import { ServiceResponse } from "@/app/types/service";
-import { CreateTransaction, CreateTransactionResponse, Transaction, TransactionType } from "@/app/types/transaction";
+import { CreateTransactionResponse, UpdateTransaction } from "@/app/types/transaction";
 import { cookies } from "next/headers";
 import { crmCoreApiKey, crmCoreEndpoint } from ".";
 
-export async function createTransactions(caseID: string, transactions: CreateTransaction[]): Promise<ServiceResponse<CreateTransactionResponse>> {
+export async function updateTransaction(transactionID: string, value: number): Promise<ServiceResponse<CreateTransactionResponse>> {
   try {
-    if (!caseID) {
+    if (!transactionID) {
       return {
         success: false,
         message: "ID do caso não informado",
@@ -16,15 +15,18 @@ export async function createTransactions(caseID: string, transactions: CreateTra
     }
 
     const jwt = cookies().get("jwt")?.value;
-    const url = `${crmCoreEndpoint}/crm/core/api/v1/cases/${caseID}/transactions/batch`;
+    const url = `${crmCoreEndpoint}/crm/core/api/v1/transactions/${transactionID}`;
 
     const session = await getCurrentUser();
     const author = session?.username || '';
 
-    const payload: CreateTransaction[] = transactions;
+    const payload: UpdateTransaction = {
+      updated_by: author,
+      value: value,
+    };
 
     const resp = await fetch(url, {
-      method: "POST",
+      method: "PUT",
       body: JSON.stringify(payload),
       headers: {
         "Content-Type": 'application/json',
@@ -45,7 +47,7 @@ export async function createTransactions(caseID: string, transactions: CreateTra
 
     const respData = await resp.json() as CreateTransactionResponse;
     return {
-      message: "transação criada com sucesso",
+      message: "transação alterada com sucesso",
       success: true,
       data: respData,
     };

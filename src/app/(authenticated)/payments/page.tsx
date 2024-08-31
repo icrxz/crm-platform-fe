@@ -58,9 +58,21 @@ async function getData(page: number): Promise<SearchResponse<TransactionItem>> {
       external_reference: caseItem.external_reference,
       created_at: caseItem.updated_at,
       status: TransactionStatus.PENDING,
-      value: transactionVal,
+      total: transactionVal,
       partner_document: (partner as Partner).document,
       partner_name: `${(partner as Partner).first_name} ${(partner as Partner).last_name}`,
+      mo: {
+        transaction_id: outgoingTransactions.filter((t) => t.description === "MO")[0]?.transaction_id || "",
+        value: outgoingTransactions.filter((t) => t.description === "MO")[0]?.value || 0,
+      },
+      transport: {
+        transaction_id: outgoingTransactions.filter((t) => t.description === "Deslocamento Técnico")[0]?.transaction_id || "",
+        value: outgoingTransactions.filter((t) => t.description === "Deslocamento Técnico")[0]?.value || 0,
+      },
+      parts: {
+        transaction_id: outgoingTransactions.filter((t) => t.description === "Peças técnico")[0]?.transaction_id || "",
+        value: outgoingTransactions.filter((t) => t.description === "Peças técnico")[0]?.value || 0,
+      },
     } as TransactionItem;
   }));
 

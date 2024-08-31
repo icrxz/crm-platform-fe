@@ -27,6 +27,10 @@ export type CreateCaseResponse = {
   customer_id?: string;
 };
 
+export type CreateCaseBatchResponse = {
+  case_ids: string[];
+};
+
 export type Case = {
   case_id: string;
   owner_id?: string;

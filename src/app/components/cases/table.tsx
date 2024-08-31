@@ -10,6 +10,7 @@ import { roboto } from '../../ui/fonts';
 import Modal from '../common/modal';
 import CreateCaseModal from './create-case';
 import CasesSearchBar from './search-bar';
+import { CreateCaseBatchModal } from './batch-form-modal';
 
 interface CasesTableProps {
   cases: SearchResponse<CaseFull>;
@@ -21,6 +22,7 @@ export default function CasesTable({ cases, initialPage }: CasesTableProps) {
 
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isCreateBatchModalOpen, setIsCreateBatchModalOpen] = useState(false);
 
   function handleChangePage(value: number) {
     router.push(`?page=${value}`);
@@ -32,7 +34,7 @@ export default function CasesTable({ cases, initialPage }: CasesTableProps) {
         Casos
       </h1>
 
-      <CasesSearchBar setIsCreationModalOpen={setIsCreateModalOpen} setIsFilterModalOpen={setIsFilterModalOpen} />
+      <CasesSearchBar setIsCreationModalOpen={setIsCreateModalOpen} setIsFilterModalOpen={setIsFilterModalOpen} setIsCreationBatchModalOpen={setIsCreateBatchModalOpen} />
 
       <div className="mt-6 flow-root">
         <div className="overflow-x-auto">
@@ -125,6 +127,8 @@ export default function CasesTable({ cases, initialPage }: CasesTableProps) {
       </Modal>}
 
       {isCreateModalOpen && <CreateCaseModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />}
+
+      {isCreateBatchModalOpen && <CreateCaseBatchModal isOpen={isCreateBatchModalOpen} onClose={() => setIsCreateBatchModalOpen(false)} />}
     </div>
   );
 }
