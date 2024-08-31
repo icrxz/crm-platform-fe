@@ -17,13 +17,13 @@ export async function uploadAttachments(formData: FormData): Promise<CreateAttac
 
   const uploads: CreateAttachment[] = await Promise.all(files.map(async (file) => {
     const fileBuffer = await getFileBuffer(file);
-    const reducedFile = await reduceFile(fileBuffer);
+    // const reducedFile = await reduceFile(fileBuffer);
     const fileKey = `${uuidv4()}.${file.type.split('/')[1]}`;
 
     const putS3Attachment = new PutObjectCommand({
       Bucket: process.env.AWS_S3_BUCKET_NAME as string,
       Key: fileKey,
-      Body: reducedFile,
+      Body: fileBuffer,
       ContentType: file.type,
     });
 
