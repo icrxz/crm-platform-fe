@@ -95,6 +95,7 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
           <div className="flex items-center space-x-2 mb-2">
             <p className="text-sm font-medium text-gray-500">Tempo decorrido:</p>
             <p className="text-sm font-medium text-gray-900">{timeElapsed(new Date(crmCase.target_date!!), new Date())}</p>
+            <Button type="button" size="sm" onClick={() => setOpenTargetDateModal(true)}>Alterar data de visita</Button>
           </div>
         )}
 

@@ -44,9 +44,21 @@ export enum TransactionStatus {
 export type TransactionItem = {
   case_id: string;
   external_reference: string;
-  value: number;
+  total: number;
   status: TransactionStatus;
   created_at: string;
   partner_name?: string;
   partner_document?: string;
+  mo: {
+    transaction_id: string;
+    value: number;
+  };
+  transport: {
+    transaction_id: string;
+    value: number;
+  };
+  parts: {
+    transaction_id: string;
+    value: number;
+  };
 };

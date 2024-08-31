@@ -119,12 +119,12 @@ export function TransactionStatusForm({ crmCase }: TransactionStatusFormProps) {
   return (
     <Card title="Adicionar transações" titleSize="text-xl">
       <form action={dispatch} className="px-5">
-        <div className="mb-4 w-full">
+        <div className="mb-4 w-full justify-evenly">
           {caseTransactions.map((transaction) => (
             <div key={transaction.transaction_id} className="flex gap-4 mb-2  items-center">
               <div className="flex gap-4 items-center">
                 <label className="block text-sm font-medium text-gray-700" htmlFor="amount">
-                  Valor
+                  {transaction.description}:
                 </label>
 
                 <InputNumberFormat
@@ -141,8 +141,6 @@ export function TransactionStatusForm({ crmCase }: TransactionStatusFormProps) {
                   value={transaction.value}
                   onChange={(e) => handleTransactionUpdate(transaction.transaction_id, e)}
                 />
-
-                <p className="block text-sm font-medium text-gray-700">{transaction.description}</p>
               </div>
             </div>
           ))}

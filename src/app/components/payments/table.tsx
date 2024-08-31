@@ -2,13 +2,14 @@
 import { parseDateTime } from '@/app/libs/date';
 import { parseDocument, parseToCurrency } from '@/app/libs/parser';
 import { SearchResponse } from '@/app/types/search_response';
-import { CheckIcon } from '@heroicons/react/24/outline';
+import { CheckIcon, PencilIcon } from '@heroicons/react/24/outline';
 import { Pagination } from '@nextui-org/pagination';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { TransactionItem, TransactionStatus } from '../../types/transaction';
 import { roboto } from '../../ui/fonts';
 import { ConfirmPaymentModal } from './confirm-payment';
+import { EditPaymentModal } from './edit-payment';
 
 interface PaymentTableProps {
   transactions: SearchResponse<TransactionItem>;
@@ -25,7 +26,8 @@ export default function PaymentTable({
 }: PaymentTableProps) {
   const router = useRouter();
   const [isConfirmPaymentModal, setIsConfirmPaymentModal] = useState(false);
-  const [selectedTransaction, setSelectedTransaction] = useState<TransactionItem | null>(null);
+  const [isEditPaymentModal, setIsEditPaymentModal] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState<TransactionItem>();
 
   function handleRowClick(paymentID: string) {
     router.push(`/payments/${paymentID}`);
@@ -38,6 +40,11 @@ export default function PaymentTable({
   function handleConfirmPayment(transaction: TransactionItem) {
     setSelectedTransaction(transaction);
     setIsConfirmPaymentModal(true);
+  }
+
+  function handleEditPayment(transaction: TransactionItem) {
+    setSelectedTransaction(transaction);
+    setIsEditPaymentModal(true);
   }
 
   return (
@@ -64,7 +71,16 @@ export default function PaymentTable({
                       Documento
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium">
-                      Valor
+                      MO
+                    </th>
+                    <th scope="col" className="px-4 py-5 font-medium">
+                      Deslocamento
+                    </th>
+                    <th scope="col" className="px-4 py-5 font-medium">
+                      Peças
+                    </th>
+                    <th scope="col" className="px-4 py-5 font-medium">
+                      Total
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium">
                       Status
@@ -97,7 +113,16 @@ export default function PaymentTable({
                         </div>
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {parseToCurrency(transaction.value)}
+                        {parseToCurrency(transaction.mo.value)}
+                      </td>
+                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                        {parseToCurrency(transaction.transport.value)}
+                      </td>
+                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                        {parseToCurrency(transaction.parts.value)}
+                      </td>
+                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                        {parseToCurrency(transaction.total)}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                         {transactionStatusTranslate[transaction.status]}
@@ -107,19 +132,22 @@ export default function PaymentTable({
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                         <div className='flex gap-2'>
-                          {/* <button
-                            className="text-blue-500 hover:text-blue-700"
-                            onClick={() => handleRowClick(transaction.case_id)}>
-                            <EyeIcon className="h-5 w-5" />
-                          </button> */}
-
                           {transaction.status == TransactionStatus.PENDING &&
-                            <button
-                              className="text-green-500 hover:text-green-700"
-                              onClick={() => handleConfirmPayment(transaction)}
-                            >
-                              <CheckIcon className='w-5 md:w-6' />
-                            </button>
+                            <>
+                              <button
+                                className="text-green-500 hover:text-green-700"
+                                onClick={() => handleConfirmPayment(transaction)}
+                              >
+                                <CheckIcon className='w-5 md:w-6' />
+                              </button>
+
+                              <button
+                                className="text-blue-600 hover:text-blue-900"
+                                onClick={() => handleEditPayment(transaction)}
+                              >
+                                <PencilIcon className='w-5 md:w-6' />
+                              </button>
+                            </>
                           }
                         </div>
                       </td>
@@ -147,6 +175,10 @@ export default function PaymentTable({
         onClose={() => setIsConfirmPaymentModal(false)}
         caseId={selectedTransaction?.case_id || ''}
       />}
+
+      {isEditPaymentModal && <EditPaymentModal
+        isOpen={isEditPaymentModal}
+        onClose={() => setIsEditPaymentModal(false)} transaction={selectedTransaction} />}
     </div>
   );
 }
