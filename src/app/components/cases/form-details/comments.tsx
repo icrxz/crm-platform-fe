@@ -35,8 +35,7 @@ export function CommentDetails({ crmCase }: CommentDetailsProps) {
                     </div>
 
                     {comment.attachments && (
-                      <div className="mt-2 gap-4 max-w-fit">
-                        <div className="flex mt-2 gap-4">
+                        <div className="grid grid-cols-5 gap-4">
                           {comment.attachments.map(image => (
                             <div key={image.attachment_id} className="p-2 bg-gray-100 rounded-lg">
                               <Image
@@ -49,7 +48,6 @@ export function CommentDetails({ crmCase }: CommentDetailsProps) {
                           ))}
                           {/* <ImageCarrousel images={comment.attachments} /> */}
                         </div>
-                      </div>
                     )}
                   </div>
                 );

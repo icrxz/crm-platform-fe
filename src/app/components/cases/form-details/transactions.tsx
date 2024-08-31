@@ -27,34 +27,34 @@ type TransactionForm = {
 const mappedTransactions: TransactionForm[] = [
   {
     transaction_id: "0",
-    type: TransactionType.INCOMING,
-    description: "Cobrado seguradora",
-    value: "",
-  },
-  {
-    transaction_id: "1",
-    type: TransactionType.INCOMING,
-    description: "Deslocamento",
-    value: "",
-  },
-  {
-    transaction_id: "2",
     type: TransactionType.OUTGOING,
     description: "MO",
     value: "",
   },
   {
-    transaction_id: "3",
+    transaction_id: "1",
     type: TransactionType.OUTGOING,
     description: "Peças técnico",
     value: "",
   },
   {
-    transaction_id: "4",
+    transaction_id: "2",
     type: TransactionType.OUTGOING,
     description: "Deslocamento Técnico",
     value: "",
-  }
+  },
+  {
+    transaction_id: "3",
+    type: TransactionType.INCOMING,
+    description: "Cobrado seguradora",
+    value: "",
+  },
+  {
+    transaction_id: "4",
+    type: TransactionType.INCOMING,
+    description: "Deslocamento",
+    value: "",
+  },
 ]
 
 export function TransactionStatusForm({ crmCase }: TransactionStatusFormProps) {
@@ -119,12 +119,13 @@ export function TransactionStatusForm({ crmCase }: TransactionStatusFormProps) {
   return (
     <Card title="Adicionar transações" titleSize="text-xl">
       <form action={dispatch} className="px-5">
-        <div className="mb-4 w-full justify-evenly">
+
+        <div className="grid mb-4 gap-4 grid-cols-3">
           {caseTransactions.map((transaction) => (
-            <div key={transaction.transaction_id} className="flex gap-4 mb-2  items-center">
-              <div className="flex gap-4 items-center">
+            <div key={transaction.transaction_id} className="flex gap-4 items-center">
+              <div className="gap-4 items-center">
                 <label className="block text-sm font-medium text-gray-700" htmlFor="amount">
-                  {transaction.description}:
+                  {transaction.description}
                 </label>
 
                 <InputNumberFormat
