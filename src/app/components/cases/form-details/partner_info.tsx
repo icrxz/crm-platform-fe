@@ -4,7 +4,8 @@ import { changePartner } from "@/app/services/cases";
 import { fetchPartners } from "@/app/services/partners";
 import { CaseFull } from "@/app/types/case";
 import { Partner } from "@/app/types/partner";
-import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import { ExclamationCircleIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
 import { InputMask } from "@react-input/mask";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -20,29 +21,35 @@ interface PartnerInfoFormProps {
 export function PartnerInfoStatusForm({ crmCase }: PartnerInfoFormProps) {
   const [partners, setPartners] = useState<Partner[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
+  const [loadingPartners, setLoadingPartners] = useState(false);
 
   const { refresh } = useRouter();
   const { showSnackbar } = useSnackbar();
   const [_, dispatch] = useFormState(onSubmit, null);
 
   useEffect(() => {
-    const query = "active=true";
-    fetchPartners(query, 1, 1000).then(response => {
-      if (!response.success || !response.data) {
-        if (response.unauthorized) {
-          signOut();
+    setLoadingPartners(true);
+    try {
+      const query = "active=true";
+      fetchPartners(query, 1, 1000).then(response => {
+        if (!response.success || !response.data) {
+          if (response.unauthorized) {
+            signOut();
+          }
+          setErrorMessage(response.message || "");
+          return;
         }
-        setErrorMessage(response.message || "");
-        return;
-      }
 
-      let partners = response.data.result;
-      partners = partners.
-        filter(partner => partner.region == crmCase.region).
-        sort((a, b) => a.first_name.localeCompare(b.first_name));
+        let partners = response.data.result;
+        partners = partners.
+          filter(partner => partner.region == crmCase.region).
+          sort((a, b) => a.first_name.localeCompare(b.first_name));
 
-      setPartners(partners);
-    });
+        setPartners(partners);
+      });
+    } finally {
+      setLoadingPartners(false);
+    }
   }, []);
 
   function onSubmit(_currentState: unknown, formData: FormData) {
@@ -64,22 +71,36 @@ export function PartnerInfoStatusForm({ crmCase }: PartnerInfoFormProps) {
     <Card title="Atribuir técnico" titleSize="text-xl">
       <form action={dispatch} className="px-5">
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="partner">
-            Técnico responsável
-          </label>
-
-          <select
-            className="w-full h-10 p-2 border border-gray-300 rounded-md"
+          <Autocomplete
+            label="Técnico responsável"
+            placeholder="Selecione um técnico"
+            classNames={{
+              listboxWrapper: "max-h-[320px]",
+              selectorButton: "text-default-500",
+              base: "text-sm font-medium text-gray-700",
+            }}
+            isRequired
             name="partner"
             id="partner"
+            labelPlacement="outside"
             required
+            variant="bordered"
+            radius="sm"
+            inputProps={{
+              classNames: {
+                input: "border-none focus:ring-0",
+                inputWrapper: "bg-white border border-gray-300",
+              }
+            }}
+            startContent={<MagnifyingGlassIcon className="h-5 w-5 text-gray-500" />}
+            isLoading={loadingPartners}
           >
             {partners.map(partner => {
-              return <option key={partner.partner_id} value={partner.partner_id}>
+              return <AutocompleteItem key={partner.partner_id} value={partner.partner_id}>
                 {`${partner.first_name} ${partner.last_name} - ${partner.shipping.city} / ${partner.shipping.state}`}
-              </option>;
+              </AutocompleteItem >;
             })}
-          </select>
+          </Autocomplete>
         </div>
 
         <div className="mb-4">
@@ -91,7 +112,7 @@ export function PartnerInfoStatusForm({ crmCase }: PartnerInfoFormProps) {
             type="datetime-local"
             id="target_date"
             name="target_date"
-            className="w-full h-10 p-2 border border-gray-300 rounded-md"
+            className="w-full h-10 p-2 border border-gray-300 rounded-md text-sm text-gray-600"
             required
             mask="__/__/____"
             replacement={{ _: /\d/ }}

@@ -59,7 +59,7 @@ async function getData(page: number): Promise<SearchResponse<TransactionItem>> {
       created_at: caseItem.updated_at,
       status: TransactionStatus.PENDING,
       total: transactionVal,
-      partner_document: (partner as Partner).document,
+      partner_document: (partner as Partner)?.document,
       partner_name: `${(partner as Partner).first_name} ${(partner as Partner).last_name}`,
       mo: {
         transaction_id: outgoingTransactions.filter((t) => t.description === "MO")[0]?.transaction_id || "",

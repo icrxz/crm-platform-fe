@@ -23,7 +23,7 @@ export async function createPartner(_currentState: unknown, formData: FormData):
     const document = removeDocumentSymbols(formDocument);
     const isCPF = document.length === 11;
 
-    const payload = {
+    const payload: CreatePartner = {
       first_name: formData.get('first_name')?.toString() || '',
       last_name: formData.get('last_name')?.toString() || '',
       document,
@@ -41,7 +41,9 @@ export async function createPartner(_currentState: unknown, formData: FormData):
         phone_number: formData.get('phone')?.toString() || '',
       },
       created_by: author,
-    } as CreatePartner;
+      payment_key: formData.get('payment_key')?.toString() || '',
+      payment_key_option: formData.get('payment_key_option')?.toString() || '',
+    };
 
     const resp = await fetch(url, {
       method: "POST",

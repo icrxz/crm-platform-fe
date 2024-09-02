@@ -10,6 +10,8 @@ export type CreatePartner = {
   shipping: Address;
   personal_contact?: Contact;
   created_by: string;
+  payment_key: string;
+  payment_key_option: string;
 };
 
 export type EditPartner = {
@@ -20,6 +22,8 @@ export type EditPartner = {
   partner_type: string;
   shipping: Address;
   personal_contact?: Contact;
+  payment_key?: string;
+  payment_key_option?: string;
   updated_by: string;
 };
 
@@ -43,4 +47,6 @@ export type Partner = {
   updated_by: string;
   active: boolean;
   description:string;
+  payment_key?: string;
+  payment_key_option?: string;
 };

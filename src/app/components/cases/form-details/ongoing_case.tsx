@@ -31,6 +31,8 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
 
   const isBeforeTargetDate = new Date() < new Date(crmCase.target_date!!);
 
+  const placeholderInfo = isBeforeTargetDate ? 'Adicione comentários ao caso' : 'Adicione informações sobre o caso e selecione imagens para anexar ao laudo, clicando no botão "Enviar para laudo"';
+
   async function onSubmit(_currentState: unknown, formData: FormData) {
     let attachments: CreateAttachment[] = [];
 
@@ -109,7 +111,7 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
             name="content"
             className="w-full h-32 p-2 border border-gray-300 rounded-md"
             rows={3}
-            placeholder="Adicione informações adicionais sobre o caso..."
+            placeholder={placeholderInfo}
             value={content}
             onChange={event => setContent(event.target.value)}
             required
@@ -121,8 +123,8 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
         </div>
 
         <div className="flex gap-4">
-          <Button type="button" onClick={handleAddComment} disabled={loadingComment}>Enviar</Button>
-          {!isBeforeTargetDate && <Button type="submit" disabled={loadingComment}>Finalizar</Button>}
+          <Button type="button" onClick={handleAddComment} disabled={loadingComment}>Adicionar comentário</Button>
+          {!isBeforeTargetDate && <Button type="submit" disabled={loadingComment}>Enviar para laudo</Button>}
         </div>
       </form>
 
