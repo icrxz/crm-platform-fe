@@ -22,6 +22,7 @@ export function PartnerInfoStatusForm({ crmCase }: PartnerInfoFormProps) {
   const [partners, setPartners] = useState<Partner[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [loadingPartners, setLoadingPartners] = useState(false);
+  const [selectedPartner, setSelectedPartner] = useState<string>();
 
   const { refresh } = useRouter();
   const { showSnackbar } = useSnackbar();
@@ -41,9 +42,7 @@ export function PartnerInfoStatusForm({ crmCase }: PartnerInfoFormProps) {
         }
 
         let partners = response.data.result;
-        partners = partners.
-          filter(partner => partner.region == crmCase.region).
-          sort((a, b) => a.first_name.localeCompare(b.first_name));
+        partners = partners.sort((a, b) => a.first_name.localeCompare(b.first_name));
 
         setPartners(partners);
       });
@@ -53,6 +52,8 @@ export function PartnerInfoStatusForm({ crmCase }: PartnerInfoFormProps) {
   }, []);
 
   function onSubmit(_currentState: unknown, formData: FormData) {
+    formData.set("partner", selectedPartner?.toString() || '')
+
     changePartner(crmCase.case_id, formData).then(response => {
       if (!response.success) {
         if (response.unauthorized) {
@@ -80,8 +81,6 @@ export function PartnerInfoStatusForm({ crmCase }: PartnerInfoFormProps) {
               base: "text-sm font-medium text-gray-700",
             }}
             isRequired
-            name="partner"
-            id="partner"
             labelPlacement="outside"
             required
             variant="bordered"
@@ -94,12 +93,15 @@ export function PartnerInfoStatusForm({ crmCase }: PartnerInfoFormProps) {
             }}
             startContent={<MagnifyingGlassIcon className="h-5 w-5 text-gray-500" />}
             isLoading={loadingPartners}
+            selectedKey={selectedPartner}
+            onSelectionChange={(key) => setSelectedPartner(key?.toString())}
+            defaultItems={partners}
           >
-            {partners.map(partner => {
-              return <AutocompleteItem key={partner.partner_id} value={partner.partner_id}>
-                {`${partner.first_name} ${partner.last_name} - ${partner.shipping.city} / ${partner.shipping.state}`}
-              </AutocompleteItem >;
-            })}
+            {(item) => (
+              <AutocompleteItem key={item.partner_id}>
+                {`${item.first_name} ${item.last_name} - ${item.shipping.city} / ${item.shipping.state}`}
+              </AutocompleteItem >
+            )}
           </Autocomplete>
         </div>
 
