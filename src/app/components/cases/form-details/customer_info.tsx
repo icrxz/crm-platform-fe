@@ -31,6 +31,11 @@ export function CustomerInfoStatusForm({ crmCase }: CustomerInfoStatusFormProps)
       attachments = response || [];
     });
 
+    if (attachments.length <= 0) {
+      setErrorMessage("Deve haver no mínimo 1 anexo.");
+      return;
+    }
+
     changeStatus(crmCase.case_id, CaseStatus.WAITING_PARTNER, formData, attachments).then(response => {
       if (!response.success) {
         if (response.unauthorized) {
@@ -60,7 +65,7 @@ export function CustomerInfoStatusForm({ crmCase }: CustomerInfoStatusFormProps)
             name="content"
             className="w-full h-32 p-2 border border-gray-300 rounded-md"
             rows={3}
-            placeholder="Digite a descrição do caso"
+            placeholder="Descreva o problema relatado pelo cliente e selecione as imagens para o laudo"
             required
           />
         </div>

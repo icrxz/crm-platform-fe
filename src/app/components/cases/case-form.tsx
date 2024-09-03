@@ -158,7 +158,7 @@ export default function CaseForm({ onSubmit, submitState, onClose }: CaseFormPro
                 className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
                 id="description"
                 name="description"
-                placeholder="Digite a descrição"
+                placeholder="Insira a descrição da seguradora"
                 required
               />
             </div>

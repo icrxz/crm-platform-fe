@@ -25,7 +25,7 @@ export default async function Page({ searchParams }: UserPageParams) {
   }
 
   const query = searchParams?.query || '';
-  const { data: users } = await fetchUsers(query, (searchParams?.page || 1));
+  const { data: users } = await fetchUsers(query+'&role=operator&role=admin', (searchParams?.page || 1));
 
   return (
     <main>
