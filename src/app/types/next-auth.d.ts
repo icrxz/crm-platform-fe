@@ -10,6 +10,14 @@ declare module "next-auth" {
       user_id: string;
       role: UserRole;
       username: string;
+      isFirstLogin: boolean;
     } & DefaultSession["user"];
+  }
+
+  interface User {
+    user_id: string;
+    role: string;
+    username: string;
+    is_first_login: boolean;
   }
 }

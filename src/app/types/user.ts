@@ -13,6 +13,16 @@ export type User = {
   active: boolean;
 };
 
+export type UpdateUser = {
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+  active?: boolean;
+  password?: string;
+  first_login_completed?: boolean;
+  updated_by: string;
+};
+
 export enum UserRole {
   THAVANNA_ADMIN = "thavanna_admin",
   ADMIN = "admin",

@@ -65,9 +65,10 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         console.log(user);
 
-        token.user_id = (user as unknown as User).user_id;
-        token.role = (user as unknown as User).role;
-        token.username = (user as unknown as User).username;
+        token.user_id = user.user_id;
+        token.role = user.role;
+        token.username = user.username;
+        token.is_first_login = user.is_first_login;
       }
       return token;
     },
@@ -76,6 +77,7 @@ export const authOptions: NextAuthOptions = {
         session.user.user_id = token.user_id as string;
         session.user.role = token.role as UserRole;
         session.user.username = token.username as string;
+        session.user.isFirstLogin = token.is_first_login as boolean;
       }
       return session;
     },

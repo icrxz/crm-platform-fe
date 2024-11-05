@@ -1,41 +1,42 @@
 "use server";
 import { getCurrentUser } from "@/app/libs/session";
 import { ServiceResponse } from "@/app/types/service";
-import { CreateTransaction, CreateTransactionResponse } from "@/app/types/transaction";
+import { UpdateUser } from "@/app/types/user";
 import { cookies } from "next/headers";
 import { crmCoreApiKey, crmCoreEndpoint } from ".";
 
-export async function createTransactions(caseID: string, transactions: CreateTransaction[]): Promise<ServiceResponse<CreateTransactionResponse>> {
+export async function updateUser(userID: string, update: UpdateUser): Promise<ServiceResponse<null>> {
   try {
-    if (!caseID) {
+    if (userID == "") {
       return {
         success: false,
-        message: "ID do caso não informado",
+        message: "ID do usuário não informado",
       };
     }
 
     const jwt = cookies().get("jwt")?.value;
-    const url = `${crmCoreEndpoint}/crm/core/api/v1/cases/${caseID}/transactions/batch`;
-
+    const url = `${crmCoreEndpoint}/crm/core/api/v1/users/${userID}`;
     const session = await getCurrentUser();
     const author = session?.username || '';
 
-    const payload: CreateTransaction[] = transactions;
+    const payload: UpdateUser = {
+      ...update,
+      updated_by: author,
+    };
 
     const resp = await fetch(url, {
-      method: "POST",
-      body: JSON.stringify(payload),
+      method: "PUT",
       headers: {
         "Content-Type": 'application/json',
         "X-API-Key": crmCoreApiKey || '',
-        "Authorization": `Bearer ${jwt}`,
-        "X-Author": author,
+        "Authorization": `Bearer ${jwt}`
       },
+      body: JSON.stringify(payload),
     });
 
     if (!resp.ok) {
       const unauthorized = resp.status === 401;
-      const errorMessage = unauthorized ? "usuário não autorizado" : "falha na criação da transação";
+      const errorMessage = unauthorized ? "usuário não autorizado" : "falha na atualização do usuário";
       return {
         success: false,
         message: errorMessage,
@@ -43,11 +44,9 @@ export async function createTransactions(caseID: string, transactions: CreateTra
       };
     }
 
-    const respData = await resp.json() as CreateTransactionResponse;
     return {
-      message: "transação criada com sucesso",
       success: true,
-      data: respData,
+      message: "usuário atualizado com sucesso",
     };
   } catch (error) {
     return {

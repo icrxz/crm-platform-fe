@@ -6,6 +6,7 @@ import { Dispatch, SetStateAction, useEffect } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { roboto } from "../../ui/fonts";
 import { Button } from "../common/button";
+import { parseDocument } from "@/app/libs/parser";
 
 interface CustomerFormProps {
   customer?: Customer;
@@ -105,7 +106,7 @@ export default function CustomerForm({ onClose, onSubmit, customer, submitState 
                   mask="___.___.___-__"
                   replacement={{ _: /\d/ }}
                   required
-                  defaultValue={customer?.document || ''}
+                  defaultValue={parseDocument(customer?.document || '')}
                 />
               </div>
             </div>
