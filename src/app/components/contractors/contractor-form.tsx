@@ -5,6 +5,7 @@ import { InputMask } from "@react-input/mask";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { Button } from "../common/button";
+import { parseDocument } from "@/app/libs/parser";
 
 interface ContractorFormProps {
   contractor?: Contractor;
@@ -28,7 +29,7 @@ export function ContractorForm({ onClose, onSubmit, contractor, submitState }: C
       <div className="flex-1 rounded-lg">
         <h1 className={`${roboto.className} mb-5 text-2xl`}>
           {contractor ? 'Edite a seguradora' : 'Cadastre a seguradora'}
-          <input type="hidden" name="partner_id" value={contractor?.contractor_id || ''} />
+          <input type="hidden" name="contractor_id" value={contractor?.contractor_id || ''} />
         </h1>
 
         <div className="w-full">
@@ -92,7 +93,7 @@ export function ContractorForm({ onClose, onSubmit, contractor, submitState }: C
                   required
                   mask="__.___.___/____-__"
                   replacement={{ _: /\d/ }}
-                  defaultValue={contractor?.document || ''}
+                  defaultValue={parseDocument(contractor?.document || '')}
                 />
               </div>
             </div>

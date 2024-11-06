@@ -33,7 +33,7 @@ export async function editPartner(_currentState: unknown, formData: FormData) {
     const payload = {
       first_name: formData.get('first_name')?.toString() || '',
       last_name: formData.get('last_name')?.toString() || '',
-      document: formData.get('document')?.toString() || '',
+      document: document,
       document_type: isCPF ? "CPF" : "CNPJ",
       partner_type: formData.get('partner_type')?.toString() || '',
       shipping: {
@@ -48,6 +48,8 @@ export async function editPartner(_currentState: unknown, formData: FormData) {
         phone_number: formData.get('phone')?.toString() || '',
       },
       updated_by: author,
+      payment_key: formData.get('payment_key')?.toString() || '',
+      payment_key_option: formData.get('payment_key_option')?.toString() || '',
     } as EditPartner;
 
     const resp = await fetch(url, {

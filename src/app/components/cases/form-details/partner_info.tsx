@@ -23,6 +23,8 @@ export function PartnerInfoStatusForm({ crmCase }: PartnerInfoFormProps) {
   const [errorMessage, setErrorMessage] = useState("");
   const [loadingPartners, setLoadingPartners] = useState(false);
   const [selectedPartner, setSelectedPartner] = useState<string>();
+  const [isPartnerInvalid, setIsPartnerInvalid] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { refresh } = useRouter();
   const { showSnackbar } = useSnackbar();
@@ -51,21 +53,33 @@ export function PartnerInfoStatusForm({ crmCase }: PartnerInfoFormProps) {
     }
   }, []);
 
-  function onSubmit(_currentState: unknown, formData: FormData) {
-    formData.set("partner", selectedPartner?.toString() || '')
+  async function onSubmit(_currentState: unknown, formData: FormData) {
+    try {
+      setIsLoading(true);
+      setIsPartnerInvalid(false);
 
-    changePartner(crmCase.case_id, formData).then(response => {
-      if (!response.success) {
-        if (response.unauthorized) {
-          signOut();
-        }
-        setErrorMessage(response.message || "");
+      if (!selectedPartner) {
+        setIsPartnerInvalid(true);
         return;
       }
 
-      showSnackbar(response.message, 'success');
-      refresh();
-    });
+      formData.set("partner", selectedPartner?.toString() || '')
+
+      changePartner(crmCase.case_id, formData).then(response => {
+        if (!response.success) {
+          if (response.unauthorized) {
+            signOut();
+          }
+          setErrorMessage(response.message || "");
+          return;
+        }
+
+        showSnackbar(response.message, 'success');
+        refresh();
+      });
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -82,7 +96,6 @@ export function PartnerInfoStatusForm({ crmCase }: PartnerInfoFormProps) {
             }}
             isRequired
             labelPlacement="outside"
-            required
             variant="bordered"
             radius="sm"
             inputProps={{
@@ -94,8 +107,14 @@ export function PartnerInfoStatusForm({ crmCase }: PartnerInfoFormProps) {
             startContent={<MagnifyingGlassIcon className="h-5 w-5 text-gray-500" />}
             isLoading={loadingPartners}
             selectedKey={selectedPartner}
-            onSelectionChange={(key) => setSelectedPartner(key?.toString())}
+            onSelectionChange={(key) => {
+              setIsPartnerInvalid(false);
+              setSelectedPartner(key?.toString());
+            }}
             defaultItems={partners}
+            isInvalid={isPartnerInvalid}
+            color={isPartnerInvalid ? 'danger' : 'default'}
+            errorMessage="Selecione um técnico!"
           >
             {(item) => (
               <AutocompleteItem key={item.partner_id}>
@@ -132,7 +151,7 @@ export function PartnerInfoStatusForm({ crmCase }: PartnerInfoFormProps) {
           </div>
         )}
 
-        <Button>Atribuir</Button>
+        <Button isLoading={isLoading}>Atribuir</Button>
       </form>
     </Card>
   );
