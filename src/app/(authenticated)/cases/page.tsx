@@ -23,7 +23,7 @@ type CasePageParams = {
   };
 };
 
-async function getData(query: string, user: User, page: number): Promise<SearchResponse<CaseFull>> {
+async function getData(query: string, userRole: UserRole | undefined, page: number): Promise<SearchResponse<CaseFull>> {
   const { success, unauthorized, data } = await fetchCases(query, page);
   if (!success || !data) {
     if (unauthorized) {
@@ -35,7 +35,7 @@ async function getData(query: string, user: User, page: number): Promise<SearchR
   const cases = data.result;
 
   let filteredCases = cases;
-  if (user.role === UserRole.OPERATOR) {
+  if (userRole === UserRole.OPERATOR) {
     filteredCases = cases.filter((crmCase) => crmCase.status !== CaseStatus.PAYMENT && crmCase.status !== CaseStatus.CLOSED && crmCase.status !== CaseStatus.CANCELED);
   }
 
@@ -67,7 +67,7 @@ export default async function Page({ searchParams }: CasePageParams) {
     signOut();
   }
 
-  const data = await getData(searchParams?.query || '', user as User, searchParams?.page || 1);
+  const data = await getData(searchParams?.query || '', user?.role, searchParams?.page || 1);
 
   return (
     <main>
