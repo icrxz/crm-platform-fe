@@ -12,7 +12,6 @@ import { useFormState } from "react-dom";
 import { Button } from "../../common/button";
 import { Card } from "../../common/card";
 import { FileUploaderGenericRef, GenericUploader } from "../../common/file-uploader";
-import Modal from "../../common/modal";
 import TargetDateModal from "../target-date-modal";
 
 interface OnGoingStatusFormProps {
