@@ -48,8 +48,8 @@ export function CreateCaseBatchModal({ isOpen, onClose }: CreateCaseBatchModalPr
         </h1>
 
         <div className="flex flex-col gap-4 items-center">
-          <label>Adicione o documento no formato .csv</label>
-          <input type="file" id="file" name="file" accept=".csv" />
+          <label>Adicione o documento nos formatos .csv, .xlsx</label>
+          <input type="file" id="file" name="file" accept=".csv,.xls,.xlsx" />
         </div>
 
         {errorMessage && (
