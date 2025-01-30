@@ -6,7 +6,8 @@ import { cookies } from "next/headers";
 import { crmCoreApiKey, crmCoreEndpoint } from ".";
 import { PublishCase } from "@/app/types/publish_case";
 import { createCustomer, editCustomer } from "../customers";
-import { createProduct, updateProduct } from "../products";
+import { createProduct } from "../products/create";
+import { updateProduct } from "../products/update";
 
 export async function publishCase(
   _currentState: unknown,
@@ -14,8 +15,6 @@ export async function publishCase(
   formData: FormData,
 ): Promise<ServiceResponse<any>> {
   try {
-    console.log('formData', formData);
-
     if (!caseID) {
       return {
         success: false,
@@ -32,7 +31,6 @@ export async function publishCase(
     let customerID = formData?.get('customer_id')?.toString() || '';
     if (!customerID) {
       const customerResp = await createCustomer(_currentState, formData);
-      console.log('customerResp', customerResp);
       if (!customerResp.success || !customerResp.data) {
         return {
           message: customerResp.message,
@@ -82,8 +80,6 @@ export async function publishCase(
       updated_by: author,
     };
 
-    console.log('payload', payload);
-
     const response = await fetch(url, {
       method: 'PUT',
       headers: {
@@ -98,7 +94,7 @@ export async function publishCase(
       const resp = await response.json();
       console.error(resp);
       const unauthorized = response.status === 401;
-      const errorMessage = unauthorized ? "usuário não autorizado" : "falha ao concluir caso";
+      const errorMessage = unauthorized ? "usuário não autorizado" : "falha ao publicar caso";
       return {
         success: false,
         message: errorMessage,

@@ -32,8 +32,6 @@ export async function updateProduct(_currentState: unknown, formData: FormData):
       serial_number: formData.get('serial_number')?.toString(),
     };
 
-    console.log('payload', payload);
-
     const resp = await fetch(url, {
       method: "PUT",
       body: JSON.stringify(payload),
