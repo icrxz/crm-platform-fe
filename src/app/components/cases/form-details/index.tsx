@@ -7,6 +7,7 @@ import { PartnerInfoStatusForm } from "./partner_info";
 import { ReceiptStatusForm } from "./receipt";
 import { ReportStatusForm } from "./report";
 import { TransactionStatusForm } from "./transactions";
+import { DraftStatusForm } from "./draft_case";
 
 interface FormDetailsProps {
   crmCase: CaseFull;
@@ -14,6 +15,8 @@ interface FormDetailsProps {
 
 export function FormDetails({ crmCase }: FormDetailsProps) {
   switch (crmCase.status) {
+    case CaseStatus.DRAFT:
+      return <DraftStatusForm crmCase={crmCase} />;
     case CaseStatus.NEW:
       return <NewCaseStatusForm crmCase={crmCase} />;
     case CaseStatus.CUSTOMER_INFO:

@@ -83,17 +83,17 @@ export default function CasesTable({ cases, initialPage }: CasesTableProps) {
                       </td>
                       <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
-                          <p>{`${crmCase.customer?.first_name} ${crmCase.customer?.last_name}`}</p>
+                          <p>{`${crmCase.customer?.first_name || '-'} ${crmCase.customer?.last_name || ''}`}</p>
                         </div>
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {crmCase.customer?.shipping.city || ''}
+                        {crmCase.customer?.shipping.city || '-'}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {crmCase.contractor?.company_name || ''}
+                        {crmCase.contractor?.company_name || '-'}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                        {crmCase.partner?.first_name || ''}
+                        {crmCase.partner?.first_name || '-'}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
                         {caseStatusMap[crmCase.status]}

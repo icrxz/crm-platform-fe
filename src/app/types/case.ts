@@ -34,12 +34,12 @@ export type CreateCaseBatchResponse = {
 export type Case = {
   case_id: string;
   owner_id?: string;
-  customer_id: string;
+  customer_id?: string;
   partner_id?: string;
   contractor_id: string;
   origin_channel: string;
   case_type: string;
-  subject: string;
+  subject?: string;
   priority: CasePriority;
   status: CaseStatus;
   created_at: string;
@@ -48,9 +48,9 @@ export type Case = {
   updated_by: string;
   closed_at?: string;
   due_date: string;
-  region: number;
+  region?: number;
   external_reference: string;
-  product_id: string;
+  product_id?: string;
   target_date?: string;
 };
 
@@ -64,6 +64,7 @@ export interface CaseFull extends Case {
 }
 
 export enum CaseStatus {
+  DRAFT = "Draft",
   NEW = "New",
   CUSTOMER_INFO = "CustomerInfo",
   WAITING_PARTNER = "WaitingPartner",
@@ -82,6 +83,7 @@ export enum CasePriority {
 }
 
 export const caseStatusMap: Record<CaseStatus, string> = {
+  Draft: "Rascunho",
   New: "Novo",
   CustomerInfo: "Informações cliente",
   WaitingPartner: "Aguardando técnico",
