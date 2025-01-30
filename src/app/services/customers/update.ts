@@ -18,27 +18,34 @@ export async function editCustomer(_currentState: unknown, formData: FormData): 
       };
     }
 
-    const address = `${formData.get('address')?.toString() || ''}, ${formData.get('number')?.toString() || ''} - ${formData.get('complement')?.toString() || ''}`;
+    const formAddress = formData.get('address')?.toString();
+    let address;
+    if (formAddress) {
+      address = `${formData.get('address')?.toString() || ''}, ${formData.get('number')?.toString() || ''} - ${formData.get('complement')?.toString() || ''}`;
+    }
 
-    const formDocument = formData.get('document')?.toString() || '';
-    const document = removeDocumentSymbols(formDocument);
-    const isCPF = document.length === 11;
+    const formDocument = formData.get('document')?.toString();
+    let document;
+    let isCPF;
+    if (formDocument) {
+      document = removeDocumentSymbols(formDocument);
+      isCPF = document.length === 11;
+    }
 
     const payload: EditCustomer = {
-      first_name: formData.get('first_name')?.toString() || '',
-      last_name: formData.get('last_name')?.toString() || '',
+      first_name: formData.get('first_name')?.toString(),
+      last_name: formData.get('last_name')?.toString(),
       document,
-      document_type: isCPF ? "CPF" : "CNPJ",
+      document_type: isCPF !== undefined ? (isCPF ? "CPF" : "CNPJ") : undefined,
       shipping: {
         address: address,
-        city: formData.get('city')?.toString() || '',
-        state: formData.get('state')?.toString() || '',
-        country: 'brazil',
-        zip_code: formData.get('zip_code')?.toString() || '',
+        city: formData.get('city')?.toString(),
+        state: formData.get('state')?.toString(),
+        zip_code: formData.get('zip_code')?.toString(),
       },
       personal_contact: {
-        email: formData.get('email')?.toString() || '',
-        phone_number: formData.get('phone')?.toString() || '',
+        email: formData.get('email')?.toString(),
+        phone_number: formData.get('phone')?.toString(),
       },
       updated_by: author,
     };

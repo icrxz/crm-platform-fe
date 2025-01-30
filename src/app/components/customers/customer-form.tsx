@@ -26,15 +26,15 @@ export default function CustomerForm({ onClose, onSubmit, customer, submitState 
   }, [state, submitState]);
 
   function getCustomerAddress(customer?: Customer) {
-    return customer?.shipping.address.split(',')[0] || ''
+    return customer?.shipping?.address?.split(',')[0] || ''
   }
 
   function getCustomerAddressNumber(customer?: Customer) {
-    return customer?.shipping.address.split(',')[1].split('-')[0] || ''
+    return customer?.shipping?.address?.split(',')[1]?.split('-')[0] || ''
   }
 
   function getCustomerAddressComplement(customer?: Customer) {
-    return customer?.shipping.address.split('-')[1] || ''
+    return customer?.shipping?.address?.split('-')[1] || ''
   }
 
   return (

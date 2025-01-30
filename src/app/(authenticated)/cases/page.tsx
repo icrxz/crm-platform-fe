@@ -42,14 +42,14 @@ async function getData(query: string, userRole: UserRole | undefined, page: numb
 
   const casesFull = await Promise.all(filteredCases.map(async (crmCase: Case) => {
     const [customer, contractor, partner] = await Promise.all([
-      getCustomerByID(crmCase.customer_id),
+      crmCase.customer_id && getCustomerByID(crmCase?.customer_id),
       getContractorByID(crmCase.contractor_id),
       crmCase.partner_id && getPartnerByID(crmCase.partner_id)
     ]);
 
     return {
       ...crmCase,
-      customer: customer.data,
+      customer: customer && customer.data ? customer.data : undefined,
       contractor: contractor.data,
       partner: partner && partner.data ? partner.data : undefined,
     };
