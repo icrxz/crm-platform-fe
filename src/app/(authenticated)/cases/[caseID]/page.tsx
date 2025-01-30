@@ -22,28 +22,27 @@ async function getData(caseID: string): Promise<CaseFull | null> {
   }
 
   const [customer, contractor, partner, owner, product, comments] = await Promise.all([
-    getCustomerByID(crmCase.customer_id),
+    crmCase.customer_id && getCustomerByID(crmCase?.customer_id),
     getContractorByID(crmCase.contractor_id),
     crmCase.partner_id && getPartnerByID(crmCase.partner_id),
     crmCase.owner_id && getUserByID(crmCase.owner_id),
-    getProductByID(crmCase.product_id),
+    crmCase.product_id && getProductByID(crmCase?.product_id),
     getCaseComments(caseID)
   ]);
 
   return {
     ...crmCase,
-    customer: customer.data,
+    customer: customer && customer.data ? customer.data : undefined,
     contractor: contractor.data,
     partner: partner && partner.data ? partner.data : undefined,
     owner: owner && owner.data ? owner.data : undefined,
-    product: product.data,
+    product: product && product.data ? product.data : undefined,
     comments: comments.data,
   };
 }
 
 export default async function Page({ params: { caseID } }: { params: { caseID: string; }; }) {
   const user = await getCurrentUser();
-  console.log(user);
   if (!user) {
     redirect("/login");
   }

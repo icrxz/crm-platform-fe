@@ -22,9 +22,9 @@ export type EditCustomer = {
   last_name?: string;
   company_name?: string;
   legal_name?: string;
-  document: string;
-  document_type: string;
-  shipping: Address;
+  document?: string;
+  document_type?: string;
+  shipping?: Address;
   personal_contact?: Contact;
   updated_by: string;
 };
