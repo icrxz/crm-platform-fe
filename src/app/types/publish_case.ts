@@ -2,8 +2,8 @@ import { CaseStatus } from "./case";
 
 export type PublishCase = {
   subject: string;
-  productID: string;
-  customerID: string;
+  product_id: string;
+  customer_id: string;
   status: CaseStatus;
   updated_by: string;
 };

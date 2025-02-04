@@ -35,6 +35,11 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
   async function onSubmit(_currentState: unknown, formData: FormData) {
     let attachments: CreateAttachment[] = [];
 
+    if (fileUploaderRef.current?.length && fileUploaderRef.current?.length <= 0) {
+      showSnackbar('é necessário ao menos 1 arquivo', 'error');
+      return 
+    }
+
     await fileUploaderRef.current?.submit().then(response => {
       attachments = response || [];
     });
@@ -118,7 +123,7 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
         </div>
 
         <div className="mb-4">
-          <GenericUploader ref={fileUploaderRef} />
+          <GenericUploader ref={fileUploaderRef} minFiles={isBeforeTargetDate ? 0 : 1} maxFiles={10} />
         </div>
 
         <div className="flex gap-4">

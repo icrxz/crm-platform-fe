@@ -29,6 +29,7 @@ export async function publishCase(
     const author = session?.username || '';
 
     let customerID = formData?.get('customer_id')?.toString() || '';
+    console.log(customerID)
     if (!customerID) {
       const customerResp = await createCustomer(_currentState, formData);
       if (!customerResp.success || !customerResp.data) {
@@ -39,6 +40,7 @@ export async function publishCase(
         };
       }
       customerID = customerResp.data.customer_id;
+      console.log('criou o customer', customerID)
     } else {
       const customerResp = await editCustomer(_currentState, formData);
       if (!customerResp.success) {
@@ -48,6 +50,7 @@ export async function publishCase(
           unauthorized: customerResp.unauthorized,
         };
       }
+      console.log('atualizou o customer')
     }
 
     let productID = formData?.get('product_id')?.toString() || '';
@@ -61,6 +64,7 @@ export async function publishCase(
         };
       }
       productID = productResp.data.product_id;
+      console.log('criou o produto', productID)
     } else {
       const productResp = await updateProduct(_currentState, formData);
       if (!productResp.success) {
@@ -70,12 +74,13 @@ export async function publishCase(
           unauthorized: productResp.unauthorized,
         };
       }
+      console.log('atualizou o produto')
     }
 
     const payload: PublishCase = {
       status: CaseStatus.NEW,
-      customerID: formData?.get('customer_id')?.toString() || '',
-      productID: formData?.get('product_id')?.toString() || '',
+      customer_id: customerID,
+      product_id: productID,
       subject: formData?.get('subject')?.toString() || '',
       updated_by: author,
     };

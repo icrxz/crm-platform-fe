@@ -1,20 +1,19 @@
 "use client";
 import { useSnackbar } from "@/app/context/SnackbarProvider";
+import { removeDocumentSymbols } from "@/app/libs/parser";
 import { publishCase } from "@/app/services/cases";
+import { fetchCustomers } from "@/app/services/customers";
+import { brazilStates } from "@/app/types/address";
 import { CaseFull } from "@/app/types/case";
+import { Customer } from "@/app/types/customer";
+import { InputMask } from "@react-input/mask";
+import { InputNumberFormat } from "@react-input/number-format";
+import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
-import { Card } from "../../common/card";
-import { InputNumberFormat } from "@react-input/number-format";
-import { brazilStates } from "@/app/types/address";
-import { Customer } from "@/app/types/customer";
-import { InputMask } from "@react-input/mask";
-import { removeDocumentSymbols } from "@/app/libs/parser";
-import { fetchCustomers } from "@/app/services/customers";
 import { Button } from "../../common/button";
-import { signOut } from "next-auth/react";
-import { custom } from "zod";
+import { Card } from "../../common/card";
 
 interface DraftStatusFormProps {
   crmCase: CaseFull;
@@ -47,7 +46,8 @@ export function DraftStatusForm({ crmCase }: DraftStatusFormProps) {
   }
 
   async function onSubmit(_currentState: unknown, formData: FormData) {
-    formData.set("customer_id", crmCase.customer?.customer_id || '');
+    console.log(customer)
+    formData.set("customer_id", customer?.customer_id || '');
     formData.set("product_id", crmCase.product?.product_id || '');
 
     await publishCase(_currentState, crmCase.case_id, formData).then(response => {
