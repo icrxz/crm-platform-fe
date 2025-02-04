@@ -32,7 +32,7 @@ export async function update(
     };
 
     const response = await fetch(url, {
-      method: 'PATCH',
+      method: 'PUT',
       headers: {
         "Content-Type": 'application/json',
         "X-API-Key": crmCoreApiKey || '',

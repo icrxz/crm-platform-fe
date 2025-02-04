@@ -9,6 +9,7 @@ import { Badge } from '../badge';
 
 export interface FileUploaderGenericRef {
   submit: () => Promise<CreateAttachment[] | undefined>;
+  length: number;
 }
 
 interface FileUploaderProps {
@@ -36,6 +37,7 @@ export const GenericUploader = forwardRef<FileUploaderGenericRef, FileUploaderPr
         allowedFileTypes: ['image/*'],
       },
       locale: Portuguese,
+      
     }));
 
     uppy.on('file-added', () => {
@@ -53,6 +55,7 @@ export const GenericUploader = forwardRef<FileUploaderGenericRef, FileUploaderPr
     useImperativeHandle(ref, () => {
       return {
         submit: submitAttachments,
+        length: uppy.getFiles().length,
       };
     });
 
