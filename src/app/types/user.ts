@@ -26,5 +26,6 @@ export type UpdateUser = {
 export enum UserRole {
   THAVANNA_ADMIN = "thavanna_admin",
   ADMIN = "admin",
-  OPERATOR = "operator"
+  OPERATOR = "operator",
+  ADMIN_OPERATOR = "admin_operator",
 }

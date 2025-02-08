@@ -123,11 +123,11 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
         </div>
 
         <div className="mb-4">
-          <GenericUploader ref={fileUploaderRef} minFiles={isBeforeTargetDate ? 0 : 1} maxFiles={10} />
+          <GenericUploader ref={fileUploaderRef} minFiles={isBeforeTargetDate ? 0 : 1} maxFiles={20} />
         </div>
 
         <div className="flex gap-4">
-          <Button type="button" onClick={handleAddComment} disabled={loadingComment}>Adicionar comentário</Button>
+          <Button type="button" onClick={handleAddComment} isLoading={loadingComment}>Adicionar comentário</Button>
           {!isBeforeTargetDate && <Button type="submit" disabled={loadingComment}>Enviar para laudo</Button>}
         </div>
       </form>

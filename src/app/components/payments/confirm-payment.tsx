@@ -72,8 +72,8 @@ export function ConfirmPaymentModal({ isOpen, onClose, caseId }: ConfirmPaymentM
         )}
 
         <div className="flex justify-center space-x-8">
-          <Button type="submit" className="min-w-24 place-content-center" aria-disabled={pending} disabled={pending}>Sim</Button>
-          <Button onClick={onClose} className="min-w-24 place-content-center" aria-disabled={pending} disabled={pending}>Não</Button>
+          <Button type="submit" className="min-w-24 place-content-center" aria-disabled={pending} isLoading={pending}>Sim</Button>
+          <Button onClick={onClose} className="min-w-24 place-content-center" aria-disabled={pending} isLoading={pending}>Não</Button>
         </div>
       </form>
     </Modal>

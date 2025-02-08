@@ -261,11 +261,11 @@ export default function PartnerForm({ partner, onSubmit, submitState, onClose }:
           </div>
 
           <div className="flex space-x-8 mt-6">
-            <Button type="submit" className="w-32 items-center" aria-disabled={pending}>
+            <Button type="submit" className="w-32 items-center" isLoading={pending} aria-disabled={pending}>
               {partner ? 'Editar' : 'Criar'}
             </Button>
 
-            <Button type="button" className="w-32 items-center" aria-disabled={pending} onClick={onClose}>
+            <Button type="button" className="w-32 items-center" isLoading={pending} aria-disabled={pending} onClick={onClose}>
               Cancelar
             </Button>
           </div>

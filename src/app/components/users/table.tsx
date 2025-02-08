@@ -15,6 +15,7 @@ const roleMap: Record<UserRole, string> = {
   'operator': "Operador",
   'admin': "Administrador",
   'thavanna_admin': "Thavanna Admin",
+  'admin_operator': "Administrador",
 };
 
 export default function UsersTable({
@@ -58,6 +59,9 @@ export default function UsersTable({
                       Cargo
                     </th>
                     <th scope="col" className="px-3 py-5 font-medium">
+                      Status
+                    </th>
+                    <th scope="col" className="px-3 py-5 font-medium">
                       Ações
                     </th>
                   </tr>
@@ -81,8 +85,12 @@ export default function UsersTable({
                         {roleMap[user.role]}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                        {user.active ? 'Ativo' : 'Inativo'}
+                      </td>
+                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                         <div className='flex gap-2'>
                           <button
+                            disabled={!user.active}
                             className="text-blue-500 hover:text-blue-700"
                             onClick={() => handleRowClick(user.user_id)}>
                             <EyeIcon className="h-5 w-5" />

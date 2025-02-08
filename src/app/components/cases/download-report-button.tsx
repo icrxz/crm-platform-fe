@@ -35,7 +35,6 @@ export function DownloadReportButton({ caseID }: DownloadReportButtonProps) {
         isLoading={loadingReport}
         type="button"
         onClick={handleDownloadReport}
-        disabled={loadingReport}
       >
         {loadingReport ? <DocumentArrowDownIcon className="ml-auto h-5 w-5 text-green-100" /> : "Baixar laudo"}
       </Button>

@@ -74,7 +74,7 @@ export default function CasesTable({ cases, initialPage }: CasesTableProps) {
                       key={crmCase.case_id}
                       className="group"
                     >
-                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-blue-500 underline group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
                           <Link href={`/cases/${crmCase.case_id}`}>
                             {crmCase.external_reference}

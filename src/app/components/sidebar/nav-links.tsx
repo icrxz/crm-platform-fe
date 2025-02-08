@@ -1,6 +1,7 @@
 'use client';
 import { UserRole } from '@/app/types/user';
 import { roboto } from '@/app/ui/fonts';
+import { adminRoles } from '@/app/utils/roles';
 import {
   BuildingOffice2Icon,
   CreditCardIcon,
@@ -34,7 +35,7 @@ export default function NavLinks({ userRole }: { userRole: UserRole; }) {
   return (
     <>
       {links.map((link) => {
-        if (link.onlyAdmin && userRole !== UserRole.ADMIN && userRole !== UserRole.THAVANNA_ADMIN) {
+        if (link.onlyAdmin && !adminRoles.includes(userRole)) {
           return null;
         }
 

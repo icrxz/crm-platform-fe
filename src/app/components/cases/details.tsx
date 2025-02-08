@@ -4,8 +4,11 @@ import { parseDocument, parseToCurrency } from "@/app/libs/parser";
 import { CaseFull, casePriorityMap, CaseStatus, caseStatusMap } from "@/app/types/case";
 import { UserRole } from "@/app/types/user";
 import { roboto } from "@/app/ui/fonts";
+import { onlyAdminStatuses, showReportStatus } from "@/app/utils/case_status";
+import { adminRoles } from "@/app/utils/roles";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
+
 import { Card } from "../common/card";
 import { CardText } from "../common/card/card-text";
 import { DownloadReportButton } from "./download-report-button";
@@ -17,18 +20,13 @@ interface CaseDetailsProps {
   userRole: UserRole;
 }
 
-const showReportStatus = [
-  CaseStatus.PAYMENT,
-  CaseStatus.RECEIPT,
-  CaseStatus.CLOSED,
-];
-
 export default function CaseDetails({ crmCase, userRole }: CaseDetailsProps) {
   const { push } = useRouter();
 
   const caseStatusList = Object.values(caseStatusMap).filter(status => status !== caseStatusMap["Canceled"]);
-  const isAdminStatus = crmCase.status === CaseStatus.PAYMENT || crmCase.status === CaseStatus.CLOSED;
-  const isAdminRole = userRole === UserRole.ADMIN || userRole === UserRole.THAVANNA_ADMIN;
+
+  const isAdminStatus = onlyAdminStatuses.includes(crmCase.status);
+  const isAdminRole = adminRoles.includes(userRole);
   const isBeforeTargetDate = new Date() < new Date(crmCase.target_date!!);
   const isShowReportStatus = showReportStatus.includes(crmCase.status);
 
@@ -89,7 +87,7 @@ export default function CaseDetails({ crmCase, userRole }: CaseDetailsProps) {
               )}
 
               {isShowReportStatus && (
-                <div className="mt-4">
+                <div className="mt-4 -ml-2">
                   <DownloadReportButton caseID={crmCase.case_id} />
                 </div>
               )}

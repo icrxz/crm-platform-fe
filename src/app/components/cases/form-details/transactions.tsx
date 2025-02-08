@@ -63,6 +63,7 @@ export function TransactionStatusForm({ crmCase }: TransactionStatusFormProps) {
   const [_, dispatch] = useFormState(onSubmit, null);
 
   const [loadingSubmit, setLoadingSubmit] = useState(false);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
   const [caseTransactions, setCaseTransactions] = useState<TransactionForm[]>(mappedTransactions);
 
   async function onSubmit() {
@@ -94,6 +95,8 @@ export function TransactionStatusForm({ crmCase }: TransactionStatusFormProps) {
         showSnackbar(statusResp.message, 'error');
         return;
       }
+
+      setHasSubmitted(true);
 
       showSnackbar(statusResp.message, 'success');
       refresh();
@@ -148,7 +151,7 @@ export function TransactionStatusForm({ crmCase }: TransactionStatusFormProps) {
         </div>
 
         <div className="pl-1">
-          <Button disabled={loadingSubmit}>
+          <Button isLoading={loadingSubmit || hasSubmitted}>
             Concluir
           </Button>
         </div>
