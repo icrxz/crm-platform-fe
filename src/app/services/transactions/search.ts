@@ -5,7 +5,6 @@ import { cookies } from "next/headers";
 import { crmCoreApiKey, crmCoreEndpoint } from ".";
 
 export async function fetchTransactions(query: string): Promise<ServiceResponse<Transaction[]>> {
-  console.log("query", query);
   try {
     const jwt = cookies().get("jwt")?.value;
     let url = `${crmCoreEndpoint}/crm/core/api/v1/transactions`;

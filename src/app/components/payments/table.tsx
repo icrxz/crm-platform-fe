@@ -166,7 +166,7 @@ export default function PaymentTable({
           siblings={3}
           showControls
           total={Math.ceil(Number((transactions?.paging.total || 1) / (transactions?.paging.limit || 1)))}
-          initialPage={Number(initialPage || 1)}
+          page={Number(initialPage || 1)}
         />
       </div>
 

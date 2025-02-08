@@ -2,15 +2,16 @@
 import { SearchResponse } from '@/app/types/search_response';
 import { Pagination } from '@nextui-org/pagination';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+
 import { parseDateTime } from '../../libs/date';
 import { CaseFull, caseStatusMap } from '../../types/case';
 import { roboto } from '../../ui/fonts';
 import Modal from '../common/modal';
+import { CreateCaseBatchModal } from './batch-form-modal';
 import CreateCaseModal from './create-case';
 import CasesSearchBar from './search-bar';
-import { CreateCaseBatchModal } from './batch-form-modal';
 
 interface CasesTableProps {
   cases: SearchResponse<CaseFull>;
@@ -19,13 +20,18 @@ interface CasesTableProps {
 
 export default function CasesTable({ cases, initialPage }: CasesTableProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
 
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isCreateBatchModalOpen, setIsCreateBatchModalOpen] = useState(false);
 
   function handleChangePage(value: number) {
-    router.push(`?page=${value}`);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', value.toString());
+
+    router.push(pathname + '?' + params.toString());
   }
 
   return (
@@ -116,7 +122,7 @@ export default function CasesTable({ cases, initialPage }: CasesTableProps) {
           siblings={3}
           showControls
           total={Math.ceil(Number((cases?.paging.total || 1) / (cases?.paging.limit || 1)))}
-          initialPage={Number(initialPage || 1)}
+          page={Number(initialPage || 1)}
         />
       </div>
 
