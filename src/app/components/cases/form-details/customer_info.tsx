@@ -71,7 +71,7 @@ export function CustomerInfoStatusForm({ crmCase }: CustomerInfoStatusFormProps)
         </div>
 
         <div className="mb-4">
-          <GenericUploader ref={fileUploaderRef} minFiles={1} maxFiles={5} />
+          <GenericUploader ref={fileUploaderRef} minFiles={1} maxFiles={20} />
         </div>
 
         {errorMessage && (

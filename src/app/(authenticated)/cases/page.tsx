@@ -11,6 +11,7 @@ import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import CasesTable from '../../components/cases/table';
 import { fetchCases } from '../../services/cases';
+import { onlyAdminStatuses } from '@/app/utils/case_status';
 
 export const metadata: Metadata = {
   title: 'Casos',
@@ -35,8 +36,9 @@ async function getData(query: string, userRole: UserRole | undefined, page: numb
   const cases = data.result;
 
   let filteredCases = cases;
+
   if (userRole === UserRole.OPERATOR) {
-    filteredCases = cases.filter((crmCase) => crmCase.status !== CaseStatus.PAYMENT && crmCase.status !== CaseStatus.CLOSED && crmCase.status !== CaseStatus.CANCELED);
+    filteredCases = cases.filter((crmCase) => !onlyAdminStatuses.includes(crmCase.status));
   }
 
 

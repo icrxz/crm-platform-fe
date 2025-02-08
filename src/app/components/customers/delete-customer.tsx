@@ -47,8 +47,8 @@ export function DeleteCustomerModal({ isOpen, onClose, customerID }: DeleteCusto
         <input type="hidden" name="customer_id" value={customerID} />
 
         <div className="flex justify-center space-x-2">
-          <Button type="submit" aria-disabled={pending}>Sim</Button>
-          <Button onClick={onClose} aria-disabled={pending}>Não</Button>
+          <Button type="submit" isLoading={pending} aria-disabled={pending}>Sim</Button>
+          <Button onClick={onClose} isLoading={pending} aria-disabled={pending}>Não</Button>
         </div>
       </form>
     </Modal>

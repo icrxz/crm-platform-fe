@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "../../common/button";
 import { Card } from "../../common/card";
-import { DownloadReportButton } from "../download-report-button";
+import { useFormState } from "react-dom";
 
 interface ReportStatusFormProps {
   crmCase: CaseFull;
@@ -16,11 +16,14 @@ interface ReportStatusFormProps {
 export function ReportStatusForm({ crmCase }: ReportStatusFormProps) {
   const { refresh } = useRouter();
   const { showSnackbar } = useSnackbar();
+  const [_, dispatch] = useFormState(onSubmit, null);
+
   const [loadingStatus, setLoadingStatus] = useState(false);
 
-  function handleConcludeCase() {
+  async function onSubmit(_currentState: unknown, formData: FormData) {
     setLoadingStatus(true);
-    changeStatus(crmCase.case_id, CaseStatus.PAYMENT).then((response) => {
+
+    changeStatus(crmCase.case_id, CaseStatus.PAYMENT, formData).then((response) => {
       if (!response.success) {
         if (response.unauthorized) {
           signOut();
@@ -39,11 +42,26 @@ export function ReportStatusForm({ crmCase }: ReportStatusFormProps) {
 
   return (
     <Card title="Gerar laudo" titleSize="text-xl">
-      <div className="flex ml-4 gap-8">
-        <DownloadReportButton caseID={crmCase.case_id} />
+      <form action={dispatch} className="px-5 gap-4">
+        <div className="mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="content">
+            Conclusão do atendimento
+          </label>
 
-        <Button type="button" disabled={loadingStatus} onClick={handleConcludeCase}>Concluir</Button>
-      </div>
+          <textarea
+            id="content"
+            name="content"
+            className="w-full h-32 p-2 border border-gray-300 rounded-md"
+            rows={2}
+            placeholder="Essa descrição será a conclusão do laudo"
+            required
+          />
+        </div>
+
+        <div className="flex gap-8">
+          <Button type="submit" isLoading={loadingStatus}>Concluir</Button>
+        </div>
+      </form>
     </Card>
   );
 }

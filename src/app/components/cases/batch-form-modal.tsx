@@ -79,8 +79,8 @@ export function CreateCaseBatchModal({ isOpen, onClose }: CreateCaseBatchModalPr
         )}
 
         <div className="flex justify-center space-x-8">
-          <Button type="submit" className="min-w-24 place-content-center" aria-disabled={pending} disabled={pending}>Confirmar</Button>
-          <Button onClick={onClose} className="min-w-24 place-content-center" aria-disabled={pending} disabled={pending}>Cancelar</Button>
+          <Button type="submit" className="min-w-24 place-content-center" aria-disabled={pending} isLoading={pending}>Confirmar</Button>
+          <Button onClick={onClose} className="min-w-24 place-content-center" aria-disabled={pending} isLoading={pending}>Cancelar</Button>
         </div>
       </form>
     </Modal>

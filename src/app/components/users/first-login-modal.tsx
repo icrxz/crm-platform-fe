@@ -134,7 +134,7 @@ export default function FirstLoginModal({ userId }: FirstLoginModalProps) {
 
 
         <div className="mt-4">
-          <Button type="submit" disabled={isLoading} size="md">Confirmar</Button>
+          <Button type="submit" isLoading={isLoading} size="md">Confirmar</Button>
         </div>
       </form>
     </Modal>

@@ -292,11 +292,11 @@ export default function CustomerForm({ onClose, onSubmit, customer, submitState 
         </div>
 
         <div className="flex space-x-8 mt-6">
-          <Button type="submit" className="w-32" aria-disabled={pending}>
+          <Button type="submit" className="w-32" isLoading={pending} aria-disabled={pending}>
             {customer ? 'Editar' : 'Cadastrar'}
           </Button>
 
-          <Button type="button" className="w-32" aria-disabled={pending} onClick={onClose}>
+          <Button type="button" className="w-32" isLoading={pending} aria-disabled={pending} onClick={onClose}>
             Cancelar
           </Button>
         </div>
