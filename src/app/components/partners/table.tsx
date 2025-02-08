@@ -151,7 +151,7 @@ export default function PartnersTable({
           siblings={3}
           showControls
           total={Math.ceil(Number((partners?.paging.total || 1) / (partners?.paging.limit || 1)))}
-          initialPage={Number(initialPage || 1)}
+          page={Number(initialPage || 1)}
         />
       </div>
 

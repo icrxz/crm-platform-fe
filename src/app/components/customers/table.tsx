@@ -138,7 +138,7 @@ export default function CustomersTable({ customers, initialPage }: CustomersTabl
           siblings={3}
           showControls
           total={Math.ceil(Number((customers?.paging.total || 1) / (customers?.paging.limit || 1)))}
-          initialPage={Number(initialPage || 1)}
+          page={Number(initialPage || 1)}
         />
       </div>
 

@@ -46,7 +46,6 @@ export function DraftStatusForm({ crmCase }: DraftStatusFormProps) {
   }
 
   async function onSubmit(_currentState: unknown, formData: FormData) {
-    console.log(customer)
     formData.set("customer_id", customer?.customer_id || '');
     formData.set("product_id", crmCase.product?.product_id || '');
 

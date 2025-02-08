@@ -4,7 +4,7 @@ import { getCustomerByID } from '@/app/services/customers';
 import { getPartnerByID } from '@/app/services/partners';
 import { Case, CaseFull, CaseStatus } from '@/app/types/case';
 import { SearchResponse } from '@/app/types/search_response';
-import { User, UserRole } from '@/app/types/user';
+import { UserRole } from '@/app/types/user';
 import { Metadata } from 'next';
 import { signOut } from 'next-auth/react';
 import { redirect } from 'next/navigation';
@@ -18,13 +18,18 @@ export const metadata: Metadata = {
 };
 
 type CasePageParams = {
-  searchParams?: {
-    query?: string;
+  searchParams: {
+    sinistro?: string;
     page?: number;
-  };
+  }
 };
 
-async function getData(query: string, userRole: UserRole | undefined, page: number): Promise<SearchResponse<CaseFull>> {
+async function getData(sinistro: string, userRole: UserRole | undefined, page: number): Promise<SearchResponse<CaseFull>> {
+  let query = '';
+  if (sinistro) {
+    query = `external_reference=${sinistro}`
+  }
+
   const { success, unauthorized, data } = await fetchCases(query, page);
   if (!success || !data) {
     if (unauthorized) {
@@ -40,7 +45,6 @@ async function getData(query: string, userRole: UserRole | undefined, page: numb
   if (userRole === UserRole.OPERATOR) {
     filteredCases = cases.filter((crmCase) => !onlyAdminStatuses.includes(crmCase.status));
   }
-
 
   const casesFull = await Promise.all(filteredCases.map(async (crmCase: Case) => {
     const [customer, contractor, partner] = await Promise.all([
@@ -69,12 +73,12 @@ export default async function Page({ searchParams }: CasePageParams) {
     signOut();
   }
 
-  const data = await getData(searchParams?.query || '', user?.role, searchParams?.page || 1);
+  const data = await getData(searchParams?.sinistro || '', user?.role, searchParams?.page || 1);
 
   return (
     <main>
       <Suspense fallback={<p>carregando casos...</p>} >
-        {data && <CasesTable cases={data} initialPage={searchParams?.page} />}
+        {data && <CasesTable cases={data} initialPage={searchParams?.page || 1} />}
       </Suspense>
     </main>
   );

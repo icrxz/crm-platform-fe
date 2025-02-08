@@ -112,7 +112,7 @@ export default function UsersTable({
           siblings={3}
           showControls
           total={Math.ceil(Number((users?.paging.total || 1) / (users?.paging.limit || 1)))}
-          initialPage={Number(initialPage || 1)}
+          page={Number(initialPage || 1)}
         />
       </div>
 
