@@ -35,27 +35,32 @@ export function CommentDetails({ crmCase }: CommentDetailsProps) {
                     </div>
 
                     {comment.attachments && (
-                        <div className="grid grid-cols-5 gap-4">
-                          {comment.attachments.map(image => (
-                            <div key={image.attachment_id} className="p-2 bg-gray-100 rounded-lg">
+                      <div className="grid grid-cols-5 gap-4">
+                        {comment.attachments.map(image => (
+                          <div key={image.attachment_id} className="p-2 bg-gray-100 rounded-lg">
+                            <a href={image.url} target="_blank">
                               <Image
                                 src={image.url}
                                 alt={image.file_name}
                                 width={250}
                                 height={250}
+                                loading="lazy"
+                                objectFit="cover"
                               />
-                            </div>
-                          ))}
-                          {/* <ImageCarrousel images={comment.attachments} /> */}
-                        </div>
-                    )}
+                            </a>
+                          </div>
+                        ))}
+                        {/* <ImageCarrousel images={comment.attachments} /> */}
+                      </div>
+                    )
+                    }
                   </div>
                 );
               })}
             </div>
           )}
         </div>
-      </Card>
-    </div>
+      </Card >
+    </div >
   );
 }
