@@ -73,6 +73,8 @@ export function FilterModal({ onClose, isModalOpen }: FilterModalProps) {
           </h1>
 
           <div className="w-full">
+            <TextInput label="Nome" name="nome" className="mb-2" defaultValue={name} />
+
             <TextInput label="Cidade" name="cidade" className="mb-2" defaultValue={city} />
 
             <Dropdown label="Estado" name="estado" options={stateOptions} placeholder='Selecione um estado' defaultValue={state} />
