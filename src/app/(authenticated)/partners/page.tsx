@@ -13,19 +13,50 @@ export const metadata: Metadata = {
   title: 'Técnicos',
 };
 
+interface PartnerFilters {
+  documento?: string;
+  cidade?: string;
+  estado?: string;
+  nome?: string;
+  page?: number;
+}
+
 type PartnerPageParams = {
-  searchParams?: {
-    documento?: string;
-    page?: number;
-  };
+  searchParams?: PartnerFilters;
 };
 
-async function getData(document: string, page: number): Promise<SearchResponse<Partner>> {
+function prepareQuery(filters?: PartnerFilters): string {
   let query = '';
-  if (document) {
-    const parsedDocument = removeDocumentSymbols(document)
-    query = `document=${parsedDocument}`
+
+  if (filters?.documento) {
+    const parsedDocument = removeDocumentSymbols(filters.documento);
+    query += `document=${parsedDocument}&`;
   }
+
+  if (filters?.nome) {
+    query += `first_name=${filters.nome}&`;
+  }
+
+  if (filters?.cidade) {
+    query += `city=${filters.cidade}&`;
+  }
+
+  if (filters?.estado) {
+    query += `state=${filters.estado}&`;
+  }
+
+  if (query.endsWith('&')) {
+    query = query.slice(0, -1);
+  }
+
+  return query;
+}
+
+async function getData(filters?: PartnerFilters): Promise<SearchResponse<Partner>> {
+  let { page, ...rest } = filters || {};
+  page = page || 1;
+
+  const query = prepareQuery(rest);
 
   const { success, unauthorized, data } = await fetchPartners(query, page);
   if (!success || !data) {
@@ -49,7 +80,7 @@ export default async function Page({ searchParams }: PartnerPageParams) {
     redirect("/login");
   }
 
-  const data = await getData(searchParams?.documento || '', searchParams?.page || 1);
+  const data = await getData(searchParams);
 
   return (
     <main>

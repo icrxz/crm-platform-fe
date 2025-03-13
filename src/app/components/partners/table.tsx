@@ -2,11 +2,10 @@
 import { parseDocument } from '@/app/libs/parser';
 import { EyeIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { Pagination } from "@nextui-org/pagination";
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useState } from 'react';
 
 import { SearchResponse } from '@/app/types/search_response';
-import Modal from '../../components/common/modal';
 import { Partner } from '../../types/partner';
 import { roboto } from '../../ui/fonts';
 import CreatePartnerModal from './create-partner';
@@ -23,12 +22,14 @@ export default function PartnersTable({
   partners,
   initialPage = 1,
 }: PartnersTableProps) {
-  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [partnerID, setPartnerID] = useState("");
-  const router = useRouter();
 
   function handlePartnerEdit(partnerID: string) {
     setPartnerID(partnerID);
@@ -45,7 +46,11 @@ export default function PartnersTable({
   }
 
   function handleChangePage(value: number) {
-    router.push(`?page=${value}`);
+    const params = new URLSearchParams(searchParams.toString());
+
+    params.set('page', '1');
+
+    router.push(pathname + '?' + params.toString());
   }
 
   return (
@@ -54,7 +59,7 @@ export default function PartnersTable({
         Técnicos
       </h1>
 
-      <PartnersSearchBar setIsCreationModalOpen={setIsCreateModalOpen} setIsFilterModalOpen={setIsFilterModalOpen} />
+      <PartnersSearchBar setIsCreationModalOpen={setIsCreateModalOpen} />
 
       <div className="mt-6 flow-root">
         <div className="overflow-x-auto">
@@ -154,12 +159,6 @@ export default function PartnersTable({
           page={Number(initialPage || 1)}
         />
       </div>
-
-      {isFilterModalOpen && <Modal isOpen={isFilterModalOpen} onClose={() => setIsFilterModalOpen(false)}>
-        <div>
-          Filtro
-        </div>
-      </Modal>}
 
       {isCreateModalOpen && <CreatePartnerModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />}
 
