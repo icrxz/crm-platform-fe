@@ -48,7 +48,7 @@ export default function PartnersTable({
   function handleChangePage(value: number) {
     const params = new URLSearchParams(searchParams.toString());
 
-    params.set('page', '1');
+    params.set('page', value.toString());
 
     router.push(pathname + '?' + params.toString());
   }
