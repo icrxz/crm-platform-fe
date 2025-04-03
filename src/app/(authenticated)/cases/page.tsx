@@ -1,21 +1,17 @@
+`use server`;
 import { getCurrentUser } from '@/app/libs/session';
 import { getContractorByID } from '@/app/services/contractors';
 import { getCustomerByID } from '@/app/services/customers';
 import { getPartnerByID } from '@/app/services/partners';
-import { Case, CaseFull, CaseStatus } from '@/app/types/case';
+import { Case, CaseFull } from '@/app/types/case';
 import { SearchResponse } from '@/app/types/search_response';
 import { UserRole } from '@/app/types/user';
-import { Metadata } from 'next';
+import { onlyAdminStatuses } from '@/app/utils/case_status';
 import { signOut } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import CasesTable from '../../components/cases/table';
 import { fetchCases } from '../../services/cases';
-import { onlyAdminStatuses } from '@/app/utils/case_status';
-
-export const metadata: Metadata = {
-  title: 'Casos',
-};
 
 type CasePageParams = {
   searchParams: {

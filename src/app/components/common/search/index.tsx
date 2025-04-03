@@ -11,7 +11,7 @@ interface SearchProps {
 export default function Search({ placeholder, initialValue, handleSearch }: SearchProps) {
   const searchDebounceCallback = useDebouncedCallback((params: string) => {
     handleSearch(params);
-  }, 300);
+  }, 1000);
 
   return (
     <div className="relative flex flex-1 flex-shrink-0 max-w-1/2">

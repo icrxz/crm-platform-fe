@@ -26,3 +26,8 @@ export function parseDocument(value: string): string {
 export function removeDocumentSymbols(value: string): string {
     return value.replace(/[^0-9]+/g, "");
 }
+
+export function isDocument(value: string): boolean {
+    const parsedDoc = removeDocumentSymbols(value);
+    return parsedDoc.length === 11 || parsedDoc.length === 14;
+}

@@ -1,17 +1,12 @@
-import { Metadata } from 'next';
-
+`use server`;
 import PartnersTable from '@/app/components/partners/table';
+import { removeDocumentSymbols } from '@/app/libs/parser';
 import { getCurrentUser } from '@/app/libs/session';
 import { fetchPartners } from '@/app/services/partners';
 import { Partner } from '@/app/types/partner';
 import { SearchResponse } from '@/app/types/search_response';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
-import { removeDocumentSymbols } from '@/app/libs/parser';
-
-export const metadata: Metadata = {
-  title: 'Técnicos',
-};
 
 interface PartnerFilters {
   documento?: string;
@@ -34,7 +29,15 @@ function prepareQuery(filters?: PartnerFilters): string {
   }
 
   if (filters?.nome) {
-    query += `first_name=${filters.nome}&`;
+    const fullName = filters.nome.trim().split(' ');
+    const firstName = fullName[0];
+    const lastName = fullName.slice(1).join(' ');
+
+    query += `first_name=${firstName}&`;
+
+    if (lastName) {
+      query += `last_name=${lastName}&`;
+    }
   }
 
   if (filters?.cidade) {
