@@ -1,5 +1,4 @@
-import { Metadata } from 'next';
-
+`use server`;
 import { removeDocumentSymbols } from '@/app/libs/parser';
 import { getCurrentUser } from '@/app/libs/session';
 import { Customer } from '@/app/types/customer';
@@ -8,10 +7,6 @@ import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import CustomersTable from '../../components/customers/table';
 import { fetchCustomers } from '../../services/customers';
-
-export const metadata: Metadata = {
-  title: 'Clientes',
-};
 
 type CustomerPageParams = {
   searchParams?: {

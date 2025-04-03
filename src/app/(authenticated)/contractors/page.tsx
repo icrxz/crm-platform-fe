@@ -1,5 +1,4 @@
-import { Metadata } from 'next';
-
+`use server`;
 import { getCurrentUser } from '@/app/libs/session';
 import { signOut } from 'next-auth/react';
 import { Suspense } from 'react';
@@ -8,10 +7,6 @@ import { fetchContractors } from '../../services/contractors';
 import { SearchResponse } from '@/app/types/search_response';
 import { Contractor } from '@/app/types/contractor';
 import { redirect } from 'next/navigation';
-
-export const metadata: Metadata = {
-  title: 'Seguradoras',
-};
 
 type ContractorPageParams = {
   searchParams?: {

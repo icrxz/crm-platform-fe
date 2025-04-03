@@ -1,20 +1,15 @@
+`use server`;
 import PaymentTable from '@/app/components/payments/table';
 import { fetchCases } from '@/app/services/cases';
 import { getPartnerByID } from '@/app/services/partners';
 import { fetchTransactions } from '@/app/services/transactions';
-import { Case } from '@/app/types/case';
 import { Partner } from '@/app/types/partner';
 import { SearchResponse } from '@/app/types/search_response';
 import { TransactionItem, TransactionStatus, TransactionType } from '@/app/types/transaction';
-import { Metadata } from 'next';
 import { getServerSession } from 'next-auth';
 import { signOut } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
-
-export const metadata: Metadata = {
-  title: 'Pagamentos',
-};
 
 async function getData(page: number): Promise<SearchResponse<TransactionItem>> {
   const query = "type=OUTGOING";
