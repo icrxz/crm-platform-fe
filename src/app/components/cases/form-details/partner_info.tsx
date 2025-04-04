@@ -34,7 +34,7 @@ export function PartnerInfoStatusForm({ crmCase }: PartnerInfoFormProps) {
     setLoadingPartners(true);
     try {
       const query = "active=true";
-      fetchPartners(query, 1, 1000).then(response => {
+      fetchPartners(query, 1, 10000).then(response => {
         if (!response.success || !response.data) {
           if (response.unauthorized) {
             signOut();
