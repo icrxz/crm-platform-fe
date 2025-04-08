@@ -42,7 +42,7 @@ export function NewCaseStatusForm({ crmCase }: NewCaseStatusFormProps) {
   }
 
   useEffect(() => {
-    const query = "active=true&role=operator";
+    const query = "active=true&role=operator&role=admin_operator";
     fetchUsers(query, 1, 1000).then(response => {
       if (!response.success || !response.data) {
         if (response.unauthorized) {
