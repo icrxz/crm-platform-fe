@@ -1,9 +1,11 @@
 "useClient";
 
+import { HTMLInputTypeAttribute } from "react";
+
 interface TextInputProps {
   name: string;
   label: string;
-  type?: string;
+  type?: HTMLInputTypeAttribute;
   placeholder?: string;
   required?: boolean;
   className?: string;
@@ -12,8 +14,11 @@ interface TextInputProps {
 
 export function TextInput({ label, name, type, placeholder, required, className, defaultValue }: TextInputProps) {
   return (
-    <div className={className}>
-      <label className="mb-3 block text-xs font-medium text-gray-900" htmlFor={name}>
+    <div className={`${className ? className : ''}`}>
+      <label
+        className="mb-3 block text-xs font-medium text-gray-900"
+        htmlFor={name}
+      >
         {label}
       </label>
 
