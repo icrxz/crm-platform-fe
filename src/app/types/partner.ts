@@ -12,6 +12,9 @@ export type CreatePartner = {
   created_by: string;
   payment_key: string;
   payment_key_option: string;
+  payment_type: string;
+  payment_owner: string;
+  payment_is_from_same_owner: boolean;
 };
 
 export type EditPartner = {
@@ -24,6 +27,9 @@ export type EditPartner = {
   personal_contact?: Contact;
   payment_key?: string;
   payment_key_option?: string;
+  payment_type?: string;
+  payment_owner?: string;
+  payment_is_from_same_owner?: boolean;
   updated_by: string;
 };
 
@@ -46,7 +52,28 @@ export type Partner = {
   updated_at: string;
   updated_by: string;
   active: boolean;
-  description:string;
+  description: string;
   payment_key?: string;
-  payment_key_option?: string;
+  payment_key_option?: PaymentOptions;
+  payment_type?: string;
+  payment_owner?: string;
+  payment_is_from_same_owner?: boolean;
 };
+
+export enum PaymentOptions {
+  CPF = 'cpf',
+  CNPJ = 'cnpj',
+  EMAIL = 'email',
+  PHONE = 'phone',
+  RANDOM = 'random',
+  OTHER = 'other',
+}
+
+export const paymentOptionMap: Record<PaymentOptions, string> = {
+  cpf: 'CPF',
+  cnpj: 'CNPJ',
+  email: 'Email',
+  phone: 'Telefone',
+  random: 'Aleatório',
+  other: 'Outro',
+}

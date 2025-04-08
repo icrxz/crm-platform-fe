@@ -48,8 +48,11 @@ export async function editPartner(_currentState: unknown, formData: FormData) {
         phone_number: formData.get('phone')?.toString() || '',
       },
       updated_by: author,
-      payment_key: formData.get('payment_key')?.toString() || '',
-      payment_key_option: formData.get('payment_key_option')?.toString() || '',
+      payment_key: formData.get('payment_key')?.toString(),
+      payment_key_option: formData.get('payment_key_option')?.toString(),
+      payment_type: 'PIX',
+      payment_owner: formData.get('payment_owner')?.toString(),
+      payment_is_from_same_owner: formData.has('payment_is_from_same_owner'),
     } as EditPartner;
 
     const resp = await fetch(url, {

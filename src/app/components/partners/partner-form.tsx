@@ -1,12 +1,15 @@
+`use client`;
+import { parseDocument } from "@/app/libs/parser";
 import { brazilStates } from "@/app/types/address";
-import { Partner } from "@/app/types/partner";
+import { Partner, paymentOptionMap, PaymentOptions } from "@/app/types/partner";
 import { ServiceResponse } from "@/app/types/service";
 import { roboto } from "@/app/ui/fonts";
+import { Checkbox } from "@heroui/checkbox";
 import { InputMask } from "@react-input/mask";
-import { Dispatch, ReactElement, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { Button } from "../common/button";
-import { parseDocument } from "@/app/libs/parser";
+import { TextInput } from "../common/text-input/text-input";
 
 interface PartnerFormProps {
   partner?: Partner;
@@ -19,11 +22,17 @@ export default function PartnerForm({ partner, onSubmit, submitState, onClose }:
   const [state, dispatch] = useFormState(onSubmit, null);
   const { pending } = useFormStatus();
 
+  const [isFromSameOwner, setIsFromSameOwner] = useState<boolean>(partner?.payment_is_from_same_owner === undefined ? true : partner.payment_is_from_same_owner);
+
   useEffect(() => {
     if (submitState) {
       submitState(state);
     }
   }, [state, submitState]);
+
+  function handleAccountOwnerChange(isSelected: boolean) {
+    setIsFromSameOwner(isSelected);
+  }
 
   return (
     <form action={dispatch} className="space-y-3">
@@ -100,7 +109,7 @@ export default function PartnerForm({ partner, onSubmit, submitState, onClose }:
             </div>
           </div>
 
-          <div className="columns-3 mb-4">
+          <div className="columns-1 mb-4">
             <div>
               <label
                 className="mb-3 block text-xs font-medium text-gray-900"
@@ -111,17 +120,19 @@ export default function PartnerForm({ partner, onSubmit, submitState, onClose }:
 
               <div className="relative">
                 <select
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                id="partner_type"
-                name="partner_type"
-                defaultValue={partner?.partner_type || ''}
+                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
+                  id="partner_type"
+                  name="partner_type"
+                  defaultValue={partner?.partner_type || ''}
                 >
                   <option value="Montador">Montador</option>
                   <option value="Tapeceiro">Tapeceiro</option>
                 </select>
               </div>
             </div>
+          </div>
 
+          <div className="columns-2 mb-4">
             <div>
               <label
                 className="mb-3 block text-xs font-medium text-gray-900"
@@ -153,19 +164,38 @@ export default function PartnerForm({ partner, onSubmit, submitState, onClose }:
 
               <div className="relative">
                 <select
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                id="payment_key_option"
-                name="payment_key_option"
-                defaultValue={partner?.payment_key_option || ''}
+                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
+                  id="payment_key_option"
+                  name="payment_key_option"
+                  defaultValue={partner?.payment_key_option || ''}
                 >
-                  <option value="cpf">CPF</option>
-                  <option value="cnpj">CNPJ</option>
-                  <option value="email">Email</option>
-                  <option value="phone">Telefone</option>
-                  <option value="random">Aleatório</option>
-                  <option value="other">Outro</option>
+                  {Object.values(PaymentOptions).map((pOption) => {
+                    return (
+                      <option value={pOption}>{paymentOptionMap[pOption]}</option>
+                    )
+                  })}
                 </select>
               </div>
+            </div>
+          </div>
+
+          <div className="my-4 flex flex-row w-full items-center">
+            <div className="w-1/2 flex-none">
+              <Checkbox
+                isSelected={isFromSameOwner}
+                onValueChange={handleAccountOwnerChange}
+                id="payment_is_from_same_owner"
+                name="payment_is_from_same_owner"
+                size="sm"
+              >
+                É o titular da conta
+              </Checkbox>
+            </div>
+
+            <div className="w-1/2 flex-none ml-2">
+              {!isFromSameOwner && (
+                <TextInput label="Nome do titular" name="payment_owner" placeholder="Insira o nome do titular da conta" defaultValue={partner?.payment_owner || ''} required />
+              )}
             </div>
           </div>
 

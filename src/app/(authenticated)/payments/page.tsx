@@ -3,7 +3,7 @@ import PaymentTable from '@/app/components/payments/table';
 import { fetchCases } from '@/app/services/cases';
 import { getPartnerByID } from '@/app/services/partners';
 import { fetchTransactions } from '@/app/services/transactions';
-import { Partner } from '@/app/types/partner';
+import { Partner, paymentOptionMap } from '@/app/types/partner';
 import { SearchResponse } from '@/app/types/search_response';
 import { TransactionItem, TransactionStatus, TransactionType } from '@/app/types/transaction';
 import { getServerSession } from 'next-auth';
@@ -31,12 +31,15 @@ async function getData(page: number): Promise<SearchResponse<TransactionItem>> {
 
 
   const outgoingCasesTransactions = await Promise.all(casesInReceipt.result.map(async (caseItem): Promise<TransactionItem> => {
-    const partner = caseItem.partner_id && await getPartnerByID(caseItem.partner_id).then((resp) => {
-      if (resp.unauthorized) {
-        signOut();
-      }
-      return resp.data || null;
-    });
+    let partner: Partner | null = null;
+    if (caseItem.partner_id) {
+      partner = await getPartnerByID(caseItem.partner_id).then((resp) => {
+        if (resp.unauthorized) {
+          signOut();
+        }
+        return resp.data || null;
+      });
+    }
 
     const transactions = await fetchTransactions(`case_id=${caseItem.case_id}`).then((resp) => {
       if (resp.unauthorized) {
@@ -48,14 +51,25 @@ async function getData(page: number): Promise<SearchResponse<TransactionItem>> {
     const outgoingTransactions = transactions.filter((transaction) => transaction.type === TransactionType.OUTGOING) || [];
     const transactionVal = outgoingTransactions.reduce((acc, transaction) => acc + transaction.value, 0);
 
+    let partnerAccount = '-';
+    if (partner?.payment_key !== "") {
+      const paymentKeyOption = partner?.payment_key_option;
+
+      partnerAccount = `${paymentKeyOption ? paymentOptionMap[paymentKeyOption] : ''}: ${partner?.payment_key}`;
+      if (partner?.payment_is_from_same_owner !== undefined && !partner?.payment_is_from_same_owner) {
+        partnerAccount += `\n(${partner?.payment_owner})`;
+      }
+    }
+
     return {
       case_id: caseItem.case_id,
       external_reference: caseItem.external_reference,
       created_at: caseItem.updated_at,
       status: TransactionStatus.PENDING,
       total: transactionVal,
-      partner_document: (partner as Partner)?.document,
-      partner_name: `${(partner as Partner).first_name} ${(partner as Partner).last_name}`,
+      partner_document: partner?.document,
+      partner_name: `${partner?.first_name} ${partner?.last_name}`,
+      partner_account: partnerAccount,
       mo: {
         transaction_id: outgoingTransactions.filter((t) => t.description === "MO")[0]?.transaction_id || "",
         value: outgoingTransactions.filter((t) => t.description === "MO")[0]?.value || 0,

@@ -68,7 +68,7 @@ export default function PaymentTable({
                       Técnico
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium">
-                      Documento
+                      PIX
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium">
                       MO
@@ -107,9 +107,9 @@ export default function PaymentTable({
                           <p>{transaction.partner_name}</p>
                         </div>
                       </td>
-                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                      <td className="whitespace-pre-wrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
-                          <p>{transaction.partner_document && parseDocument(transaction.partner_document)}</p>
+                          <p>{transaction.partner_account}</p>
                         </div>
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
