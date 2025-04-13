@@ -292,7 +292,7 @@ export default function PartnerForm({ partner, onSubmit, submitState, onClose }:
 
           <div className="flex space-x-8 mt-6">
             <Button type="submit" className="w-32 items-center" isLoading={pending} aria-disabled={pending}>
-              {partner ? 'Editar' : 'Criar'}
+              {partner ? 'Salvar' : 'Criar'}
             </Button>
 
             <Button type="button" className="w-32 items-center" isLoading={pending} aria-disabled={pending} onClick={onClose}>
