@@ -4,7 +4,7 @@ import { parseCurrencyToNumber } from "@/app/libs/parser";
 import { changeStatus } from "@/app/services/cases";
 import { createTransactions } from "@/app/services/transactions";
 import { CaseFull, CaseStatus } from "@/app/types/case";
-import { CreateTransaction, TransactionType } from "@/app/types/transaction";
+import { CreateTransaction, TransactionDescMap, TransactionForm, TransactionType } from "@/app/types/transaction";
 import { InputNumberFormat } from "@react-input/number-format";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -15,13 +15,6 @@ import { Card } from "../../common/card";
 
 interface TransactionStatusFormProps {
   crmCase: CaseFull;
-}
-
-type TransactionForm = {
-  transaction_id: string,
-  type: TransactionType,
-  description: string,
-  value: string,
 }
 
 const mappedTransactions: TransactionForm[] = [
@@ -51,6 +44,12 @@ const mappedTransactions: TransactionForm[] = [
   },
   {
     transaction_id: "4",
+    type: TransactionType.INCOMING,
+    description: "Peças",
+    value: "",
+  },
+  {
+    transaction_id: "5",
     type: TransactionType.INCOMING,
     description: "Deslocamento",
     value: "",
@@ -120,31 +119,64 @@ export function TransactionStatusForm({ crmCase }: TransactionStatusFormProps) {
     <Card title="Adicionar transações" titleSize="text-xl">
       <form action={dispatch} className="px-5">
 
-        <div className="grid mb-4 gap-4 grid-cols-3">
-          {caseTransactions.map((transaction) => (
-            <div key={transaction.transaction_id} className="flex gap-4 items-center">
-              <div className="gap-4 items-center">
-                <label className="block text-sm font-medium text-gray-700" htmlFor="amount">
-                  {transaction.description}
-                </label>
+        <div className="mb-4">
+          <h2>Técnico</h2>
+          <div className="grid mt-2 gap-4 grid-cols-3">
+            {caseTransactions.filter((tr) => tr.type === TransactionType.OUTGOING).map((transaction) => (
+              <div key={transaction.transaction_id} className="flex gap-4 items-center">
+                <div className="gap-4 items-center">
+                  <label className="block text-sm font-medium text-gray-700" htmlFor="amount">
+                    {TransactionDescMap[transaction.description as keyof typeof TransactionDescMap]}
+                  </label>
 
-                <InputNumberFormat
-                  className="peer block rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                  id="amount"
-                  name="amount"
-                  placeholder="Digite o valor"
-                  required
-                  locales={"pt-BR"}
-                  maximumFractionDigits={2}
-                  format="currency"
-                  currency="BRL"
-                  min={0}
-                  value={transaction.value}
-                  onChange={(e) => handleTransactionUpdate(transaction.transaction_id, e)}
-                />
+                  <InputNumberFormat
+                    className="peer block rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
+                    id="amount"
+                    name="amount"
+                    placeholder="Digite o valor"
+                    required
+                    locales={"pt-BR"}
+                    maximumFractionDigits={2}
+                    format="currency"
+                    currency="BRL"
+                    min={0}
+                    value={transaction.value}
+                    onChange={(e) => handleTransactionUpdate(transaction.transaction_id, e)}
+                  />
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+        </div>
+
+        <div className="mb-4">
+          <h2>Seguradora</h2>
+          <div className="grid mt-2 gap-4 grid-cols-3">
+            {caseTransactions.filter((tr) => tr.type === TransactionType.INCOMING).map((transaction) => (
+              <div key={transaction.transaction_id} className="flex gap-4 items-center">
+                <div className="gap-4 items-center">
+                  <label className="block text-sm font-medium text-gray-700" htmlFor="amount">
+                  {TransactionDescMap[transaction.description as keyof typeof TransactionDescMap]}
+                  </label>
+
+                  <InputNumberFormat
+                    className="peer block rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
+                    id="amount"
+                    name="amount"
+                    placeholder="Digite o valor"
+                    required
+                    locales={"pt-BR"}
+                    maximumFractionDigits={2}
+                    format="currency"
+                    currency="BRL"
+                    min={0}
+                    value={transaction.value}
+                    onChange={(e) => handleTransactionUpdate(transaction.transaction_id, e)}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="pl-1">

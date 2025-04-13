@@ -62,3 +62,19 @@ export type TransactionItem = {
     value: number;
   };
 };
+
+export type TransactionForm = {
+  transaction_id: string,
+  type: TransactionType,
+  description: string,
+  value: string,
+}
+
+export const TransactionDescMap = {
+  "MO": "Mão de Obra",
+  "Peças técnico": "Peças",
+  "Deslocamento Técnico": "Deslocamento",
+  "Cobrado seguradora": "Mão de Obra",
+  "Peças": "Peças",
+  "Deslocamento": "Deslocamento",
+}
