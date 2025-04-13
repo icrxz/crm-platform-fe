@@ -13,18 +13,39 @@ import { Suspense } from 'react';
 import CasesTable from '../../components/cases/table';
 import { fetchCases } from '../../services/cases';
 
+interface CaseFilters {
+  sinistro?: string;
+  status?: string;
+  page?: number;
+}
+
 type CasePageParams = {
-  searchParams: {
-    sinistro?: string;
-    page?: number;
-  }
+  searchParams: CaseFilters;
 };
 
-async function getData(sinistro: string, userRole: UserRole | undefined, page: number): Promise<SearchResponse<CaseFull>> {
+function prepareQuery(filters?: CaseFilters): string {
   let query = '';
-  if (sinistro) {
-    query = `external_reference=${sinistro}`
+
+  if (filters?.sinistro) {
+    query += `external_reference=${filters.sinistro}&`
   }
+
+  if (filters?.status) {
+    query += `status=${filters.status}&`;
+  }
+
+  if (query.endsWith('&')) {
+    query = query.slice(0, -1);
+  }
+
+  return query;
+}
+
+async function getData(filters: CaseFilters, userRole: UserRole | undefined): Promise<SearchResponse<CaseFull>> {
+  let { page, ...rest } = filters || {};
+  page = page || 1;
+
+  const query = prepareQuery(rest);
 
   const { success, unauthorized, data } = await fetchCases(query, page);
   if (!success || !data) {
@@ -69,7 +90,7 @@ export default async function Page({ searchParams }: CasePageParams) {
     signOut();
   }
 
-  const data = await getData(searchParams?.sinistro || '', user?.role, searchParams?.page || 1);
+  const data = await getData(searchParams, user?.role);
 
   return (
     <main>

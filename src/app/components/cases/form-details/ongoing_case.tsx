@@ -7,12 +7,13 @@ import { CreateAttachment } from "@/app/types/attachments";
 import { CaseFull, CaseStatus } from "@/app/types/case";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import { Button } from "../../common/button";
 import { Card } from "../../common/card";
 import { FileUploaderGenericRef, GenericUploader } from "../../common/file-uploader";
 import TargetDateModal from "../target-date-modal";
+import { Checkbox } from "@nextui-org/react";
 
 interface OnGoingStatusFormProps {
   crmCase: CaseFull;
@@ -27,6 +28,7 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
   const [content, setContent] = useState("");
   const [loadingComment, setLoadingComment] = useState(false);
   const [openTargetDateModal, setOpenTargetDateModal] = useState(false);
+  const [shouldShowFirstPayment, setShouldShowFirstPayment] = useState(false);
 
   const isBeforeTargetDate = new Date() < new Date(crmCase.target_date!!);
 
@@ -37,7 +39,7 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
 
     if (fileUploaderRef.current?.length && fileUploaderRef.current?.length <= 0) {
       showSnackbar('é necessário ao menos 1 arquivo', 'error');
-      return 
+      return
     }
 
     await fileUploaderRef.current?.submit().then(response => {
@@ -88,6 +90,26 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
     setLoadingComment(false);
   }
 
+  const checkTime = () => {
+    const currentTime = new Date();
+    const currentHour = currentTime.getHours();
+    const currentMinute = currentTime.getMinutes();
+
+    if (currentHour < 15 || (currentHour === 15 && currentMinute === 0)) {
+      setShouldShowFirstPayment(true);
+    } else {
+      setShouldShowFirstPayment(false);
+    }
+  };
+
+  useEffect(() => {
+    checkTime();
+
+    const intervalId = setInterval(checkTime, 60000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   return (
     <Card title={isBeforeTargetDate ? "Aguardando data da visita" : "Caso em andamento"} titleSize="text-xl">
       <form action={dispatch} className="px-5 gap-4">
@@ -122,8 +144,16 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
           />
         </div>
 
-        <div className="mb-4">
+        <div className="flex mb-4 gap-8 items-top">
           <GenericUploader ref={fileUploaderRef} minFiles={isBeforeTargetDate ? 0 : 1} maxFiles={20} />
+
+          {shouldShowFirstPayment && <Checkbox
+            className="flex mb-1"
+            id="first_payment"
+            name="first_payment"
+          >
+            Primeiro pagamento
+          </Checkbox>}
         </div>
 
         <div className="flex gap-4">
