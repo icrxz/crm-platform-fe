@@ -49,6 +49,7 @@ export type TransactionItem = {
   created_at: string;
   partner_name?: string;
   partner_document?: string;
+  partner_account?: string;
   mo: {
     transaction_id: string;
     value: number;
