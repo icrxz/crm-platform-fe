@@ -293,7 +293,7 @@ export default function CustomerForm({ onClose, onSubmit, customer, submitState 
 
         <div className="flex space-x-8 mt-6">
           <Button type="submit" className="w-32" isLoading={pending} aria-disabled={pending}>
-            {customer ? 'Editar' : 'Cadastrar'}
+            {customer ? 'Salvar' : 'Cadastrar'}
           </Button>
 
           <Button type="button" className="w-32" isLoading={pending} aria-disabled={pending} onClick={onClose}>

@@ -146,7 +146,7 @@ export function ContractorForm({ onClose, onSubmit, contractor, submitState }: C
 
         <div className="flex space-x-8 mt-6">
           <Button type="submit" className="w-32 items-center" isLoading={pending} aria-disabled={pending}>
-            {contractor ? 'Editar' : 'Criar'}
+            {contractor ? 'Salvar' : 'Criar'}
           </Button>
 
           <Button type="button" className="w-32 items-center" isLoading={pending} aria-disabled={pending} onClick={onClose}>
