@@ -37,7 +37,7 @@ export const GenericUploader = forwardRef<FileUploaderGenericRef, FileUploaderPr
         allowedFileTypes: ['image/*'],
       },
       locale: Portuguese,
-      
+
     }));
 
     uppy.on('file-added', () => {
@@ -84,7 +84,7 @@ export const GenericUploader = forwardRef<FileUploaderGenericRef, FileUploaderPr
             {uppy.getFiles().map((file) => (
               <Badge
                 key={file.id}
-                content={file.name}
+                content={file.name || ''}
                 isClosable
                 onClose={() => {
                   uppy.removeFile(file.id);

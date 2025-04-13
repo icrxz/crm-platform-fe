@@ -43,6 +43,9 @@ export async function createPartner(_currentState: unknown, formData: FormData):
       created_by: author,
       payment_key: formData.get('payment_key')?.toString() || '',
       payment_key_option: formData.get('payment_key_option')?.toString() || '',
+      payment_type: 'PIX',
+      payment_owner: formData.get('payment_owner')?.toString() || '',
+      payment_is_from_same_owner: formData.has('payment_is_from_same_owner'),
     };
 
     const resp = await fetch(url, {
