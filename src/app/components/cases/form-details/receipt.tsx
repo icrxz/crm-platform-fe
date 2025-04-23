@@ -3,7 +3,7 @@ import { useSnackbar } from "@/app/context/SnackbarProvider";
 import { parseCurrencyToNumber, parseToCurrency } from "@/app/libs/parser";
 import { fetchTransactions, updateTransaction } from "@/app/services/transactions";
 import { CaseFull } from "@/app/types/case";
-import { CreateTransaction, Transaction, TransactionDescMap, TransactionForm, TransactionType } from "@/app/types/transaction";
+import { Transaction, TransactionDescMap, TransactionForm, TransactionType } from "@/app/types/transaction";
 import { InputNumberFormat } from "@react-input/number-format";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -122,7 +122,7 @@ export function ReceiptStatusForm({ crmCase }: ReceiptStatusFormProps) {
                   </label>
 
                   <InputNumberFormat
-                    className="peer disabled:cursor-not-allowed block rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
+                    className="peer disabled:bg-gray-300 disabled:cursor-not-allowed block rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
                     id="amount"
                     name="amount"
                     placeholder="Digite o valor"
@@ -154,7 +154,7 @@ export function ReceiptStatusForm({ crmCase }: ReceiptStatusFormProps) {
                   </label>
 
                   <InputNumberFormat
-                    className="peer disabled:cursor-not-allowed block rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
+                    className="peer disabled:bg-gray-300 disabled:cursor-not-allowed block rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
                     id="amount"
                     name="amount"
                     placeholder="Digite o valor"
