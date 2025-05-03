@@ -74,7 +74,7 @@ export function DraftStatusForm({ crmCase }: DraftStatusFormProps) {
   }, [crmCase.customer]);
 
   return (
-    <Card title="Complete os dados do caso" titleSize="text-xl">
+    <Card title="Complete os dados do caso" titleSize="xl">
       <form action={dispatch} className="px-5 gap-4">
         <div className="my-4">
           <label className="mb-3 block text-xs font-medium text-gray-900" htmlFor="subject">

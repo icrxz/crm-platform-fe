@@ -53,7 +53,7 @@ export function CustomerInfoStatusForm({ crmCase }: CustomerInfoStatusFormProps)
   }
 
   return (
-    <Card title="Detalhes" titleSize="text-xl">
+    <Card title="Detalhes" titleSize="xl">
       <form action={dispatch} className="px-5">
         <div className="mb-2">
           <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="content">

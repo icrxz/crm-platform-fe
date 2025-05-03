@@ -83,7 +83,7 @@ export function PartnerInfoStatusForm({ crmCase }: PartnerInfoFormProps) {
   }
 
   return (
-    <Card title="Atribuir técnico" titleSize="text-xl">
+    <Card title="Atribuir técnico" titleSize="xl">
       <form action={dispatch} className="px-5">
         <div className="mb-4">
           <Autocomplete
