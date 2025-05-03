@@ -3,21 +3,36 @@ import React from "react";
 
 interface CardProps {
     title: string | React.ReactNode;
-    titleSize?: string;
+    titleSize?: 'sm' | 'md' | 'lg' | 'xl';
     children: React.ReactNode;
+    size?: 'sm' | 'md' | 'lg' | 'xl';
 }
 
-export function Card({ title, titleSize = "sm", children }: CardProps) {
+const cardSizes = {
+    sm: "p-1",
+    md: "p-1",
+    lg: "p-2",
+    xl: "p-4"
+}
+
+const childrenSizes = {
+    sm: "mb-1",
+    md: "mb-1",
+    lg: "mb-2",
+    xl: "mb-3"
+}
+
+export function Card({ title, titleSize = "sm", children, size = 'lg' }: CardProps) {
     return (
-        <div className="rounded-xl bg-gray-50 p-2 shadow-sm">
-            <div className="flex p-3">
+        <div className={`rounded-xl bg-gray-50 shadow-sm ${cardSizes[size]}`}>
+            <div className={`flex ${cardSizes[size]}`}>
                 {typeof title === "string" ? (
-                    <h2 className={`ml-2 ${titleSize} font-semibold`}>
+                    <p className={`ml-2 text-${titleSize} font-semibold`}>
                         {title}
-                    </h2>) : title}
+                    </p>) : title}
             </div>
 
-            <div className="mb-2">
+            <div className={`${childrenSizes[size]}`}>
                 {children}
             </div>
         </div>

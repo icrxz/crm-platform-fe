@@ -68,7 +68,7 @@ export default function CaseDetails({ crmCase, userRole }: CaseDetailsProps) {
 
       <div className="flex gap-6 mb-8">
         <div className="w-1/3 h-fill">
-          <Card title="Dados do caso" titleSize="text-xl">
+          <Card title="Dados do caso" titleSize="xl">
             <div className="items-center ml-4 gap-8">
               <CardText title="Sinistro:" text={crmCase.external_reference} />
               <CardText title="Seguradora:" text={crmCase.contractor?.company_name || ''} />
@@ -106,7 +106,7 @@ export default function CaseDetails({ crmCase, userRole }: CaseDetailsProps) {
 
       <div className="flex gap-6 mb-8">
         <div className="w-1/2 h-fill">
-          <Card title="Cliente" titleSize="text-xl">
+          <Card title="Cliente" titleSize="xl">
             <div className="items-center ml-4 gap-8">
               <CardText title="Nome do cliente:" text={`${crmCase.customer?.first_name} ${crmCase.customer?.last_name}` || ''} />
               <CardText title="Documento:" text={parseDocument(crmCase.customer?.document || '')} />
@@ -121,7 +121,7 @@ export default function CaseDetails({ crmCase, userRole }: CaseDetailsProps) {
         </div>
 
         <div className="w-1/2 h-fill">
-          <Card title="Produto" titleSize="text-xl">
+          <Card title="Produto" titleSize="xl">
             <div className="items-center ml-4 gap-8">
               <CardText title="Nome do produto:" text={crmCase.product?.product_name || ''} />
               <CardText title="Descrição:" text={crmCase.product?.product_description || ''} />

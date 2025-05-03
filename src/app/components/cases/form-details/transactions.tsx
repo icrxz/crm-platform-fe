@@ -116,7 +116,7 @@ export function TransactionStatusForm({ crmCase }: TransactionStatusFormProps) {
   }
 
   return (
-    <Card title="Adicionar transações" titleSize="text-xl">
+    <Card title="Adicionar transações" titleSize="xl">
       <form action={dispatch} className="px-5">
 
         <div className="mb-4">

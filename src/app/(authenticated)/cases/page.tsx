@@ -1,9 +1,6 @@
 `use server`;
 import { getCurrentUser } from '@/app/libs/session';
-import { getContractorByID } from '@/app/services/contractors';
-import { getCustomerByID } from '@/app/services/customers';
-import { getPartnerByID } from '@/app/services/partners';
-import { Case, CaseFull } from '@/app/types/case';
+import { CaseFull } from '@/app/types/case';
 import { SearchResponse } from '@/app/types/search_response';
 import { UserRole } from '@/app/types/user';
 import { onlyAdminStatuses } from '@/app/utils/case_status';
@@ -11,7 +8,7 @@ import { signOut } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import CasesTable from '../../components/cases/table';
-import { fetchCases } from '../../services/cases';
+import { fetchCasesFull } from '../../services/cases';
 
 type CasePageParams = {
   searchParams: {
@@ -26,7 +23,7 @@ async function getData(sinistro: string, userRole: UserRole | undefined, page: n
     query = `external_reference=${sinistro}`
   }
 
-  const { success, unauthorized, data } = await fetchCases(query, page);
+  const { success, unauthorized, data } = await fetchCasesFull(query, page);
   if (!success || !data) {
     if (unauthorized) {
       redirect("/login");
@@ -42,23 +39,8 @@ async function getData(sinistro: string, userRole: UserRole | undefined, page: n
     filteredCases = cases.filter((crmCase) => !onlyAdminStatuses.includes(crmCase.status));
   }
 
-  const casesFull = await Promise.all(filteredCases.map(async (crmCase: Case) => {
-    const [customer, contractor, partner] = await Promise.all([
-      crmCase.customer_id && getCustomerByID(crmCase?.customer_id),
-      getContractorByID(crmCase.contractor_id),
-      crmCase.partner_id && getPartnerByID(crmCase.partner_id)
-    ]);
-
-    return {
-      ...crmCase,
-      customer: customer && customer.data ? customer.data : undefined,
-      contractor: contractor.data,
-      partner: partner && partner.data ? partner.data : undefined,
-    };
-  }));
-
   return {
-    result: casesFull,
+    result: filteredCases,
     paging: data.paging,
   };
 }

@@ -11,7 +11,7 @@ interface CommentDetailsProps {
 export function CommentDetails({ crmCase }: CommentDetailsProps) {
   return (
     <div className="w-full h-fill">
-      <Card title="Detalhes" titleSize="text-xl">
+      <Card title="Detalhes" titleSize="xl">
         <div className="mx-4">
           <div className="items-center space-y-4">
             <p className="text-sm font-medium text-gray-900">{crmCase.subject}</p>

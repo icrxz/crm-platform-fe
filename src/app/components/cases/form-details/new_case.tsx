@@ -58,7 +58,7 @@ export function NewCaseStatusForm({ crmCase }: NewCaseStatusFormProps) {
   }, []);
 
   return (
-    <Card title="Novo caso" titleSize="text-xl">
+    <Card title="Novo caso" titleSize="xl">
       <form action={dispatch} className="px-5">
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="owner">
