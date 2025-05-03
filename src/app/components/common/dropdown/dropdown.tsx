@@ -14,9 +14,12 @@ interface DropdownProps {
   required?: boolean;
   className?: string;
   defaultValue?: string;
+  value?: string;
+  onChange?: (value: string) => void;
+  optional?: boolean;
 }
 
-export function Dropdown({ label, name, options, placeholder, required, className, defaultValue }: DropdownProps) {
+export function Dropdown({ label, name, options, placeholder, required, className, defaultValue, onChange, optional, value }: DropdownProps) {
   return (
     <div className={className}>
       <label className="mb-3 block text-xs font-medium text-gray-900" htmlFor={name}>
@@ -29,8 +32,12 @@ export function Dropdown({ label, name, options, placeholder, required, classNam
         name={name}
         required={required}
         defaultValue={defaultValue || ''}
+        onChange={(e) => onChange && onChange(e.target.value)}
+        value={value}
       >
         {placeholder && <option value="">{placeholder}</option>}
+
+        {optional && <option value=""></option>}
 
         {options.map(opt => (
           <option key={opt.id} value={opt.value}>{opt.label}</option>

@@ -41,7 +41,7 @@ export function ReportStatusForm({ crmCase }: ReportStatusFormProps) {
   }
 
   return (
-    <Card title="Gerar laudo" titleSize="text-xl">
+    <Card title="Gerar laudo" titleSize="xl">
       <form action={dispatch} className="px-5 gap-4">
         <div className="mb-2">
           <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="content">

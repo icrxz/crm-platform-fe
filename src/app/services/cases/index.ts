@@ -7,6 +7,7 @@ import { getCaseByID } from './get_by_id';
 import { getCaseFullByID } from './get_full_by_id';
 import { publishCase } from './publish_case';
 import { fetchCases } from './search_cases';
+import { fetchCasesFull } from './search_cases_full';
 
 export const crmCoreEndpoint = process.env.CRM_CORE_ENDPOINT;
 export const crmCoreApiKey = process.env.CRM_CORE_API_KEY;
@@ -21,4 +22,5 @@ export {
   createCaseBatch,
   publishCase,
   getCaseFullByID,
+  fetchCasesFull,
 };

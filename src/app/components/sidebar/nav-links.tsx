@@ -9,6 +9,7 @@ import {
   HomeIcon,
   UserGroupIcon,
   WrenchIcon,
+  Square3Stack3DIcon,
 } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import Link from 'next/link';
@@ -27,6 +28,7 @@ const links = [
   { name: 'Seguradoras', href: '/contractors', icon: BuildingOffice2Icon, onlyAdmin: false },
   { name: 'Pagamentos', href: '/payments', icon: CreditCardIcon, onlyAdmin: true },
   { name: 'Usuários', href: '/users', icon: UserGroupIcon, onlyAdmin: true },
+  { name: 'Controle Interno', href: '/panel', icon: Square3Stack3DIcon, onlyAdmin: true },
 ];
 
 export default function NavLinks({ userRole }: { userRole: UserRole; }) {

@@ -89,7 +89,7 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
   }
 
   return (
-    <Card title={isBeforeTargetDate ? "Aguardando data da visita" : "Caso em andamento"} titleSize="text-xl">
+    <Card title={isBeforeTargetDate ? "Aguardando data da visita" : "Caso em andamento"} titleSize="xl">
       <form action={dispatch} className="px-5 gap-4">
         {isBeforeTargetDate ? (
           <div className="flex items-center space-x-2 mb-2">

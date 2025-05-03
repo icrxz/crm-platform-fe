@@ -109,7 +109,7 @@ export function ReceiptStatusForm({ crmCase }: ReceiptStatusFormProps) {
   }
 
   return (
-    <Card title="Transações" titleSize="text-xl">
+    <Card title="Transações" titleSize="xl">
       <form className="px-5">
         <div className="mb-2">
           <h2>Técnico</h2>

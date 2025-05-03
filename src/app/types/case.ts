@@ -3,6 +3,7 @@ import { Contractor } from "./contractor";
 import { Customer } from "./customer";
 import { Partner } from "./partner";
 import { Product } from "./product";
+import { Transaction } from './transaction';
 import { User } from "./user";
 
 export type CreateCase = {
@@ -38,7 +39,7 @@ export type Case = {
   partner_id?: string;
   contractor_id: string;
   origin_channel: string;
-  case_type: string;
+  type: string;
   subject?: string;
   priority: CasePriority;
   status: CaseStatus;
@@ -61,6 +62,7 @@ export interface CaseFull extends Case {
   product?: Product;
   owner?: User;
   comments?: Comment[];
+  transactions?: Transaction[];
 }
 
 export enum CaseStatus {
