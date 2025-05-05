@@ -124,7 +124,7 @@ export default async function ControlPanelSummary({ cases }: ControlPanelSummary
         </p>
       </Card>
 
-      <Card title="Total saída" size="md">
+      <Card title="Total saída">
       <p className={`${roboto.className} truncate rounded-xl bg-white px-2 py-4 text-center font-semibold text-md`}>
           {parseToCurrency(data.totalOutgoing)}
         </p>
