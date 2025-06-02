@@ -13,6 +13,8 @@ import { Button } from "../../common/button";
 import { Card } from "../../common/card";
 import { FileUploaderGenericRef, GenericUploader } from "../../common/file-uploader";
 import TargetDateModal from "../target-date-modal";
+import { ErrorMessage } from "../../common/error-message";
+import { RadioGroup, Radio } from "@nextui-org/react";
 
 interface OnGoingStatusFormProps {
   crmCase: CaseFull;
@@ -27,6 +29,7 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
   const [content, setContent] = useState("");
   const [loadingComment, setLoadingComment] = useState(false);
   const [openTargetDateModal, setOpenTargetDateModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const isBeforeTargetDate = new Date() < new Date(crmCase.target_date!!);
 
@@ -35,9 +38,13 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
   async function onSubmit(_currentState: unknown, formData: FormData) {
     let attachments: CreateAttachment[] = [];
 
-    if (fileUploaderRef.current?.length && fileUploaderRef.current?.length <= 0) {
-      showSnackbar('é necessário ao menos 1 arquivo', 'error');
-      return 
+    await fileUploaderRef.current?.submit().then(response => {
+      attachments = response || [];
+    });
+
+    if (attachments.length <= 0) {
+      setErrorMessage("Deve haver no mínimo 1 anexo.");
+      return;
     }
 
     await fileUploaderRef.current?.submit().then(response => {
@@ -125,6 +132,26 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
         <div className="mb-4">
           <GenericUploader ref={fileUploaderRef} minFiles={isBeforeTargetDate ? 0 : 1} maxFiles={20} />
         </div>
+
+        <div>
+          <RadioGroup
+            label="Tipo de serviço"
+            defaultValue="repair"
+            className="mb-4"
+            orientation="horizontal"
+            isRequired
+            size="sm"
+            id="type"
+            name="type"
+          >
+            <Radio value={"repair"}>Reparo</Radio>
+            <Radio value={"inspection"}>Vistoria</Radio>
+          </RadioGroup>
+        </div>
+
+        {errorMessage && (
+          <ErrorMessage message={errorMessage} />
+        )}
 
         <div className="flex gap-4">
           <Button type="button" onClick={handleAddComment} isLoading={loadingComment}>Adicionar comentário</Button>

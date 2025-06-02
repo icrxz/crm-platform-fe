@@ -11,6 +11,11 @@ interface ControlPanelTableProps {
 }
 
 export default function ControlPanelTable({ cases }: ControlPanelTableProps) {
+  const mapServiceType: Record<string, string> = {
+    "repair": "R",
+    "inspection": "V"
+  }
+
   return (
     <div className="w-full">
       <div className="mt-6 flow-root">
@@ -54,6 +59,9 @@ export default function ControlPanelTable({ cases }: ControlPanelTableProps) {
                     <th scope="col" className="py-5 font-medium sm:pl-6">
                       Peças Seguradora
                     </th>
+                    <th scope="col" className="py-5 font-medium sm:pl-6">
+                      Serviço
+                    </th>
                   </tr>
                 </thead>
 
@@ -95,6 +103,9 @@ export default function ControlPanelTable({ cases }: ControlPanelTableProps) {
                       </td>
                       <td className="whitespace-nowrap bg-white pl-6 py-5 text-sm">
                         {parseToCurrency(crmCase.transactions?.find((tr) => tr.type === TransactionType.INCOMING && tr.description === 'Peças')?.value || 0)}
+                      </td>
+                      <td className="whitespace-nowrap bg-white pl-6 py-5 text-sm">
+                        {mapServiceType[crmCase.type] || '-'}
                       </td>
                     </tr>
                   ))}

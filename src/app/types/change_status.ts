@@ -5,5 +5,6 @@ export type ChangeStatus = {
   status: CaseStatus;
   content?: string;
   attachments?: CreateAttachment[];
+  type?: string;
   updated_by: string;
 };
