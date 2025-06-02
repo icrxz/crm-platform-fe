@@ -32,6 +32,7 @@ export async function changeStatus(
       content: formData?.get("content")?.toString(),
       updated_by: author,
       attachments: attachments,
+      type: formData?.get("type")?.toString()
     };
 
     const response = await fetch(url, {

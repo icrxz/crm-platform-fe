@@ -7,7 +7,7 @@ interface ErrorMessageProps {
 export function ErrorMessage({ message }: ErrorMessageProps) {
   return (
     <div
-      className="flex h-8 items-end space-x-1"
+      className="flex h-4 items-end space-x-1 py-2"
       aria-live="polite"
       aria-atomic="true"
     >
