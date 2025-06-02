@@ -95,7 +95,7 @@ export default function CaseDetails({ crmCase, userRole }: CaseDetailsProps) {
                   <DownloadReportButton caseID={crmCase.case_id} />
                 )}
 
-                {isAdminStatus && (
+                {isAdminRole && (
                   <ResetCaseButton caseId={crmCase.case_id} userRole={userRole} />
                 )}
               </div>

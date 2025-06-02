@@ -33,7 +33,7 @@ export async function resetStatus(caseID: string,): Promise<ServiceResponse<any>
       const resp = await response.json();
       console.error(resp);
       const unauthorized = response.status === 401;
-      const errorMessage = unauthorized ? "usuário não autorizado" : "falha ao concluir caso";
+      const errorMessage = unauthorized ? "usuário não autorizado" : "falha ao resetar status do caso";
       return {
         success: false,
         message: errorMessage,

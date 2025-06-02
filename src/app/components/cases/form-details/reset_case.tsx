@@ -24,11 +24,11 @@ export function ResetCaseButton({ caseId, userRole }: ResetCaseButtonProps) {
 
   const isAdminRole = adminRoles.includes(userRole);
 
-  function handleResetCase() {
+  async function handleResetCase() {
     setLoading(true);
 
     try {
-      resetStatus(caseId).then(response => {
+      await resetStatus(caseId).then(response => {
         if (!response.success) {
           if (response.unauthorized) {
             signOut();
@@ -44,6 +44,7 @@ export function ResetCaseButton({ caseId, userRole }: ResetCaseButtonProps) {
       });
     } finally {
       setLoading(false);
+      setShowConfirmation(false);
     }
   }
 
@@ -55,18 +56,23 @@ export function ResetCaseButton({ caseId, userRole }: ResetCaseButtonProps) {
     <>
       {isAdminRole && <Button
         onClick={() => setShowConfirmation(true)}
-        color="error"
+        color="warning"
         disabled={loading}
         isLoading={loading}
+        size="md"
       >
         Resetar caso
       </Button>}
 
       {showConfirmation && (
         <Modal isOpen={showConfirmation} onClose={onClose}>
-          <h1 className={`${roboto.className} my-5 mx-5 text-xl`}>
+          <h1 className={`${roboto.className} mt-3 mb-2 mx-5 text-xl`}>
             Tem certeza que deseja resetar o caso?
           </h1>
+
+          <p className={`${roboto.className} mb-5 mx-5 text-md`}>
+            Esta ação irá remover todas as informações do caso e reiniciar o fluxo.
+          </p>
 
           <div className="flex justify-center space-x-8">
             <Button
@@ -74,6 +80,7 @@ export function ResetCaseButton({ caseId, userRole }: ResetCaseButtonProps) {
               color="success"
               disabled={loading}
               isLoading={loading}
+              size="md"
             >
               Sim
             </Button>
@@ -83,6 +90,7 @@ export function ResetCaseButton({ caseId, userRole }: ResetCaseButtonProps) {
               color="error"
               disabled={loading}
               isLoading={loading}
+              size="md"
             >
               Cancelar
             </Button>
