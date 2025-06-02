@@ -31,10 +31,10 @@ export function DownloadReportButton({ caseID }: DownloadReportButtonProps) {
     <a>
       <Button
         aria-disabled={loadingReport}
-        className="ml-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-gray-200"
         isLoading={loadingReport}
         type="button"
         onClick={handleDownloadReport}
+        size="md"
       >
         {loadingReport ? <DocumentArrowDownIcon className="ml-auto h-5 w-5 text-green-100" /> : "Baixar laudo"}
       </Button>

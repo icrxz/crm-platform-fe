@@ -12,8 +12,8 @@ interface ControlPanelTableProps {
 
 export default function ControlPanelTable({ cases }: ControlPanelTableProps) {
   const mapServiceType: Record<string, string> = {
-    "repair": "R",
-    "inspection": "V"
+    "repair": "Rep",
+    "inspection": "Vist"
   }
 
   return (

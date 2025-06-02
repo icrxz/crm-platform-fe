@@ -14,6 +14,7 @@ import { CardText } from "../common/card/card-text";
 import { DownloadReportButton } from "./download-report-button";
 import { FormDetails } from "./form-details";
 import { CommentDetails } from "./form-details/comments";
+import { ResetCaseButton } from "./form-details/reset_case";
 
 interface CaseDetailsProps {
   crmCase: CaseFull;
@@ -75,22 +76,29 @@ export default function CaseDetails({ crmCase, userRole }: CaseDetailsProps) {
               <CardText title="Data de criação:" text={parseDateTime(crmCase.created_at)} />
               <CardText title="Criado por:" text={crmCase.created_by} />
               <CardText title="Prioridade:" text={casePriorityMap[crmCase.priority]} />
+              
               {crmCase.owner && (
                 <CardText title="Responsável:" text={crmCase.owner.username} />
               )}
+
               <CardText title="Data de vencimento:" text={parseDateTime(crmCase.due_date, "dd/MM/yyyy")} />
               {crmCase.partner && (
                 <CardText title="Técnico:" text={`${crmCase.partner.first_name} ${crmCase.partner.last_name}`} />
               )}
+              
               {crmCase.status == CaseStatus.ONGOING && crmCase.target_date && (
                 <CardText title="Data agendada:" text={parseDateTime(crmCase.target_date, "dd/MM/yyyy")} />
               )}
 
-              {isShowReportStatus && (
-                <div className="mt-4 -ml-2">
+              <div className="flex gap-4 mt-4 -ml-2">
+                {isShowReportStatus && (
                   <DownloadReportButton caseID={crmCase.case_id} />
-                </div>
-              )}
+                )}
+
+                {isAdminRole && (
+                  <ResetCaseButton caseId={crmCase.case_id} userRole={userRole} />
+                )}
+              </div>
             </div>
           </Card>
         </div>

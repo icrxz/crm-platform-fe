@@ -9,7 +9,7 @@ const Snackbar = () => {
     if (snackbar.open) {
       const timer = setTimeout(() => {
         closeSnackbar();
-      }, 3000); // Fecha automaticamente após 3 segundos
+      }, 5000); // Fecha automaticamente após 5 segundos
       return () => clearTimeout(timer);
     }
   }, [snackbar, closeSnackbar]);
