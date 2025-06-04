@@ -47,10 +47,6 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
       return;
     }
 
-    await fileUploaderRef.current?.submit().then(response => {
-      attachments = response || [];
-    });
-
     changeStatus(crmCase.case_id, CaseStatus.REPORT, formData, attachments).then(response => {
       if (!response.success) {
         if (response.unauthorized) {
