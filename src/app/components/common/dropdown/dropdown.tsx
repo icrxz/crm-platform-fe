@@ -1,4 +1,4 @@
-"useClient";
+'useClient';
 
 export interface DropdownOption {
   id: string;
@@ -19,10 +19,24 @@ interface DropdownProps {
   optional?: boolean;
 }
 
-export function Dropdown({ label, name, options, placeholder, required, className, defaultValue, onChange, optional, value }: DropdownProps) {
+export function Dropdown({
+  label,
+  name,
+  options,
+  placeholder,
+  required,
+  className,
+  defaultValue,
+  onChange,
+  optional,
+  value,
+}: DropdownProps) {
   return (
     <div className={className}>
-      <label className="mb-3 block text-xs font-medium text-gray-900" htmlFor={name}>
+      <label
+        className="mb-3 block text-xs font-medium text-gray-900"
+        htmlFor={name}
+      >
         {label}
       </label>
 
@@ -31,16 +45,21 @@ export function Dropdown({ label, name, options, placeholder, required, classNam
         id={name}
         name={name}
         required={required}
-        defaultValue={defaultValue || ''}
-        onChange={(e) => onChange && onChange(e.target.value)}
-        value={value}
+        {...(value !== undefined
+          ? { value, onChange: (e) => onChange && onChange(e.target.value) }
+          : {
+              defaultValue: defaultValue || '',
+              onChange: (e) => onChange && onChange(e.target.value),
+            })}
       >
         {placeholder && <option value="">{placeholder}</option>}
 
         {optional && <option value=""></option>}
 
-        {options.map(opt => (
-          <option key={opt.id} value={opt.value}>{opt.label}</option>
+        {options.map((opt) => (
+          <option key={opt.id} value={opt.value}>
+            {opt.label}
+          </option>
         ))}
       </select>
     </div>
