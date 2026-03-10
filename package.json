@@ -45,7 +45,7 @@
     "react-multi-carousel": "2.8.5",
     "sharp": "0.33.5",
     "tailwindcss": "3.4.19",
-    "use-debounce": "10.0.4",
+    "use-debounce": "10.1.0",
     "uuid": "11.0.5",
     "zod": "3.24.1"
   },
