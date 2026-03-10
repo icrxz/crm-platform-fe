@@ -1,9 +1,9 @@
-"use server";
-import { removeDocumentSymbols } from "@/app/libs/parser";
-import { getCurrentUser } from "@/app/libs/session";
-import { EditPartner } from "@/app/types/partner";
-import { cookies } from "next/headers";
-import { crmCoreApiKey, crmCoreEndpoint } from ".";
+'use server';
+import { removeDocumentSymbols } from '@/app/libs/parser';
+import { getCurrentUser } from '@/app/libs/session';
+import { EditPartner } from '@/app/types/partner';
+import { cookies } from 'next/headers';
+import { crmCoreApiKey, crmCoreEndpoint } from '.';
 
 export async function editPartner(_currentState: unknown, formData: FormData) {
   try {
@@ -11,18 +11,18 @@ export async function editPartner(_currentState: unknown, formData: FormData) {
     if (!partnerID) {
       return {
         success: false,
-        message: "ID do técnico não informado",
+        message: 'ID do técnico não informado',
       };
     }
 
-    const jwt = cookies().get("jwt")?.value;
+    const jwt = (await cookies()).get('jwt')?.value;
     const url = `${crmCoreEndpoint}/crm/core/api/v1/partners/${partnerID}`;
 
     const session = await getCurrentUser();
     const author = session?.username || '';
 
     let address = '';
-    if (formData.get("address")) {
+    if (formData.get('address')) {
       address = `${formData.get('address')?.toString() || ''}, ${formData.get('number')?.toString() || ''} - ${formData.get('complement')?.toString() || ''}`;
     }
 
@@ -34,7 +34,7 @@ export async function editPartner(_currentState: unknown, formData: FormData) {
       first_name: formData.get('first_name')?.toString() || '',
       last_name: formData.get('last_name')?.toString() || '',
       document: document,
-      document_type: isCPF ? "CPF" : "CNPJ",
+      document_type: isCPF ? 'CPF' : 'CNPJ',
       partner_type: formData.get('partner_type')?.toString() || '',
       shipping: {
         address: address,
@@ -56,18 +56,20 @@ export async function editPartner(_currentState: unknown, formData: FormData) {
     } as EditPartner;
 
     const resp = await fetch(url, {
-      method: "PUT",
+      method: 'PUT',
       body: JSON.stringify(payload),
       headers: {
-        "Content-Type": 'application/json',
-        "X-API-Key": crmCoreApiKey || '',
-        "Authorization": `Bearer ${jwt}`
-      }
+        'Content-Type': 'application/json',
+        'X-API-Key': crmCoreApiKey || '',
+        Authorization: `Bearer ${jwt}`,
+      },
     });
 
     if (!resp.ok) {
       const unauthorized = resp.status === 401;
-      const errorMessage = unauthorized ? "usuário não autorizado" : "falha na edição do técnico";
+      const errorMessage = unauthorized
+        ? 'usuário não autorizado'
+        : 'falha na edição do técnico';
       return {
         success: false,
         message: errorMessage,
@@ -76,16 +78,15 @@ export async function editPartner(_currentState: unknown, formData: FormData) {
     }
 
     return {
-      message: "técnico editado com sucesso!",
+      message: 'técnico editado com sucesso!',
       success: true,
     };
-
   } catch (ex) {
     console.error(ex);
 
     return {
       success: false,
-      message: "algo de errado aconteceu, contate o suporte!",
+      message: 'algo de errado aconteceu, contate o suporte!',
     };
   }
 }

@@ -1,20 +1,23 @@
-"use client";
-import { useSnackbar } from "@/app/context/SnackbarProvider";
-import { ONLY_DATE_PATTERN, parseDateTime, timeElapsed } from "@/app/libs/date";
-import { changeStatus } from "@/app/services/cases";
-import { addComment } from "@/app/services/comments";
-import { CreateAttachment } from "@/app/types/attachments";
-import { CaseFull, CaseStatus } from "@/app/types/case";
-import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
-import { useFormState } from "react-dom";
-import { Button } from "../../common/button";
-import { Card } from "../../common/card";
-import { FileUploaderGenericRef, GenericUploader } from "../../common/file-uploader";
-import TargetDateModal from "../target-date-modal";
-import { ErrorMessage } from "../../common/error-message";
-import { RadioGroup, Radio } from "@nextui-org/react";
+'use client';
+import { useSnackbar } from '@/app/context/SnackbarProvider';
+import { ONLY_DATE_PATTERN, parseDateTime, timeElapsed } from '@/app/libs/date';
+import { changeStatus } from '@/app/services/cases';
+import { addComment } from '@/app/services/comments';
+import { CreateAttachment } from '@/app/types/attachments';
+import { CaseFull, CaseStatus } from '@/app/types/case';
+import { signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useRef, useState } from 'react';
+import { useFormState } from 'react-dom';
+import { Button } from '../../common/button';
+import { Card } from '../../common/card';
+import {
+  FileUploaderGenericRef,
+  GenericUploader,
+} from '../../common/file-uploader';
+import TargetDateModal from '../target-date-modal';
+import { ErrorMessage } from '../../common/error-message';
+import { RadioGroup, Radio } from '@heroui/react';
 
 interface OnGoingStatusFormProps {
   crmCase: CaseFull;
@@ -26,28 +29,35 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
   const [_, dispatch] = useFormState(onSubmit, null);
 
   const fileUploaderRef = useRef<FileUploaderGenericRef>(null);
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState('');
   const [loadingComment, setLoadingComment] = useState(false);
   const [openTargetDateModal, setOpenTargetDateModal] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState('');
 
   const isBeforeTargetDate = new Date() < new Date(crmCase.target_date!!);
 
-  const placeholderInfo = isBeforeTargetDate ? 'Adicione comentários ao caso' : 'Adicione informações sobre o caso e selecione imagens para anexar ao laudo, clicando no botão "Enviar para laudo"';
+  const placeholderInfo = isBeforeTargetDate
+    ? 'Adicione comentários ao caso'
+    : 'Adicione informações sobre o caso e selecione imagens para anexar ao laudo, clicando no botão "Enviar para laudo"';
 
   async function onSubmit(_currentState: unknown, formData: FormData) {
     let attachments: CreateAttachment[] = [];
 
-    await fileUploaderRef.current?.submit().then(response => {
+    await fileUploaderRef.current?.submit().then((response) => {
       attachments = response || [];
     });
 
     if (attachments.length <= 0) {
-      setErrorMessage("Deve haver no mínimo 1 anexo.");
+      setErrorMessage('Deve haver no mínimo 1 anexo.');
       return;
     }
 
-    changeStatus(crmCase.case_id, CaseStatus.REPORT, formData, attachments).then(response => {
+    changeStatus(
+      crmCase.case_id,
+      CaseStatus.REPORT,
+      formData,
+      attachments
+    ).then((response) => {
       if (!response.success) {
         if (response.unauthorized) {
           signOut();
@@ -65,68 +75,100 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
     setLoadingComment(true);
 
     const formData = new FormData();
-    formData.append("content", content);
+    formData.append('content', content);
 
     let attachments: CreateAttachment[] = [];
 
-    await fileUploaderRef.current?.submit().then(response => {
+    await fileUploaderRef.current?.submit().then((response) => {
       attachments = response || [];
     });
 
-    addComment(crmCase.case_id, formData, attachments).then(response => {
-      if (!response.success) {
-        if (response.unauthorized) {
-          signOut();
+    addComment(crmCase.case_id, formData, attachments)
+      .then((response) => {
+        if (!response.success) {
+          if (response.unauthorized) {
+            signOut();
+          }
+          showSnackbar(response.message, 'error');
+          return;
         }
-        showSnackbar(response.message, 'error');
-        return;
-      }
 
-      showSnackbar(response.message, 'success');
-      refresh();
-    }).finally(() => {
-      setContent('');
-    });
+        showSnackbar(response.message, 'success');
+        refresh();
+      })
+      .finally(() => {
+        setContent('');
+      });
 
     setLoadingComment(false);
   }
 
   return (
-    <Card title={isBeforeTargetDate ? "Aguardando data da visita" : "Caso em andamento"} titleSize="xl">
-      <form action={dispatch} className="px-5 gap-4">
+    <Card
+      title={
+        isBeforeTargetDate ? 'Aguardando data da visita' : 'Caso em andamento'
+      }
+      titleSize="xl"
+    >
+      <form action={dispatch} className="gap-4 px-5">
         {isBeforeTargetDate ? (
-          <div className="flex items-center space-x-2 mb-2">
+          <div className="mb-2 flex items-center space-x-2">
             <p className="text-sm font-medium text-gray-500">Data agendada:</p>
-            <p className="text-sm font-medium text-gray-900 ml-4">{parseDateTime(crmCase.target_date || '', ONLY_DATE_PATTERN)}</p>
-            <Button type="button" size="sm" onClick={() => setOpenTargetDateModal(true)}>Alterar data de visita</Button>
+            <p className="ml-4 text-sm font-medium text-gray-900">
+              {parseDateTime(crmCase.target_date || '', ONLY_DATE_PATTERN)}
+            </p>
+            <Button
+              type="button"
+              size="sm"
+              onClick={() => setOpenTargetDateModal(true)}
+            >
+              Alterar data de visita
+            </Button>
           </div>
         ) : (
-          <div className="flex items-center space-x-2 mb-2">
-            <p className="text-sm font-medium text-gray-500">Tempo decorrido:</p>
-            <p className="text-sm font-medium text-gray-900">{timeElapsed(new Date(crmCase.target_date!!), new Date())}</p>
-            <Button type="button" size="sm" onClick={() => setOpenTargetDateModal(true)}>Alterar data de visita</Button>
+          <div className="mb-2 flex items-center space-x-2">
+            <p className="text-sm font-medium text-gray-500">
+              Tempo decorrido:
+            </p>
+            <p className="text-sm font-medium text-gray-900">
+              {timeElapsed(new Date(crmCase.target_date!!), new Date())}
+            </p>
+            <Button
+              type="button"
+              size="sm"
+              onClick={() => setOpenTargetDateModal(true)}
+            >
+              Alterar data de visita
+            </Button>
           </div>
         )}
 
         <div className="mb-2">
-          <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="content">
+          <label
+            className="mb-2 block text-sm font-medium text-gray-700"
+            htmlFor="content"
+          >
             Informações adicionais
           </label>
 
           <textarea
             id="content"
             name="content"
-            className="w-full h-32 p-2 border border-gray-300 rounded-md"
+            className="h-32 w-full rounded-md border border-gray-300 p-2"
             rows={3}
             placeholder={placeholderInfo}
             value={content}
-            onChange={event => setContent(event.target.value)}
+            onChange={(event) => setContent(event.target.value)}
             required
           />
         </div>
 
         <div className="mb-4">
-          <GenericUploader ref={fileUploaderRef} minFiles={isBeforeTargetDate ? 0 : 1} maxFiles={20} />
+          <GenericUploader
+            ref={fileUploaderRef}
+            minFiles={isBeforeTargetDate ? 0 : 1}
+            maxFiles={20}
+          />
         </div>
 
         <div>
@@ -140,18 +182,26 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
             id="type"
             name="type"
           >
-            <Radio value={"repair"}>Reparo</Radio>
-            <Radio value={"inspection"}>Vistoria</Radio>
+            <Radio value={'repair'}>Reparo</Radio>
+            <Radio value={'inspection'}>Vistoria</Radio>
           </RadioGroup>
         </div>
 
-        {errorMessage && (
-          <ErrorMessage message={errorMessage} />
-        )}
+        {errorMessage && <ErrorMessage message={errorMessage} />}
 
         <div className="flex gap-4">
-          <Button type="button" onClick={handleAddComment} isLoading={loadingComment}>Adicionar comentário</Button>
-          {!isBeforeTargetDate && <Button type="submit" disabled={loadingComment}>Enviar para laudo</Button>}
+          <Button
+            type="button"
+            onClick={handleAddComment}
+            isLoading={loadingComment}
+          >
+            Adicionar comentário
+          </Button>
+          {!isBeforeTargetDate && (
+            <Button type="submit" disabled={loadingComment}>
+              Enviar para laudo
+            </Button>
+          )}
         </div>
       </form>
 

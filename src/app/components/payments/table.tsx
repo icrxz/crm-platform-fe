@@ -1,9 +1,9 @@
-"use client";
+'use client';
 import { parseDateTime } from '@/app/libs/date';
 import { parseDocument, parseToCurrency } from '@/app/libs/parser';
 import { SearchResponse } from '@/app/types/search_response';
 import { CheckIcon, PencilIcon } from '@heroicons/react/24/outline';
-import { Pagination } from '@nextui-org/pagination';
+import { Pagination } from '@heroui/pagination';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { TransactionItem, TransactionStatus } from '../../types/transaction';
@@ -17,7 +17,7 @@ interface PaymentTableProps {
 }
 
 const transactionStatusTranslate: Record<string, string> = {
-  [TransactionStatus.PENDING]: "Pendente",
+  [TransactionStatus.PENDING]: 'Pendente',
 };
 
 export default function PaymentTable({
@@ -27,7 +27,8 @@ export default function PaymentTable({
   const router = useRouter();
   const [isConfirmPaymentModal, setIsConfirmPaymentModal] = useState(false);
   const [isEditPaymentModal, setIsEditPaymentModal] = useState(false);
-  const [selectedTransaction, setSelectedTransaction] = useState<TransactionItem>();
+  const [selectedTransaction, setSelectedTransaction] =
+    useState<TransactionItem>();
 
   function handleRowClick(paymentID: string) {
     router.push(`/payments/${paymentID}`);
@@ -57,7 +58,6 @@ export default function PaymentTable({
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
             <div className="overflow-hidden rounded-md bg-gray-50 p-2 md:pt-0">
-
               <table className="hidden min-w-full rounded-md text-gray-900 md:table">
                 <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
                   <tr>
@@ -131,24 +131,26 @@ export default function PaymentTable({
                         {parseDateTime(transaction.created_at)}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        <div className='flex gap-2'>
-                          {transaction.status == TransactionStatus.PENDING &&
+                        <div className="flex gap-2">
+                          {transaction.status == TransactionStatus.PENDING && (
                             <>
                               <button
                                 className="text-green-500 hover:text-green-700"
-                                onClick={() => handleConfirmPayment(transaction)}
+                                onClick={() =>
+                                  handleConfirmPayment(transaction)
+                                }
                               >
-                                <CheckIcon className='w-5 md:w-6' />
+                                <CheckIcon className="w-5 md:w-6" />
                               </button>
 
                               <button
                                 className="text-blue-600 hover:text-blue-900"
                                 onClick={() => handleEditPayment(transaction)}
                               >
-                                <PencilIcon className='w-5 md:w-6' />
+                                <PencilIcon className="w-5 md:w-6" />
                               </button>
                             </>
-                          }
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -160,25 +162,36 @@ export default function PaymentTable({
         </div>
       </div>
 
-      <div className='mt-2'>
+      <div className="mt-2">
         <Pagination
           onChange={handleChangePage}
           siblings={3}
           showControls
-          total={Math.ceil(Number((transactions?.paging.total || 1) / (transactions?.paging.limit || 1)))}
+          total={Math.ceil(
+            Number(
+              (transactions?.paging.total || 1) /
+                (transactions?.paging.limit || 1)
+            )
+          )}
           page={Number(initialPage || 1)}
         />
       </div>
 
-      {isConfirmPaymentModal && <ConfirmPaymentModal
-        isOpen={isConfirmPaymentModal}
-        onClose={() => setIsConfirmPaymentModal(false)}
-        caseId={selectedTransaction?.case_id || ''}
-      />}
+      {isConfirmPaymentModal && (
+        <ConfirmPaymentModal
+          isOpen={isConfirmPaymentModal}
+          onClose={() => setIsConfirmPaymentModal(false)}
+          caseId={selectedTransaction?.case_id || ''}
+        />
+      )}
 
-      {isEditPaymentModal && <EditPaymentModal
-        isOpen={isEditPaymentModal}
-        onClose={() => setIsEditPaymentModal(false)} transaction={selectedTransaction} />}
+      {isEditPaymentModal && (
+        <EditPaymentModal
+          isOpen={isEditPaymentModal}
+          onClose={() => setIsEditPaymentModal(false)}
+          transaction={selectedTransaction}
+        />
+      )}
     </div>
   );
 }
