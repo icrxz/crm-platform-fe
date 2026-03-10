@@ -7,7 +7,8 @@ import { roboto } from '@/app/ui/fonts';
 import { Checkbox } from '@heroui/checkbox';
 import { InputMask } from '@react-input/mask';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import { Button } from '../common/button';
 import { TextInput } from '../common/text-input/text-input';
 
@@ -27,7 +28,7 @@ export default function PartnerForm({
   submitState,
   onClose,
 }: PartnerFormProps) {
-  const [state, dispatch] = useFormState(onSubmit, null);
+  const [state, dispatch] = useActionState(onSubmit, null);
   const { pending } = useFormStatus();
 
   const [isFromSameOwner, setIsFromSameOwner] = useState<boolean>(

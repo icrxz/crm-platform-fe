@@ -13,7 +13,7 @@ import { InputMask } from '@react-input/mask';
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useFormState } from 'react-dom';
+import { useActionState } from 'react';
 import { Button } from '../../common/button';
 import { Card } from '../../common/card';
 
@@ -31,7 +31,7 @@ export function PartnerInfoStatusForm({ crmCase }: PartnerInfoFormProps) {
 
   const { refresh } = useRouter();
   const { showSnackbar } = useSnackbar();
-  const [_, dispatch] = useFormState(onSubmit, null);
+  const [_, dispatch] = useActionState(onSubmit, null);
 
   useEffect(() => {
     setLoadingPartners(true);

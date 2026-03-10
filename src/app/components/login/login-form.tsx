@@ -6,13 +6,14 @@ import {
   ExclamationCircleIcon,
   KeyIcon,
 } from '@heroicons/react/24/outline';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import { Button } from '../../components/common/button';
 import { login } from '../../services/authentication';
 import { roboto } from '../../ui/fonts';
 
 export default function LoginForm() {
-  const [errorMessage, dispatch] = useFormState(login, null);
+  const [errorMessage, dispatch] = useActionState(login, null);
 
   return (
     <form action={dispatch} className="space-y-3">

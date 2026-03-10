@@ -11,7 +11,8 @@ import { InputNumberFormat } from '@react-input/number-format';
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import { Button } from '../../common/button';
 import { Card } from '../../common/card';
 
@@ -22,7 +23,7 @@ interface DraftStatusFormProps {
 export function DraftStatusForm({ crmCase }: DraftStatusFormProps) {
   const { refresh } = useRouter();
   const { showSnackbar } = useSnackbar();
-  const [_, dispatch] = useFormState(onSubmit, null);
+  const [_, dispatch] = useActionState(onSubmit, null);
 
   const [userDocument, setUserDocument] = useState<string>(
     crmCase.customer?.document || ''
@@ -194,7 +195,7 @@ export function DraftStatusForm({ crmCase }: DraftStatusFormProps) {
               <button
                 type="button"
                 disabled={pending || searchingUser || hasSearchedCustomer}
-                className="ml-2 rounded-md bg-blue-500 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-200"
+                className="ml-2 rounded-md bg-blue-500 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-gray-200"
                 onClick={handleSearchUser}
               >
                 Buscar

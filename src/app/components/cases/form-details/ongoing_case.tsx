@@ -8,7 +8,7 @@ import { CaseFull, CaseStatus } from '@/app/types/case';
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
-import { useFormState } from 'react-dom';
+import { useActionState } from 'react';
 import { Button } from '../../common/button';
 import { Card } from '../../common/card';
 import {
@@ -26,7 +26,7 @@ interface OnGoingStatusFormProps {
 export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
   const { refresh } = useRouter();
   const { showSnackbar } = useSnackbar();
-  const [_, dispatch] = useFormState(onSubmit, null);
+  const [_, dispatch] = useActionState(onSubmit, null);
 
   const fileUploaderRef = useRef<FileUploaderGenericRef>(null);
   const [content, setContent] = useState('');

@@ -4,7 +4,8 @@ import { roboto } from '@/app/ui/fonts';
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import { Button } from '../common/button';
 import Modal from '../common/modal';
 
@@ -19,7 +20,7 @@ export function DeleteContractorModal({
   onClose,
   contractorID,
 }: DeleteContractorModalProps) {
-  const [state, dispatch] = useFormState(deleteContractor, null);
+  const [state, dispatch] = useActionState(deleteContractor, null);
   const { pending } = useFormStatus();
   const { showSnackbar } = useSnackbar();
   const { refresh } = useRouter();
