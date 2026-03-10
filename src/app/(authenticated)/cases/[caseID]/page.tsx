@@ -1,27 +1,36 @@
-"use server";
-import CaseDetails from "@/app/components/cases/details";
-import { getCurrentUser } from "@/app/libs/session";
-import { getCaseFullByID } from "@/app/services/cases";
-import { CaseFull } from "@/app/types/case";
-import { redirect } from "next/navigation";
-import { Suspense } from "react";
+'use server';
+import CaseDetails from '@/app/components/cases/details';
+import { getCurrentUser } from '@/app/libs/session';
+import { getCaseFullByID } from '@/app/services/cases';
+import { CaseFull } from '@/app/types/case';
+import { redirect } from 'next/navigation';
+import { Suspense } from 'react';
 
 async function getData(caseID: string): Promise<CaseFull | null> {
-  const { success, unauthorized, data: crmCase } = await getCaseFullByID(caseID);
+  const {
+    success,
+    unauthorized,
+    data: crmCase,
+  } = await getCaseFullByID(caseID);
   if (!success || !crmCase) {
     if (unauthorized) {
-      redirect("/login");
+      redirect('/login');
     }
-    redirect("/cases");
+    redirect('/cases');
   }
-  
+
   return crmCase;
 }
 
-export default async function Page({ params: { caseID } }: { params: { caseID: string; }; }) {
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ caseID: string }>;
+}) {
+  const { caseID } = await params;
   const user = await getCurrentUser();
   if (!user) {
-    redirect("/login");
+    redirect('/login');
   }
 
   const crmCase = await getData(caseID);
