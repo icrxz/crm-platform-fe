@@ -1,28 +1,40 @@
 `use client`;
-import { parseDocument } from "@/app/libs/parser";
-import { brazilStates } from "@/app/types/address";
-import { Partner, paymentOptionMap, PaymentOptions } from "@/app/types/partner";
-import { ServiceResponse } from "@/app/types/service";
-import { roboto } from "@/app/ui/fonts";
-import { Checkbox } from "@heroui/checkbox";
-import { InputMask } from "@react-input/mask";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { useFormState, useFormStatus } from "react-dom";
-import { Button } from "../common/button";
-import { TextInput } from "../common/text-input/text-input";
+import { parseDocument } from '@/app/libs/parser';
+import { brazilStates } from '@/app/types/address';
+import { Partner, paymentOptionMap, PaymentOptions } from '@/app/types/partner';
+import { ServiceResponse } from '@/app/types/service';
+import { roboto } from '@/app/ui/fonts';
+import { Checkbox } from '@heroui/checkbox';
+import { InputMask } from '@react-input/mask';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useFormState, useFormStatus } from 'react-dom';
+import { Button } from '../common/button';
+import { TextInput } from '../common/text-input/text-input';
 
 interface PartnerFormProps {
   partner?: Partner;
-  onSubmit: (_currentState: unknown, formData: FormData) => Promise<ServiceResponse<any>>;
+  onSubmit: (
+    _currentState: unknown,
+    formData: FormData
+  ) => Promise<ServiceResponse<any>>;
   onClose: () => void;
   submitState?: Dispatch<SetStateAction<ServiceResponse<any> | null>>;
 }
 
-export default function PartnerForm({ partner, onSubmit, submitState, onClose }: PartnerFormProps) {
+export default function PartnerForm({
+  partner,
+  onSubmit,
+  submitState,
+  onClose,
+}: PartnerFormProps) {
   const [state, dispatch] = useFormState(onSubmit, null);
   const { pending } = useFormStatus();
 
-  const [isFromSameOwner, setIsFromSameOwner] = useState<boolean>(partner?.payment_is_from_same_owner === undefined ? true : partner.payment_is_from_same_owner);
+  const [isFromSameOwner, setIsFromSameOwner] = useState<boolean>(
+    partner?.payment_is_from_same_owner === undefined
+      ? true
+      : partner.payment_is_from_same_owner
+  );
 
   useEffect(() => {
     if (submitState) {
@@ -39,11 +51,15 @@ export default function PartnerForm({ partner, onSubmit, submitState, onClose }:
       <div className="flex-1">
         <h1 className={`${roboto.className} mb-5 text-2xl`}>
           {partner ? 'Edite o técnico' : 'Cadastre o técnico'}
-          <input type="hidden" name="partner_id" value={partner?.partner_id || ''} />
+          <input
+            type="hidden"
+            name="partner_id"
+            value={partner?.partner_id || ''}
+          />
         </h1>
 
         <div className="w-full">
-          <div className="columns-3 mb-4">
+          <div className="mb-4 columns-3">
             <div>
               <label
                 className="mb-3 block text-xs font-medium text-gray-900"
@@ -109,7 +125,7 @@ export default function PartnerForm({ partner, onSubmit, submitState, onClose }:
             </div>
           </div>
 
-          <div className="columns-1 mb-4">
+          <div className="mb-4 columns-1">
             <div>
               <label
                 className="mb-3 block text-xs font-medium text-gray-900"
@@ -132,7 +148,7 @@ export default function PartnerForm({ partner, onSubmit, submitState, onClose }:
             </div>
           </div>
 
-          <div className="columns-2 mb-4">
+          <div className="mb-4 columns-2">
             <div>
               <label
                 className="mb-3 block text-xs font-medium text-gray-900"
@@ -171,15 +187,17 @@ export default function PartnerForm({ partner, onSubmit, submitState, onClose }:
                 >
                   {Object.values(PaymentOptions).map((pOption) => {
                     return (
-                      <option value={pOption}>{paymentOptionMap[pOption]}</option>
-                    )
+                      <option key={pOption} value={pOption}>
+                        {paymentOptionMap[pOption]}
+                      </option>
+                    );
                   })}
                 </select>
               </div>
             </div>
           </div>
 
-          <div className="my-4 flex flex-row w-full items-center">
+          <div className="my-4 flex w-full flex-row items-center">
             <div className="w-1/2 flex-none">
               <Checkbox
                 isSelected={isFromSameOwner}
@@ -192,16 +210,22 @@ export default function PartnerForm({ partner, onSubmit, submitState, onClose }:
               </Checkbox>
             </div>
 
-            <div className="w-1/2 flex-none ml-2">
+            <div className="ml-2 w-1/2 flex-none">
               {!isFromSameOwner && (
-                <TextInput label="Nome do titular" name="payment_owner" placeholder="Insira o nome do titular da conta" defaultValue={partner?.payment_owner || ''} required />
+                <TextInput
+                  label="Nome do titular"
+                  name="payment_owner"
+                  placeholder="Insira o nome do titular da conta"
+                  defaultValue={partner?.payment_owner || ''}
+                  required
+                />
               )}
             </div>
           </div>
 
           <hr />
 
-          <div className="columns-2 my-4">
+          <div className="my-4 columns-2">
             <div>
               <label
                 className="mb-3 block text-xs font-medium text-gray-900"
@@ -238,7 +262,9 @@ export default function PartnerForm({ partner, onSubmit, submitState, onClose }:
                   defaultValue={partner?.shipping?.state || ''}
                 >
                   {brazilStates.map((state) => (
-                    <option key={`state-${state}`} value={state}>{state}</option>
+                    <option key={`state-${state}`} value={state}>
+                      {state}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -247,7 +273,7 @@ export default function PartnerForm({ partner, onSubmit, submitState, onClose }:
 
           <hr />
 
-          <div className="columns-2 my-4">
+          <div className="my-4 columns-2">
             <div>
               <label
                 className="mb-3 block text-xs font-medium text-gray-900"
@@ -290,12 +316,23 @@ export default function PartnerForm({ partner, onSubmit, submitState, onClose }:
             </div>
           </div>
 
-          <div className="flex space-x-8 mt-6">
-            <Button type="submit" className="w-32 items-center" isLoading={pending} aria-disabled={pending}>
+          <div className="mt-6 flex space-x-8">
+            <Button
+              type="submit"
+              className="w-32 items-center"
+              isLoading={pending}
+              aria-disabled={pending}
+            >
               {partner ? 'Salvar' : 'Criar'}
             </Button>
 
-            <Button type="button" className="w-32 items-center" isLoading={pending} aria-disabled={pending} onClick={onClose}>
+            <Button
+              type="button"
+              className="w-32 items-center"
+              isLoading={pending}
+              aria-disabled={pending}
+              onClick={onClose}
+            >
               Cancelar
             </Button>
           </div>
