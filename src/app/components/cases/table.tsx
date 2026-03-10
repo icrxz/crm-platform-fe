@@ -1,6 +1,6 @@
-"use client";
+'use client';
 import { SearchResponse } from '@/app/types/search_response';
-import { Pagination } from '@nextui-org/pagination';
+import { Pagination } from '@heroui/pagination';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -36,17 +36,18 @@ export default function CasesTable({ cases, initialPage }: CasesTableProps) {
 
   return (
     <div className="w-full">
-      <h1 className={`${roboto.className} mb-8 text-xl md:text-2xl`}>
-        Casos
-      </h1>
+      <h1 className={`${roboto.className} mb-8 text-xl md:text-2xl`}>Casos</h1>
 
-      <CasesSearchBar setIsCreationModalOpen={setIsCreateModalOpen} setIsFilterModalOpen={setIsFilterModalOpen} setIsCreationBatchModalOpen={setIsCreateBatchModalOpen} />
+      <CasesSearchBar
+        setIsCreationModalOpen={setIsCreateModalOpen}
+        setIsFilterModalOpen={setIsFilterModalOpen}
+        setIsCreationBatchModalOpen={setIsCreateBatchModalOpen}
+      />
 
       <div className="mt-6 flow-root">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
             <div className="overflow-hidden rounded-md bg-gray-50 p-2 md:pt-0">
-
               <table className="hidden min-w-full rounded-md text-gray-900 md:table">
                 <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
                   <tr>
@@ -76,10 +77,7 @@ export default function CasesTable({ cases, initialPage }: CasesTableProps) {
 
                 <tbody className="divide-y divide-gray-200 text-gray-900">
                   {cases.result.map((crmCase) => (
-                    <tr
-                      key={crmCase.case_id}
-                      className="group"
-                    >
+                    <tr key={crmCase.case_id} className="group">
                       <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-blue-500 underline group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
                           <Link href={`/cases/${crmCase.case_id}`}>
@@ -105,7 +103,7 @@ export default function CasesTable({ cases, initialPage }: CasesTableProps) {
                         {caseStatusMap[crmCase.status]}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                        {parseDateTime(crmCase.due_date, "dd/MM/yyyy")}
+                        {parseDateTime(crmCase.due_date, 'dd/MM/yyyy')}
                       </td>
                     </tr>
                   ))}
@@ -116,25 +114,40 @@ export default function CasesTable({ cases, initialPage }: CasesTableProps) {
         </div>
       </div>
 
-      <div className='mt-2'>
+      <div className="mt-2">
         <Pagination
           onChange={handleChangePage}
           siblings={3}
           showControls
-          total={Math.ceil(Number((cases?.paging.total || 1) / (cases?.paging.limit || 1)))}
+          total={Math.ceil(
+            Number((cases?.paging.total || 1) / (cases?.paging.limit || 1))
+          )}
           page={Number(initialPage || 1)}
         />
       </div>
 
-      {isFilterModalOpen && <Modal isOpen={isFilterModalOpen} onClose={() => setIsFilterModalOpen(false)}>
-        <div>
-          Filtro
-        </div>
-      </Modal>}
+      {isFilterModalOpen && (
+        <Modal
+          isOpen={isFilterModalOpen}
+          onClose={() => setIsFilterModalOpen(false)}
+        >
+          <div>Filtro</div>
+        </Modal>
+      )}
 
-      {isCreateModalOpen && <CreateCaseModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />}
+      {isCreateModalOpen && (
+        <CreateCaseModal
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+        />
+      )}
 
-      {isCreateBatchModalOpen && <CreateCaseBatchModal isOpen={isCreateBatchModalOpen} onClose={() => setIsCreateBatchModalOpen(false)} />}
+      {isCreateBatchModalOpen && (
+        <CreateCaseBatchModal
+          isOpen={isCreateBatchModalOpen}
+          onClose={() => setIsCreateBatchModalOpen(false)}
+        />
+      )}
     </div>
   );
 }

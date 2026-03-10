@@ -11,22 +11,26 @@ import CasesTable from '../../components/cases/table';
 import { fetchCasesFull } from '../../services/cases';
 
 type CasePageParams = {
-  searchParams: {
+  searchParams: Promise<{
     sinistro?: string;
     page?: number;
-  }
+  }>;
 };
 
-async function getData(sinistro: string, userRole: UserRole | undefined, page: number): Promise<SearchResponse<CaseFull>> {
+async function getData(
+  sinistro: string,
+  userRole: UserRole | undefined,
+  page: number
+): Promise<SearchResponse<CaseFull>> {
   let query = '';
   if (sinistro) {
-    query = `external_reference=${sinistro}`
+    query = `external_reference=${sinistro}`;
   }
 
   const { success, unauthorized, data } = await fetchCasesFull(query, page);
   if (!success || !data) {
     if (unauthorized) {
-      redirect("/login");
+      redirect('/login');
     }
     return { result: [], paging: { limit: 10, offset: page * 10, total: 0 } };
   }
@@ -36,7 +40,9 @@ async function getData(sinistro: string, userRole: UserRole | undefined, page: n
   let filteredCases = cases;
 
   if (userRole === UserRole.OPERATOR) {
-    filteredCases = cases.filter((crmCase) => !onlyAdminStatuses.includes(crmCase.status));
+    filteredCases = cases.filter(
+      (crmCase) => !onlyAdminStatuses.includes(crmCase.status)
+    );
   }
 
   return {
@@ -46,17 +52,18 @@ async function getData(sinistro: string, userRole: UserRole | undefined, page: n
 }
 
 export default async function Page({ searchParams }: CasePageParams) {
+  const { sinistro, page } = await searchParams;
   const user = await getCurrentUser();
   if (!user) {
     signOut();
   }
 
-  const data = await getData(searchParams?.sinistro || '', user?.role, searchParams?.page || 1);
+  const data = await getData(sinistro || '', user?.role, page || 1);
 
   return (
     <main>
-      <Suspense fallback={<p>carregando casos...</p>} >
-        {data && <CasesTable cases={data} initialPage={searchParams?.page || 1} />}
+      <Suspense fallback={<p>carregando casos...</p>}>
+        {data && <CasesTable cases={data} initialPage={page || 1} />}
       </Suspense>
     </main>
   );

@@ -1,0 +1,23 @@
+version: 2
+updates:
+  # 1. Monitora pacotes do ecossistema Node/NPM (Next.js, React, Tailwind, etc)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependências"
+      - "frontend"
+
+  # 2. Monitora as Actions que usamos na pasta .github/workflows/
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "ci/cd"
+      - "actions"

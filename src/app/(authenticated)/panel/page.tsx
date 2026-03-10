@@ -26,7 +26,7 @@ interface PanelFilters {
 }
 
 type PanelPageParams = {
-  searchParams: PanelFilters;
+  searchParams: Promise<PanelFilters>;
 };
 
 function prepareQuery(filters?: PanelFilters): string {
@@ -53,7 +53,9 @@ function prepareQuery(filters?: PanelFilters): string {
 
   const currentDate = new Date();
   const isLastYear = currentDate.getMonth() < selectedMonth;
-  const searchYear = isLastYear ? currentDate.getFullYear() - 1 : currentDate.getFullYear();
+  const searchYear = isLastYear
+    ? currentDate.getFullYear() - 1
+    : currentDate.getFullYear();
 
   const initialMonthDate = new Date(searchYear, selectedMonth, 1);
   initialMonthDate.setUTCHours(0, 0, 0, 0);
@@ -80,9 +82,12 @@ async function getData(filters: PanelFilters): Promise<PanelResult> {
   const { success, unauthorized, data } = await fetchCasesFull(query, 1, 10000);
   if (!success || !data) {
     if (unauthorized) {
-      redirect("/login");
+      redirect('/login');
     }
-    return { result: [], paging: { limit: 10000, offset: 1 * 10000, total: 0 } };
+    return {
+      result: [],
+      paging: { limit: 10000, offset: 1 * 10000, total: 0 },
+    };
   }
 
   const contractors = await fetchContractors('', 1, 10000);
@@ -98,16 +103,17 @@ async function getData(filters: PanelFilters): Promise<PanelResult> {
 }
 
 export default async function Page({ searchParams }: PanelPageParams) {
+  const filters = await searchParams;
   const user = await getCurrentUser();
   if (!user) {
     signOut();
   }
 
   if (user?.role === UserRole.OPERATOR) {
-    redirect("/home");
+    redirect('/home');
   }
 
-  const data = await getData(searchParams);
+  const data = await getData(filters);
 
   return (
     <main>
@@ -117,7 +123,12 @@ export default async function Page({ searchParams }: PanelPageParams) {
 
       <div>
         <Suspense fallback={<CardsSkeleton />}>
-          {data.contractors && data.partners && <ControlPanelSearch contractors={data.contractors || []} partners={data.partners || []} />}
+          {data.contractors && data.partners && (
+            <ControlPanelSearch
+              contractors={data.contractors || []}
+              partners={data.partners || []}
+            />
+          )}
 
           {data.result && (
             <>

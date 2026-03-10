@@ -1,20 +1,20 @@
-"use client"
-import { updateUser } from "@/app/services/user";
-import { UpdateUser } from "@/app/types/user";
-import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useFormState } from "react-dom";
-import { Button } from "../common/button";
-import { ErrorMessage } from "../common/error-message";
-import Modal from "../common/modal";
+'use client';
+import { updateUser } from '@/app/services/user';
+import { UpdateUser } from '@/app/types/user';
+import { signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useActionState } from 'react';
+import { Button } from '../common/button';
+import { ErrorMessage } from '../common/error-message';
+import Modal from '../common/modal';
 
 interface FirstLoginModalProps {
   userId: string;
 }
 
 export default function FirstLoginModal({ userId }: FirstLoginModalProps) {
-  const [state, dispatch] = useFormState(onSubmit, null);
+  const [state, dispatch] = useActionState(onSubmit, null);
   const { refresh } = useRouter();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -25,22 +25,22 @@ export default function FirstLoginModal({ userId }: FirstLoginModalProps) {
     setIsLoading(true);
     setErrorMessage(undefined);
     try {
-      const newPassword = formData.get("new_password")?.toString();
-      const confirmPassword = formData.get("confirm_password")?.toString();
-      const email = formData.get("email")?.toString();
+      const newPassword = formData.get('new_password')?.toString();
+      const confirmPassword = formData.get('confirm_password')?.toString();
+      const email = formData.get('email')?.toString();
 
       if (newPassword != confirmPassword) {
-        setErrorMessage("As senhas devem corresponder!");
+        setErrorMessage('As senhas devem corresponder!');
         return;
       }
 
       if (!newPassword || !email) {
-        setErrorMessage("Os campos não podem estar vazios!");
+        setErrorMessage('Os campos não podem estar vazios!');
         return;
       }
 
       const updateFormData: UpdateUser = {
-        updated_by: "",
+        updated_by: '',
         email: email,
         password: newPassword,
         first_login_completed: true,
@@ -66,8 +66,10 @@ export default function FirstLoginModal({ userId }: FirstLoginModalProps) {
     <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} closable={false}>
       <form action={dispatch} className="px-4 py-2">
         <div>
-          <h3 className="text-xl text-gray-900 font-bold">Alterar dados</h3>
-          <p className="text-xs text-gray-500">Altere seus dados de login no primeiro acesso</p>
+          <h3 className="text-xl font-bold text-gray-900">Alterar dados</h3>
+          <p className="text-xs text-gray-500">
+            Altere seus dados de login no primeiro acesso
+          </p>
         </div>
 
         <div className="mt-4 space-y-2">
@@ -128,15 +130,14 @@ export default function FirstLoginModal({ userId }: FirstLoginModalProps) {
           </div>
         </div>
 
-        {errorMessage && (
-          <ErrorMessage message={errorMessage} />
-        )}
-
+        {errorMessage && <ErrorMessage message={errorMessage} />}
 
         <div className="mt-4">
-          <Button type="submit" isLoading={isLoading} size="md">Confirmar</Button>
+          <Button type="submit" isLoading={isLoading} size="md">
+            Confirmar
+          </Button>
         </div>
       </form>
     </Modal>
-  )
+  );
 }

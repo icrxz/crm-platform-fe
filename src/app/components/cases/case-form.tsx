@@ -1,33 +1,42 @@
-"use client";
-import { removeDocumentSymbols } from "@/app/libs/parser";
-import { fetchContractors } from "@/app/services/contractors";
-import { fetchCustomers } from "@/app/services/customers";
-import { brazilStates } from "@/app/types/address";
-import { Case } from "@/app/types/case";
-import { Contractor } from "@/app/types/contractor";
-import { Customer } from "@/app/types/customer";
-import { ServiceResponse } from "@/app/types/service";
-import { roboto } from "@/app/ui/fonts";
-import { InputMask } from "@react-input/mask";
-import { InputNumberFormat } from "@react-input/number-format";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { useFormState, useFormStatus } from "react-dom";
-import { Button } from "../common/button";
+'use client';
+import { removeDocumentSymbols } from '@/app/libs/parser';
+import { fetchContractors } from '@/app/services/contractors';
+import { fetchCustomers } from '@/app/services/customers';
+import { brazilStates } from '@/app/types/address';
+import { Case } from '@/app/types/case';
+import { Contractor } from '@/app/types/contractor';
+import { Customer } from '@/app/types/customer';
+import { ServiceResponse } from '@/app/types/service';
+import { roboto } from '@/app/ui/fonts';
+import { InputMask } from '@react-input/mask';
+import { InputNumberFormat } from '@react-input/number-format';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
+import { Button } from '../common/button';
 
 interface CaseFormProps {
   case?: Case;
-  onSubmit: (_currentState: unknown, formData: FormData) => Promise<ServiceResponse<any>>;
+  onSubmit: (
+    _currentState: unknown,
+    formData: FormData
+  ) => Promise<ServiceResponse<any>>;
   onClose: () => void;
   submitState?: Dispatch<SetStateAction<ServiceResponse<any> | null>>;
 }
 
-export default function CaseForm({ onSubmit, submitState, onClose }: CaseFormProps) {
-  const [state, dispatch] = useFormState(onSubmit, null);
+export default function CaseForm({
+  onSubmit,
+  submitState,
+  onClose,
+}: CaseFormProps) {
+  const [state, dispatch] = useActionState(onSubmit, null);
   const [contractors, setContractors] = useState<Contractor[]>([]);
-  const [userDocument, setUserDocument] = useState<string>("");
+  const [userDocument, setUserDocument] = useState<string>('');
   const [searchingUser, setSearchingUser] = useState<boolean>(false);
   const [customer, setCustomer] = useState<Customer | undefined>();
-  const [hasSearchedCustomer, setHasSearchedCustomer] = useState<boolean>(false);
+  const [hasSearchedCustomer, setHasSearchedCustomer] =
+    useState<boolean>(false);
 
   const { pending } = useFormStatus();
 
@@ -35,18 +44,20 @@ export default function CaseForm({ onSubmit, submitState, onClose }: CaseFormPro
     setSearchingUser(true);
     const document = removeDocumentSymbols(userDocument);
 
-    fetchCustomers(`document=${document}`, 1, 1000).then((res) => {
-      if (res.success && res.data) {
-        setCustomer(res.data.result[0]);
-      }
-    }).finally(() => {
-      setSearchingUser(false);
-      setHasSearchedCustomer(true);
-    });
+    fetchCustomers(`document=${document}`, 1, 1000)
+      .then((res) => {
+        if (res.success && res.data) {
+          setCustomer(res.data.result[0]);
+        }
+      })
+      .finally(() => {
+        setSearchingUser(false);
+        setHasSearchedCustomer(true);
+      });
   }
 
   useEffect(() => {
-    fetchContractors("active=true", 1, 1000).then(res => {
+    fetchContractors('active=true', 1, 1000).then((res) => {
       setContractors(res.data?.result || []);
     });
   }, []);
@@ -60,14 +71,15 @@ export default function CaseForm({ onSubmit, submitState, onClose }: CaseFormPro
   return (
     <form action={dispatch} className="space-y-3">
       <div className="flex-1">
-        <h1 className={`${roboto.className} mb-5 text-2xl`}>
-          Criar caso
-        </h1>
+        <h1 className={`${roboto.className} mb-5 text-2xl`}>Criar caso</h1>
 
         <div className="w-full">
-          <div className="columns-2 mb-4">
+          <div className="mb-4 columns-2">
             <div>
-              <label className="mb-3 block text-xs font-medium text-gray-900" htmlFor="claim">
+              <label
+                className="mb-3 block text-xs font-medium text-gray-900"
+                htmlFor="claim"
+              >
                 Sinistro
               </label>
 
@@ -82,14 +94,27 @@ export default function CaseForm({ onSubmit, submitState, onClose }: CaseFormPro
             </div>
 
             <div>
-              <label className="mb-3 block text-xs font-medium text-gray-900" htmlFor="contractor">
+              <label
+                className="mb-3 block text-xs font-medium text-gray-900"
+                htmlFor="contractor"
+              >
                 Seguradora
               </label>
 
-              <select className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500" id="contractor" name="contractor" required>
+              <select
+                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
+                id="contractor"
+                name="contractor"
+                required
+              >
                 <option value="">Selecione a seguradora</option>
-                {contractors.map(contractor => (
-                  <option key={contractor.contractor_id} value={contractor.contractor_id}>{contractor.company_name}</option>
+                {contractors.map((contractor) => (
+                  <option
+                    key={contractor.contractor_id}
+                    value={contractor.contractor_id}
+                  >
+                    {contractor.company_name}
+                  </option>
                 ))}
               </select>
             </div>
@@ -97,9 +122,12 @@ export default function CaseForm({ onSubmit, submitState, onClose }: CaseFormPro
 
           <hr />
 
-          <div className="columns-3 my-4">
+          <div className="my-4 columns-3">
             <div>
-              <label className="mb-3 block text-xs font-medium text-gray-900" htmlFor="brand">
+              <label
+                className="mb-3 block text-xs font-medium text-gray-900"
+                htmlFor="brand"
+              >
                 Marca
               </label>
 
@@ -114,7 +142,10 @@ export default function CaseForm({ onSubmit, submitState, onClose }: CaseFormPro
             </div>
 
             <div>
-              <label className="mb-3 block text-xs font-medium text-gray-900" htmlFor="model">
+              <label
+                className="mb-3 block text-xs font-medium text-gray-900"
+                htmlFor="model"
+              >
                 Modelo
               </label>
 
@@ -129,7 +160,10 @@ export default function CaseForm({ onSubmit, submitState, onClose }: CaseFormPro
             </div>
 
             <div>
-              <label className="mb-3 block text-xs font-medium text-gray-900" htmlFor="amount">
+              <label
+                className="mb-3 block text-xs font-medium text-gray-900"
+                htmlFor="amount"
+              >
                 Valor
               </label>
 
@@ -139,7 +173,7 @@ export default function CaseForm({ onSubmit, submitState, onClose }: CaseFormPro
                 name="amount"
                 placeholder="Digite o valor"
                 required
-                locales={"pt-BR"}
+                locales={'pt-BR'}
                 maximumFractionDigits={2}
                 format="currency"
                 currency="BRL"
@@ -148,9 +182,12 @@ export default function CaseForm({ onSubmit, submitState, onClose }: CaseFormPro
             </div>
           </div>
 
-          <div className="columns-1 mb-4">
+          <div className="mb-4 columns-1">
             <div>
-              <label className="mb-3 block text-xs font-medium text-gray-900" htmlFor="description">
+              <label
+                className="mb-3 block text-xs font-medium text-gray-900"
+                htmlFor="description"
+              >
                 Descrição
               </label>
 
@@ -166,9 +203,12 @@ export default function CaseForm({ onSubmit, submitState, onClose }: CaseFormPro
 
           <hr />
 
-          <div className="columns-1 my-4">
+          <div className="my-4 columns-1">
             <div>
-              <label className="mb-3 block text-xs font-medium text-gray-900" htmlFor="document">
+              <label
+                className="mb-3 block text-xs font-medium text-gray-900"
+                htmlFor="document"
+              >
                 Documento
               </label>
 
@@ -188,19 +228,26 @@ export default function CaseForm({ onSubmit, submitState, onClose }: CaseFormPro
                 <button
                   type="button"
                   disabled={pending || searchingUser}
-                  className="ml-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="ml-2 rounded-md bg-blue-500 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   onClick={handleSearchUser}
                 >
                   Buscar
                 </button>
-                <input type="hidden" name="customer_id" value={customer?.customer_id || ''} />
+                <input
+                  type="hidden"
+                  name="customer_id"
+                  value={customer?.customer_id || ''}
+                />
               </div>
             </div>
           </div>
 
-          <div className="columns-2 my-4">
+          <div className="my-4 columns-2">
             <div>
-              <label className="mb-3 block text-xs font-medium text-gray-900" htmlFor="first_name">
+              <label
+                className="mb-3 block text-xs font-medium text-gray-900"
+                htmlFor="first_name"
+              >
                 Nome
               </label>
 
@@ -217,7 +264,10 @@ export default function CaseForm({ onSubmit, submitState, onClose }: CaseFormPro
             </div>
 
             <div>
-              <label className="mb-3 block text-xs font-medium text-gray-900" htmlFor="last_name">
+              <label
+                className="mb-3 block text-xs font-medium text-gray-900"
+                htmlFor="last_name"
+              >
                 Sobrenome
               </label>
 
@@ -234,9 +284,12 @@ export default function CaseForm({ onSubmit, submitState, onClose }: CaseFormPro
             </div>
           </div>
 
-          <div className="columns-2 my-4">
+          <div className="my-4 columns-2">
             <div>
-              <label className="mb-3 block text-xs font-medium text-gray-900" htmlFor="first_name">
+              <label
+                className="mb-3 block text-xs font-medium text-gray-900"
+                htmlFor="first_name"
+              >
                 Cidade
               </label>
 
@@ -270,7 +323,9 @@ export default function CaseForm({ onSubmit, submitState, onClose }: CaseFormPro
                   disabled={!hasSearchedCustomer || !!customer}
                 >
                   {brazilStates.map((state) => (
-                    <option key={`state-${state}`} value={state}>{state}</option>
+                    <option key={`state-${state}`} value={state}>
+                      {state}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -278,12 +333,23 @@ export default function CaseForm({ onSubmit, submitState, onClose }: CaseFormPro
           </div>
         </div>
 
-        <div className="flex space-x-8 mt-6">
-          <Button type="submit" className="w-32 items-center" isLoading={pending} aria-disabled={pending}>
+        <div className="mt-6 flex space-x-8">
+          <Button
+            type="submit"
+            className="w-32 items-center"
+            isLoading={pending}
+            aria-disabled={pending}
+          >
             Criar
           </Button>
 
-          <Button type="button" className="w-32 items-center" isLoading={pending} aria-disabled={pending} onClick={onClose}>
+          <Button
+            type="button"
+            className="w-32 items-center"
+            isLoading={pending}
+            aria-disabled={pending}
+            onClick={onClose}
+          >
             Cancelar
           </Button>
         </div>

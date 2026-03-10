@@ -6,10 +6,10 @@ import AcmeLogo from '../ui/acme-logo';
 
 export default async function LoginPage() {
   const session = await getServerSession();
-  const jwt = cookies().get("jwt")?.value;
+  const jwt = (await cookies()).get('jwt')?.value;
 
   if (session && jwt) {
-    redirect("/home");
+    redirect('/home');
   }
 
   return (

@@ -1,32 +1,36 @@
-"use server";
-import { ServiceResponse } from "@/app/types/service";
-import { User } from "@/app/types/user";
-import { cookies } from "next/headers";
-import { crmCoreApiKey, crmCoreEndpoint } from ".";
+'use server';
+import { ServiceResponse } from '@/app/types/service';
+import { User } from '@/app/types/user';
+import { cookies } from 'next/headers';
+import { crmCoreApiKey, crmCoreEndpoint } from '.';
 
-export async function getUserByID(userID: string): Promise<ServiceResponse<User>> {
+export async function getUserByID(
+  userID: string
+): Promise<ServiceResponse<User>> {
   try {
-    if (userID == "") {
+    if (userID == '') {
       return {
         success: false,
-        message: "ID do usuário não informado",
+        message: 'ID do usuário não informado',
       };
     }
 
-    const jwt = cookies().get("jwt")?.value;
+    const jwt = (await cookies()).get('jwt')?.value;
     const url = `${crmCoreEndpoint}/crm/core/api/v1/users/${userID}`;
     const resp = await fetch(url, {
-      method: "GET",
+      method: 'GET',
       headers: {
-        "Content-Type": 'application/json',
-        "X-API-Key": crmCoreApiKey || '',
-        "Authorization": `Bearer ${jwt}`
-      }
+        'Content-Type': 'application/json',
+        'X-API-Key': crmCoreApiKey || '',
+        Authorization: `Bearer ${jwt}`,
+      },
     });
 
     if (!resp.ok) {
       const unauthorized = resp.status === 401;
-      const errorMessage = unauthorized ? "usuário não autorizado" : "falha na busca do usuário";
+      const errorMessage = unauthorized
+        ? 'usuário não autorizado'
+        : 'falha na busca do usuário';
       return {
         success: false,
         message: errorMessage,
@@ -34,16 +38,16 @@ export async function getUserByID(userID: string): Promise<ServiceResponse<User>
       };
     }
 
-    const data = await resp.json() as User;
+    const data = (await resp.json()) as User;
     return {
       success: true,
-      message: "usuário encontrado com sucesso",
+      message: 'usuário encontrado com sucesso',
       data,
     };
   } catch (error) {
     return {
       success: false,
-      message: "algo de errado aconteceu, contate o suporte!",
+      message: 'algo de errado aconteceu, contate o suporte!',
     };
   }
 }

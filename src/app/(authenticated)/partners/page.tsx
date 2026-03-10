@@ -17,7 +17,7 @@ interface PartnerFilters {
 }
 
 type PartnerPageParams = {
-  searchParams?: PartnerFilters;
+  searchParams: Promise<PartnerFilters>;
 };
 
 function prepareQuery(filters?: PartnerFilters): string {
@@ -55,7 +55,9 @@ function prepareQuery(filters?: PartnerFilters): string {
   return query;
 }
 
-async function getData(filters?: PartnerFilters): Promise<SearchResponse<Partner>> {
+async function getData(
+  filters?: PartnerFilters
+): Promise<SearchResponse<Partner>> {
   let { page, ...rest } = filters || {};
   page = page || 1;
 
@@ -64,7 +66,7 @@ async function getData(filters?: PartnerFilters): Promise<SearchResponse<Partner
   const { success, unauthorized, data } = await fetchPartners(query, page);
   if (!success || !data) {
     if (unauthorized) {
-      redirect("/login");
+      redirect('/login');
     }
     return { result: [], paging: { limit: 10, offset: page * 10, total: 0 } };
   }
@@ -78,17 +80,18 @@ async function getData(filters?: PartnerFilters): Promise<SearchResponse<Partner
 }
 
 export default async function Page({ searchParams }: PartnerPageParams) {
+  const filters = await searchParams;
   const user = await getCurrentUser();
   if (!user) {
-    redirect("/login");
+    redirect('/login');
   }
 
-  const data = await getData(searchParams);
+  const data = await getData(filters);
 
   return (
     <main>
       <Suspense fallback={<p>Carregando técnicos...</p>}>
-        <PartnersTable partners={data} initialPage={searchParams?.page} />
+        <PartnersTable partners={data} initialPage={filters?.page} />
       </Suspense>
     </main>
   );

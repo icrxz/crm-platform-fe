@@ -1,21 +1,30 @@
-import { Contractor } from "@/app/types/contractor";
-import { ServiceResponse } from "@/app/types/service";
-import { roboto } from "@/app/ui/fonts";
-import { InputMask } from "@react-input/mask";
-import { Dispatch, SetStateAction, useEffect } from "react";
-import { useFormState, useFormStatus } from "react-dom";
-import { Button } from "../common/button";
-import { parseDocument } from "@/app/libs/parser";
+import { Contractor } from '@/app/types/contractor';
+import { ServiceResponse } from '@/app/types/service';
+import { roboto } from '@/app/ui/fonts';
+import { InputMask } from '@react-input/mask';
+import { Dispatch, SetStateAction, useEffect } from 'react';
+import { useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
+import { Button } from '../common/button';
+import { parseDocument } from '@/app/libs/parser';
 
 interface ContractorFormProps {
   contractor?: Contractor;
-  onSubmit: (_currentState: unknown, formData: FormData) => Promise<ServiceResponse<any>>;
+  onSubmit: (
+    _currentState: unknown,
+    formData: FormData
+  ) => Promise<ServiceResponse<any>>;
   onClose: () => void;
   submitState?: Dispatch<SetStateAction<ServiceResponse<any> | null>>;
 }
 
-export function ContractorForm({ onClose, onSubmit, contractor, submitState }: ContractorFormProps) {
-  const [state, dispatch] = useFormState(onSubmit, null);
+export function ContractorForm({
+  onClose,
+  onSubmit,
+  contractor,
+  submitState,
+}: ContractorFormProps) {
+  const [state, dispatch] = useActionState(onSubmit, null);
   const { pending } = useFormStatus();
 
   useEffect(() => {
@@ -29,11 +38,15 @@ export function ContractorForm({ onClose, onSubmit, contractor, submitState }: C
       <div className="flex-1 rounded-lg">
         <h1 className={`${roboto.className} mb-5 text-2xl`}>
           {contractor ? 'Edite a seguradora' : 'Cadastre a seguradora'}
-          <input type="hidden" name="contractor_id" value={contractor?.contractor_id || ''} />
+          <input
+            type="hidden"
+            name="contractor_id"
+            value={contractor?.contractor_id || ''}
+          />
         </h1>
 
         <div className="w-full">
-          <div className="columns-3 mb-4">
+          <div className="mb-4 columns-3">
             <div>
               <label
                 className="mb-3 block text-xs font-medium text-gray-900"
@@ -101,7 +114,7 @@ export function ContractorForm({ onClose, onSubmit, contractor, submitState }: C
 
           <hr />
 
-          <div className="columns-2 my-4">
+          <div className="my-4 columns-2">
             <div>
               <label
                 className="mb-3 block text-xs font-medium text-gray-900"
@@ -117,7 +130,9 @@ export function ContractorForm({ onClose, onSubmit, contractor, submitState }: C
                   type="text"
                   name="phone"
                   placeholder="Digite o telefone do representante"
-                  defaultValue={contractor?.business_contact?.phone_number || ''}
+                  defaultValue={
+                    contractor?.business_contact?.phone_number || ''
+                  }
                 />
               </div>
             </div>
@@ -144,12 +159,23 @@ export function ContractorForm({ onClose, onSubmit, contractor, submitState }: C
           </div>
         </div>
 
-        <div className="flex space-x-8 mt-6">
-          <Button type="submit" className="w-32 items-center" isLoading={pending} aria-disabled={pending}>
+        <div className="mt-6 flex space-x-8">
+          <Button
+            type="submit"
+            className="w-32 items-center"
+            isLoading={pending}
+            aria-disabled={pending}
+          >
             {contractor ? 'Salvar' : 'Criar'}
           </Button>
 
-          <Button type="button" className="w-32 items-center" isLoading={pending} aria-disabled={pending} onClick={onClose}>
+          <Button
+            type="button"
+            className="w-32 items-center"
+            isLoading={pending}
+            aria-disabled={pending}
+            onClick={onClose}
+          >
             Cancelar
           </Button>
         </div>

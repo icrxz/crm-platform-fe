@@ -1,13 +1,13 @@
-import { useSnackbar } from "@/app/context/SnackbarProvider";
-import { Partner } from "@/app/types/partner";
-import { ServiceResponse } from "@/app/types/service";
-import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
-import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
-import { editPartner, getPartnerByID } from "../../services/partners";
-import Modal from "../common/modal";
-import PartnerForm from "./partner-form";
+import { useSnackbar } from '@/app/context/SnackbarProvider';
+import { Partner } from '@/app/types/partner';
+import { ServiceResponse } from '@/app/types/service';
+import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
+import { signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { Suspense, useEffect, useState } from 'react';
+import { editPartner, getPartnerByID } from '../../services/partners';
+import Modal from '../common/modal';
+import PartnerForm from './partner-form';
 
 interface EditPartnerModalProps {
   isOpen: boolean;
@@ -15,13 +15,18 @@ interface EditPartnerModalProps {
   onClose: () => void;
 }
 
-export default function EditPartnerModal({ isOpen, onClose, partnerID }: EditPartnerModalProps) {
-  const [errorMessage, setErrorMessage] = useState("");
+export default function EditPartnerModal({
+  isOpen,
+  onClose,
+  partnerID,
+}: EditPartnerModalProps) {
   const [state, setState] = useState<ServiceResponse<any> | null>(null);
   const [partner, setPartner] = useState<Partner | undefined>(undefined);
 
   const { showSnackbar } = useSnackbar();
   const { refresh } = useRouter();
+
+  const errorMessage = state && !state.success ? state.message || '' : '';
 
   const handleClose = () => {
     setPartner(undefined);
@@ -40,30 +45,34 @@ export default function EditPartnerModal({ isOpen, onClose, partnerID }: EditPar
     }
 
     getPartner();
-  }, [partnerID]);
+  }, [partnerID, showSnackbar, onClose]);
 
   useEffect(() => {
     if (!state) {
       return;
     }
 
-    if (state?.success) {
+    if (state.success) {
       showSnackbar(state.message, 'success');
       refresh();
       onClose();
-    } else {
-      if (state?.unauthorized) {
-        signOut();
-      }
-      setErrorMessage(state?.message || "");
+    } else if (state.unauthorized) {
+      signOut();
     }
-  }, [state]);
+  }, [state, showSnackbar, refresh, onClose]);
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose}>
       <div>
-        <Suspense fallback={<div>Carregando...</div>} >
-          {partner && <PartnerForm onSubmit={editPartner} submitState={setState} onClose={handleClose} partner={partner} />}
+        <Suspense fallback={<div>Carregando...</div>}>
+          {partner && (
+            <PartnerForm
+              onSubmit={editPartner}
+              submitState={setState}
+              onClose={handleClose}
+              partner={partner}
+            />
+          )}
         </Suspense>
 
         {errorMessage && (

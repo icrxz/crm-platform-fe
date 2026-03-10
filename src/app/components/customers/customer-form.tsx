@@ -1,22 +1,31 @@
-import { brazilStates } from "@/app/types/address";
-import { Customer } from "@/app/types/customer";
-import { ServiceResponse } from "@/app/types/service";
-import { InputMask } from "@react-input/mask";
-import { Dispatch, SetStateAction, useEffect } from "react";
-import { useFormState, useFormStatus } from "react-dom";
-import { roboto } from "../../ui/fonts";
-import { Button } from "../common/button";
-import { parseDocument } from "@/app/libs/parser";
+import { brazilStates } from '@/app/types/address';
+import { Customer } from '@/app/types/customer';
+import { ServiceResponse } from '@/app/types/service';
+import { InputMask } from '@react-input/mask';
+import { Dispatch, SetStateAction, useEffect } from 'react';
+import { useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
+import { roboto } from '../../ui/fonts';
+import { Button } from '../common/button';
+import { parseDocument } from '@/app/libs/parser';
 
 interface CustomerFormProps {
   customer?: Customer;
-  onSubmit: (_currentState: unknown, formData: FormData) => Promise<ServiceResponse<any>>;
+  onSubmit: (
+    _currentState: unknown,
+    formData: FormData
+  ) => Promise<ServiceResponse<any>>;
   onClose: () => void;
   submitState?: Dispatch<SetStateAction<ServiceResponse<any> | null>>;
 }
 
-export default function CustomerForm({ onClose, onSubmit, customer, submitState }: CustomerFormProps) {
-  const [state, dispatch] = useFormState(onSubmit, null);
+export default function CustomerForm({
+  onClose,
+  onSubmit,
+  customer,
+  submitState,
+}: CustomerFormProps) {
+  const [state, dispatch] = useActionState(onSubmit, null);
   const { pending } = useFormStatus();
 
   useEffect(() => {
@@ -26,15 +35,15 @@ export default function CustomerForm({ onClose, onSubmit, customer, submitState 
   }, [state, submitState]);
 
   function getCustomerAddress(customer?: Customer) {
-    return customer?.shipping?.address?.split(',')[0] || ''
+    return customer?.shipping?.address?.split(',')[0] || '';
   }
 
   function getCustomerAddressNumber(customer?: Customer) {
-    return customer?.shipping?.address?.split(',')[1]?.split('-')[0] || ''
+    return customer?.shipping?.address?.split(',')[1]?.split('-')[0] || '';
   }
 
   function getCustomerAddressComplement(customer?: Customer) {
-    return customer?.shipping?.address?.split('-')[1] || ''
+    return customer?.shipping?.address?.split('-')[1] || '';
   }
 
   return (
@@ -42,11 +51,15 @@ export default function CustomerForm({ onClose, onSubmit, customer, submitState 
       <div className="flex-1">
         <h1 className={`${roboto.className} mb-5 text-2xl`}>
           {customer ? 'Edite o cliente' : 'Cadastre o cliente'}
-          <input type="hidden" name="customer_id" value={customer?.customer_id || ''} />
+          <input
+            type="hidden"
+            name="customer_id"
+            value={customer?.customer_id || ''}
+          />
         </h1>
 
         <div className="w-full">
-          <div className="columns-3 mb-4">
+          <div className="mb-4 columns-3">
             <div>
               <label
                 className="mb-3 block text-xs font-medium text-gray-900"
@@ -114,7 +127,7 @@ export default function CustomerForm({ onClose, onSubmit, customer, submitState 
 
           <hr />
 
-          <div className="columns-3 my-4">
+          <div className="my-4 columns-3">
             <div>
               <label
                 className="mb-3 block text-xs font-medium text-gray-900"
@@ -178,7 +191,7 @@ export default function CustomerForm({ onClose, onSubmit, customer, submitState 
             </div>
           </div>
 
-          <div className="columns-3 mb-4">
+          <div className="mb-4 columns-3">
             <div>
               <label
                 className="mb-3 block text-xs font-medium text-gray-900"
@@ -216,7 +229,9 @@ export default function CustomerForm({ onClose, onSubmit, customer, submitState 
                   defaultValue={customer?.shipping.state || ''}
                 >
                   {brazilStates.map((state) => (
-                    <option key={`state-${state}`} value={state}>{state}</option>
+                    <option key={`state-${state}`} value={state}>
+                      {state}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -247,7 +262,7 @@ export default function CustomerForm({ onClose, onSubmit, customer, submitState 
 
           <hr />
 
-          <div className="columns-2 my-4">
+          <div className="my-4 columns-2">
             <div>
               <label
                 className="mb-3 block text-xs font-medium text-gray-900"
@@ -291,12 +306,23 @@ export default function CustomerForm({ onClose, onSubmit, customer, submitState 
           </div>
         </div>
 
-        <div className="flex space-x-8 mt-6">
-          <Button type="submit" className="w-32" isLoading={pending} aria-disabled={pending}>
+        <div className="mt-6 flex space-x-8">
+          <Button
+            type="submit"
+            className="w-32"
+            isLoading={pending}
+            aria-disabled={pending}
+          >
             {customer ? 'Salvar' : 'Cadastrar'}
           </Button>
 
-          <Button type="button" className="w-32" isLoading={pending} aria-disabled={pending} onClick={onClose}>
+          <Button
+            type="button"
+            className="w-32"
+            isLoading={pending}
+            aria-disabled={pending}
+            onClick={onClose}
+          >
             Cancelar
           </Button>
         </div>

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import { uploadAttachments } from '@/app/services/attachments';
 import { CreateAttachment } from '@/app/types/attachments';
 import Uppy from '@uppy/core';
@@ -18,85 +18,84 @@ interface FileUploaderProps {
   minFiles?: number;
 }
 
-export const GenericUploader = forwardRef<FileUploaderGenericRef, FileUploaderProps>(
-  ({
-    maxFileSize,
-    maxFiles,
-    minFiles,
-  }, ref) => {
-    const [refreshInput, setRefreshInput] = useState(false);
+export const GenericUploader = forwardRef<
+  FileUploaderGenericRef,
+  FileUploaderProps
+>(({ maxFileSize, maxFiles, minFiles }, ref) => {
+  const [refreshInput, setRefreshInput] = useState(false);
 
-    const [uppy] = useState(() => new Uppy({
-      id: 'uppyAttachments',
-      autoProceed: true,
-      debug: true,
-      restrictions: {
-        maxFileSize: maxFileSize,
-        maxNumberOfFiles: maxFiles,
-        minNumberOfFiles: minFiles,
-        allowedFileTypes: ['image/*'],
-      },
-      locale: Portuguese,
+  const [uppy] = useState(
+    () =>
+      new Uppy({
+        id: 'uppyAttachments',
+        autoProceed: true,
+        debug: true,
+        restrictions: {
+          maxFileSize: maxFileSize,
+          maxNumberOfFiles: maxFiles,
+          minNumberOfFiles: minFiles,
+          allowedFileTypes: ['image/*'],
+        },
+        locale: Portuguese,
+      })
+  );
 
-    }));
+  uppy.on('file-added', () => {
+    setRefreshInput(true);
+  });
 
-    uppy.on('file-added', () => {
-      setRefreshInput(true);
-    });
-
-    useEffect(() => {
-      if (refreshInput) {
-        setTimeout(() => {
-          setRefreshInput(false);
-        }, 5);
-      }
-    }, [refreshInput]);
-
-    useImperativeHandle(ref, () => {
-      return {
-        submit: submitAttachments,
-        length: uppy.getFiles().length,
-      };
-    });
-
-    async function submitAttachments() {
-      const uppyAttachments = uppy.getFiles();
-
-      const formData = new FormData();
-      uppyAttachments.map((file) => {
-        formData.append('attachments', file.data as File);
-      });
-
-      const attachments = await uploadAttachments(formData).then((uploadResp) => {
-        uppy.cancelAll();
-        return uploadResp;
-      });
-
-      return attachments || [];
+  useEffect(() => {
+    if (refreshInput) {
+      setTimeout(() => {
+        setRefreshInput(false);
+      }, 5);
     }
+  }, [refreshInput]);
 
-    return (
-      <div>
-        <FileInput uppy={uppy} pretty inputName='attachments' id='attachments' />
+  async function submitAttachments() {
+    const uppyAttachments = uppy.getFiles();
 
-        {!refreshInput && (
-          <div className='flex gap-2 -mt-1'>
-            {uppy.getFiles().map((file) => (
-              <Badge
-                key={file.id}
-                content={file.name || ''}
-                isClosable
-                onClose={() => {
-                  uppy.removeFile(file.id);
-                  setRefreshInput(true);
-                }}
-              />
-            ))}
-          </div>
-        )}
-      </div>
-    );
+    const formData = new FormData();
+    uppyAttachments.map((file) => {
+      formData.append('attachments', file.data as File);
+    });
+
+    const attachments = await uploadAttachments(formData).then((uploadResp) => {
+      uppy.cancelAll();
+      return uploadResp;
+    });
+
+    return attachments || [];
   }
-);
+
+  useImperativeHandle(ref, () => {
+    return {
+      submit: submitAttachments,
+      length: uppy.getFiles().length,
+    };
+  });
+
+  return (
+    <div>
+      <FileInput uppy={uppy} pretty inputName="attachments" id="attachments" />
+
+      {!refreshInput && (
+        <div className="-mt-1 flex gap-2">
+          {uppy.getFiles().map((file) => (
+            <Badge
+              key={file.id}
+              content={file.name || ''}
+              isClosable
+              onClose={() => {
+                uppy.removeFile(file.id);
+                setRefreshInput(true);
+              }}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+});
 
 GenericUploader.displayName = 'GenericUploader';
