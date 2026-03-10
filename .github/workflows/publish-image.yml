@@ -17,7 +17,7 @@ jobs:
 
       # Ferramenta avançada do Docker que permite usar cache em nuvem
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       # Login no Docker Hub usando os Secrets que você cadastrou
       - name: Login no Docker Hub
