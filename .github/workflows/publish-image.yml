@@ -29,7 +29,7 @@ jobs:
       # Extrai a tag atual (ex: v1.2.0) e também marca a imagem como 'latest'
       - name: Extrair metadados (tags, labels)
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           # Substitua o prefixo se necessário. Por padrão ele usa seu username do Dockerhub / nome do repositório
           images: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}
