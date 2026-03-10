@@ -60,7 +60,7 @@
     "@types/uuid": "10.0.0",
     "autoprefixer": "10.4.20",
     "dotenv": "16.4.5",
-    "eslint": "9.39.4",
+    "eslint": "10.0.3",
     "eslint-config-next": "16.1.6",
     "eslint-config-prettier": "10.1.8",
     "husky": "9.1.7",
