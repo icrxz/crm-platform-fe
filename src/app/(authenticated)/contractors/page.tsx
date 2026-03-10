@@ -9,22 +9,25 @@ import { Contractor } from '@/app/types/contractor';
 import { redirect } from 'next/navigation';
 
 type ContractorPageParams = {
-  searchParams?: {
+  searchParams: Promise<{
     nome?: string;
     page?: number;
-  };
+  }>;
 };
 
-async function getData(nome: string, page: number): Promise<SearchResponse<Contractor>> {
+async function getData(
+  nome: string,
+  page: number
+): Promise<SearchResponse<Contractor>> {
   let query = '';
   if (nome) {
-    query = `company_name=${nome}`
+    query = `company_name=${nome}`;
   }
 
   const { success, unauthorized, data } = await fetchContractors(query, page);
   if (!success || !data) {
     if (unauthorized) {
-      redirect("/login");
+      redirect('/login');
     }
     return { result: [], paging: { limit: 10, offset: page * 10, total: 0 } };
   }
@@ -37,20 +40,19 @@ async function getData(nome: string, page: number): Promise<SearchResponse<Contr
   };
 }
 
-export default async function Page({
-  searchParams,
-}: ContractorPageParams) {
+export default async function Page({ searchParams }: ContractorPageParams) {
+  const { nome, page } = await searchParams;
   const session = await getCurrentUser();
   if (!session) {
     signOut();
   }
 
-  const data = await getData(searchParams?.nome || '', searchParams?.page || 1);
+  const data = await getData(nome || '', page || 1);
 
   return (
     <main>
       <Suspense fallback={<p>Carregando seguradoras...</p>}>
-        <ContractorsTable contractors={data} initialPage={searchParams?.page} />
+        <ContractorsTable contractors={data} initialPage={page} />
       </Suspense>
     </main>
   );

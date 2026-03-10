@@ -9,23 +9,26 @@ import CustomersTable from '../../components/customers/table';
 import { fetchCustomers } from '../../services/customers';
 
 type CustomerPageParams = {
-  searchParams?: {
+  searchParams: Promise<{
     documento?: string;
     page?: number;
-  };
+  }>;
 };
 
-async function getData(document: string, page: number): Promise<SearchResponse<Customer>> {
+async function getData(
+  document: string,
+  page: number
+): Promise<SearchResponse<Customer>> {
   let query = '';
   if (document) {
-    const parsedDocument = removeDocumentSymbols(document)
-    query = `document=${parsedDocument}`
+    const parsedDocument = removeDocumentSymbols(document);
+    query = `document=${parsedDocument}`;
   }
 
   const { success, unauthorized, data } = await fetchCustomers(query, page);
   if (!success || !data) {
     if (unauthorized) {
-      redirect("/login");
+      redirect('/login');
     }
     return { result: [], paging: { limit: 10, offset: page * 10, total: 0 } };
   }
@@ -39,17 +42,18 @@ async function getData(document: string, page: number): Promise<SearchResponse<C
 }
 
 export default async function Page({ searchParams }: CustomerPageParams) {
+  const { documento, page } = await searchParams;
   const user = await getCurrentUser();
   if (!user) {
-    redirect("/login");
+    redirect('/login');
   }
 
-  const data = await getData(searchParams?.documento || '', searchParams?.page || 1);
+  const data = await getData(documento || '', page || 1);
 
   return (
     <main>
       <Suspense fallback={<p>Carregando clientes...</p>}>
-        <CustomersTable customers={data} initialPage={searchParams?.page} />
+        <CustomersTable customers={data} initialPage={page} />
       </Suspense>
     </main>
   );
