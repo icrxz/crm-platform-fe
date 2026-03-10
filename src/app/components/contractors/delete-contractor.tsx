@@ -1,12 +1,12 @@
-import { useSnackbar } from "@/app/context/SnackbarProvider";
-import { deleteContractor } from "@/app/services/contractors";
-import { roboto } from "@/app/ui/fonts";
-import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { useFormState, useFormStatus } from "react-dom";
-import { Button } from "../common/button";
-import Modal from "../common/modal";
+import { useSnackbar } from '@/app/context/SnackbarProvider';
+import { deleteContractor } from '@/app/services/contractors';
+import { roboto } from '@/app/ui/fonts';
+import { signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { useFormState, useFormStatus } from 'react-dom';
+import { Button } from '../common/button';
+import Modal from '../common/modal';
 
 interface DeleteContractorModalProps {
   isOpen: boolean;
@@ -14,7 +14,11 @@ interface DeleteContractorModalProps {
   onClose: () => void;
 }
 
-export function DeleteContractorModal({ isOpen, onClose, contractorID }: DeleteContractorModalProps) {
+export function DeleteContractorModal({
+  isOpen,
+  onClose,
+  contractorID,
+}: DeleteContractorModalProps) {
   const [state, dispatch] = useFormState(deleteContractor, null);
   const { pending } = useFormStatus();
   const { showSnackbar } = useSnackbar();
@@ -33,22 +37,26 @@ export function DeleteContractorModal({ isOpen, onClose, contractorID }: DeleteC
       if (state?.unauthorized) {
         signOut();
       }
-      showSnackbar(state?.message || "", 'error');
+      showSnackbar(state?.message || '', 'error');
     }
-  }, [state]);
+  }, [state, showSnackbar, refresh, onClose]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <form action={dispatch} className="space-y-3">
-        <h1 className={`${roboto.className} my-5 mx-5 text-xl`}>
+        <h1 className={`${roboto.className} mx-5 my-5 text-xl`}>
           Tem certeza que deseja desativar a seguradora?
         </h1>
 
         <input type="hidden" name="contractor_id" value={contractorID} />
 
         <div className="flex justify-center space-x-2">
-          <Button type="submit" isLoading={pending} aria-disabled={pending}>Sim</Button>
-          <Button onClick={onClose} isLoading={pending} aria-disabled={pending}>Não</Button>
+          <Button type="submit" isLoading={pending} aria-disabled={pending}>
+            Sim
+          </Button>
+          <Button onClick={onClose} isLoading={pending} aria-disabled={pending}>
+            Não
+          </Button>
         </div>
       </form>
     </Modal>

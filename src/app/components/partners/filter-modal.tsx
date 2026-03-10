@@ -1,11 +1,11 @@
-"use client";
-import { useEffect, useMemo, useState } from 'react';
+'use client';
+import { useMemo } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { roboto } from "@/app/ui/fonts";
+import { roboto } from '@/app/ui/fonts';
 
-import Modal from "../common/modal";
-import { Button } from "../common/button";
-import { TextInput } from "../common/text-input/text-input";
+import Modal from '../common/modal';
+import { Button } from '../common/button';
+import { TextInput } from '../common/text-input/text-input';
 import { Dropdown, DropdownOption } from '../common/dropdown/dropdown';
 import { brazilStates } from '../../types/address';
 
@@ -19,20 +19,18 @@ export function FilterModal({ onClose, isModalOpen }: FilterModalProps) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const [name, setName] = useState<string>('');
-  const [city, setCity] = useState<string>('');
-  const [state, setState] = useState<string>('');
-  const [stateOptions, setStateOptions] = useState<Array<DropdownOption>>([]);
-
-  useMemo(() => {
-    const mappedStates = brazilStates.map((state) => ({
-      id: state,
-      value: state,
-      label: state,
-    }));
-
-    setStateOptions(mappedStates);
-  }, [brazilStates])
+  const name = searchParams.get('nome') || '';
+  const city = searchParams.get('cidade') || '';
+  const state = searchParams.get('estado') || '';
+  const stateOptions = useMemo(
+    () =>
+      brazilStates.map((state) => ({
+        id: state,
+        value: state,
+        label: state,
+      })),
+    []
+  );
 
   async function submitFilters(formData: FormData) {
     const params = new URLSearchParams(searchParams.toString());
@@ -53,37 +51,38 @@ export function FilterModal({ onClose, isModalOpen }: FilterModalProps) {
     onClose();
   }
 
-  useEffect(() => {
-    const name = searchParams.get('nome')?.toString() || '';
-    setName(name);
-
-    const city = searchParams.get('cidade')?.toString() || '';
-    setCity(city);
-
-    const state = searchParams.get('estado')?.toString() || '';
-    setState(state);
-  }, [searchParams]);
-
   return (
     <Modal isOpen={isModalOpen} onClose={onClose}>
-      <form action={submitFilters} className="flex space-y-3 min-w-80">
+      <form action={submitFilters} className="flex min-w-80 space-y-3">
         <div className="flex-1">
-          <h1 className={`${roboto.className} mb-5 text-2xl`}>
-            Filtros
-          </h1>
+          <h1 className={`${roboto.className} mb-5 text-2xl`}>Filtros</h1>
 
           <div className="w-full">
-            <TextInput label="Nome" name="nome" className="mb-2" defaultValue={name} />
+            <TextInput
+              label="Nome"
+              name="nome"
+              className="mb-2"
+              defaultValue={name}
+            />
 
-            <TextInput label="Cidade" name="cidade" className="mb-2" defaultValue={city} />
+            <TextInput
+              label="Cidade"
+              name="cidade"
+              className="mb-2"
+              defaultValue={city}
+            />
 
-            <Dropdown label="Estado" name="estado" options={stateOptions} placeholder='Selecione um estado' defaultValue={state} />
+            <Dropdown
+              label="Estado"
+              name="estado"
+              options={stateOptions}
+              placeholder="Selecione um estado"
+              defaultValue={state}
+            />
           </div>
 
-          <div className="flex space-x-8 mt-6 justify-end">
-            <Button className="w-24 justify-center">
-              Buscar
-            </Button>
+          <div className="mt-6 flex justify-end space-x-8">
+            <Button className="w-24 justify-center">Buscar</Button>
           </div>
         </div>
       </form>

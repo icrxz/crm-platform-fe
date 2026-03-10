@@ -1,19 +1,19 @@
-"use client";
-import { useSnackbar } from "@/app/context/SnackbarProvider";
-import { removeDocumentSymbols } from "@/app/libs/parser";
-import { publishCase } from "@/app/services/cases";
-import { fetchCustomers } from "@/app/services/customers";
-import { brazilStates } from "@/app/types/address";
-import { CaseFull } from "@/app/types/case";
-import { Customer } from "@/app/types/customer";
-import { InputMask } from "@react-input/mask";
-import { InputNumberFormat } from "@react-input/number-format";
-import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useFormState, useFormStatus } from "react-dom";
-import { Button } from "../../common/button";
-import { Card } from "../../common/card";
+'use client';
+import { useSnackbar } from '@/app/context/SnackbarProvider';
+import { removeDocumentSymbols } from '@/app/libs/parser';
+import { publishCase } from '@/app/services/cases';
+import { fetchCustomers } from '@/app/services/customers';
+import { brazilStates } from '@/app/types/address';
+import { CaseFull } from '@/app/types/case';
+import { Customer } from '@/app/types/customer';
+import { InputMask } from '@react-input/mask';
+import { InputNumberFormat } from '@react-input/number-format';
+import { signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useFormState, useFormStatus } from 'react-dom';
+import { Button } from '../../common/button';
+import { Card } from '../../common/card';
 
 interface DraftStatusFormProps {
   crmCase: CaseFull;
@@ -24,10 +24,16 @@ export function DraftStatusForm({ crmCase }: DraftStatusFormProps) {
   const { showSnackbar } = useSnackbar();
   const [_, dispatch] = useFormState(onSubmit, null);
 
-  const [userDocument, setUserDocument] = useState<string>("");
-  const [customer, setCustomer] = useState<Customer | undefined>();
+  const [userDocument, setUserDocument] = useState<string>(
+    crmCase.customer?.document || ''
+  );
+  const [customer, setCustomer] = useState<Customer | undefined>(
+    crmCase.customer
+  );
   const [searchingUser, setSearchingUser] = useState<boolean>(false);
-  const [hasSearchedCustomer, setHasSearchedCustomer] = useState<boolean>(false);
+  const [hasSearchedCustomer, setHasSearchedCustomer] = useState<boolean>(
+    !!crmCase.customer
+  );
 
   const { pending } = useFormStatus();
 
@@ -35,49 +41,48 @@ export function DraftStatusForm({ crmCase }: DraftStatusFormProps) {
     setSearchingUser(true);
     const document = removeDocumentSymbols(userDocument);
 
-    fetchCustomers(`document=${document}`, 1, 1000).then((res) => {
-      if (res.success && res.data) {
-        setCustomer(res.data.result[0]);
-      }
-    }).finally(() => {
-      setSearchingUser(false);
-      setHasSearchedCustomer(true);
-    });
+    fetchCustomers(`document=${document}`, 1, 1000)
+      .then((res) => {
+        if (res.success && res.data) {
+          setCustomer(res.data.result[0]);
+        }
+      })
+      .finally(() => {
+        setSearchingUser(false);
+        setHasSearchedCustomer(true);
+      });
   }
 
   async function onSubmit(_currentState: unknown, formData: FormData) {
-    formData.set("customer_id", customer?.customer_id || '');
-    formData.set("product_id", crmCase.product?.product_id || '');
+    formData.set('customer_id', customer?.customer_id || '');
+    formData.set('product_id', crmCase.product?.product_id || '');
 
-    await publishCase(_currentState, crmCase.case_id, formData).then(response => {
-      if (!response.success) {
-        if (response.unauthorized) {
-          signOut();
+    await publishCase(_currentState, crmCase.case_id, formData)
+      .then((response) => {
+        if (!response.success) {
+          if (response.unauthorized) {
+            signOut();
+          }
+          showSnackbar(response.message, 'error');
+          return;
         }
-        showSnackbar(response.message, 'error');
-        return;
-      }
 
-      showSnackbar(response.message, 'success');
-      refresh();
-    }).catch((ex) => {
-      showSnackbar(ex, 'error');
-    });
+        showSnackbar(response.message, 'success');
+        refresh();
+      })
+      .catch((ex) => {
+        showSnackbar(ex, 'error');
+      });
   }
-
-  useEffect(() => {
-    if (crmCase.customer) {
-      setCustomer(crmCase.customer);
-      setUserDocument(crmCase.customer.document);
-      setHasSearchedCustomer(true);
-    }
-  }, [crmCase.customer]);
 
   return (
     <Card title="Complete os dados do caso" titleSize="xl">
-      <form action={dispatch} className="px-5 gap-4">
+      <form action={dispatch} className="gap-4 px-5">
         <div className="my-4">
-          <label className="mb-3 block text-xs font-medium text-gray-900" htmlFor="subject">
+          <label
+            className="mb-3 block text-xs font-medium text-gray-900"
+            htmlFor="subject"
+          >
             Descrição
           </label>
 
@@ -94,9 +99,12 @@ export function DraftStatusForm({ crmCase }: DraftStatusFormProps) {
 
         <hr />
 
-        <div className="columns-3 my-4">
+        <div className="my-4 columns-3">
           <div>
-            <label className="mb-3 block text-xs font-medium text-gray-900" htmlFor="brand">
+            <label
+              className="mb-3 block text-xs font-medium text-gray-900"
+              htmlFor="brand"
+            >
               Marca
             </label>
 
@@ -113,7 +121,10 @@ export function DraftStatusForm({ crmCase }: DraftStatusFormProps) {
           </div>
 
           <div>
-            <label className="mb-3 block text-xs font-medium text-gray-900" htmlFor="model">
+            <label
+              className="mb-3 block text-xs font-medium text-gray-900"
+              htmlFor="model"
+            >
               Modelo
             </label>
 
@@ -130,7 +141,10 @@ export function DraftStatusForm({ crmCase }: DraftStatusFormProps) {
           </div>
 
           <div>
-            <label className="mb-3 block text-xs font-medium text-gray-900" htmlFor="amount">
+            <label
+              className="mb-3 block text-xs font-medium text-gray-900"
+              htmlFor="amount"
+            >
               Valor
             </label>
 
@@ -140,7 +154,7 @@ export function DraftStatusForm({ crmCase }: DraftStatusFormProps) {
               name="amount"
               placeholder="Digite o valor"
               required
-              locales={"pt-BR"}
+              locales={'pt-BR'}
               maximumFractionDigits={2}
               format="currency"
               currency="BRL"
@@ -153,9 +167,12 @@ export function DraftStatusForm({ crmCase }: DraftStatusFormProps) {
 
         <hr />
 
-        <div className="columns-1 my-4">
+        <div className="my-4 columns-1">
           <div>
-            <label className="mb-3 block text-xs font-medium text-gray-900" htmlFor="document">
+            <label
+              className="mb-3 block text-xs font-medium text-gray-900"
+              htmlFor="document"
+            >
               Documento
             </label>
 
@@ -177,19 +194,26 @@ export function DraftStatusForm({ crmCase }: DraftStatusFormProps) {
               <button
                 type="button"
                 disabled={pending || searchingUser || hasSearchedCustomer}
-                className="ml-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-gray-200"
+                className="ml-2 rounded-md bg-blue-500 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-200"
                 onClick={handleSearchUser}
               >
                 Buscar
               </button>
-              <input type="hidden" name="customer_id" value={customer?.customer_id || ''} />
+              <input
+                type="hidden"
+                name="customer_id"
+                value={customer?.customer_id || ''}
+              />
             </div>
           </div>
         </div>
 
-        <div className="columns-2 my-4">
+        <div className="my-4 columns-2">
           <div>
-            <label className="mb-3 block text-xs font-medium text-gray-900" htmlFor="first_name">
+            <label
+              className="mb-3 block text-xs font-medium text-gray-900"
+              htmlFor="first_name"
+            >
               Nome
             </label>
 
@@ -206,7 +230,10 @@ export function DraftStatusForm({ crmCase }: DraftStatusFormProps) {
           </div>
 
           <div>
-            <label className="mb-3 block text-xs font-medium text-gray-900" htmlFor="last_name">
+            <label
+              className="mb-3 block text-xs font-medium text-gray-900"
+              htmlFor="last_name"
+            >
               Sobrenome
             </label>
 
@@ -223,9 +250,12 @@ export function DraftStatusForm({ crmCase }: DraftStatusFormProps) {
           </div>
         </div>
 
-        <div className="columns-2 my-4">
+        <div className="my-4 columns-2">
           <div>
-            <label className="mb-3 block text-xs font-medium text-gray-900" htmlFor="first_name">
+            <label
+              className="mb-3 block text-xs font-medium text-gray-900"
+              htmlFor="first_name"
+            >
               Cidade
             </label>
 
@@ -259,15 +289,21 @@ export function DraftStatusForm({ crmCase }: DraftStatusFormProps) {
                 disabled={!hasSearchedCustomer || !!customer}
               >
                 {brazilStates.map((state) => (
-                  <option key={`state-${state}`} value={state}>{state}</option>
+                  <option key={`state-${state}`} value={state}>
+                    {state}
+                  </option>
                 ))}
               </select>
             </div>
           </div>
         </div>
 
-        <div className="flex space-x-8 mt-6">
-          <Button type="submit" className="w-22 items-center" aria-disabled={pending}>
+        <div className="mt-6 flex space-x-8">
+          <Button
+            type="submit"
+            className="w-22 items-center"
+            aria-disabled={pending}
+          >
             Salvar
           </Button>
         </div>
