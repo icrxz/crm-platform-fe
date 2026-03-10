@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const jwt = req.cookies.get('jwt');
 
   if (!jwt) {
-    req.cookies.delete(["next-auth.csrf-token", "next-auth.session-token"]);
+    req.cookies.delete(['next-auth.csrf-token', 'next-auth.session-token']);
     return NextResponse.redirect(new URL('/login', req.url));
   }
 
@@ -20,5 +20,5 @@ export const config = {
     '/partners',
     '/payments',
     '/users',
-  ]
+  ],
 };
