@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Checkout do código
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # Ferramenta avançada do Docker que permite usar cache em nuvem
       - name: Set up Docker Buildx
