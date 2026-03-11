@@ -85,6 +85,20 @@ export const authOptions: NextAuthOptions = {
   },
   events: {
     async signOut({ session, token }) {
+      const jwt = (await cookies()).get('jwt');
+      if (jwt?.value) {
+        try {
+          await fetch(`${crmCoreEndpoint}/crm/core/api/v1/logout`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${jwt.value}`,
+            },
+          });
+        } catch {
+          // ignore - cookie will be deleted regardless
+        }
+      }
       (await cookies()).delete('jwt');
     },
   },

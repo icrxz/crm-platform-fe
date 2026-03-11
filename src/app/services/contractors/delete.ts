@@ -1,4 +1,5 @@
 'use server';
+import { getApiErrorMessage } from '@/app/libs/api-error';
 import { cookies } from 'next/headers';
 import { crmCoreApiKey, crmCoreEndpoint } from '.';
 
@@ -28,9 +29,11 @@ export async function deleteContractor(
 
     if (!resp.ok) {
       const unauthorized = resp.status === 401;
-      const errorMessage = unauthorized
+      const errorMessageDefault = unauthorized
         ? 'usuário não autorizado'
         : 'falha na desativação da seguradora';
+      const errorMessage = await getApiErrorMessage(resp, errorMessageDefault);
+
       return {
         success: false,
         message: errorMessage,

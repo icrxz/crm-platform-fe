@@ -1,4 +1,5 @@
 'use server';
+import { getApiErrorMessage } from '@/app/libs/api-error';
 import { ServiceResponse } from '@/app/types/service';
 import { Transaction } from '@/app/types/transaction';
 import { cookies } from 'next/headers';
@@ -28,9 +29,11 @@ export async function getTransactionByID(
 
     if (!resp.ok) {
       const unauthorized = resp.status === 401;
-      const errorMessage = unauthorized
+      const errorMessageDefault = unauthorized
         ? 'usuário não autorizado'
         : 'falha na busca da transação';
+      const errorMessage = await getApiErrorMessage(resp, errorMessageDefault);
+
       return {
         success: false,
         message: errorMessage,

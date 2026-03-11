@@ -1,4 +1,5 @@
 'use server';
+import { getApiErrorMessage } from '@/app/libs/api-error';
 import { Contractor } from '@/app/types/contractor';
 import { cookies } from 'next/headers';
 import { crmCoreApiKey, crmCoreEndpoint } from '.';
@@ -26,9 +27,14 @@ export async function getContractorByID(contractorID: string) {
 
     if (!response.ok) {
       const unauthorized = response.status === 401;
-      const errorMessage = unauthorized
+      const errorMessageDefault = unauthorized
         ? 'usuário não autorizado'
         : 'falha na busca da seguradora';
+      const errorMessage = await getApiErrorMessage(
+        response,
+        errorMessageDefault
+      );
+
       return {
         success: false,
         message: errorMessage,

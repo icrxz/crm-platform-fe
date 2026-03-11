@@ -1,4 +1,5 @@
 'use server';
+import { getApiErrorMessage } from '@/app/libs/api-error';
 import { getCurrentUser } from '@/app/libs/session';
 import { CreateAttachment } from '@/app/types/attachments';
 import { Comment, CommentType, CreateComment } from '@/app/types/comment';
@@ -45,9 +46,14 @@ export async function addComment(
 
     if (!response.ok) {
       const unauthorized = response.status === 401;
-      const errorMessage = unauthorized
+      const errorMessageDefault = unauthorized
         ? 'usuário não autorizado'
         : 'falha ao criar comentários no caso';
+      const errorMessage = await getApiErrorMessage(
+        response,
+        errorMessageDefault
+      );
+
       return {
         success: false,
         message: errorMessage,

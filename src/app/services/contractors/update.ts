@@ -1,4 +1,5 @@
 'use server';
+import { getApiErrorMessage } from '@/app/libs/api-error';
 import { removeDocumentSymbols } from '@/app/libs/parser';
 import { getCurrentUser } from '@/app/libs/session';
 import {
@@ -54,9 +55,14 @@ export async function updateContractor(
 
     if (!response.ok) {
       const unauthorized = response.status === 401;
-      const errorMessage = unauthorized
+      const errorMessageDefault = unauthorized
         ? 'usuário não autorizado'
         : 'falha na edição da seguradora';
+      const errorMessage = await getApiErrorMessage(
+        response,
+        errorMessageDefault
+      );
+
       return {
         success: false,
         message: errorMessage,

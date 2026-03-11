@@ -1,4 +1,5 @@
 'use server';
+import { getApiErrorMessage } from '@/app/libs/api-error';
 import { Comment } from '@/app/types/comment';
 import { ServiceResponse } from '@/app/types/service';
 import { cookies } from 'next/headers';
@@ -29,9 +30,14 @@ export async function getCaseComments(
 
     if (!response.ok) {
       const unauthorized = response.status === 401;
-      const errorMessage = unauthorized
+      const errorMessageDefault = unauthorized
         ? 'usuário não autorizado'
         : 'falha ao buscar comentários do caso';
+      const errorMessage = await getApiErrorMessage(
+        response,
+        errorMessageDefault
+      );
+
       return {
         success: false,
         message: errorMessage,

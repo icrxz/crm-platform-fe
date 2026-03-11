@@ -1,4 +1,5 @@
 'use server';
+import { getApiErrorMessage } from '@/app/libs/api-error';
 import { getCurrentUser } from '@/app/libs/session';
 import { ServiceResponse } from '@/app/types/service';
 import { cookies } from 'next/headers';
@@ -35,9 +36,11 @@ export async function resetStatus(
       const resp = await response.json();
       console.error(resp);
       const unauthorized = response.status === 401;
-      const errorMessage = unauthorized
+      const errorMessageDefault = unauthorized
         ? 'usuário não autorizado'
         : 'falha ao resetar status do caso';
+      const errorMessage = await getApiErrorMessage(resp, errorMessageDefault);
+
       return {
         success: false,
         message: errorMessage,

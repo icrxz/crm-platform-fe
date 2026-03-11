@@ -1,4 +1,5 @@
 'use server';
+import { getApiErrorMessage } from '@/app/libs/api-error';
 import { getCurrentUser } from '@/app/libs/session';
 import { AssignOwner } from '@/app/types/assign_owner';
 import { CaseStatus } from '@/app/types/case';
@@ -39,9 +40,13 @@ export async function assignOwner(
 
     if (!response.ok) {
       const unauthorized = response.status === 401;
-      const errorMessage = unauthorized
+      const errorMessageDefault = unauthorized
         ? 'usuário não autorizado'
         : 'falha na associação do usuário';
+      const errorMessage = await getApiErrorMessage(
+        response,
+        errorMessageDefault
+      );
       return {
         success: false,
         message: errorMessage,

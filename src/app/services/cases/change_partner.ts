@@ -1,4 +1,5 @@
 'use server';
+import { getApiErrorMessage } from '@/app/libs/api-error';
 import { getCurrentUser } from '@/app/libs/session';
 import { CaseStatus } from '@/app/types/case';
 import { ChangePartner } from '@/app/types/change_partner';
@@ -43,9 +44,13 @@ export async function changePartner(
 
     if (!response.ok) {
       const unauthorized = response.status === 401;
-      const errorMessage = unauthorized
+      const errorMessageDefault = unauthorized
         ? 'usuário não autorizado'
         : 'falha na associação do técnico';
+      const errorMessage = await getApiErrorMessage(
+        response,
+        errorMessageDefault
+      );
       return {
         success: false,
         message: errorMessage,

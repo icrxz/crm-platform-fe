@@ -1,4 +1,5 @@
 'use server';
+import { getApiErrorMessage } from '@/app/libs/api-error';
 
 import { Customer } from '@/app/types/customer';
 import { ServiceResponse } from '@/app/types/service';
@@ -30,9 +31,11 @@ export async function getCustomerByID(
 
     if (!resp.ok) {
       const unauthorized = resp.status === 401;
-      const errorMessage = unauthorized
+      const errorMessageDefault = unauthorized
         ? 'usuário não autorizado'
         : 'falha na busca do cliente';
+      const errorMessage = await getApiErrorMessage(resp, errorMessageDefault);
+
       return {
         success: false,
         message: errorMessage,

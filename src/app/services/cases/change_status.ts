@@ -1,4 +1,5 @@
 'use server';
+import { getApiErrorMessage } from '@/app/libs/api-error';
 import { getCurrentUser } from '@/app/libs/session';
 import { CreateAttachment } from '@/app/types/attachments';
 import { CaseStatus } from '@/app/types/case';
@@ -46,12 +47,14 @@ export async function changeStatus(
     });
 
     if (!response.ok) {
-      const resp = await response.json();
-      console.error(resp);
       const unauthorized = response.status === 401;
-      const errorMessage = unauthorized
+      const errorMessageDefault = unauthorized
         ? 'usuário não autorizado'
         : 'falha ao concluir caso';
+      const errorMessage = await getApiErrorMessage(
+        response,
+        errorMessageDefault
+      );
       return {
         success: false,
         message: errorMessage,
