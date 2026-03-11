@@ -28,5 +28,6 @@ jobs:
             ci
             chore
             revert
+            release
           # Exige que o PR tenha um escopo? (ex: feat(api): ...) - false é o padrão
           requireScope: false
