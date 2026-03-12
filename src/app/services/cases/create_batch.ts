@@ -1,4 +1,5 @@
 'use server';
+import { getApiErrorMessage } from '@/app/libs/api-error';
 import { getCurrentUser } from '@/app/libs/session';
 import { CreateCaseBatchResponse } from '@/app/types/case';
 import { ServiceResponse } from '@/app/types/service';
@@ -27,9 +28,10 @@ export async function createCaseBatch(
 
     if (!resp.ok) {
       const unauthorized = resp.status === 401;
-      const errorMessage = unauthorized
+      const errorMessageDefault = unauthorized
         ? 'usuário não autorizado'
         : 'falha na criação dos casos';
+      const errorMessage = await getApiErrorMessage(resp, errorMessageDefault);
       return {
         success: false,
         message: errorMessage,

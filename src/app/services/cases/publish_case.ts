@@ -1,4 +1,5 @@
 'use server';
+import { getApiErrorMessage } from '@/app/libs/api-error';
 import { getCurrentUser } from '@/app/libs/session';
 import { CaseStatus } from '@/app/types/case';
 import { ServiceResponse } from '@/app/types/service';
@@ -94,9 +95,11 @@ export async function publishCase(
       const resp = await response.json();
       console.error(resp);
       const unauthorized = response.status === 401;
-      const errorMessage = unauthorized
+      const errorMessageDefault = unauthorized
         ? 'usuário não autorizado'
         : 'falha ao publicar caso';
+      const errorMessage = await getApiErrorMessage(resp, errorMessageDefault);
+
       return {
         success: false,
         message: errorMessage,

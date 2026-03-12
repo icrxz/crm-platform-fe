@@ -1,4 +1,5 @@
 'use server';
+import { getApiErrorMessage } from '@/app/libs/api-error';
 import { SearchResponse } from '@/app/types/search_response';
 import { ServiceResponse } from '@/app/types/service';
 import { User } from '@/app/types/user';
@@ -29,9 +30,11 @@ export async function fetchUsers(
 
     if (!resp.ok) {
       const unauthorized = resp.status === 401;
-      const errorMessage = unauthorized
+      const errorMessageDefault = unauthorized
         ? 'usuário não autorizado'
         : 'falha na busca dos usuários';
+      const errorMessage = await getApiErrorMessage(resp, errorMessageDefault);
+
       return {
         success: false,
         message: errorMessage,

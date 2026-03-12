@@ -1,4 +1,5 @@
 'use server';
+import { getApiErrorMessage } from '@/app/libs/api-error';
 import { removeDocumentSymbols } from '@/app/libs/parser';
 import { getCurrentUser } from '@/app/libs/session';
 import { EditPartner } from '@/app/types/partner';
@@ -67,9 +68,11 @@ export async function editPartner(_currentState: unknown, formData: FormData) {
 
     if (!resp.ok) {
       const unauthorized = resp.status === 401;
-      const errorMessage = unauthorized
+      const errorMessageDefault = unauthorized
         ? 'usuário não autorizado'
         : 'falha na edição do técnico';
+      const errorMessage = await getApiErrorMessage(resp, errorMessageDefault);
+
       return {
         success: false,
         message: errorMessage,

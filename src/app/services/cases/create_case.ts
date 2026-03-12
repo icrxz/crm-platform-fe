@@ -1,4 +1,5 @@
 'use server';
+import { getApiErrorMessage } from '@/app/libs/api-error';
 import { parseCurrencyToNumber } from '@/app/libs/parser';
 import { getCurrentUser } from '@/app/libs/session';
 import { CreateCase, CreateCaseResponse } from '@/app/types/case';
@@ -63,9 +64,11 @@ export async function createCase(
 
     if (!resp.ok) {
       const unauthorized = resp.status === 401;
-      const errorMessage = unauthorized
+      const errorMessageDefault = unauthorized
         ? 'usuário não autorizado'
         : 'falha na criação do caso';
+      const errorMessage = await getApiErrorMessage(resp, errorMessageDefault);
+
       return {
         success: false,
         message: errorMessage,
