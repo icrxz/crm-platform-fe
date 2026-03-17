@@ -25,7 +25,7 @@ function prepareQuery(filters?: PaymentFilters): string {
   let query = 'status=Receipt&sort_by=updated_at&sort_order=DESC&';
 
   if (filters?.sinistro) {
-    query += `case_id=${filters.sinistro}&`;
+    query += `external_reference=${filters.sinistro}&`;
   }
 
   if (filters?.tecnico) {
