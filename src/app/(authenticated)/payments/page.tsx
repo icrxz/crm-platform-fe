@@ -21,7 +21,6 @@ interface PaymentFilters {
   page?: number;
 }
 
-
 function prepareQuery(filters?: PaymentFilters): string {
   let query = 'status=Receipt&sort_by=updated_at&sort_order=DESC&';
 
@@ -40,74 +39,104 @@ function prepareQuery(filters?: PaymentFilters): string {
   return query;
 }
 
-async function getData(filters?: PaymentFilters): Promise<SearchResponse<TransactionItem>> {
+async function getData(
+  filters?: PaymentFilters
+): Promise<SearchResponse<TransactionItem>> {
   let { page, ...rest } = filters || {};
   page = page || 1;
-  
+
   const caseQuery = prepareQuery(rest);
   const casesInReceipt = await fetchCases(caseQuery, page).then((resp) => {
     if (resp.unauthorized) {
       signOut();
     }
-    return resp.data || { result: [], paging: { limit: 10, offset: page * 10, total: 0 } };
+    return (
+      resp.data || {
+        result: [],
+        paging: { limit: 10, offset: page * 10, total: 0 },
+      }
+    );
   });
 
+  const outgoingCasesTransactions = await Promise.all(
+    casesInReceipt.result.map(async (caseItem): Promise<TransactionItem> => {
+      let partner: Partner | null = null;
+      if (caseItem.partner_id) {
+        partner = await getPartnerByID(caseItem.partner_id).then((resp) => {
+          if (resp.unauthorized) {
+            signOut();
+          }
+          return resp.data || null;
+        });
+      }
 
-  const outgoingCasesTransactions = await Promise.all(casesInReceipt.result.map(async (caseItem): Promise<TransactionItem> => {
-    let partner: Partner | null = null;
-    if (caseItem.partner_id) {
-      partner = await getPartnerByID(caseItem.partner_id).then((resp) => {
+      const outgoingTransactions = await fetchTransactions(
+        `case_id=${caseItem.case_id}&type=${TransactionType.OUTGOING}`
+      ).then((resp) => {
         if (resp.unauthorized) {
           signOut();
         }
-        return resp.data || null;
+        return resp.data || [];
       });
-    }
 
-    const outgoingTransactions = await fetchTransactions(`case_id=${caseItem.case_id}&type=${TransactionType.OUTGOING}`).then((resp) => {
-      if (resp.unauthorized) {
-        signOut();
+      const transactionVal = outgoingTransactions.reduce(
+        (acc, transaction) => acc + transaction.value,
+        0
+      );
+
+      let partnerAccount = '-';
+      if (partner?.payment_key !== '') {
+        const paymentKeyOption = partner?.payment_key_option;
+
+        partnerAccount = `${paymentKeyOption ? paymentOptionMap[paymentKeyOption] : ''}: ${partner?.payment_key}`;
+        if (
+          partner?.payment_is_from_same_owner !== undefined &&
+          !partner?.payment_is_from_same_owner
+        ) {
+          partnerAccount += `\n(${partner?.payment_owner})`;
+        }
       }
-      return resp.data || [];
-    });
 
-    const transactionVal = outgoingTransactions.reduce((acc, transaction) => acc + transaction.value, 0);
-
-    let partnerAccount = '-';
-    if (partner?.payment_key !== "") {
-      const paymentKeyOption = partner?.payment_key_option;
-
-      partnerAccount = `${paymentKeyOption ? paymentOptionMap[paymentKeyOption] : ''}: ${partner?.payment_key}`;
-      if (partner?.payment_is_from_same_owner !== undefined && !partner?.payment_is_from_same_owner) {
-        partnerAccount += `\n(${partner?.payment_owner})`;
-      }
-    }
-
-    return {
-      case_id: caseItem.case_id,
-      external_reference: caseItem.external_reference,
-      created_at: caseItem.updated_at,
-      status: TransactionStatus.PENDING,
-      total: transactionVal,
-      partner_document: partner?.document,
-      partner_name: `${partner?.first_name} ${partner?.last_name}`,
-      partner_account: partnerAccount,
-      mo: {
-        transaction_id: outgoingTransactions.filter((t) => t.description === "MO")[0]?.transaction_id || "",
-        value: outgoingTransactions.filter((t) => t.description === "MO")[0]?.value || 0,
-      },
-      transport: {
-        transaction_id: outgoingTransactions.filter((t) => t.description === "Deslocamento Técnico")[0]?.transaction_id || "",
-        value: outgoingTransactions.filter((t) => t.description === "Deslocamento Técnico")[0]?.value || 0,
-      },
-      parts: {
-        transaction_id: outgoingTransactions.filter((t) => t.description === "Peças técnico")[0]?.transaction_id || "",
-        value: outgoingTransactions.filter((t) => t.description === "Peças técnico")[0]?.value || 0,
-      },
-    } as TransactionItem;
-  }));
-
-  const partners = await fetchPartners('', 1, 10000);
+      return {
+        case_id: caseItem.case_id,
+        external_reference: caseItem.external_reference,
+        created_at: caseItem.updated_at,
+        status: TransactionStatus.PENDING,
+        total: transactionVal,
+        partner_document: partner?.document,
+        partner_name: `${partner?.first_name} ${partner?.last_name}`,
+        partner_account: partnerAccount,
+        mo: {
+          transaction_id:
+            outgoingTransactions.filter((t) => t.description === 'MO')[0]
+              ?.transaction_id || '',
+          value:
+            outgoingTransactions.filter((t) => t.description === 'MO')[0]
+              ?.value || 0,
+        },
+        transport: {
+          transaction_id:
+            outgoingTransactions.filter(
+              (t) => t.description === 'Deslocamento Técnico'
+            )[0]?.transaction_id || '',
+          value:
+            outgoingTransactions.filter(
+              (t) => t.description === 'Deslocamento Técnico'
+            )[0]?.value || 0,
+        },
+        parts: {
+          transaction_id:
+            outgoingTransactions.filter(
+              (t) => t.description === 'Peças técnico'
+            )[0]?.transaction_id || '',
+          value:
+            outgoingTransactions.filter(
+              (t) => t.description === 'Peças técnico'
+            )[0]?.value || 0,
+        },
+      } as TransactionItem;
+    })
+  );
 
   return {
     result: outgoingCasesTransactions,
@@ -124,24 +153,31 @@ type TransactionPageParams = {
   searchParams: Promise<{
     query?: string;
     page?: number;
+    sinistro?: string;
+    tecnico?: string;
   }>;
 };
 
 export default async function Page({ searchParams }: TransactionPageParams) {
-  const { page } = await searchParams;
+  const resolvedParams = await searchParams;
+  const { page } = resolvedParams;
   const session = await getServerSession();
 
   if (!session) {
     redirect('/login');
   }
 
-  const payments = await getData(searchParams);
+  const payments = await getData(resolvedParams);
   const partners = await getPartners();
 
   return (
     <main>
       <Suspense fallback={<p>Carregando pagamentos...</p>}>
-        <PaymentTable transactions={payments || []} initialPage={page} partners={partners} />
+        <PaymentTable
+          transactions={payments || []}
+          initialPage={page}
+          partners={partners}
+        />
       </Suspense>
     </main>
   );
