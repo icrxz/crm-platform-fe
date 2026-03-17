@@ -96,7 +96,10 @@ export default function ControlPanelTable({ cases }: ControlPanelTableProps) {
                           {crmCase.customer?.shipping.city || '-'}
                         </td>
                         <td
-                          className={`whitespace-nowrap bg-white py-5 pl-6 text-sm${isDuplicate ? 'text-red-500' : ''}`}
+                          className={
+                            'whitespace-nowrap bg-white py-5 pl-6 text-sm' +
+                            (isDuplicate ? ' text-red-500' : '')
+                          }
                         >
                           {crmCase.customer
                             ? `${crmCase.customer.first_name} ${crmCase.customer.last_name}`
