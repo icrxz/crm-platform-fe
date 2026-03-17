@@ -1,7 +1,7 @@
 `use server`;
 import PaymentTable from '@/app/components/payments/table';
 import { fetchCases } from '@/app/services/cases';
-import { getPartnerByID } from '@/app/services/partners';
+import { fetchPartners, getPartnerByID } from '@/app/services/partners';
 import { fetchTransactions } from '@/app/services/transactions';
 import { Partner, paymentOptionMap } from '@/app/types/partner';
 import { SearchResponse } from '@/app/types/search_response';
@@ -15,34 +15,48 @@ import { signOut } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 
-async function getData(page: number): Promise<SearchResponse<TransactionItem>> {
-  const query = 'type=OUTGOING';
+interface PaymentFilters {
+  tecnico?: string;
+  sinistro?: string;
+  page?: number;
+}
 
-  const {
-    success,
-    unauthorized,
-    data: transactions,
-  } = await fetchTransactions(query);
-  if (!success || !transactions) {
-    if (unauthorized) {
-      redirect('/login');
-    }
-    return { result: [], paging: { limit: 10, offset: page * 10, total: 0 } };
+function prepareQuery(filters?: PaymentFilters): string {
+  let query = 'status=Receipt&sort_by=updated_at&sort_order=DESC&';
+
+  if (filters?.sinistro) {
+    query += `external_reference=${filters.sinistro}&`;
   }
 
-  const casesInReceipt = await fetchCases(`status=Receipt`, page).then(
-    (resp) => {
-      if (resp.unauthorized) {
-        signOut();
-      }
-      return (
-        resp.data || {
-          result: [],
-          paging: { limit: 10, offset: page * 10, total: 0 },
-        }
-      );
+  if (filters?.tecnico) {
+    query += `partner_id=${filters.tecnico}&`;
+  }
+
+  if (query.endsWith('&')) {
+    query = query.slice(0, -1);
+  }
+
+  return query;
+}
+
+async function getData(
+  filters?: PaymentFilters
+): Promise<SearchResponse<TransactionItem>> {
+  let { page, ...rest } = filters || {};
+  page = page || 1;
+
+  const caseQuery = prepareQuery(rest);
+  const casesInReceipt = await fetchCases(caseQuery, page).then((resp) => {
+    if (resp.unauthorized) {
+      signOut();
     }
-  );
+    return (
+      resp.data || {
+        result: [],
+        paging: { limit: 10, offset: page * 10, total: 0 },
+      }
+    );
+  });
 
   const outgoingCasesTransactions = await Promise.all(
     casesInReceipt.result.map(async (caseItem): Promise<TransactionItem> => {
@@ -56,8 +70,8 @@ async function getData(page: number): Promise<SearchResponse<TransactionItem>> {
         });
       }
 
-      const transactions = await fetchTransactions(
-        `case_id=${caseItem.case_id}`
+      const outgoingTransactions = await fetchTransactions(
+        `case_id=${caseItem.case_id}&type=${TransactionType.OUTGOING}`
       ).then((resp) => {
         if (resp.unauthorized) {
           signOut();
@@ -65,10 +79,6 @@ async function getData(page: number): Promise<SearchResponse<TransactionItem>> {
         return resp.data || [];
       });
 
-      const outgoingTransactions =
-        transactions.filter(
-          (transaction) => transaction.type === TransactionType.OUTGOING
-        ) || [];
       const transactionVal = outgoingTransactions.reduce(
         (acc, transaction) => acc + transaction.value,
         0
@@ -134,27 +144,40 @@ async function getData(page: number): Promise<SearchResponse<TransactionItem>> {
   };
 }
 
+async function getPartners(): Promise<Partner[]> {
+  const partners = await fetchPartners('', 1, 10000);
+  return partners.data?.result || [];
+}
+
 type TransactionPageParams = {
   searchParams: Promise<{
     query?: string;
     page?: number;
+    sinistro?: string;
+    tecnico?: string;
   }>;
 };
 
 export default async function Page({ searchParams }: TransactionPageParams) {
-  const { page } = await searchParams;
+  const resolvedParams = await searchParams;
+  const { page } = resolvedParams;
   const session = await getServerSession();
 
   if (!session) {
     redirect('/login');
   }
 
-  const payments = await getData(page || 1);
+  const payments = await getData(resolvedParams);
+  const partners = await getPartners();
 
   return (
     <main>
       <Suspense fallback={<p>Carregando pagamentos...</p>}>
-        <PaymentTable transactions={payments || []} />
+        <PaymentTable
+          transactions={payments || []}
+          initialPage={page}
+          partners={partners}
+        />
       </Suspense>
     </main>
   );
