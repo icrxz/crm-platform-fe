@@ -9,11 +9,15 @@ import { Dropdown } from '../common/dropdown/dropdown';
 import { useState } from 'react';
 import { Autocomplete, AutocompleteItem } from '@heroui/react';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import type { Key } from '@react-types/shared';
 
 interface ControlPanelSearchProps {
   contractors: Contractor[];
   partners: Partner[];
 }
+
+const currentYear = new Date().getFullYear();
+const years = Array.from({ length: 5 }, (_, i) => String(currentYear - i));
 
 export default function ControlPanelSearch({
   contractors,
@@ -31,6 +35,18 @@ export default function ControlPanelSearch({
   const [month, setMonth] = useState(
     searchParams.get('mes') || months[new Date().getMonth()]
   );
+  const [ano, setAno] = useState(
+    searchParams.get('ano') || String(currentYear)
+  );
+
+  const handlePartnerChange = (key: Key | null) => {
+    const newPartnerId = key?.toString() || '';
+    setPartnerId(newPartnerId);
+    if (!newPartnerId) {
+      setMonth(months[new Date().getMonth()]);
+      setAno(String(currentYear));
+    }
+  };
 
   const handleSearch = () => {
     const params = new URLSearchParams(searchParams.toString());
@@ -41,6 +57,7 @@ export default function ControlPanelSearch({
       ? params.set('seguradora', contractorId)
       : params.delete('seguradora');
     month ? params.set('mes', month) : params.delete('mes');
+    ano ? params.set('ano', ano) : params.delete('ano');
 
     router.push(pathname + '?' + params.toString());
   };
@@ -49,35 +66,51 @@ export default function ControlPanelSearch({
     setPartnerId('');
     setState('');
     setContractorId('');
-    setMonth('');
+    setMonth(months[new Date().getMonth()]);
+    setAno(String(currentYear));
     router.push(pathname);
   };
 
   return (
     <div className="mb-6 flex items-center rounded-lg bg-gray-100 px-4 pb-2 pt-4 shadow-md">
-      <div className="grid w-full grid-cols-4 gap-3">
+      <div className="flex w-full items-end gap-3">
         <Dropdown
           onChange={(val) => setMonth(val)}
           label="Mês"
           name="month"
-          className="mb-2"
-          options={months.map((month) => ({
-            id: month,
-            value: month,
-            label: month,
+          className="mb-2 w-28 shrink-0"
+          options={months.map((m) => ({
+            id: m,
+            value: m,
+            label: m,
           }))}
+          optional={!!partnerId}
           value={month}
+        />
+
+        <Dropdown
+          onChange={(val) => setAno(val)}
+          label="Ano"
+          name="year"
+          className="mb-2 w-24 shrink-0"
+          options={years.map((y) => ({
+            id: y,
+            value: y,
+            label: y,
+          }))}
+          optional={!!partnerId}
+          value={ano}
         />
 
         <Dropdown
           onChange={(val) => setState(val)}
           label="Estado"
           name="state"
-          className="mb-2"
-          options={brazilStates.map((state) => ({
-            id: state,
-            value: state,
-            label: state,
+          className="mb-2 flex-1"
+          options={brazilStates.map((s) => ({
+            id: s,
+            value: s,
+            label: s,
           }))}
           optional
           value={state}
@@ -87,7 +120,7 @@ export default function ControlPanelSearch({
           onChange={(val) => setContractorId(val)}
           label="Seguradora"
           name="contractor"
-          className="mb-2"
+          className="mb-2 flex-1"
           options={
             contractors?.map((contractor) => ({
               id: contractor.contractor_id,
@@ -105,7 +138,7 @@ export default function ControlPanelSearch({
           classNames={{
             listboxWrapper: 'max-h-[320px]',
             selectorButton: 'text-default-500',
-            base: 'text-sm font-medium text-gray-700',
+            base: 'flex-1 mb-2 text-sm font-medium text-gray-700',
           }}
           labelPlacement="outside"
           variant="bordered"
@@ -119,10 +152,8 @@ export default function ControlPanelSearch({
           startContent={
             <MagnifyingGlassIcon className="h-5 w-5 text-gray-500" />
           }
-          selectedKey={partnerId}
-          onSelectionChange={(key) => {
-            setPartnerId(key?.toString() || '');
-          }}
+          value={partnerId || undefined}
+          onChange={handlePartnerChange}
           defaultItems={partners}
         >
           {(item) => (

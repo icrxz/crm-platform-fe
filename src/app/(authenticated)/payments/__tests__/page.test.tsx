@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { getServerSession } from 'next-auth';
+import { getCurrentUser } from '../../../libs/session';
 import { redirect } from 'next/navigation';
 import { fetchCases } from '../../../services/cases';
 import { fetchPartners, getPartnerByID } from '../../../services/partners';
@@ -12,7 +12,7 @@ import {
   buildSearchResponse,
 } from '../../../components/payments/__fixtures__/builders';
 
-jest.mock('next-auth', () => ({ getServerSession: jest.fn() }));
+jest.mock('../../../libs/session', () => ({ getCurrentUser: jest.fn() }));
 jest.mock('next-auth/react', () => ({ signOut: jest.fn() }));
 jest.mock('next/navigation', () => ({
   redirect: jest.fn().mockImplementation((url: string) => {
@@ -52,11 +52,11 @@ const mockFetchCases = fetchCases as jest.Mock;
 const mockFetchPartners = fetchPartners as jest.Mock;
 const mockGetPartnerByID = getPartnerByID as jest.Mock;
 const mockFetchTransactions = fetchTransactions as jest.Mock;
-const mockGetServerSession = getServerSession as jest.Mock;
-const mockRedirect = redirect as jest.Mock;
+const mockGetCurrentUser = getCurrentUser as jest.Mock;
+const mockRedirect = redirect as unknown as jest.Mock;
 
 function setupAuthenticatedSession() {
-  mockGetServerSession.mockResolvedValue({ user: { name: 'Test User' } });
+  mockGetCurrentUser.mockResolvedValue({ name: 'Test User' });
 }
 
 function setupServices({
@@ -88,7 +88,7 @@ describe('Payments Page', () => {
   describe('authentication', () => {
     it('should redirect to /login when there is no session', async () => {
       // Arrange
-      mockGetServerSession.mockResolvedValue(null);
+      mockGetCurrentUser.mockResolvedValue(null);
       const searchParams = Promise.resolve({});
 
       // Act & Assert
