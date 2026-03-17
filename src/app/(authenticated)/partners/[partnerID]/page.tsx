@@ -11,6 +11,7 @@ import { CaseFull, CaseStatus } from '@/app/types/case';
 import { Contractor } from '@/app/types/contractor';
 import { SearchResponse } from '@/app/types/search_response';
 import { monthsNumeric } from '@/app/types/month';
+import { adminRoles } from '@/app/utils/roles';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 
@@ -122,9 +123,11 @@ export default async function Page({
     redirect('/login');
   }
 
+  const isAdmin = adminRoles.includes(user.role);
+
   const [partner, casesData] = await Promise.all([
     getPartnerByID(partnerID),
-    getCases(partnerID, filters),
+    isAdmin ? getCases(partnerID, filters) : Promise.resolve(null),
   ]);
 
   return (
@@ -133,12 +136,16 @@ export default async function Page({
         {partner?.data && <PartnerDetails partner={partner.data} />}
       </Suspense>
 
-      <Suspense>
-        {casesData.contractors && (
-          <ControlPanelSearch contractors={casesData.contractors} />
-        )}
-        <ControlPanelTable cases={casesData} hideTecnicoColumn />
-      </Suspense>
+      {isAdmin && casesData && (
+        <Suspense>
+          <div className="mt-8">
+            {casesData.contractors && (
+              <ControlPanelSearch contractors={casesData.contractors} />
+            )}
+            <ControlPanelTable cases={casesData} hideTecnicoColumn />
+          </div>
+        </Suspense>
+      )}
     </main>
   );
 }
