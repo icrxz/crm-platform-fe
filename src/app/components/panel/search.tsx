@@ -13,7 +13,7 @@ import type { Key } from '@react-types/shared';
 
 interface ControlPanelSearchProps {
   contractors: Contractor[];
-  partners: Partner[];
+  partners?: Partner[];
 }
 
 const currentYear = new Date().getFullYear();
@@ -84,7 +84,7 @@ export default function ControlPanelSearch({
             value: m,
             label: m,
           }))}
-          optional={!!partnerId}
+          optional={!partners || !!partnerId}
           value={month}
         />
 
@@ -98,7 +98,7 @@ export default function ControlPanelSearch({
             value: y,
             label: y,
           }))}
-          optional={!!partnerId}
+          optional={!partners || !!partnerId}
           value={ano}
         />
 
@@ -132,36 +132,38 @@ export default function ControlPanelSearch({
           value={contractorId}
         />
 
-        <Autocomplete
-          label="Técnico responsável"
-          placeholder="Selecione um técnico"
-          classNames={{
-            listboxWrapper: 'max-h-[320px]',
-            selectorButton: 'text-default-500',
-            base: 'flex-1 mb-2 text-sm font-medium text-gray-700',
-          }}
-          labelPlacement="outside"
-          variant="bordered"
-          radius="sm"
-          inputProps={{
-            classNames: {
-              input: 'border-none focus:ring-0',
-              inputWrapper: 'bg-white border border-gray-300',
-            },
-          }}
-          startContent={
-            <MagnifyingGlassIcon className="h-5 w-5 text-gray-500" />
-          }
-          value={partnerId || undefined}
-          onChange={handlePartnerChange}
-          defaultItems={partners}
-        >
-          {(item) => (
-            <AutocompleteItem key={item.partner_id}>
-              {`${item.first_name} ${item.last_name} - ${item.shipping.city} / ${item.shipping.state}`}
-            </AutocompleteItem>
-          )}
-        </Autocomplete>
+        {partners && (
+          <Autocomplete
+            label="Técnico responsável"
+            placeholder="Selecione um técnico"
+            classNames={{
+              listboxWrapper: 'max-h-[320px]',
+              selectorButton: 'text-default-500',
+              base: 'flex-1 mb-2 text-sm font-medium text-gray-700',
+            }}
+            labelPlacement="outside"
+            variant="bordered"
+            radius="sm"
+            inputProps={{
+              classNames: {
+                input: 'border-none focus:ring-0',
+                inputWrapper: 'bg-white border border-gray-300',
+              },
+            }}
+            startContent={
+              <MagnifyingGlassIcon className="h-5 w-5 text-gray-500" />
+            }
+            value={partnerId || undefined}
+            onChange={handlePartnerChange}
+            defaultItems={partners}
+          >
+            {(item) => (
+              <AutocompleteItem key={item.partner_id}>
+                {`${item.first_name} ${item.last_name} - ${item.shipping.city} / ${item.shipping.state}`}
+              </AutocompleteItem>
+            )}
+          </Autocomplete>
+        )}
       </div>
 
       <div className="mr-4 flex w-1/2 justify-end gap-4">

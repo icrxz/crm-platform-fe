@@ -8,9 +8,13 @@ import { TransactionType } from '@/app/types/transaction';
 
 interface ControlPanelTableProps {
   cases: SearchResponse<CaseFull>;
+  hideTecnicoColumn?: boolean;
 }
 
-export default function ControlPanelTable({ cases }: ControlPanelTableProps) {
+export default function ControlPanelTable({
+  cases,
+  hideTecnicoColumn,
+}: ControlPanelTableProps) {
   const mapServiceType: Record<string, string> = {
     repair: 'Rep',
     inspection: 'Vist',
@@ -49,9 +53,11 @@ export default function ControlPanelTable({ cases }: ControlPanelTableProps) {
                     <th scope="col" className="py-5 font-medium sm:pl-6">
                       Segurado
                     </th>
-                    <th scope="col" className="py-5 font-medium sm:pl-6">
-                      Técnico
-                    </th>
+                    {!hideTecnicoColumn && (
+                      <th scope="col" className="py-5 font-medium sm:pl-6">
+                        Técnico
+                      </th>
+                    )}
                     <th scope="col" className="py-5 font-medium sm:pl-6">
                       Senha
                     </th>
@@ -105,9 +111,11 @@ export default function ControlPanelTable({ cases }: ControlPanelTableProps) {
                             ? `${crmCase.customer.first_name} ${crmCase.customer.last_name}`
                             : '-'}
                         </td>
-                        <td className="whitespace-nowrap bg-white py-5 pl-6 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                          {crmCase.partner?.first_name || '-'}
-                        </td>
+                        {!hideTecnicoColumn && (
+                          <td className="whitespace-nowrap bg-white py-5 pl-6 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
+                            {crmCase.partner?.first_name || '-'}
+                          </td>
+                        )}
                         <td className="whitespace-nowrap bg-white py-5 pl-6 text-sm">
                           {crmCase.external_reference || '-'}
                         </td>
