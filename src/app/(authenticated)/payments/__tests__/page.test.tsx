@@ -53,7 +53,7 @@ const mockFetchPartners = fetchPartners as jest.Mock;
 const mockGetPartnerByID = getPartnerByID as jest.Mock;
 const mockFetchTransactions = fetchTransactions as jest.Mock;
 const mockGetServerSession = getServerSession as jest.Mock;
-const mockRedirect = redirect as jest.Mock;
+const mockRedirect = redirect as unknown as jest.Mock;
 
 function setupAuthenticatedSession() {
   mockGetServerSession.mockResolvedValue({ user: { name: 'Test User' } });

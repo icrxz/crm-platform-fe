@@ -10,8 +10,7 @@ import {
   TransactionStatus,
   TransactionType,
 } from '@/app/types/transaction';
-import { getServerSession } from 'next-auth';
-import { signOut } from 'next-auth/react';
+import { getCurrentUser } from '@/app/libs/session';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 
@@ -47,9 +46,6 @@ async function getData(
 
   const caseQuery = prepareQuery(rest);
   const casesInReceipt = await fetchCases(caseQuery, page).then((resp) => {
-    if (resp.unauthorized) {
-      signOut();
-    }
     return (
       resp.data || {
         result: [],
@@ -63,9 +59,6 @@ async function getData(
       let partner: Partner | null = null;
       if (caseItem.partner_id) {
         partner = await getPartnerByID(caseItem.partner_id).then((resp) => {
-          if (resp.unauthorized) {
-            signOut();
-          }
           return resp.data || null;
         });
       }
@@ -73,9 +66,6 @@ async function getData(
       const outgoingTransactions = await fetchTransactions(
         `case_id=${caseItem.case_id}&type=${TransactionType.OUTGOING}`
       ).then((resp) => {
-        if (resp.unauthorized) {
-          signOut();
-        }
         return resp.data || [];
       });
 
@@ -161,9 +151,9 @@ type TransactionPageParams = {
 export default async function Page({ searchParams }: TransactionPageParams) {
   const resolvedParams = await searchParams;
   const { page } = resolvedParams;
-  const session = await getServerSession();
+  const user = await getCurrentUser();
 
-  if (!session) {
+  if (!user) {
     redirect('/login');
   }
 

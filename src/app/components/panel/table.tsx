@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import { SearchResponse } from '@/app/types/search_response';
 
 import { parseDateTime } from '../../libs/date';
@@ -12,9 +12,24 @@ interface ControlPanelTableProps {
 
 export default function ControlPanelTable({ cases }: ControlPanelTableProps) {
   const mapServiceType: Record<string, string> = {
-    "repair": "Rep",
-    "inspection": "Vist"
-  }
+    repair: 'Rep',
+    inspection: 'Vist',
+  };
+
+  const documentCounts = (cases?.result || []).reduce<Record<string, number>>(
+    (acc, c) => {
+      const doc = c.customer?.document;
+      if (doc) acc[doc] = (acc[doc] || 0) + 1;
+      return acc;
+    },
+    {}
+  );
+
+  const duplicateDocuments = new Set(
+    Object.entries(documentCounts)
+      .filter(([, count]) => count > 1)
+      .map(([doc]) => doc)
+  );
 
   return (
     <div className="w-full">
@@ -22,7 +37,6 @@ export default function ControlPanelTable({ cases }: ControlPanelTableProps) {
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
             <div className="overflow-hidden rounded-md bg-gray-50 p-2 md:pt-0">
-
               <table className="hidden min-w-full rounded-md text-gray-900 md:table">
                 <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
                   <tr>
@@ -31,6 +45,9 @@ export default function ControlPanelTable({ cases }: ControlPanelTableProps) {
                     </th>
                     <th scope="col" className="py-5 font-medium sm:pl-6">
                       Cidade
+                    </th>
+                    <th scope="col" className="py-5 font-medium sm:pl-6">
+                      Segurado
                     </th>
                     <th scope="col" className="py-5 font-medium sm:pl-6">
                       Técnico
@@ -66,49 +83,94 @@ export default function ControlPanelTable({ cases }: ControlPanelTableProps) {
                 </thead>
 
                 <tbody className="divide-y divide-gray-200 text-gray-900">
-                  {cases?.result?.map((crmCase) => (
-                    <tr
-                      key={crmCase.case_id}
-                      className="group"
-                    >
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                        {parseDateTime(crmCase?.created_at || '')}
-                      </td>
-                      <td className="whitespace-nowrap bg-white pl-6 py-5 text-sm">
-                        {crmCase.customer?.shipping.city || '-'}
-                      </td>
-                      <td className="whitespace-nowrap bg-white pl-6 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                        {crmCase.partner?.first_name || '-'}
-                      </td>
-                      <td className="whitespace-nowrap bg-white pl-6 py-5 text-sm">
-                        {crmCase.external_reference || '-'}
-                      </td>
-                      <td className="whitespace-nowrap bg-white pl-6 py-5 text-sm">
-                        {crmCase.contractor?.company_name || '-'}
-                      </td>
-                      <td className="whitespace-nowrap bg-white pl-6 py-5 text-sm">
-                        {parseToCurrency(crmCase.transactions?.find((tr) => tr.type === TransactionType.OUTGOING && tr.description === 'MO')?.value || 0)}
-                      </td>
-                      <td className="whitespace-nowrap bg-white pl-6 py-5 text-sm">
-                        {parseToCurrency(crmCase.transactions?.find((tr) => tr.type === TransactionType.OUTGOING && tr.description === 'Deslocamento Técnico')?.value || 0)}
-                      </td>
-                      <td className="whitespace-nowrap bg-white pl-6 py-5 text-sm">
-                        {parseToCurrency(crmCase.transactions?.find((tr) => tr.type === TransactionType.OUTGOING && tr.description === 'Peças técnico')?.value || 0)}
-                      </td>
-                      <td className="whitespace-nowrap bg-white pl-6 py-5 text-sm">
-                        {parseToCurrency(crmCase.transactions?.find((tr) => tr.type === TransactionType.INCOMING && tr.description === 'Cobrado seguradora')?.value || 0)}
-                      </td>
-                      <td className="whitespace-nowrap bg-white pl-6 py-5 text-sm">
-                        {parseToCurrency(crmCase.transactions?.find((tr) => tr.type === TransactionType.INCOMING && tr.description === 'Deslocamento')?.value || 0)}
-                      </td>
-                      <td className="whitespace-nowrap bg-white pl-6 py-5 text-sm">
-                        {parseToCurrency(crmCase.transactions?.find((tr) => tr.type === TransactionType.INCOMING && tr.description === 'Peças')?.value || 0)}
-                      </td>
-                      <td className="whitespace-nowrap bg-white pl-6 py-5 text-sm">
-                        {mapServiceType[crmCase.type] || '-'}
-                      </td>
-                    </tr>
-                  ))}
+                  {(cases?.result || []).map((crmCase) => {
+                    const isDuplicate = duplicateDocuments.has(
+                      crmCase.customer?.document || ''
+                    );
+                    return (
+                      <tr key={crmCase.case_id} className="group">
+                        <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
+                          {parseDateTime(crmCase?.created_at || '')}
+                        </td>
+                        <td className="whitespace-nowrap bg-white py-5 pl-6 text-sm">
+                          {crmCase.customer?.shipping.city || '-'}
+                        </td>
+                        <td
+                          className={`whitespace-nowrap bg-white py-5 pl-6 text-sm${isDuplicate ? 'text-red-500' : ''}`}
+                        >
+                          {crmCase.customer
+                            ? `${crmCase.customer.first_name} ${crmCase.customer.last_name}`
+                            : '-'}
+                        </td>
+                        <td className="whitespace-nowrap bg-white py-5 pl-6 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
+                          {crmCase.partner?.first_name || '-'}
+                        </td>
+                        <td className="whitespace-nowrap bg-white py-5 pl-6 text-sm">
+                          {crmCase.external_reference || '-'}
+                        </td>
+                        <td className="whitespace-nowrap bg-white py-5 pl-6 text-sm">
+                          {crmCase.contractor?.company_name || '-'}
+                        </td>
+                        <td className="whitespace-nowrap bg-white py-5 pl-6 text-sm">
+                          {parseToCurrency(
+                            crmCase.transactions?.find(
+                              (tr) =>
+                                tr.type === TransactionType.OUTGOING &&
+                                tr.description === 'MO'
+                            )?.value || 0
+                          )}
+                        </td>
+                        <td className="whitespace-nowrap bg-white py-5 pl-6 text-sm">
+                          {parseToCurrency(
+                            crmCase.transactions?.find(
+                              (tr) =>
+                                tr.type === TransactionType.OUTGOING &&
+                                tr.description === 'Deslocamento Técnico'
+                            )?.value || 0
+                          )}
+                        </td>
+                        <td className="whitespace-nowrap bg-white py-5 pl-6 text-sm">
+                          {parseToCurrency(
+                            crmCase.transactions?.find(
+                              (tr) =>
+                                tr.type === TransactionType.OUTGOING &&
+                                tr.description === 'Peças técnico'
+                            )?.value || 0
+                          )}
+                        </td>
+                        <td className="whitespace-nowrap bg-white py-5 pl-6 text-sm">
+                          {parseToCurrency(
+                            crmCase.transactions?.find(
+                              (tr) =>
+                                tr.type === TransactionType.INCOMING &&
+                                tr.description === 'Cobrado seguradora'
+                            )?.value || 0
+                          )}
+                        </td>
+                        <td className="whitespace-nowrap bg-white py-5 pl-6 text-sm">
+                          {parseToCurrency(
+                            crmCase.transactions?.find(
+                              (tr) =>
+                                tr.type === TransactionType.INCOMING &&
+                                tr.description === 'Deslocamento'
+                            )?.value || 0
+                          )}
+                        </td>
+                        <td className="whitespace-nowrap bg-white py-5 pl-6 text-sm">
+                          {parseToCurrency(
+                            crmCase.transactions?.find(
+                              (tr) =>
+                                tr.type === TransactionType.INCOMING &&
+                                tr.description === 'Peças'
+                            )?.value || 0
+                          )}
+                        </td>
+                        <td className="whitespace-nowrap bg-white py-5 pl-6 text-sm">
+                          {mapServiceType[crmCase.type] || '-'}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
