@@ -1,13 +1,16 @@
-"use server";
+'use server';
 
-import { removeDocumentSymbols } from "@/app/libs/parser";
-import { getCurrentUser } from "@/app/libs/session";
-import { CreateCustomer, CreateCustomerResponse } from "@/app/types/customer";
-import { ServiceResponse } from "@/app/types/service";
-import { cookies } from "next/headers";
-import { crmCoreApiKey, crmCoreEndpoint } from ".";
+import { removeDocumentSymbols } from '@/app/libs/parser';
+import { getCurrentUser } from '@/app/libs/session';
+import { CreateCustomer, CreateCustomerResponse } from '@/app/types/customer';
+import { ServiceResponse } from '@/app/types/service';
+import { cookies } from 'next/headers';
+import { crmCoreApiKey, crmCoreEndpoint } from '.';
 
-export async function createCustomer(_currentState: unknown, formData: FormData): Promise<ServiceResponse<CreateCustomerResponse>> {
+export async function createCustomer(
+  _currentState: unknown,
+  formData: FormData
+): Promise<ServiceResponse<CreateCustomerResponse>> {
   try {
     const session = await getCurrentUser();
     const author = session?.username || '';
@@ -22,7 +25,7 @@ export async function createCustomer(_currentState: unknown, formData: FormData)
       first_name: formData.get('first_name')?.toString() || '',
       last_name: formData.get('last_name')?.toString() || '',
       document,
-      document_type: isCPF ? "CPF" : "CNPJ",
+      document_type: isCPF ? 'CPF' : 'CNPJ',
       shipping: {
         address: address,
         city: formData.get('city')?.toString() || '',
@@ -37,32 +40,32 @@ export async function createCustomer(_currentState: unknown, formData: FormData)
       created_by: author,
     } as CreateCustomer;
 
-    const jwt = cookies().get("jwt")?.value;
+    const jwt = (await cookies()).get('jwt')?.value;
     const url = `${crmCoreEndpoint}/crm/core/api/v1/customers`;
 
     const resp = await fetch(url, {
-      method: "POST",
+      method: 'POST',
       body: JSON.stringify(payload),
       headers: {
-        "Content-Type": 'application/json',
-        "X-API-Key": crmCoreApiKey || '',
-        "Authorization": `Bearer ${jwt}`
-      }
+        'Content-Type': 'application/json',
+        'X-API-Key': crmCoreApiKey || '',
+        Authorization: `Bearer ${jwt}`,
+      },
     });
 
     if (!resp.ok) {
       return {
         success: false,
-        message: "falha na criação do cliente",
+        message: 'falha na criação do cliente',
         unauthorized: resp.status === 401,
       };
     }
 
-    const respData = await resp.json() as CreateCustomerResponse;
+    const respData = (await resp.json()) as CreateCustomerResponse;
 
     return {
       success: true,
-      message: "cliente criado com sucesso!!",
+      message: 'cliente criado com sucesso!!',
       unauthorized: false,
       data: respData,
     };
@@ -71,7 +74,7 @@ export async function createCustomer(_currentState: unknown, formData: FormData)
 
     return {
       success: false,
-      message: "algo de errado aconteceu, contate o suporte!",
+      message: 'algo de errado aconteceu, contate o suporte!',
     };
   }
 }

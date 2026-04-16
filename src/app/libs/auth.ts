@@ -1,8 +1,8 @@
-import { NextAuthOptions } from "next-auth";
+import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { cookies } from "next/headers";
+import { cookies } from 'next/headers';
 import { z } from 'zod';
-import { User, UserRole } from "../types/user";
+import { User, UserRole } from '../types/user';
 
 const crmCoreEndpoint = process.env.CRM_CORE_ENDPOINT;
 
@@ -16,7 +16,7 @@ export const authOptions: NextAuthOptions = {
   },
   providers: [
     CredentialsProvider({
-      name: "Credentials",
+      name: 'Credentials',
       credentials: {
         email: {},
         password: {},
@@ -33,21 +33,24 @@ export const authOptions: NextAuthOptions = {
         const { email, password } = parsedCredentials.data;
 
         try {
-          const result = await fetch(`${crmCoreEndpoint}/crm/core/api/v1/login`, {
-            method: "POST",
-            body: JSON.stringify({
-              email: email,
-              password: password
-            }),
-            headers: { "Content-Type": "application/json" }
-          });
+          const result = await fetch(
+            `${crmCoreEndpoint}/crm/core/api/v1/login`,
+            {
+              method: 'POST',
+              body: JSON.stringify({
+                email: email,
+                password: password,
+              }),
+              headers: { 'Content-Type': 'application/json' },
+            }
+          );
 
           const authData = await result.json();
           if (!result.ok || !authData.token || !authData.user) {
             return null;
-          };
+          }
 
-          cookies().set("jwt", authData.token, {
+          (await cookies()).set('jwt', authData.token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             maxAge: 60 * 60 * 12, // 12 hours
@@ -82,7 +85,21 @@ export const authOptions: NextAuthOptions = {
   },
   events: {
     async signOut({ session, token }) {
-      cookies().delete("jwt");
-    }
-  }
+      const jwt = (await cookies()).get('jwt');
+      if (jwt?.value) {
+        try {
+          await fetch(`${crmCoreEndpoint}/crm/core/api/v1/logout`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${jwt.value}`,
+            },
+          });
+        } catch {
+          // ignore - cookie will be deleted regardless
+        }
+      }
+      (await cookies()).delete('jwt');
+    },
+  },
 };

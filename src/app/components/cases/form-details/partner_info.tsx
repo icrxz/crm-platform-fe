@@ -1,18 +1,21 @@
-"use client";
-import { useSnackbar } from "@/app/context/SnackbarProvider";
-import { changePartner } from "@/app/services/cases";
-import { fetchPartners } from "@/app/services/partners";
-import { CaseFull } from "@/app/types/case";
-import { Partner } from "@/app/types/partner";
-import { ExclamationCircleIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
-import { InputMask } from "@react-input/mask";
-import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useFormState } from "react-dom";
-import { Button } from "../../common/button";
-import { Card } from "../../common/card";
+'use client';
+import { useSnackbar } from '@/app/context/SnackbarProvider';
+import { changePartner } from '@/app/services/cases';
+import { fetchPartners } from '@/app/services/partners';
+import { CaseFull } from '@/app/types/case';
+import { Partner } from '@/app/types/partner';
+import {
+  ExclamationCircleIcon,
+  MagnifyingGlassIcon,
+} from '@heroicons/react/24/outline';
+import { Autocomplete, AutocompleteItem } from '@heroui/react';
+import { InputMask } from '@react-input/mask';
+import { signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useActionState } from 'react';
+import { Button } from '../../common/button';
+import { Card } from '../../common/card';
 
 interface PartnerInfoFormProps {
   crmCase: CaseFull;
@@ -20,7 +23,7 @@ interface PartnerInfoFormProps {
 
 export function PartnerInfoStatusForm({ crmCase }: PartnerInfoFormProps) {
   const [partners, setPartners] = useState<Partner[]>([]);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState('');
   const [loadingPartners, setLoadingPartners] = useState(false);
   const [selectedPartner, setSelectedPartner] = useState<string>();
   const [isPartnerInvalid, setIsPartnerInvalid] = useState(false);
@@ -28,23 +31,25 @@ export function PartnerInfoStatusForm({ crmCase }: PartnerInfoFormProps) {
 
   const { refresh } = useRouter();
   const { showSnackbar } = useSnackbar();
-  const [_, dispatch] = useFormState(onSubmit, null);
+  const [_, dispatch] = useActionState(onSubmit, null);
 
   useEffect(() => {
     setLoadingPartners(true);
     try {
-      const query = "active=true";
-      fetchPartners(query, 1, 10000).then(response => {
+      const query = 'active=true';
+      fetchPartners(query, 1, 10000).then((response) => {
         if (!response.success || !response.data) {
           if (response.unauthorized) {
             signOut();
           }
-          setErrorMessage(response.message || "");
+          setErrorMessage(response.message || '');
           return;
         }
 
         let partners = response.data.result;
-        partners = partners.sort((a, b) => a.first_name.localeCompare(b.first_name));
+        partners = partners.sort((a, b) =>
+          a.first_name.localeCompare(b.first_name)
+        );
 
         setPartners(partners);
       });
@@ -63,14 +68,14 @@ export function PartnerInfoStatusForm({ crmCase }: PartnerInfoFormProps) {
         return;
       }
 
-      formData.set("partner", selectedPartner?.toString() || '')
+      formData.set('partner', selectedPartner?.toString() || '');
 
-      changePartner(crmCase.case_id, formData).then(response => {
+      changePartner(crmCase.case_id, formData).then((response) => {
         if (!response.success) {
           if (response.unauthorized) {
             signOut();
           }
-          setErrorMessage(response.message || "");
+          setErrorMessage(response.message || '');
           return;
         }
 
@@ -90,9 +95,9 @@ export function PartnerInfoStatusForm({ crmCase }: PartnerInfoFormProps) {
             label="Técnico responsável"
             placeholder="Selecione um técnico"
             classNames={{
-              listboxWrapper: "max-h-[320px]",
-              selectorButton: "text-default-500",
-              base: "text-sm font-medium text-gray-700",
+              listboxWrapper: 'max-h-[320px]',
+              selectorButton: 'text-default-500',
+              base: 'text-sm font-medium text-gray-700',
             }}
             isRequired
             labelPlacement="outside"
@@ -100,11 +105,13 @@ export function PartnerInfoStatusForm({ crmCase }: PartnerInfoFormProps) {
             radius="sm"
             inputProps={{
               classNames: {
-                input: "border-none focus:ring-0",
-                inputWrapper: "bg-white border border-gray-300",
-              }
+                input: 'border-none focus:ring-0',
+                inputWrapper: 'bg-white border border-gray-300',
+              },
             }}
-            startContent={<MagnifyingGlassIcon className="h-5 w-5 text-gray-500" />}
+            startContent={
+              <MagnifyingGlassIcon className="h-5 w-5 text-gray-500" />
+            }
             isLoading={loadingPartners}
             selectedKey={selectedPartner}
             onSelectionChange={(key) => {
@@ -119,13 +126,16 @@ export function PartnerInfoStatusForm({ crmCase }: PartnerInfoFormProps) {
             {(item) => (
               <AutocompleteItem key={item.partner_id}>
                 {`${item.first_name} ${item.last_name} - ${item.shipping.city} / ${item.shipping.state}`}
-              </AutocompleteItem >
+              </AutocompleteItem>
             )}
           </Autocomplete>
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="target_date">
+          <label
+            className="mb-2 block text-sm font-medium text-gray-700"
+            htmlFor="target_date"
+          >
             Data de visita
           </label>
 
@@ -133,7 +143,7 @@ export function PartnerInfoStatusForm({ crmCase }: PartnerInfoFormProps) {
             type="datetime-local"
             id="target_date"
             name="target_date"
-            className="w-full h-10 p-2 border border-gray-300 rounded-md text-sm text-gray-600"
+            className="h-10 w-full rounded-md border border-gray-300 p-2 text-sm text-gray-600"
             required
             mask="__/__/____"
             replacement={{ _: /\d/ }}

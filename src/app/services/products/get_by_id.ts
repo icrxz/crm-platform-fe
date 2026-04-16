@@ -1,33 +1,40 @@
-"use server";
-import { Product } from "@/app/types/product";
-import { ServiceResponse } from "@/app/types/service";
-import { cookies } from "next/headers";
-import { crmCoreApiKey, crmCoreEndpoint } from ".";
+'use server';
+import { getApiErrorMessage } from '@/app/libs/api-error';
+import { Product } from '@/app/types/product';
+import { ServiceResponse } from '@/app/types/service';
+import { cookies } from 'next/headers';
+import { crmCoreApiKey, crmCoreEndpoint } from '.';
 
-export async function getProductByID(productID: string): Promise<ServiceResponse<Product>> {
+export async function getProductByID(
+  productID: string
+): Promise<ServiceResponse<Product>> {
   try {
-    if (productID == "") {
+    if (productID == '') {
       return {
         success: false,
-        message: "ID do produto não informado",
+        message: 'ID do produto não informado',
       };
     }
 
-    const jwt = cookies().get("jwt")?.value;
+    const jwt = (await cookies()).get('jwt')?.value;
     const url = `${crmCoreEndpoint}/crm/core/api/v1/products/${productID}`;
 
     const resp = await fetch(url, {
-      method: "GET",
+      method: 'GET',
       headers: {
-        "Content-Type": 'application/json',
-        "X-API-Key": crmCoreApiKey || '',
-        "Authorization": `Bearer ${jwt}`
-      }
+        'Content-Type': 'application/json',
+        'X-API-Key': crmCoreApiKey || '',
+        Authorization: `Bearer ${jwt}`,
+      },
     });
 
     if (!resp.ok) {
       const unauthorized = resp.status === 401;
-      const errorMessage = unauthorized ? "usuário não autorizado" : "falha na busca do produto";
+      const errorMessageDefault = unauthorized
+        ? 'usuário não autorizado'
+        : 'falha na busca do produto';
+      const errorMessage = await getApiErrorMessage(resp, errorMessageDefault);
+
       return {
         success: false,
         message: errorMessage,
@@ -35,16 +42,16 @@ export async function getProductByID(productID: string): Promise<ServiceResponse
       };
     }
 
-    const data = await resp.json() as Product;
+    const data = (await resp.json()) as Product;
     return {
       success: true,
-      message: "produto encontrado com sucesso",
+      message: 'produto encontrado com sucesso',
       data,
     };
   } catch (error) {
     return {
       success: false,
-      message: "algo de errado aconteceu, contate o suporte!",
+      message: 'algo de errado aconteceu, contate o suporte!',
     };
   }
 }

@@ -1,12 +1,13 @@
-import { useSnackbar } from "@/app/context/SnackbarProvider";
-import { deletePartner } from "@/app/services/partners";
-import { roboto } from "@/app/ui/fonts";
-import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { useFormState, useFormStatus } from "react-dom";
-import { Button } from "../common/button";
-import Modal from "../common/modal";
+import { useSnackbar } from '@/app/context/SnackbarProvider';
+import { deletePartner } from '@/app/services/partners';
+import { roboto } from '@/app/ui/fonts';
+import { signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
+import { Button } from '../common/button';
+import Modal from '../common/modal';
 
 interface DeletePartnerModalProps {
   isOpen: boolean;
@@ -14,8 +15,12 @@ interface DeletePartnerModalProps {
   onClose: () => void;
 }
 
-export function DeletePartnerModal({ isOpen, onClose, partnerID }: DeletePartnerModalProps) {
-  const [state, dispatch] = useFormState(deletePartner, null);
+export function DeletePartnerModal({
+  isOpen,
+  onClose,
+  partnerID,
+}: DeletePartnerModalProps) {
+  const [state, dispatch] = useActionState(deletePartner, null);
   const { pending } = useFormStatus();
   const { showSnackbar } = useSnackbar();
   const { refresh } = useRouter();
@@ -33,22 +38,26 @@ export function DeletePartnerModal({ isOpen, onClose, partnerID }: DeletePartner
       if (state?.unauthorized) {
         signOut();
       }
-      showSnackbar(state?.message || "", 'error');
+      showSnackbar(state?.message || '', 'error');
     }
-  }, [state]);
+  }, [state, showSnackbar, refresh, onClose]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <form action={dispatch} className="space-y-3">
-        <h1 className={`${roboto.className} my-5 mx-5 text-xl`}>
+        <h1 className={`${roboto.className} mx-5 my-5 text-xl`}>
           Tem certeza que deseja desativar o técnico?
         </h1>
 
         <input type="hidden" name="partner_id" value={partnerID} />
 
         <div className="flex justify-center space-x-2">
-          <Button type="submit" isLoading={pending} aria-disabled={pending}>Sim</Button>
-          <Button onClick={onClose} isLoading={pending} aria-disabled={pending}>Não</Button>
+          <Button type="submit" isLoading={pending} aria-disabled={pending}>
+            Sim
+          </Button>
+          <Button onClick={onClose} isLoading={pending} aria-disabled={pending}>
+            Não
+          </Button>
         </div>
       </form>
     </Modal>

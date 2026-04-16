@@ -1,32 +1,40 @@
-"use server";
-import { ServiceResponse } from "@/app/types/service";
-import { cookies } from "next/headers";
-import { crmCoreApiKey, crmCoreEndpoint } from ".";
+'use server';
+import { getApiErrorMessage } from '@/app/libs/api-error';
+import { ServiceResponse } from '@/app/types/service';
+import { cookies } from 'next/headers';
+import { crmCoreApiKey, crmCoreEndpoint } from '.';
 
-export async function deletePartner(_currentState: unknown, formData: FormData): Promise<ServiceResponse<null>> {
+export async function deletePartner(
+  _currentState: unknown,
+  formData: FormData
+): Promise<ServiceResponse<null>> {
   try {
     const partnerID = formData.get('partner_id')?.toString() || '';
     if (!partnerID) {
       return {
         success: false,
-        message: "ID do técnico não informado",
+        message: 'ID do técnico não informado',
       };
     }
 
-    const jwt = cookies().get("jwt")?.value;
+    const jwt = (await cookies()).get('jwt')?.value;
     const url = `${crmCoreEndpoint}/crm/core/api/v1/partners/${partnerID}`;
 
     const resp = await fetch(url, {
-      method: "DELETE",
+      method: 'DELETE',
       headers: {
-        "X-API-Key": crmCoreApiKey || '',
-        "Authorization": `Bearer ${jwt}`
-      }
+        'X-API-Key': crmCoreApiKey || '',
+        Authorization: `Bearer ${jwt}`,
+      },
     });
 
     if (!resp.ok) {
       const unauthorized = resp.status === 401;
-      const errorMessage = unauthorized ? "usuário não autorizado" : "falha na exclusão do técnico";
+      const errorMessageDefault = unauthorized
+        ? 'usuário não autorizado'
+        : 'falha na exclusão do técnico';
+      const errorMessage = await getApiErrorMessage(resp, errorMessageDefault);
+
       return {
         success: false,
         message: errorMessage,
@@ -35,16 +43,15 @@ export async function deletePartner(_currentState: unknown, formData: FormData):
     }
 
     return {
-      message: "técnico desativado com sucesso!",
+      message: 'técnico desativado com sucesso!',
       success: true,
     };
-
   } catch (ex) {
     console.error(ex);
 
     return {
       success: false,
-      message: "algo de errado aconteceu, contate o suporte!",
+      message: 'algo de errado aconteceu, contate o suporte!',
     };
   }
 }

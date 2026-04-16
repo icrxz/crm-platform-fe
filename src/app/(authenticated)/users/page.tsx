@@ -6,27 +6,29 @@ import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 
 type UserPageParams = {
-  searchParams?: {
+  searchParams: Promise<{
     query?: string;
     page?: number;
-  };
+  }>;
 };
 
-
 export default async function Page({ searchParams }: UserPageParams) {
+  const { query, page } = await searchParams;
   const session = await getServerSession();
 
   if (!session) {
-    redirect("/login");
+    redirect('/login');
   }
 
-  const query = searchParams?.query || '';
-  const { data: users } = await fetchUsers(query + '&role=operator&role=admin&role=admin_operator', (searchParams?.page || 1));
+  const { data: users } = await fetchUsers(
+    (query || '') + '&role=operator&role=admin&role=admin_operator',
+    page || 1
+  );
 
   return (
     <main>
       <Suspense fallback={<p>Carregando usuários...</p>}>
-        <UsersTable users={users} initialPage={searchParams?.page} />
+        <UsersTable users={users} initialPage={page} />
       </Suspense>
     </main>
   );

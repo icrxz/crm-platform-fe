@@ -1,11 +1,11 @@
-"use client";
+'use client';
 import { parseDateTime } from '@/app/libs/date';
 import { parseDocument } from '@/app/libs/parser';
 import { SearchResponse } from '@/app/types/search_response';
 import EyeIcon from '@heroicons/react/24/outline/EyeIcon';
 import PencilIcon from '@heroicons/react/24/outline/PencilIcon';
 import TrashIcon from '@heroicons/react/24/outline/TrashIcon';
-import { Pagination } from '@nextui-org/pagination';
+import { Pagination } from '@heroui/pagination';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Customer } from '../../types/customer';
@@ -21,12 +21,15 @@ interface CustomersTableProps {
   initialPage?: number;
 }
 
-export default function CustomersTable({ customers, initialPage }: CustomersTableProps) {
+export default function CustomersTable({
+  customers,
+  initialPage,
+}: CustomersTableProps) {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [costumerID, setCostumerID] = useState("");
+  const [costumerID, setCostumerID] = useState('');
   const router = useRouter();
 
   function handleEdit(costumerID: string) {
@@ -53,13 +56,15 @@ export default function CustomersTable({ customers, initialPage }: CustomersTabl
         Clientes
       </h1>
 
-      <CustomersSearchBar setIsCreationModalOpen={setIsCreateModalOpen} setIsFilterModalOpen={setIsFilterModalOpen} />
+      <CustomersSearchBar
+        setIsCreationModalOpen={setIsCreateModalOpen}
+        setIsFilterModalOpen={setIsFilterModalOpen}
+      />
 
       <div className="mt-6 flow-root">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
             <div className="overflow-hidden rounded-md bg-gray-50 p-2 md:pt-0">
-
               <table className="hidden min-w-full rounded-md text-gray-900 md:table">
                 <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
                   <tr>
@@ -99,10 +104,11 @@ export default function CustomersTable({ customers, initialPage }: CustomersTabl
                         {parseDateTime(customer.created_at)}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        <div className='flex gap-2'>
+                        <div className="flex gap-2">
                           <button
                             className="text-green-500 hover:text-green-700"
-                            onClick={() => handleRowClick(customer.customer_id)}>
+                            onClick={() => handleRowClick(customer.customer_id)}
+                          >
                             <EyeIcon className="h-5 w-5" />
                           </button>
 
@@ -110,17 +116,17 @@ export default function CustomersTable({ customers, initialPage }: CustomersTabl
                             className="text-blue-600 hover:text-blue-900"
                             onClick={() => handleEdit(customer.customer_id)}
                           >
-                            <PencilIcon className='w-5 md:w-6' />
+                            <PencilIcon className="w-5 md:w-6" />
                           </button>
 
-                          {customer.active &&
+                          {customer.active && (
                             <button
                               className="text-red-600 hover:text-red-900"
                               onClick={() => handleDelete(customer.customer_id)}
                             >
-                              <TrashIcon className='w-5 md:w-6' />
+                              <TrashIcon className="w-5 md:w-6" />
                             </button>
-                          }
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -132,27 +138,51 @@ export default function CustomersTable({ customers, initialPage }: CustomersTabl
         </div>
       </div>
 
-      <div className='mt-2'>
+      <div className="mt-2">
         <Pagination
           onChange={handleChangePage}
           siblings={3}
           showControls
-          total={Math.ceil(Number((customers?.paging.total || 1) / (customers?.paging.limit || 1)))}
+          total={Math.ceil(
+            Number(
+              (customers?.paging.total || 1) / (customers?.paging.limit || 1)
+            )
+          )}
           page={Number(initialPage || 1)}
         />
       </div>
 
-      {isFilterModalOpen && <Modal isOpen={isFilterModalOpen} onClose={() => setIsFilterModalOpen(false)}>
-        <div>
-          Filtro
-        </div>
-      </Modal>}
+      {isFilterModalOpen && (
+        <Modal
+          isOpen={isFilterModalOpen}
+          onClose={() => setIsFilterModalOpen(false)}
+        >
+          <div>Filtro</div>
+        </Modal>
+      )}
 
-      {isCreateModalOpen && <CreateCustomerModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />}
+      {isCreateModalOpen && (
+        <CreateCustomerModal
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+        />
+      )}
 
-      {isEditModalOpen && <EditCustomerModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} customerID={costumerID} />}
+      {isEditModalOpen && (
+        <EditCustomerModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          customerID={costumerID}
+        />
+      )}
 
-      {isDeleteModalOpen && <DeleteCustomerModal isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)} customerID={costumerID} />}
+      {isDeleteModalOpen && (
+        <DeleteCustomerModal
+          isOpen={isDeleteModalOpen}
+          onClose={() => setIsDeleteModalOpen(false)}
+          customerID={costumerID}
+        />
+      )}
     </div>
   );
 }

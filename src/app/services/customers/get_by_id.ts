@@ -1,34 +1,41 @@
-"use server";
+'use server';
+import { getApiErrorMessage } from '@/app/libs/api-error';
 
-import { Customer } from "@/app/types/customer";
-import { ServiceResponse } from "@/app/types/service";
-import { cookies } from "next/headers";
-import { crmCoreApiKey, crmCoreEndpoint } from ".";
+import { Customer } from '@/app/types/customer';
+import { ServiceResponse } from '@/app/types/service';
+import { cookies } from 'next/headers';
+import { crmCoreApiKey, crmCoreEndpoint } from '.';
 
-export async function getCustomerByID(customerID: string): Promise<ServiceResponse<Customer>> {
+export async function getCustomerByID(
+  customerID: string
+): Promise<ServiceResponse<Customer>> {
   try {
     if (!customerID) {
       return {
         success: false,
-        message: "ID do cliente não informado",
+        message: 'ID do cliente não informado',
       };
     }
 
-    const jwt = cookies().get("jwt")?.value;
+    const jwt = (await cookies()).get('jwt')?.value;
     const url = `${crmCoreEndpoint}/crm/core/api/v1/customers/${customerID}`;
 
     const resp = await fetch(url, {
-      method: "GET",
+      method: 'GET',
       headers: {
-        "Content-Type": 'application/json',
-        "X-API-Key": crmCoreApiKey || '',
-        "Authorization": `Bearer ${jwt}`
-      }
+        'Content-Type': 'application/json',
+        'X-API-Key': crmCoreApiKey || '',
+        Authorization: `Bearer ${jwt}`,
+      },
     });
 
     if (!resp.ok) {
       const unauthorized = resp.status === 401;
-      const errorMessage = unauthorized ? "usuário não autorizado" : "falha na busca do cliente";
+      const errorMessageDefault = unauthorized
+        ? 'usuário não autorizado'
+        : 'falha na busca do cliente';
+      const errorMessage = await getApiErrorMessage(resp, errorMessageDefault);
+
       return {
         success: false,
         message: errorMessage,
@@ -36,10 +43,10 @@ export async function getCustomerByID(customerID: string): Promise<ServiceRespon
       };
     }
 
-    const respData = await resp.json() as Customer;
+    const respData = (await resp.json()) as Customer;
 
     return {
-      message: "",
+      message: '',
       success: true,
       data: respData,
     };
@@ -48,7 +55,7 @@ export async function getCustomerByID(customerID: string): Promise<ServiceRespon
 
     return {
       success: false,
-      message: "algo de errado aconteceu, contate o suporte!",
+      message: 'algo de errado aconteceu, contate o suporte!',
     };
   }
 }

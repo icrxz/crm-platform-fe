@@ -1,21 +1,24 @@
-"use server";
-import { removeDocumentSymbols } from "@/app/libs/parser";
-import { getCurrentUser } from "@/app/libs/session";
-import { CreatePartner } from "@/app/types/partner";
-import { ServiceResponse } from "@/app/types/service";
-import { cookies } from "next/headers";
-import { crmCoreApiKey, crmCoreEndpoint } from ".";
+'use server';
+import { removeDocumentSymbols } from '@/app/libs/parser';
+import { getCurrentUser } from '@/app/libs/session';
+import { CreatePartner } from '@/app/types/partner';
+import { ServiceResponse } from '@/app/types/service';
+import { cookies } from 'next/headers';
+import { crmCoreApiKey, crmCoreEndpoint } from '.';
 
-export async function createPartner(_currentState: unknown, formData: FormData): Promise<ServiceResponse<any>> {
+export async function createPartner(
+  _currentState: unknown,
+  formData: FormData
+): Promise<ServiceResponse<any>> {
   try {
     const session = await getCurrentUser();
     const author = session?.username || '';
 
-    const jwt = cookies().get("jwt")?.value;
+    const jwt = (await cookies()).get('jwt')?.value;
     const url = `${crmCoreEndpoint}/crm/core/api/v1/partners`;
 
     let address = '';
-    if (formData.get("address")) {
+    if (formData.get('address')) {
       address = `${formData.get('address')?.toString() || ''}, ${formData.get('number')?.toString() || ''} - ${formData.get('complement')?.toString() || ''}`;
     }
 
@@ -27,7 +30,7 @@ export async function createPartner(_currentState: unknown, formData: FormData):
       first_name: formData.get('first_name')?.toString() || '',
       last_name: formData.get('last_name')?.toString() || '',
       document,
-      document_type: isCPF ? "CPF" : "CNPJ",
+      document_type: isCPF ? 'CPF' : 'CNPJ',
       partner_type: formData.get('partner_type')?.toString() || '',
       shipping: {
         address: address,
@@ -49,26 +52,26 @@ export async function createPartner(_currentState: unknown, formData: FormData):
     };
 
     const resp = await fetch(url, {
-      method: "POST",
+      method: 'POST',
       body: JSON.stringify(payload),
       headers: {
-        "Content-Type": 'application/json',
-        "X-API-Key": crmCoreApiKey || '',
-        "Authorization": `Bearer ${jwt}`
-      }
+        'Content-Type': 'application/json',
+        'X-API-Key': crmCoreApiKey || '',
+        Authorization: `Bearer ${jwt}`,
+      },
     });
 
     if (!resp.ok) {
       return {
         success: false,
-        message: "Falha na criação do técnico",
+        message: 'Falha na criação do técnico',
         unauthorized: resp.status === 401,
       };
     }
 
     return {
       success: true,
-      message: "Técnico criado com sucesso!",
+      message: 'Técnico criado com sucesso!',
       unauthorized: false,
     };
   } catch (ex) {
@@ -76,7 +79,7 @@ export async function createPartner(_currentState: unknown, formData: FormData):
 
     return {
       success: false,
-      message: "algo de errado aconteceu, contate o suporte!",
+      message: 'algo de errado aconteceu, contate o suporte!',
     };
   }
 }

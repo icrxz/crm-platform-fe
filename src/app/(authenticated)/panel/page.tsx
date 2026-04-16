@@ -20,13 +20,14 @@ import { monthsNumeric } from '@/app/types/month';
 
 interface PanelFilters {
   mes?: string;
+  ano?: string;
   estado?: string;
   seguradora?: string;
   tecnico?: string;
 }
 
 type PanelPageParams = {
-  searchParams: PanelFilters;
+  searchParams: Promise<PanelFilters>;
 };
 
 function prepareQuery(filters?: PanelFilters): string {
@@ -52,8 +53,15 @@ function prepareQuery(filters?: PanelFilters): string {
   }
 
   const currentDate = new Date();
-  const isLastYear = currentDate.getMonth() < selectedMonth;
-  const searchYear = isLastYear ? currentDate.getFullYear() - 1 : currentDate.getFullYear();
+  let searchYear: number;
+  if (filters?.ano) {
+    searchYear = parseInt(filters.ano, 10);
+  } else {
+    const isLastYear = currentDate.getMonth() < selectedMonth;
+    searchYear = isLastYear
+      ? currentDate.getFullYear() - 1
+      : currentDate.getFullYear();
+  }
 
   const initialMonthDate = new Date(searchYear, selectedMonth, 1);
   initialMonthDate.setUTCHours(0, 0, 0, 0);
@@ -80,17 +88,33 @@ async function getData(filters: PanelFilters): Promise<PanelResult> {
   const { success, unauthorized, data } = await fetchCasesFull(query, 1, 10000);
   if (!success || !data) {
     if (unauthorized) {
-      redirect("/login");
+      redirect('/login');
     }
-    return { result: [], paging: { limit: 10000, offset: 1 * 10000, total: 0 } };
+    return {
+      result: [],
+      paging: { limit: 10000, offset: 1 * 10000, total: 0 },
+    };
   }
 
   const contractors = await fetchContractors('', 1, 10000);
 
   const partners = await fetchPartners('', 1, 10000);
 
+  const sortedByDate = [...data.result].sort(
+    (a, b) =>
+      new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+  );
+
+  const groupsByDocument = new Map<string, CaseFull[]>();
+  for (const c of sortedByDate) {
+    const key = c.customer?.document || c.case_id;
+    if (!groupsByDocument.has(key)) groupsByDocument.set(key, []);
+    groupsByDocument.get(key)!.push(c);
+  }
+  const processedResult = [...groupsByDocument.values()].flat();
+
   return {
-    result: data.result,
+    result: processedResult,
     paging: data.paging,
     contractors: contractors.data?.result,
     partners: partners.data?.result,
@@ -98,16 +122,17 @@ async function getData(filters: PanelFilters): Promise<PanelResult> {
 }
 
 export default async function Page({ searchParams }: PanelPageParams) {
+  const filters = await searchParams;
   const user = await getCurrentUser();
   if (!user) {
     signOut();
   }
 
   if (user?.role === UserRole.OPERATOR) {
-    redirect("/home");
+    redirect('/home');
   }
 
-  const data = await getData(searchParams);
+  const data = await getData(filters);
 
   return (
     <main>
@@ -117,7 +142,12 @@ export default async function Page({ searchParams }: PanelPageParams) {
 
       <div>
         <Suspense fallback={<CardsSkeleton />}>
-          {data.contractors && data.partners && <ControlPanelSearch contractors={data.contractors || []} partners={data.partners || []} />}
+          {data.contractors && data.partners && (
+            <ControlPanelSearch
+              contractors={data.contractors || []}
+              partners={data.partners || []}
+            />
+          )}
 
           {data.result && (
             <>

@@ -1,69 +1,84 @@
-"use client";
-import { useSnackbar } from "@/app/context/SnackbarProvider";
-import { changeStatus } from "@/app/services/cases";
-import { CreateAttachment } from "@/app/types/attachments";
-import { CaseFull, CaseStatus } from "@/app/types/case";
-import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
-import { useFormState } from "react-dom";
-import { Button } from "../../common/button";
-import { Card } from "../../common/card";
-import { ErrorMessage } from "../../common/error-message";
-import { FileUploaderGenericRef, GenericUploader } from "../../common/file-uploader";
+'use client';
+import { useSnackbar } from '@/app/context/SnackbarProvider';
+import { changeStatus } from '@/app/services/cases';
+import { CreateAttachment } from '@/app/types/attachments';
+import { CaseFull, CaseStatus } from '@/app/types/case';
+import { signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useRef, useState } from 'react';
+import { useActionState } from 'react';
+import { Button } from '../../common/button';
+import { Card } from '../../common/card';
+import { ErrorMessage } from '../../common/error-message';
+import {
+  FileUploaderGenericRef,
+  GenericUploader,
+} from '../../common/file-uploader';
 
 interface CustomerInfoStatusFormProps {
   crmCase: CaseFull;
 }
 
-export function CustomerInfoStatusForm({ crmCase }: CustomerInfoStatusFormProps) {
-  const [errorMessage, setErrorMessage] = useState("");
+export function CustomerInfoStatusForm({
+  crmCase,
+}: CustomerInfoStatusFormProps) {
+  const [errorMessage, setErrorMessage] = useState('');
   const fileUploaderRef = useRef<FileUploaderGenericRef>(null);
 
   const { refresh } = useRouter();
   const { showSnackbar } = useSnackbar();
-  const [_, dispatch] = useFormState(onSubmit, null);
+  const [_, dispatch] = useActionState(onSubmit, null);
 
   async function onSubmit(_: unknown, formData: FormData) {
     let attachments: CreateAttachment[] = [];
 
-    await fileUploaderRef.current?.submit().then(response => {
+    await fileUploaderRef.current?.submit().then((response) => {
       attachments = response || [];
     });
 
     if (attachments.length <= 0) {
-      setErrorMessage("Deve haver no mínimo 1 anexo.");
+      setErrorMessage('Deve haver no mínimo 1 anexo.');
       return;
     }
 
-    changeStatus(crmCase.case_id, CaseStatus.WAITING_PARTNER, formData, attachments).then(response => {
-      if (!response.success) {
-        if (response.unauthorized) {
-          signOut();
+    changeStatus(
+      crmCase.case_id,
+      CaseStatus.WAITING_PARTNER,
+      formData,
+      attachments
+    )
+      .then((response) => {
+        if (!response.success) {
+          if (response.unauthorized) {
+            signOut();
+          }
+          setErrorMessage(response.message || '');
+          return;
         }
-        setErrorMessage(response.message || "");
-        return;
-      }
 
-      showSnackbar(response.message, 'success');
-      refresh();
-    }).catch(error => {
-      setErrorMessage(error);
-    });
+        showSnackbar(response.message, 'success');
+        refresh();
+      })
+      .catch((error) => {
+        setErrorMessage(error);
+      });
   }
 
   return (
     <Card title="Detalhes" titleSize="xl">
       <form action={dispatch} className="px-5">
         <div className="mb-2">
-          <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="content">
+          <label
+            className="mb-2 block text-sm font-medium text-gray-700"
+            htmlFor="content"
+          >
             Descrição do caso
           </label>
 
           <textarea
             id="content"
             name="content"
-            className="w-full h-32 p-2 border border-gray-300 rounded-md"
+            className="h-32 w-full rounded-md border border-gray-300 p-2"
             rows={3}
             placeholder="Descreva o problema relatado pelo cliente e selecione as imagens para o laudo"
             required
@@ -74,9 +89,7 @@ export function CustomerInfoStatusForm({ crmCase }: CustomerInfoStatusFormProps)
           <GenericUploader ref={fileUploaderRef} minFiles={1} maxFiles={20} />
         </div>
 
-        {errorMessage && (
-          <ErrorMessage message={errorMessage} />
-        )}
+        {errorMessage && <ErrorMessage message={errorMessage} />}
 
         <Button>Enviar</Button>
       </form>
