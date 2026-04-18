@@ -9,7 +9,12 @@ const nextConfig = {
         hostname: "crm-core-attachments.s3.us-east-2.amazonaws.com",
       }
     ]
-  }
+  },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '10mb',
+    },
+  },
 };
 
 export default nextConfig;
