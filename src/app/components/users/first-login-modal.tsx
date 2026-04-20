@@ -49,7 +49,7 @@ export default function FirstLoginModal({ userId }: FirstLoginModalProps) {
       const resp = await updateUser(userId, updateFormData);
       if (!resp.success) {
         if (resp.unauthorized) {
-          signOut();
+          signOut({ callbackUrl: '/login' });
         }
         setErrorMessage(resp.message);
         return;

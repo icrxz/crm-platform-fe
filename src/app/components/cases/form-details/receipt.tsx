@@ -39,7 +39,7 @@ export function ReceiptStatusForm({ crmCase }: ReceiptStatusFormProps) {
       .then((resp) => {
         if (!resp.success) {
           if (resp.unauthorized) {
-            signOut();
+            signOut({ callbackUrl: '/login' });
           }
           showSnackbar(resp.message, 'error');
           return;
@@ -82,7 +82,7 @@ export function ReceiptStatusForm({ crmCase }: ReceiptStatusFormProps) {
         ).then((resp) => {
           if (!resp.success) {
             if (resp.unauthorized) {
-              signOut();
+              signOut({ callbackUrl: '/login' });
               showSnackbar(resp.message, 'error');
               return;
             }
@@ -134,7 +134,7 @@ export function ReceiptStatusForm({ crmCase }: ReceiptStatusFormProps) {
       <form className="px-5">
         <div className="mb-2">
           <h2>Técnico</h2>
-          <div className="mt-2 mb-4 grid w-full grid-cols-3 gap-4">
+          <div className="mb-4 mt-2 grid w-full grid-cols-3 gap-4">
             {formTransactions
               ?.filter((tr) => tr.type === TransactionType.OUTGOING)
               .map((transaction) => (

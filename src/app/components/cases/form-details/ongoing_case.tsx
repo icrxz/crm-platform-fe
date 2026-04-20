@@ -60,7 +60,7 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
     ).then((response) => {
       if (!response.success) {
         if (response.unauthorized) {
-          signOut();
+          signOut({ callbackUrl: '/login' });
         }
         showSnackbar(response.message, 'error');
         return;
@@ -87,7 +87,7 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
       .then((response) => {
         if (!response.success) {
           if (response.unauthorized) {
-            signOut();
+            signOut({ callbackUrl: '/login' });
           }
           showSnackbar(response.message, 'error');
           return;

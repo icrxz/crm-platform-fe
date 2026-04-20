@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import { UserRole } from '@/app/types/user';
 import { PowerIcon } from '@heroicons/react/24/outline';
 import { signOut } from 'next-auth/react';
@@ -16,11 +16,11 @@ export default function SideNav({ userRole }: SideNavProps) {
   return (
     <div className="flex h-full flex-col px-3 py-4 md:px-2">
       <Link
-        className="mb-2 flex h-20 items-end justify-start rounded-md p-2 bg-gray-100 md:h-40"
+        className="mb-2 flex h-20 items-end justify-start rounded-md bg-gray-100 p-2 md:h-40"
         href="/home"
       >
-        <div className="relative w-full h-full">
-          <Image src={logoPic} fill alt='rd logo png image' />
+        <div className="relative h-full w-full">
+          <Image src={logoPic} fill alt="rd logo png image" />
         </div>
       </Link>
 
@@ -31,7 +31,7 @@ export default function SideNav({ userRole }: SideNavProps) {
 
         <button
           className="flex h-[48px] w-full grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3"
-          onClick={() => signOut()}
+          onClick={() => signOut({ callbackUrl: '/login' })}
         >
           <PowerIcon className="w-6" />
           <div className="hidden md:block">Sair</div>

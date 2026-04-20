@@ -32,7 +32,7 @@ export default function TargetDateModal({
     update(caseId, formData).then((response) => {
       if (!response.success) {
         if (response.unauthorized) {
-          signOut();
+          signOut({ callbackUrl: '/login' });
         }
         setErrorMessage(response.message || '');
         return;

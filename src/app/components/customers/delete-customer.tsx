@@ -36,7 +36,7 @@ export function DeleteCustomerModal({
       onClose();
     } else {
       if (state?.unauthorized) {
-        signOut();
+        signOut({ callbackUrl: '/login' });
       }
       showSnackbar(state?.message || '', 'error');
     }
