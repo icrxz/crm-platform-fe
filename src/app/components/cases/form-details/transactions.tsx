@@ -90,7 +90,7 @@ export function TransactionStatusForm({ crmCase }: TransactionStatusFormProps) {
       );
       if (!transactionResp.success) {
         if (transactionResp.unauthorized) {
-          signOut();
+          signOut({ callbackUrl: '/login' });
         }
         showSnackbar(transactionResp.message, 'error');
         return;
@@ -102,7 +102,7 @@ export function TransactionStatusForm({ crmCase }: TransactionStatusFormProps) {
       );
       if (!statusResp.success) {
         if (statusResp.unauthorized) {
-          signOut();
+          signOut({ callbackUrl: '/login' });
         }
         showSnackbar(statusResp.message, 'error');
         return;

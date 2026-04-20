@@ -1,6 +1,5 @@
 `use server`;
 import { getCurrentUser } from '@/app/libs/session';
-import { signOut } from 'next-auth/react';
 import { Suspense } from 'react';
 import ContractorsTable from '../../components/contractors/table';
 import { fetchContractors } from '../../services/contractors';
@@ -44,7 +43,7 @@ export default async function Page({ searchParams }: ContractorPageParams) {
   const { nome, page } = await searchParams;
   const session = await getCurrentUser();
   if (!session) {
-    signOut();
+    redirect('/login');
   }
 
   const data = await getData(nome || '', page || 1);

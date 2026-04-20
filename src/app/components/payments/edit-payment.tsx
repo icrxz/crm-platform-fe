@@ -64,7 +64,7 @@ export function EditPaymentModal({
         updateTransaction(tr.transactionID, tr.value).then((resp) => {
           if (!resp.success) {
             if (resp.unauthorized) {
-              signOut();
+              signOut({ callbackUrl: '/login' });
               showSnackbar(resp.message, 'error');
               return;
             }

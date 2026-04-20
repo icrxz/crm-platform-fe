@@ -66,9 +66,14 @@ export default function ControlPanelSearch({
     setPartnerId('');
     setState('');
     setContractorId('');
-    setMonth(months[new Date().getMonth()]);
-    setAno(String(currentYear));
-    router.push(pathname);
+    const currentMonth = months[new Date().getMonth()];
+    const currentAno = String(new Date().getFullYear());
+    setMonth(currentMonth);
+    setAno(currentAno);
+    const params = new URLSearchParams();
+    params.set('mes', currentMonth);
+    params.set('ano', currentAno);
+    router.push(pathname + '?' + params.toString());
   };
 
   return (
@@ -154,7 +159,7 @@ export default function ControlPanelSearch({
               <MagnifyingGlassIcon className="h-5 w-5 text-gray-500" />
             }
             value={partnerId || undefined}
-            onChange={handlePartnerChange}
+            onSelectionChange={handlePartnerChange}
             defaultItems={partners}
           >
             {(item) => (

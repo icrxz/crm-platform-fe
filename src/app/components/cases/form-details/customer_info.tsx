@@ -50,7 +50,7 @@ export function CustomerInfoStatusForm({
       .then((response) => {
         if (!response.success) {
           if (response.unauthorized) {
-            signOut();
+            signOut({ callbackUrl: '/login' });
           }
           setErrorMessage(response.message || '');
           return;

@@ -1,9 +1,9 @@
-import { signOut } from 'next-auth/react';
 import Snackbar from '../components/common/snackbar';
 import SideNav from '../components/sidebar/sidenav';
 import { SnackbarProvider } from '../context/SnackbarProvider';
 import { getCurrentUser } from '../libs/session';
 import FirstLoginModal from '../components/users/first-login-modal';
+import { redirect } from 'next/navigation';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -12,8 +12,7 @@ interface LayoutProps {
 export default async function Layout({ children }: LayoutProps) {
   const user = await getCurrentUser();
   if (!user) {
-    signOut();
-    return;
+    redirect('/login');
   }
 
   return (
@@ -23,15 +22,13 @@ export default async function Layout({ children }: LayoutProps) {
           <SideNav userRole={user?.role} />
         </div>
 
-        <div className="grow p-6 md:overflow-y-auto md:p-12">
-          {children}
-        </div>
+        <div className="grow p-6 md:overflow-y-auto md:p-12">{children}</div>
 
         {/* {user.isFirstLogin && (
           <FirstLoginModal userId={user.user_id} />
         )} */}
-        
-        < Snackbar />
+
+        <Snackbar />
       </div>
     </SnackbarProvider>
   );
