@@ -42,7 +42,7 @@
     "postcss": "8.5.1",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "react-multi-carousel": "2.8.5",
+    "react-multi-carousel": "2.8.6",
     "sharp": "0.33.5",
     "tailwindcss": "3.4.19",
     "use-debounce": "10.1.0",
