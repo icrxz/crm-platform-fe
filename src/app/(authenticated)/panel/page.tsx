@@ -8,15 +8,12 @@ import { Contractor } from '@/app/types/contractor';
 import { Partner } from '@/app/types/partner';
 import { SearchResponse } from '@/app/types/search_response';
 import { UserRole } from '@/app/types/user';
-import { signOut } from 'next-auth/react';
 import { redirect } from 'next/navigation';
-import { Suspense } from 'react';
-import { CardsSkeleton } from '../../components/dashboard/skeletons';
 import { fetchCasesFull } from '../../services/cases';
 import { roboto } from '../../ui/fonts';
 import ControlPanelSummary from '@/app/components/panel/summary';
 import ControlPanelSearch from '@/app/components/panel/search';
-import { monthsNumeric } from '@/app/types/month';
+import { months, monthsNumeric } from '@/app/types/month';
 
 interface PanelFilters {
   mes?: string;
@@ -30,34 +27,25 @@ type PanelPageParams = {
   searchParams: Promise<PanelFilters>;
 };
 
-function prepareQuery(filters?: PanelFilters): string {
+function prepareQuery(filters: PanelFilters): string {
   let query = '';
 
-  if (filters?.seguradora) {
+  if (filters.seguradora) {
     query += `contractor_id=${filters.seguradora}&`;
   }
 
-  if (filters?.tecnico) {
+  if (filters.tecnico) {
     query += `partner_id=${filters.tecnico}&`;
   }
 
-  if (filters?.estado) {
+  if (filters.estado) {
     query += `state=${filters.estado}&`;
   }
 
-  let selectedMonth = -1;
-  if (filters?.mes) {
-    if (Object.keys(monthsNumeric).find((key) => key === filters.mes)) {
-      selectedMonth = monthsNumeric[filters.mes] - 1;
-    }
-  }
+  if (filters.mes && filters.mes in monthsNumeric && filters.ano) {
+    const selectedMonth = monthsNumeric[filters.mes] - 1;
+    const searchYear = parseInt(filters.ano, 10);
 
-  let searchYear = -1;
-  if (filters?.ano) {
-    searchYear = parseInt(filters.ano, 10);
-  }
-
-  if (selectedMonth >= 0 && searchYear >= 0) {
     const initialMonthDate = new Date(searchYear, selectedMonth, 1);
     initialMonthDate.setUTCHours(0, 0, 0, 0);
 
@@ -73,6 +61,16 @@ function prepareQuery(filters?: PanelFilters): string {
   return query;
 }
 
+function applyDefaultFilters(filters: PanelFilters): PanelFilters {
+  if (Object.keys(filters).length > 0) return filters;
+
+  const now = new Date();
+  return {
+    mes: months[now.getMonth()],
+    ano: String(now.getFullYear()),
+  };
+}
+
 interface PanelResult extends SearchResponse<CaseFull> {
   contractors?: Contractor[];
   partners?: Partner[];
@@ -81,9 +79,15 @@ interface PanelResult extends SearchResponse<CaseFull> {
 async function getData(filters: PanelFilters): Promise<PanelResult> {
   const query = prepareQuery(filters);
 
-  const { success, unauthorized, data } = await fetchCasesFull(query, 1, 10000);
-  if (!success || !data) {
-    if (unauthorized) {
+  const [casesResponse, contractorsResponse, partnersResponse] =
+    await Promise.all([
+      fetchCasesFull(query, 1, 10000),
+      fetchContractors('', 1, 10000),
+      fetchPartners('', 1, 10000),
+    ]);
+
+  if (!casesResponse.success || !casesResponse.data) {
+    if (casesResponse.unauthorized) {
       redirect('/login');
     }
     return {
@@ -92,11 +96,7 @@ async function getData(filters: PanelFilters): Promise<PanelResult> {
     };
   }
 
-  const contractors = await fetchContractors('', 1, 10000);
-
-  const partners = await fetchPartners('', 1, 10000);
-
-  const sortedByDate = [...data.result].sort(
+  const sortedByDate = [...casesResponse.data.result].sort(
     (a, b) =>
       new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
   );
@@ -111,9 +111,9 @@ async function getData(filters: PanelFilters): Promise<PanelResult> {
 
   return {
     result: processedResult,
-    paging: data.paging,
-    contractors: contractors.data?.result,
-    partners: partners.data?.result,
+    paging: casesResponse.data.paging,
+    contractors: contractorsResponse.data?.result,
+    partners: partnersResponse.data?.result,
   };
 }
 
@@ -121,14 +121,14 @@ export default async function Page({ searchParams }: PanelPageParams) {
   const filters = await searchParams;
   const user = await getCurrentUser();
   if (!user) {
-    signOut();
+    redirect('/login');
   }
 
   if (user?.role === UserRole.OPERATOR) {
     redirect('/home');
   }
 
-  const data = await getData(filters);
+  const data = await getData(applyDefaultFilters(filters));
 
   return (
     <main>
@@ -137,21 +137,19 @@ export default async function Page({ searchParams }: PanelPageParams) {
       </h1>
 
       <div>
-        <Suspense fallback={<CardsSkeleton />}>
-          {data.contractors && data.partners && (
-            <ControlPanelSearch
-              contractors={data.contractors || []}
-              partners={data.partners || []}
-            />
-          )}
+        {data.contractors && data.partners && (
+          <ControlPanelSearch
+            contractors={data.contractors || []}
+            partners={data.partners || []}
+          />
+        )}
 
-          {data.result && (
-            <>
-              <ControlPanelSummary cases={data.result} />
-              <ControlPanelTable cases={data} />
-            </>
-          )}
-        </Suspense>
+        {data.result && (
+          <>
+            <ControlPanelSummary cases={data.result} />
+            <ControlPanelTable cases={data} />
+          </>
+        )}
       </div>
     </main>
   );

@@ -29,7 +29,7 @@ export function NewCaseStatusForm({ crmCase }: NewCaseStatusFormProps) {
       .then((response) => {
         if (!response.success) {
           if (response.unauthorized) {
-            signOut();
+            signOut({ callbackUrl: '/login' });
           }
           setErrorMessage(response.message || '');
           return;
@@ -49,7 +49,7 @@ export function NewCaseStatusForm({ crmCase }: NewCaseStatusFormProps) {
       .then((response) => {
         if (!response.success || !response.data) {
           if (response.unauthorized) {
-            signOut();
+            signOut({ callbackUrl: '/login' });
           }
           return;
         }

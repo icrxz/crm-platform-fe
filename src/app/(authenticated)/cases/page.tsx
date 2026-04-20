@@ -4,7 +4,6 @@ import { CaseFull } from '@/app/types/case';
 import { SearchResponse } from '@/app/types/search_response';
 import { UserRole } from '@/app/types/user';
 import { onlyAdminStatuses } from '@/app/utils/case_status';
-import { signOut } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import CasesTable from '../../components/cases/table';
@@ -55,7 +54,7 @@ export default async function Page({ searchParams }: CasePageParams) {
   const { sinistro, page } = await searchParams;
   const user = await getCurrentUser();
   if (!user) {
-    signOut();
+    redirect('/login');
   }
 
   const data = await getData(sinistro || '', user?.role, page || 1);

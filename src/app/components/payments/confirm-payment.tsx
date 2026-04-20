@@ -54,7 +54,7 @@ export function ConfirmPaymentModal({
       .then((response) => {
         if (!response.success) {
           if (response.unauthorized) {
-            signOut();
+            signOut({ callbackUrl: '/login' });
           }
           showSnackbar(response.message, 'error');
           return;
