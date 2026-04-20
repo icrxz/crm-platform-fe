@@ -45,32 +45,28 @@ function prepareQuery(filters?: PanelFilters): string {
     query += `state=${filters.estado}&`;
   }
 
-  let selectedMonth = new Date().getUTCMonth();
+  let selectedMonth = -1;
   if (filters?.mes) {
     if (Object.keys(monthsNumeric).find((key) => key === filters.mes)) {
       selectedMonth = monthsNumeric[filters.mes] - 1;
     }
   }
 
-  const currentDate = new Date();
-  let searchYear: number;
+  let searchYear = -1;
   if (filters?.ano) {
     searchYear = parseInt(filters.ano, 10);
-  } else {
-    const isLastYear = currentDate.getMonth() < selectedMonth;
-    searchYear = isLastYear
-      ? currentDate.getFullYear() - 1
-      : currentDate.getFullYear();
   }
 
-  const initialMonthDate = new Date(searchYear, selectedMonth, 1);
-  initialMonthDate.setUTCHours(0, 0, 0, 0);
+  if (selectedMonth >= 0 && searchYear >= 0) {
+    const initialMonthDate = new Date(searchYear, selectedMonth, 1);
+    initialMonthDate.setUTCHours(0, 0, 0, 0);
 
-  const finalMonthDate = new Date(searchYear, selectedMonth + 1, 0);
-  finalMonthDate.setUTCHours(23, 59, 59, 999);
+    const finalMonthDate = new Date(searchYear, selectedMonth + 1, 0);
+    finalMonthDate.setUTCHours(23, 59, 59, 999);
 
-  query += `start_date=${initialMonthDate.toISOString()}&`;
-  query += `end_date=${finalMonthDate.toISOString()}&`;
+    query += `start_date=${initialMonthDate.toISOString()}&`;
+    query += `end_date=${finalMonthDate.toISOString()}&`;
+  }
 
   query += `status=${CaseStatus.CLOSED}`;
 
