@@ -13,6 +13,8 @@ interface PartnerFilters {
   cidade?: string;
   estado?: string;
   nome?: string;
+  first_name?: string;
+  last_name?: string;
   page?: number;
 }
 
@@ -29,23 +31,24 @@ function prepareQuery(filters?: PartnerFilters): string {
   }
 
   if (filters?.nome) {
-    const fullName = filters.nome.trim().split(' ');
-    const firstName = fullName[0];
-    const lastName = fullName.slice(1).join(' ');
-
-    query += `first_name=${firstName}&`;
-
-    if (lastName) {
-      query += `last_name=${lastName}&`;
-    }
+    const fullName = filters.nome.trim();
+    query += `name=${fullName}&`;
   }
 
   if (filters?.cidade) {
-    query += `city=${filters.cidade}&`;
+    query += `city=${filters.cidade.trim()}&`;
   }
 
   if (filters?.estado) {
-    query += `state=${filters.estado}&`;
+    query += `state=${filters.estado.trim()}&`;
+  }
+
+  if (filters?.first_name) {
+    query += `first_name=${filters.first_name.trim()}&`;
+  }
+
+  if (filters?.last_name) {
+    query += `last_name=${filters.last_name.trim()}&`;
   }
 
   if (query.endsWith('&')) {
