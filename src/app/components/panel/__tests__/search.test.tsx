@@ -12,20 +12,23 @@ jest.mock('next/navigation', () => ({
 
 jest.mock('@heroui/react', () => ({
   Autocomplete: ({
-    onChange,
+    onSelectionChange,
     label,
   }: {
-    onChange: (key: string | null) => void;
+    onSelectionChange: (key: string | null) => void;
     label: string;
   }) => (
     <div>
       <button
         aria-label={`select-${label}`}
-        onClick={() => onChange('partner-123')}
+        onClick={() => onSelectionChange('partner-123')}
       >
         Select Partner
       </button>
-      <button aria-label={`clear-${label}`} onClick={() => onChange(null)}>
+      <button
+        aria-label={`clear-${label}`}
+        onClick={() => onSelectionChange(null)}
+      >
         Clear Partner
       </button>
     </div>
@@ -331,7 +334,7 @@ describe('ControlPanelSearch', () => {
       );
     });
 
-    it('should navigate to pathname without params when Limpar filtros is clicked', () => {
+    it('should navigate to pathname with current month and year when Limpar filtros is clicked', () => {
       // Arrange
       setupMocks({ mes: 'Março', tecnico: 'partner-123' });
       render(<ControlPanelSearch contractors={[]} partners={[]} />);
@@ -340,7 +343,14 @@ describe('ControlPanelSearch', () => {
       fireEvent.click(screen.getByText('Limpar filtros'));
 
       // Assert
-      expect(mockPush).toHaveBeenCalledWith('/panel');
+      const currentMonth = months[new Date().getMonth()];
+      const currentYear = String(new Date().getFullYear());
+      expect(mockPush).toHaveBeenCalledWith(
+        expect.stringContaining(`mes=${encodeURIComponent(currentMonth)}`)
+      );
+      expect(mockPush).toHaveBeenCalledWith(
+        expect.stringContaining(`ano=${currentYear}`)
+      );
     });
 
     it('should reset Mês and Ano to current values when Limpar filtros is clicked', () => {
