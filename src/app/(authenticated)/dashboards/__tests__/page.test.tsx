@@ -3,7 +3,9 @@ import { redirect } from 'next/navigation';
 import Page from '../page';
 
 jest.mock('next/navigation', () => ({
-  redirect: jest.fn(),
+  redirect: jest.fn().mockImplementation((url: string) => {
+    throw new Error(`NEXT_REDIRECT:${url}`);
+  }),
 }));
 
 jest.mock('../../../libs/session', () => ({
@@ -52,7 +54,7 @@ jest.mock('@heroicons/react/24/outline', () => ({
 }));
 
 const { getCurrentUser } = jest.requireMock('../../../libs/session');
-const mockUser = { id: 'user-1', role: 'ADMIN', name: 'Test User' };
+const mockUser = { id: 'user-1', role: 'admin', name: 'Test User' };
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -62,7 +64,7 @@ describe('Page', () => {
   describe('authentication', () => {
     it('should redirect to /login when user is not authenticated', async () => {
       getCurrentUser.mockResolvedValue(null);
-      await Page();
+      await expect(Page()).rejects.toThrow('NEXT_REDIRECT:/login');
       expect(redirect).toHaveBeenCalledWith('/login');
     });
 
