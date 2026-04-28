@@ -12,6 +12,7 @@ import {
   RankingSkeleton,
 } from '@/app/components/dashboards/skeletons';
 import { getCurrentUser } from '@/app/libs/session';
+import { adminRoles } from '@/app/utils/roles';
 import { TrophyIcon } from '@heroicons/react/24/outline';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
@@ -21,6 +22,10 @@ export default async function Page() {
 
   if (!user) {
     redirect('/login');
+  }
+
+  if (!adminRoles.includes(user.role)) {
+    redirect('/home');
   }
 
   return (

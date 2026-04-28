@@ -7,8 +7,8 @@ import { CaseFull, CaseStatus } from '@/app/types/case';
 import { Contractor } from '@/app/types/contractor';
 import { Partner } from '@/app/types/partner';
 import { SearchResponse } from '@/app/types/search_response';
-import { UserRole } from '@/app/types/user';
 import { redirect } from 'next/navigation';
+import { adminRoles } from '@/app/utils/roles';
 import { fetchCasesFull } from '../../services/cases';
 import { roboto } from '../../ui/fonts';
 import ControlPanelSummary from '@/app/components/panel/summary';
@@ -124,7 +124,7 @@ export default async function Page({ searchParams }: PanelPageParams) {
     redirect('/login');
   }
 
-  if (user?.role === UserRole.OPERATOR) {
+  if (!adminRoles.includes(user.role)) {
     redirect('/home');
   }
 

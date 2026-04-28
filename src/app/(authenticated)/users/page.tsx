@@ -2,6 +2,7 @@
 import UsersTable from '@/app/components/users/table';
 import { fetchUsers } from '@/app/services/user';
 import { getCurrentUser } from '@/app/libs/session';
+import { adminRoles } from '@/app/utils/roles';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 
@@ -18,6 +19,10 @@ export default async function Page({ searchParams }: UserPageParams) {
 
   if (!session) {
     redirect('/login');
+  }
+
+  if (!adminRoles.includes(session.role)) {
+    redirect('/home');
   }
 
   const { data: users } = await fetchUsers(
