@@ -11,6 +11,7 @@ import {
   TransactionType,
 } from '@/app/types/transaction';
 import { getCurrentUser } from '@/app/libs/session';
+import { adminRoles } from '@/app/utils/roles';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 
@@ -155,6 +156,10 @@ export default async function Page({ searchParams }: TransactionPageParams) {
 
   if (!user) {
     redirect('/login');
+  }
+
+  if (!adminRoles.includes(user.role)) {
+    redirect('/home');
   }
 
   const payments = await getData(resolvedParams);

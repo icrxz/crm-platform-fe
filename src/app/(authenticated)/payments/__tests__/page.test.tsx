@@ -56,7 +56,7 @@ const mockGetCurrentUser = getCurrentUser as jest.Mock;
 const mockRedirect = redirect as unknown as jest.Mock;
 
 function setupAuthenticatedSession() {
-  mockGetCurrentUser.mockResolvedValue({ name: 'Test User' });
+  mockGetCurrentUser.mockResolvedValue({ name: 'Test User', role: 'admin' });
 }
 
 function setupServices({

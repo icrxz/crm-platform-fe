@@ -10,6 +10,7 @@ import {
   UserGroupIcon,
   WrenchIcon,
   Square3Stack3DIcon,
+  TrophyIcon,
 } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import Link from 'next/link';
@@ -21,17 +22,43 @@ const links = [
     name: 'Casos',
     href: '/cases',
     icon: DocumentDuplicateIcon,
-    onlyAdmin: false
+    onlyAdmin: false,
   },
-  { name: 'Clientes', href: '/customers', icon: UserGroupIcon, onlyAdmin: false },
+  {
+    name: 'Clientes',
+    href: '/customers',
+    icon: UserGroupIcon,
+    onlyAdmin: false,
+  },
   { name: 'Técnicos', href: '/partners', icon: WrenchIcon, onlyAdmin: false },
-  { name: 'Seguradoras', href: '/contractors', icon: BuildingOffice2Icon, onlyAdmin: false },
-  { name: 'Pagamentos', href: '/payments', icon: CreditCardIcon, onlyAdmin: true },
+  {
+    name: 'Seguradoras',
+    href: '/contractors',
+    icon: BuildingOffice2Icon,
+    onlyAdmin: false,
+  },
+  {
+    name: 'Pagamentos',
+    href: '/payments',
+    icon: CreditCardIcon,
+    onlyAdmin: true,
+  },
   { name: 'Usuários', href: '/users', icon: UserGroupIcon, onlyAdmin: true },
-  { name: 'Controle Interno', href: '/panel', icon: Square3Stack3DIcon, onlyAdmin: true },
+  {
+    name: 'Controle Interno',
+    href: '/panel',
+    icon: Square3Stack3DIcon,
+    onlyAdmin: true,
+  },
+  {
+    name: 'Gamificação',
+    href: '/dashboards',
+    icon: TrophyIcon,
+    onlyAdmin: true,
+  },
 ];
 
-export default function NavLinks({ userRole }: { userRole: UserRole; }) {
+export default function NavLinks({ userRole }: { userRole: UserRole }) {
   const pathname = usePathname();
 
   return (
@@ -50,7 +77,7 @@ export default function NavLinks({ userRole }: { userRole: UserRole; }) {
               'flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3',
               {
                 'bg-sky-100 text-blue-600': pathname === link.href,
-              },
+              }
             )}
           >
             <LinkIcon className="w-6" />

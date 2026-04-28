@@ -1,4 +1,5 @@
 `use server`;
+import { unauthorizedRedirect } from '@/app/libs/auth-redirect';
 import { removeDocumentSymbols } from '@/app/libs/parser';
 import { getCurrentUser } from '@/app/libs/session';
 import { Customer } from '@/app/types/customer';
@@ -28,7 +29,7 @@ async function getData(
   const { success, unauthorized, data } = await fetchCustomers(query, page);
   if (!success || !data) {
     if (unauthorized) {
-      redirect('/login');
+      await unauthorizedRedirect();
     }
     return { result: [], paging: { limit: 10, offset: page * 10, total: 0 } };
   }

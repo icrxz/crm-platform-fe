@@ -1,5 +1,6 @@
 'use server';
 import ControlPanelTable from '@/app/components/panel/table';
+import { unauthorizedRedirect } from '@/app/libs/auth-redirect';
 import { getCurrentUser } from '@/app/libs/session';
 import { fetchContractors } from '@/app/services/contractors';
 import { fetchPartners } from '@/app/services/partners';
@@ -7,8 +8,8 @@ import { CaseFull, CaseStatus } from '@/app/types/case';
 import { Contractor } from '@/app/types/contractor';
 import { Partner } from '@/app/types/partner';
 import { SearchResponse } from '@/app/types/search_response';
-import { UserRole } from '@/app/types/user';
 import { redirect } from 'next/navigation';
+import { adminRoles } from '@/app/utils/roles';
 import { fetchCasesFull } from '../../services/cases';
 import { roboto } from '../../ui/fonts';
 import ControlPanelSummary from '@/app/components/panel/summary';
@@ -88,7 +89,7 @@ async function getData(filters: PanelFilters): Promise<PanelResult> {
 
   if (!casesResponse.success || !casesResponse.data) {
     if (casesResponse.unauthorized) {
-      redirect('/login');
+      await unauthorizedRedirect();
     }
     return {
       result: [],
@@ -124,7 +125,7 @@ export default async function Page({ searchParams }: PanelPageParams) {
     redirect('/login');
   }
 
-  if (user?.role === UserRole.OPERATOR) {
+  if (!adminRoles.includes(user.role)) {
     redirect('/home');
   }
 
