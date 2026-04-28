@@ -1,5 +1,6 @@
 'use server';
 import ControlPanelTable from '@/app/components/panel/table';
+import { unauthorizedRedirect } from '@/app/libs/auth-redirect';
 import { getCurrentUser } from '@/app/libs/session';
 import { fetchContractors } from '@/app/services/contractors';
 import { fetchPartners } from '@/app/services/partners';
@@ -88,7 +89,7 @@ async function getData(filters: PanelFilters): Promise<PanelResult> {
 
   if (!casesResponse.success || !casesResponse.data) {
     if (casesResponse.unauthorized) {
-      redirect('/login');
+      await unauthorizedRedirect();
     }
     return {
       result: [],

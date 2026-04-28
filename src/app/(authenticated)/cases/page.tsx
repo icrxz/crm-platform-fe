@@ -1,4 +1,5 @@
 `use server`;
+import { unauthorizedRedirect } from '@/app/libs/auth-redirect';
 import { getCurrentUser } from '@/app/libs/session';
 import { CaseFull } from '@/app/types/case';
 import { SearchResponse } from '@/app/types/search_response';
@@ -29,7 +30,7 @@ async function getData(
   const { success, unauthorized, data } = await fetchCasesFull(query, page);
   if (!success || !data) {
     if (unauthorized) {
-      redirect('/login');
+      await unauthorizedRedirect();
     }
     return { result: [], paging: { limit: 10, offset: page * 10, total: 0 } };
   }

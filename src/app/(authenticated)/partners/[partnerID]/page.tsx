@@ -3,6 +3,7 @@
 import PartnerDetails from '@/app/components/partners/details';
 import ControlPanelSearch from '@/app/components/panel/search';
 import ControlPanelTable from '@/app/components/panel/table';
+import { unauthorizedRedirect } from '@/app/libs/auth-redirect';
 import { getCurrentUser } from '@/app/libs/session';
 import { fetchCasesFull } from '@/app/services/cases';
 import { fetchContractors } from '@/app/services/contractors';
@@ -82,7 +83,7 @@ async function getCases(
   const { success, unauthorized, data } = await fetchCasesFull(query, 1, 10000);
   if (!success || !data) {
     if (unauthorized) {
-      redirect('/login');
+      await unauthorizedRedirect();
     }
     return {
       result: [],

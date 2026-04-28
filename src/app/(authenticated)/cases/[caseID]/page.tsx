@@ -1,5 +1,6 @@
 'use server';
 import CaseDetails from '@/app/components/cases/details';
+import { unauthorizedRedirect } from '@/app/libs/auth-redirect';
 import { getCurrentUser } from '@/app/libs/session';
 import { getCaseFullByID } from '@/app/services/cases';
 import { CaseFull } from '@/app/types/case';
@@ -14,7 +15,7 @@ async function getData(caseID: string): Promise<CaseFull | null> {
   } = await getCaseFullByID(caseID);
   if (!success || !crmCase) {
     if (unauthorized) {
-      redirect('/login');
+      await unauthorizedRedirect();
     }
     redirect('/cases');
   }
