@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function proxy(req: NextRequest) {
+export function middleware(req: NextRequest) {
   const jwt = req.cookies.get('jwt');
 
   if (!jwt) {
@@ -13,12 +13,13 @@ export async function proxy(req: NextRequest) {
 
 export const config = {
   matcher: [
-    '/home',
-    '/cases',
-    '/contractors',
-    '/customers',
-    '/partners',
-    '/payments',
-    '/users',
+    '/home/:path*',
+    '/panel/:path*',
+    '/cases/:path*',
+    '/contractors/:path*',
+    '/customers/:path*',
+    '/partners/:path*',
+    '/payments/:path*',
+    '/users/:path*',
   ],
 };

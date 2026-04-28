@@ -1,4 +1,5 @@
 `use server`;
+import { unauthorizedRedirect } from '@/app/libs/auth-redirect';
 import { getCurrentUser } from '@/app/libs/session';
 import { Suspense } from 'react';
 import ContractorsTable from '../../components/contractors/table';
@@ -26,7 +27,7 @@ async function getData(
   const { success, unauthorized, data } = await fetchContractors(query, page);
   if (!success || !data) {
     if (unauthorized) {
-      redirect('/login');
+      await unauthorizedRedirect();
     }
     return { result: [], paging: { limit: 10, offset: page * 10, total: 0 } };
   }

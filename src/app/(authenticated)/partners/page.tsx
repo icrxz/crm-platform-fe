@@ -1,5 +1,6 @@
 `use server`;
 import PartnersTable from '@/app/components/partners/table';
+import { unauthorizedRedirect } from '@/app/libs/auth-redirect';
 import { removeDocumentSymbols } from '@/app/libs/parser';
 import { getCurrentUser } from '@/app/libs/session';
 import { fetchPartners } from '@/app/services/partners';
@@ -69,7 +70,7 @@ async function getData(
   const { success, unauthorized, data } = await fetchPartners(query, page);
   if (!success || !data) {
     if (unauthorized) {
-      redirect('/login');
+      await unauthorizedRedirect();
     }
     return { result: [], paging: { limit: 10, offset: page * 10, total: 0 } };
   }

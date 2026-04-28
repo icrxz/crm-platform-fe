@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { redirect } from 'next/navigation';
+import { unauthorizedRedirect } from '../../../libs/auth-redirect';
 import { getCurrentUser } from '../../../libs/session';
 import { fetchCasesFull } from '../../../services/cases';
 import { fetchContractors } from '../../../services/contractors';
@@ -19,6 +20,11 @@ jest.mock('next-auth/react', () => ({ signOut: jest.fn() }));
 jest.mock('next/navigation', () => ({
   redirect: jest.fn().mockImplementation((url: string) => {
     throw new Error(`NEXT_REDIRECT:${url}`);
+  }),
+}));
+jest.mock('../../../libs/auth-redirect', () => ({
+  unauthorizedRedirect: jest.fn().mockImplementation(() => {
+    throw new Error('NEXT_REDIRECT:/login');
   }),
 }));
 
@@ -62,6 +68,7 @@ jest.mock('../../../ui/fonts', () => ({
 }));
 
 const mockRedirect = redirect as unknown as jest.Mock;
+const mockUnauthorizedRedirect = unauthorizedRedirect as unknown as jest.Mock;
 const mockGetCurrentUser = getCurrentUser as unknown as jest.Mock;
 const mockFetchCasesFull = fetchCasesFull as jest.Mock;
 const mockFetchContractors = fetchContractors as jest.Mock;
@@ -207,7 +214,7 @@ describe('Panel Page', () => {
       await expect(Page({ searchParams })).rejects.toThrow(
         'NEXT_REDIRECT:/login'
       );
-      expect(mockRedirect).toHaveBeenCalledWith('/login');
+      expect(mockUnauthorizedRedirect).toHaveBeenCalled();
     });
   });
 

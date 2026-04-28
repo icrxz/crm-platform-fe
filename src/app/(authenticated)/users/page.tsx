@@ -1,7 +1,8 @@
 `use server`;
 import UsersTable from '@/app/components/users/table';
 import { fetchUsers } from '@/app/services/user';
-import { getServerSession } from 'next-auth';
+import { getCurrentUser } from '@/app/libs/session';
+import { adminRoles } from '@/app/utils/roles';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 
@@ -14,10 +15,14 @@ type UserPageParams = {
 
 export default async function Page({ searchParams }: UserPageParams) {
   const { query, page } = await searchParams;
-  const session = await getServerSession();
+  const session = await getCurrentUser();
 
   if (!session) {
     redirect('/login');
+  }
+
+  if (!adminRoles.includes(session.role)) {
+    redirect('/home');
   }
 
   const { data: users } = await fetchUsers(
