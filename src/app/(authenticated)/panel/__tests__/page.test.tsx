@@ -68,7 +68,7 @@ jest.mock('../../../ui/fonts', () => ({
 }));
 
 const mockRedirect = redirect as unknown as jest.Mock;
-const mockUnauthorizedRedirect = unauthorizedRedirect as jest.Mock;
+const mockUnauthorizedRedirect = unauthorizedRedirect as unknown as jest.Mock;
 const mockGetCurrentUser = getCurrentUser as unknown as jest.Mock;
 const mockFetchCasesFull = fetchCasesFull as jest.Mock;
 const mockFetchContractors = fetchContractors as jest.Mock;
