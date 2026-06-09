@@ -49,7 +49,7 @@
     "tailwindcss": "3.4.19",
     "use-debounce": "10.1.0",
     "uuid": "11.0.5",
-    "zod": "3.24.1"
+    "zod": "4.3.6"
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^16.2.7",
