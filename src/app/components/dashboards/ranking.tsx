@@ -1,3 +1,7 @@
+import {
+  fetchRankingData,
+  RankingAgent,
+} from '@/app/services/cases/fetch_ranking';
 import { TrophyIcon } from '@heroicons/react/24/outline';
 
 const AVATAR_COLORS = [
@@ -27,41 +31,7 @@ function getInitials(name: string): string {
 
 const MEDAL: Record<number, string> = { 0: '🥇', 1: '🥈', 2: '🥉' };
 
-interface Agent {
-  name: string;
-  inProgress: {
-    green: number;
-    yellow: number;
-    red: number;
-    mostDelayed: string;
-  };
-  finalized: { vistoria: number; reparo: number };
-}
-
-const agents: Agent[] = [
-  {
-    name: 'João Silva',
-    inProgress: { green: 8, yellow: 3, red: 2, mostDelayed: 'CASO-099' },
-    finalized: { vistoria: 20, reparo: 14 },
-  },
-  {
-    name: 'Maria Oliveira',
-    inProgress: { green: 6, yellow: 4, red: 1, mostDelayed: 'CASO-074' },
-    finalized: { vistoria: 15, reparo: 13 },
-  },
-  {
-    name: 'Daniel Costa',
-    inProgress: { green: 5, yellow: 2, red: 3, mostDelayed: 'CASO-051' },
-    finalized: { vistoria: 12, reparo: 9 },
-  },
-  {
-    name: 'Ana Ferreira',
-    inProgress: { green: 4, yellow: 5, red: 0, mostDelayed: '' },
-    finalized: { vistoria: 10, reparo: 8 },
-  },
-];
-
-function DelayBar({ inProgress }: { inProgress: Agent['inProgress'] }) {
+function DelayBar({ inProgress }: { inProgress: RankingAgent['inProgress'] }) {
   const total = inProgress.green + inProgress.yellow + inProgress.red;
   if (total === 0)
     return (
@@ -105,7 +75,7 @@ function DelayBar({ inProgress }: { inProgress: Agent['inProgress'] }) {
   );
 }
 
-function FinalizedBar({ finalized }: { finalized: Agent['finalized'] }) {
+function FinalizedBar({ finalized }: { finalized: RankingAgent['finalized'] }) {
   const total = finalized.vistoria + finalized.reparo;
   if (total === 0) return null;
 
@@ -127,7 +97,10 @@ function FinalizedBar({ finalized }: { finalized: Agent['finalized'] }) {
   );
 }
 
-export default function Ranking() {
+export default async function Ranking() {
+  const result = await fetchRankingData();
+  const agents = result.data ?? [];
+
   return (
     <div className="flex flex-col gap-3 rounded-xl bg-gray-50 p-4 shadow-sm">
       <div className="flex items-center justify-between">

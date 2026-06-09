@@ -41,18 +41,23 @@ jest.mock('../../../components/dashboards/skeletons', () => ({
   ),
 }));
 
+jest.mock('../../../components/tv/auto-refresh', () => ({
+  __esModule: true,
+  default: () => <div data-testid="auto-refresh" />,
+}));
+
 jest.mock('@heroicons/react/24/outline', () => ({
   TrophyIcon: () => <svg data-testid="trophy-icon" />,
 }));
 
 const { getCurrentUser } = jest.requireMock('../../../libs/session');
-const mockUser = { id: 'user-1', role: 'admin', name: 'Test User' };
+const mockAdminUser = { id: 'user-1', role: 'admin', name: 'Test User' };
 
 beforeEach(() => {
   jest.clearAllMocks();
 });
 
-describe('Page', () => {
+describe('TvDashboardPage', () => {
   describe('authentication', () => {
     it('should redirect to /login when user is not authenticated', async () => {
       getCurrentUser.mockResolvedValue(null);
@@ -60,8 +65,14 @@ describe('Page', () => {
       expect(redirect).toHaveBeenCalledWith('/login');
     });
 
-    it('should not redirect when user is authenticated', async () => {
-      getCurrentUser.mockResolvedValue(mockUser);
+    it('should redirect to /home when user lacks admin role', async () => {
+      getCurrentUser.mockResolvedValue({ id: 'user-2', role: 'operator' });
+      await expect(Page()).rejects.toThrow('NEXT_REDIRECT:/home');
+      expect(redirect).toHaveBeenCalledWith('/home');
+    });
+
+    it('should not redirect when user has admin role', async () => {
+      getCurrentUser.mockResolvedValue(mockAdminUser);
       await Page();
       expect(redirect).not.toHaveBeenCalled();
     });
@@ -69,7 +80,7 @@ describe('Page', () => {
 
   describe('rendering', () => {
     beforeEach(() => {
-      getCurrentUser.mockResolvedValue(mockUser);
+      getCurrentUser.mockResolvedValue(mockAdminUser);
     });
 
     it('should render the page title', async () => {
@@ -77,16 +88,12 @@ describe('Page', () => {
       expect(screen.getByText('Desempenho do Time')).toBeInTheDocument();
     });
 
-    it('should render the page subtitle', async () => {
+    it('should render the auto-refresh component', async () => {
       render(await Page());
-      expect(
-        screen.getByText(
-          'Acompanhe rankings, assiduidade e evolução no atendimento'
-        )
-      ).toBeInTheDocument();
+      expect(screen.getByTestId('auto-refresh')).toBeInTheDocument();
     });
 
-    it('should render the KPI cards', async () => {
+    it('should render KPI cards', async () => {
       render(await Page());
       expect(screen.getByTestId('kpi-cards')).toBeInTheDocument();
     });

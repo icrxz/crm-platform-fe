@@ -1,5 +1,6 @@
 'use client';
 
+import { PerformanceWeek } from '@/app/services/cases/fetch_performance_chart';
 import { ChartBarIcon } from '@heroicons/react/24/outline';
 import {
   CartesianGrid,
@@ -12,21 +13,16 @@ import {
   YAxis,
 } from 'recharts';
 
-const data = [
-  { week: 'S1', tma: 4.2, volume: 38 },
-  { week: 'S2', tma: 3.8, volume: 42 },
-  { week: 'S3', tma: 5.1, volume: 55 },
-  { week: 'S4', tma: 4.6, volume: 50 },
-  { week: 'S5', tma: 3.5, volume: 44 },
-  { week: 'S6', tma: 3.2, volume: 47 },
-];
-
 const LEGEND_LABELS: Record<string, string> = {
   tma: 'TMA (dias)',
   volume: 'Volume de Casos',
 };
 
-export default function PerformanceChart() {
+export default function PerformanceChart({
+  data,
+}: {
+  data: PerformanceWeek[];
+}) {
   return (
     <div className="flex flex-col gap-3 rounded-xl bg-gray-50 p-4 shadow-sm">
       <div className="flex items-start justify-between">
@@ -62,7 +58,7 @@ export default function PerformanceChart() {
           <YAxis
             yAxisId="tma"
             orientation="left"
-            domain={[0, 8]}
+            domain={[0, 'auto']}
             tick={{ fontSize: 11, fill: '#9ca3af' }}
             axisLine={false}
             tickLine={false}
@@ -70,7 +66,7 @@ export default function PerformanceChart() {
           <YAxis
             yAxisId="volume"
             orientation="right"
-            domain={[0, 70]}
+            domain={[0, 'auto']}
             tick={{ fontSize: 11, fill: '#9ca3af' }}
             axisLine={false}
             tickLine={false}

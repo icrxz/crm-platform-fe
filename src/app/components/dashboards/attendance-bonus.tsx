@@ -30,25 +30,12 @@ function getInitials(name: string): string {
     .slice(0, 2);
 }
 
-const EMPLOYEES = [
-  'João Silva',
-  'Maria Oliveira',
-  'Daniel Costa',
-  'Ana Ferreira',
-  'Carlos Souza',
-  'Fernanda Lima',
-  'Ricardo Alves',
-  'Patrícia Mendes',
-  'Bruno Santos',
-  'Juliana Rocha',
-  'Marcos Pereira',
-  'Camila Nunes',
-];
-
-const INITIAL_ELIMINATED = new Set([2, 7]);
-
-export default function AttendanceBonus() {
-  const [eliminated, setEliminated] = useState<Set<number>>(INITIAL_ELIMINATED);
+export default function AttendanceBonus({
+  employees,
+}: {
+  employees: string[];
+}) {
+  const [eliminated, setEliminated] = useState<Set<number>>(new Set());
 
   function toggle(index: number) {
     setEliminated((prev) => {
@@ -62,7 +49,7 @@ export default function AttendanceBonus() {
     });
   }
 
-  const active = EMPLOYEES.length - eliminated.size;
+  const active = employees.length - eliminated.size;
 
   return (
     <div className="flex flex-col gap-3 rounded-xl bg-gray-50 p-4 shadow-sm">
@@ -85,7 +72,7 @@ export default function AttendanceBonus() {
       </div>
 
       <div className="grid grid-cols-4 gap-3">
-        {EMPLOYEES.map((name, idx) => {
+        {employees.map((name, idx) => {
           const isEliminated = eliminated.has(idx);
           return (
             <button
