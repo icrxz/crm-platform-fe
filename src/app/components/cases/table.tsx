@@ -1,12 +1,13 @@
 'use client';
+import { CaseListItem } from '@/app/types/case-list-item';
 import { SearchResponse } from '@/app/types/search_response';
 import { Pagination } from '@heroui/pagination';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { parseDateTime } from '../../libs/date';
-import { CaseFull, caseStatusMap } from '../../types/case';
+import { caseStatusMap } from '../../types/case';
 import { roboto } from '../../ui/fonts';
 import Modal from '../common/modal';
 import { CreateCaseBatchModal } from './batch-form-modal';
@@ -14,7 +15,7 @@ import CreateCaseModal from './create-case';
 import CasesSearchBar from './search-bar';
 
 interface CasesTableProps {
-  cases: SearchResponse<CaseFull>;
+  cases: SearchResponse<CaseListItem>;
   initialPage?: number;
 }
 
@@ -87,17 +88,17 @@ export default function CasesTable({ cases, initialPage }: CasesTableProps) {
                       </td>
                       <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
-                          <p>{`${crmCase.customer?.first_name || '-'} ${crmCase.customer?.last_name || ''}`}</p>
+                          <p>{`${crmCase.customer_first_name || '-'} ${crmCase.customer_last_name || ''}`}</p>
                         </div>
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {crmCase.customer?.shipping.city || '-'}
+                        {crmCase.customer_city || '-'}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {crmCase.contractor?.company_name || '-'}
+                        {crmCase.contractor_company_name || '-'}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                        {crmCase.partner?.first_name || '-'}
+                        {crmCase.partner_first_name || '-'}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
                         {caseStatusMap[crmCase.status]}

@@ -4,7 +4,7 @@ import { unauthorizedRedirect } from '@/app/libs/auth-redirect';
 import { removeDocumentSymbols } from '@/app/libs/parser';
 import { getCurrentUser } from '@/app/libs/session';
 import { fetchPartners } from '@/app/services/partners';
-import { Partner } from '@/app/types/partner';
+import { PartnerListItem } from '@/app/types/partner-list-item';
 import { SearchResponse } from '@/app/types/search_response';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
@@ -61,7 +61,7 @@ function prepareQuery(filters?: PartnerFilters): string {
 
 async function getData(
   filters?: PartnerFilters
-): Promise<SearchResponse<Partner>> {
+): Promise<SearchResponse<PartnerListItem>> {
   let { page, ...rest } = filters || {};
   page = page || 1;
 
@@ -75,12 +75,20 @@ async function getData(
     return { result: [], paging: { limit: 10, offset: page * 10, total: 0 } };
   }
 
-  const partners = data.result;
+  const listItems = data.result.map(
+    (p): PartnerListItem => ({
+      partner_id: p.partner_id,
+      first_name: p.first_name,
+      last_name: p.last_name,
+      partner_type: p.partner_type,
+      document: p.document,
+      city: p.shipping.city,
+      state: p.shipping.state,
+      active: p.active,
+    })
+  );
 
-  return {
-    result: partners,
-    paging: data.paging,
-  };
+  return { result: listItems, paging: data.paging };
 }
 
 export default async function Page({ searchParams }: PartnerPageParams) {

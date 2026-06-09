@@ -5,15 +5,31 @@ import { CaseStatus } from '@/app/types/case';
 import { roboto } from '@/app/ui/fonts';
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useRef, useState } from 'react';
+import {
+  type ForwardRefExoticComponent,
+  type RefAttributes,
+  useRef,
+  useState,
+} from 'react';
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Button } from '../common/button';
 import { ErrorMessage } from '../common/error-message';
-import {
+import dynamic from 'next/dynamic';
+import type {
   FileUploaderGenericRef,
-  GenericUploader,
+  FileUploaderProps,
 } from '../common/file-uploader';
+
+const GenericUploader = dynamic(
+  () =>
+    import('../common/file-uploader').then((m) => ({
+      default: m.GenericUploader,
+    })),
+  { ssr: false }
+) as ForwardRefExoticComponent<
+  FileUploaderProps & RefAttributes<FileUploaderGenericRef>
+>;
 import Modal from '../common/modal';
 
 interface ConfirmPaymentModalProps {

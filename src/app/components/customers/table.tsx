@@ -1,6 +1,7 @@
 'use client';
 import { parseDateTime } from '@/app/libs/date';
 import { parseDocument } from '@/app/libs/parser';
+import { CustomerListItem } from '@/app/types/customer-list-item';
 import { SearchResponse } from '@/app/types/search_response';
 import EyeIcon from '@heroicons/react/24/outline/EyeIcon';
 import PencilIcon from '@heroicons/react/24/outline/PencilIcon';
@@ -8,7 +9,6 @@ import TrashIcon from '@heroicons/react/24/outline/TrashIcon';
 import { Pagination } from '@heroui/pagination';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { Customer } from '../../types/customer';
 import { roboto } from '../../ui/fonts';
 import Modal from '../common/modal';
 import CreateCustomerModal from './create-customer';
@@ -17,7 +17,7 @@ import EditCustomerModal from './edit-customer';
 import CustomersSearchBar from './search-bar';
 
 interface CustomersTableProps {
-  customers?: SearchResponse<Customer>;
+  customers?: SearchResponse<CustomerListItem>;
   initialPage?: number;
 }
 
@@ -95,7 +95,7 @@ export default function CustomersTable({
                         </div>
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {customer.personal_contact?.email || '-'}
+                        {customer.email || '-'}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                         {parseDocument(customer.document)}

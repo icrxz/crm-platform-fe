@@ -1,13 +1,13 @@
 'use client';
+import { PanelCaseItem } from '@/app/types/panel-case-item';
 import { SearchResponse } from '@/app/types/search_response';
 
 import { parseDateTime } from '../../libs/date';
-import { CaseFull } from '../../types/case';
 import { parseToCurrency } from '@/app/libs/parser';
 import { TransactionType } from '@/app/types/transaction';
 
 interface ControlPanelTableProps {
-  cases: SearchResponse<CaseFull>;
+  cases: SearchResponse<PanelCaseItem>;
   hideTecnicoColumn?: boolean;
 }
 
@@ -22,7 +22,7 @@ export default function ControlPanelTable({
 
   const documentCounts = (cases?.result || []).reduce<Record<string, number>>(
     (acc, c) => {
-      const doc = c.customer?.document;
+      const doc = c.customer_document;
       if (doc) acc[doc] = (acc[doc] || 0) + 1;
       return acc;
     },
@@ -87,7 +87,7 @@ export default function ControlPanelTable({
         <tbody className="divide-y divide-gray-200 text-gray-900">
           {(cases?.result || []).map((crmCase) => {
             const isDuplicate = duplicateDocuments.has(
-              crmCase.customer?.document || ''
+              crmCase.customer_document || ''
             );
             return (
               <tr key={crmCase.case_id} className="group">
@@ -95,7 +95,7 @@ export default function ControlPanelTable({
                   {parseDateTime(crmCase?.created_at || '')}
                 </td>
                 <td className="whitespace-nowrap bg-white py-5 pl-6 text-sm">
-                  {crmCase.customer?.shipping.city || '-'}
+                  {crmCase.customer_city || '-'}
                 </td>
                 <td
                   className={
@@ -103,20 +103,20 @@ export default function ControlPanelTable({
                     (isDuplicate ? ' text-red-500' : '')
                   }
                 >
-                  {crmCase.customer
-                    ? `${crmCase.customer.first_name} ${crmCase.customer.last_name}`
+                  {crmCase.customer_first_name
+                    ? `${crmCase.customer_first_name} ${crmCase.customer_last_name}`
                     : '-'}
                 </td>
                 {!hideTecnicoColumn && (
                   <td className="whitespace-nowrap bg-white py-5 pl-6 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                    {crmCase.partner?.first_name || '-'}
+                    {crmCase.partner_first_name || '-'}
                   </td>
                 )}
                 <td className="whitespace-nowrap bg-white py-5 pl-6 text-sm">
                   {crmCase.external_reference || '-'}
                 </td>
                 <td className="whitespace-nowrap bg-white py-5 pl-6 text-sm">
-                  {crmCase.contractor?.company_name || '-'}
+                  {crmCase.contractor_company_name || '-'}
                 </td>
                 <td className="whitespace-nowrap bg-white py-5 pl-6 text-sm">
                   {parseToCurrency(

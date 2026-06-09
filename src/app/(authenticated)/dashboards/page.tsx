@@ -1,12 +1,11 @@
 'use server';
 import Achievements from '@/app/components/dashboards/achievements';
 import KpiCards from '@/app/components/dashboards/kpi-cards';
-import PerformanceChart from '@/app/components/dashboards/performance-chart';
+import PerformanceChartLazy from '@/app/components/dashboards/performance-chart-lazy';
 import PeriodFilter from '@/app/components/dashboards/period-filter';
 import Ranking from '@/app/components/dashboards/ranking';
 import Rewards from '@/app/components/dashboards/rewards';
 import {
-  ChartSkeleton,
   GenericSkeleton,
   KpiCardsSkeleton,
   RankingSkeleton,
@@ -65,9 +64,7 @@ export default async function Page() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <Suspense fallback={<ChartSkeleton />}>
-          <PerformanceChart />
-        </Suspense>
+        <PerformanceChartLazy />
         <Suspense fallback={<GenericSkeleton />}>
           <Rewards />
         </Suspense>

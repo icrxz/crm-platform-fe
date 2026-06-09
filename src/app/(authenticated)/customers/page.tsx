@@ -2,7 +2,7 @@
 import { unauthorizedRedirect } from '@/app/libs/auth-redirect';
 import { removeDocumentSymbols } from '@/app/libs/parser';
 import { getCurrentUser } from '@/app/libs/session';
-import { Customer } from '@/app/types/customer';
+import { CustomerListItem } from '@/app/types/customer-list-item';
 import { SearchResponse } from '@/app/types/search_response';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
@@ -19,7 +19,7 @@ type CustomerPageParams = {
 async function getData(
   document: string,
   page: number
-): Promise<SearchResponse<Customer>> {
+): Promise<SearchResponse<CustomerListItem>> {
   let query = '';
   if (document) {
     const parsedDocument = removeDocumentSymbols(document);
@@ -34,12 +34,19 @@ async function getData(
     return { result: [], paging: { limit: 10, offset: page * 10, total: 0 } };
   }
 
-  const customers = data.result;
+  const listItems = data.result.map(
+    (c): CustomerListItem => ({
+      customer_id: c.customer_id,
+      first_name: c.first_name,
+      last_name: c.last_name,
+      email: c.personal_contact?.email,
+      document: c.document,
+      created_at: c.created_at,
+      active: c.active,
+    })
+  );
 
-  return {
-    result: customers,
-    paging: data.paging,
-  };
+  return { result: listItems, paging: data.paging };
 }
 
 export default async function Page({ searchParams }: CustomerPageParams) {
