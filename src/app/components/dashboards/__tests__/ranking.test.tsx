@@ -13,12 +13,18 @@ describe('Ranking', () => {
       expect(screen.getByText('Ver Todos')).toBeInTheDocument();
     });
 
-    it('should render all four agents', () => {
+    it('should render the bonus banner', () => {
       render(<Ranking />);
-      expect(screen.getByText('D')).toBeInTheDocument();
-      expect(screen.getByText('M')).toBeInTheDocument();
-      expect(screen.getByText('J')).toBeInTheDocument();
-      expect(screen.getByText('A')).toBeInTheDocument();
+      expect(screen.getByText(/Bônus Liderança Geral/)).toBeInTheDocument();
+      expect(screen.getByText(/R\$ 400,00/)).toBeInTheDocument();
+    });
+
+    it('should render all four agents by first name', () => {
+      render(<Ranking />);
+      expect(screen.getByText('João')).toBeInTheDocument();
+      expect(screen.getByText('Maria')).toBeInTheDocument();
+      expect(screen.getByText('Daniel')).toBeInTheDocument();
+      expect(screen.getByText('Ana')).toBeInTheDocument();
     });
 
     it('should render gold medal for first place', () => {
@@ -38,13 +44,19 @@ describe('Ranking', () => {
 
     it('should render numeric position for fourth place', () => {
       render(<Ranking />);
-      expect(screen.getByText('4')).toBeInTheDocument();
+      const matches = screen.getAllByText('4');
+      expect(matches.length).toBeGreaterThan(0);
     });
 
-    it('should render the table column headers', () => {
+    it('should render the delay traffic light labels', () => {
       render(<Ranking />);
-      expect(screen.getByText('FINALIZADOS')).toBeInTheDocument();
-      expect(screen.getByText('VIST. / REPARO')).toBeInTheDocument();
+      const labels = screen.getAllByText(/≤5d/);
+      expect(labels.length).toBeGreaterThan(0);
+    });
+
+    it('should render the most delayed case number', () => {
+      render(<Ranking />);
+      expect(screen.getByText(/CASO-099/)).toBeInTheDocument();
     });
   });
 });

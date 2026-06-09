@@ -12,11 +12,6 @@ jest.mock('../../../libs/session', () => ({
   getCurrentUser: jest.fn(),
 }));
 
-jest.mock('../../../components/dashboards/period-filter', () => ({
-  __esModule: true,
-  default: () => <div data-testid="period-filter" />,
-}));
-
 jest.mock('../../../components/dashboards/kpi-cards', () => ({
   __esModule: true,
   default: () => <div data-testid="kpi-cards" />,
@@ -27,9 +22,9 @@ jest.mock('../../../components/dashboards/ranking', () => ({
   default: () => <div data-testid="ranking" />,
 }));
 
-jest.mock('../../../components/dashboards/achievements', () => ({
+jest.mock('../../../components/dashboards/attendance-bonus', () => ({
   __esModule: true,
-  default: () => <div data-testid="achievements" />,
+  default: () => <div data-testid="attendance-bonus" />,
 }));
 
 jest.mock('../../../components/dashboards/performance-chart', () => ({
@@ -37,16 +32,13 @@ jest.mock('../../../components/dashboards/performance-chart', () => ({
   default: () => <div data-testid="performance-chart" />,
 }));
 
-jest.mock('../../../components/dashboards/rewards', () => ({
-  __esModule: true,
-  default: () => <div data-testid="rewards" />,
-}));
-
 jest.mock('../../../components/dashboards/skeletons', () => ({
   KpiCardsSkeleton: () => <div data-testid="kpi-cards-skeleton" />,
   RankingSkeleton: () => <div data-testid="ranking-skeleton" />,
   ChartSkeleton: () => <div data-testid="chart-skeleton" />,
-  GenericSkeleton: () => <div data-testid="generic-skeleton" />,
+  AttendanceBonusSkeleton: () => (
+    <div data-testid="attendance-bonus-skeleton" />
+  ),
 }));
 
 jest.mock('@heroicons/react/24/outline', () => ({
@@ -89,14 +81,9 @@ describe('Page', () => {
       render(await Page());
       expect(
         screen.getByText(
-          'Acompanhe rankings, conquistas e evolução no atendimento'
+          'Acompanhe rankings, assiduidade e evolução no atendimento'
         )
       ).toBeInTheDocument();
-    });
-
-    it('should render the period filter', async () => {
-      render(await Page());
-      expect(screen.getByTestId('period-filter')).toBeInTheDocument();
     });
 
     it('should render the KPI cards', async () => {
@@ -109,19 +96,14 @@ describe('Page', () => {
       expect(screen.getByTestId('ranking')).toBeInTheDocument();
     });
 
-    it('should render the achievements', async () => {
+    it('should render the attendance bonus board', async () => {
       render(await Page());
-      expect(screen.getByTestId('achievements')).toBeInTheDocument();
+      expect(screen.getByTestId('attendance-bonus')).toBeInTheDocument();
     });
 
     it('should render the performance chart', async () => {
       render(await Page());
       expect(screen.getByTestId('performance-chart')).toBeInTheDocument();
-    });
-
-    it('should render the rewards', async () => {
-      render(await Page());
-      expect(screen.getByTestId('rewards')).toBeInTheDocument();
     });
   });
 });

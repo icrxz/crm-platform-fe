@@ -22,12 +22,16 @@ describe('PerformanceChart', () => {
   describe('rendering', () => {
     it('should render the section title', () => {
       render(<PerformanceChart />);
-      expect(screen.getByText('Evolução de Desempenho')).toBeInTheDocument();
+      expect(
+        screen.getByText('Evolução de Desempenho (TMA)')
+      ).toBeInTheDocument();
     });
 
-    it('should render the "Ver Histórico" action link', () => {
+    it('should render the subtitle', () => {
       render(<PerformanceChart />);
-      expect(screen.getByText(/Ver Histórico/)).toBeInTheDocument();
+      expect(
+        screen.getByText('Tempo Médio de Atendimento vs Volume Recebido')
+      ).toBeInTheDocument();
     });
 
     it('should render the chart container', () => {
@@ -35,19 +39,14 @@ describe('PerformanceChart', () => {
       expect(screen.getByTestId('responsive-container')).toBeInTheDocument();
     });
 
-    it('should render the line for cases data', () => {
+    it('should render the TMA line', () => {
       render(<PerformanceChart />);
-      expect(screen.getByTestId('line-cases')).toBeInTheDocument();
+      expect(screen.getByTestId('line-tma')).toBeInTheDocument();
     });
 
-    it('should render the line for SLA data', () => {
+    it('should render the volume line', () => {
       render(<PerformanceChart />);
-      expect(screen.getByTestId('line-sla')).toBeInTheDocument();
-    });
-
-    it('should render the line for points data', () => {
-      render(<PerformanceChart />);
-      expect(screen.getByTestId('line-points')).toBeInTheDocument();
+      expect(screen.getByTestId('line-volume')).toBeInTheDocument();
     });
   });
 });
