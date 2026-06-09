@@ -1,13 +1,13 @@
-"use server";
+'use server';
 
-import { parseToCurrency } from "@/app/libs/parser";
-import { CaseFull } from "@/app/types/case";
-import { Transaction, TransactionType } from "@/app/types/transaction";
-import { roboto } from "@/app/ui/fonts";
-import { Card } from "../common/card";
+import { parseToCurrency } from '@/app/libs/parser';
+import { PanelCaseItem } from '@/app/types/panel-case-item';
+import { TransactionType } from '@/app/types/transaction';
+import { roboto } from '@/app/ui/fonts';
+import { Card } from '../common/card';
 
 interface ControlPanelSummaryProps {
-  cases: CaseFull[];
+  cases: PanelCaseItem[];
 }
 
 interface PanelSummaryData {
@@ -21,7 +21,7 @@ interface PanelSummaryData {
   totalOutgoing: number;
 }
 
-async function getData(cases: CaseFull[]): Promise<PanelSummaryData> {
+async function getData(cases: PanelCaseItem[]): Promise<PanelSummaryData> {
   let totalLabor = 0;
   let totalDisplacement = 0;
   let totalParts = 0;
@@ -62,7 +62,7 @@ async function getData(cases: CaseFull[]): Promise<PanelSummaryData> {
             break;
         }
       }
-    })
+    });
   });
 
   return {
@@ -77,61 +77,81 @@ async function getData(cases: CaseFull[]): Promise<PanelSummaryData> {
   };
 }
 
-export default async function ControlPanelSummary({ cases }: ControlPanelSummaryProps) {
+export default async function ControlPanelSummary({
+  cases,
+}: ControlPanelSummaryProps) {
   const data = await getData(cases);
 
   return (
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       <Card title="Mão de obra Técnico">
-        <p className={`${roboto.className} truncate rounded-xl bg-white px-2 py-4 text-center font-semibold text-md`}>
+        <p
+          className={`${roboto.className} text-md truncate rounded-xl bg-white px-2 py-4 text-center font-semibold`}
+        >
           {parseToCurrency(data.totalLabor)}
         </p>
       </Card>
 
       <Card title="Deslocamento Técnico">
-      <p className={`${roboto.className} truncate rounded-xl bg-white px-2 py-4 text-center font-semibold text-md`}>
+        <p
+          className={`${roboto.className} text-md truncate rounded-xl bg-white px-2 py-4 text-center font-semibold`}
+        >
           {parseToCurrency(data.totalDisplacement)}
         </p>
       </Card>
 
       <Card title="Peças Técnico">
-      <p className={`${roboto.className} truncate rounded-xl bg-white px-2 py-4 text-center font-semibold text-md`}>
+        <p
+          className={`${roboto.className} text-md truncate rounded-xl bg-white px-2 py-4 text-center font-semibold`}
+        >
           {parseToCurrency(data.totalParts)}
         </p>
       </Card>
 
       <Card title="Mão de obra Seguradora">
-      <p className={`${roboto.className} truncate rounded-xl bg-white px-2 py-4 text-center font-semibold text-md`}>
+        <p
+          className={`${roboto.className} text-md truncate rounded-xl bg-white px-2 py-4 text-center font-semibold`}
+        >
           {parseToCurrency(data.totalIncomingLabor)}
         </p>
       </Card>
 
       <Card title="Deslocamento Seguradora">
-      <p className={`${roboto.className} truncate rounded-xl bg-white px-2 py-4 text-center font-semibold text-md`}>
+        <p
+          className={`${roboto.className} text-md truncate rounded-xl bg-white px-2 py-4 text-center font-semibold`}
+        >
           {parseToCurrency(data.totalIncomingDisplacement)}
         </p>
       </Card>
 
       <Card title="Peças Seguradora">
-      <p className={`${roboto.className} truncate rounded-xl bg-white px-2 py-4 text-center font-semibold text-md`}>
+        <p
+          className={`${roboto.className} text-md truncate rounded-xl bg-white px-2 py-4 text-center font-semibold`}
+        >
           {parseToCurrency(data.totalIncomingParts)}
         </p>
       </Card>
 
       <Card title="Total entrada">
-      <p className={`${roboto.className} truncate rounded-xl bg-white px-2 py-4 text-center font-semibold text-md`}>
+        <p
+          className={`${roboto.className} text-md truncate rounded-xl bg-white px-2 py-4 text-center font-semibold`}
+        >
           {parseToCurrency(data.totalIncoming)}
         </p>
       </Card>
 
       <Card title="Total saída">
-      <p className={`${roboto.className} truncate rounded-xl bg-white px-2 py-4 text-center font-semibold text-md`}>
+        <p
+          className={`${roboto.className} text-md truncate rounded-xl bg-white px-2 py-4 text-center font-semibold`}
+        >
           {parseToCurrency(data.totalOutgoing)}
         </p>
       </Card>
 
       <Card title="Total de casos">
-      <p className={`${roboto.className} truncate rounded-xl bg-white px-2 py-4 text-center font-semibold text-md`}>
+        <p
+          className={`${roboto.className} text-md truncate rounded-xl bg-white px-2 py-4 text-center font-semibold`}
+        >
           {cases.length}
         </p>
       </Card>

@@ -1,7 +1,7 @@
 `use server`;
 import { unauthorizedRedirect } from '@/app/libs/auth-redirect';
 import { getCurrentUser } from '@/app/libs/session';
-import { CaseFull } from '@/app/types/case';
+import { CaseListItem } from '@/app/types/case-list-item';
 import { SearchResponse } from '@/app/types/search_response';
 import { UserRole } from '@/app/types/user';
 import { onlyAdminStatuses } from '@/app/utils/case_status';
@@ -21,7 +21,7 @@ async function getData(
   sinistro: string,
   userRole: UserRole | undefined,
   page: number
-): Promise<SearchResponse<CaseFull>> {
+): Promise<SearchResponse<CaseListItem>> {
   let query = '';
   if (sinistro) {
     query = `external_reference=${sinistro}`;
@@ -35,20 +35,29 @@ async function getData(
     return { result: [], paging: { limit: 10, offset: page * 10, total: 0 } };
   }
 
-  const cases = data.result;
-
-  let filteredCases = cases;
+  let filteredCases = data.result;
 
   if (userRole === UserRole.OPERATOR) {
-    filteredCases = cases.filter(
+    filteredCases = filteredCases.filter(
       (crmCase) => !onlyAdminStatuses.includes(crmCase.status)
     );
   }
 
-  return {
-    result: filteredCases,
-    paging: data.paging,
-  };
+  const listItems = filteredCases.map(
+    (c): CaseListItem => ({
+      case_id: c.case_id,
+      external_reference: c.external_reference,
+      status: c.status,
+      due_date: c.due_date,
+      customer_first_name: c.customer?.first_name,
+      customer_last_name: c.customer?.last_name,
+      customer_city: c.customer?.shipping?.city,
+      contractor_company_name: c.contractor?.company_name,
+      partner_first_name: c.partner?.first_name,
+    })
+  );
+
+  return { result: listItems, paging: data.paging };
 }
 
 export default async function Page({ searchParams }: CasePageParams) {

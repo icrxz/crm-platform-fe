@@ -7,14 +7,30 @@ import { CreateAttachment } from '@/app/types/attachments';
 import { CaseFull, CaseStatus } from '@/app/types/case';
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useRef, useState } from 'react';
+import {
+  type ForwardRefExoticComponent,
+  type RefAttributes,
+  useRef,
+  useState,
+} from 'react';
 import { useActionState } from 'react';
 import { Button } from '../../common/button';
 import { Card } from '../../common/card';
-import {
+import dynamic from 'next/dynamic';
+import type {
   FileUploaderGenericRef,
-  GenericUploader,
+  FileUploaderProps,
 } from '../../common/file-uploader';
+
+const GenericUploader = dynamic(
+  () =>
+    import('../../common/file-uploader').then((m) => ({
+      default: m.GenericUploader,
+    })),
+  { ssr: false }
+) as ForwardRefExoticComponent<
+  FileUploaderProps & RefAttributes<FileUploaderGenericRef>
+>;
 import TargetDateModal from '../target-date-modal';
 import { ErrorMessage } from '../../common/error-message';
 import { RadioGroup, Radio } from '@heroui/react';

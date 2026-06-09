@@ -8,6 +8,7 @@
     "postclean": "npm i && npm run build",
     "dev": "next dev",
     "build": "next build",
+    "analyze": "ANALYZE=true next build --no-turbopack",
     "start": "next start",
     "lint": "eslint .",
     "prettier": "prettier --write --ignore-unknown .",
@@ -51,6 +52,7 @@
     "zod": "3.24.1"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^16.2.7",
     "@testing-library/jest-dom": "6.9.1",
     "@testing-library/react": "16.3.2",
     "@types/bcrypt": "6.0.0",

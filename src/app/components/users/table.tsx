@@ -1,13 +1,14 @@
 'use client';
+import { UserListItem } from '@/app/types/user-list-item';
+import { UserRole } from '@/app/types/user';
 import { SearchResponse } from '@/app/types/search_response';
-import { User, UserRole } from '@/app/types/user';
 import { EyeIcon } from '@heroicons/react/24/outline';
 import { Pagination } from '@heroui/pagination';
 import { useRouter } from 'next/navigation';
 import { roboto } from '../../ui/fonts';
 
 interface UsersTableProps {
-  users?: SearchResponse<User>;
+  users?: SearchResponse<UserListItem>;
   initialPage?: number;
 }
 
