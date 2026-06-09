@@ -18,36 +18,44 @@ jest.mock('recharts', () => ({
   Legend: () => <div data-testid="legend" />,
 }));
 
+const mockData = [
+  { week: 'S1', tma: 4.2, volume: 38 },
+  { week: 'S2', tma: 3.8, volume: 42 },
+  { week: 'S3', tma: 5.1, volume: 55 },
+  { week: 'S4', tma: 4.6, volume: 50 },
+  { week: 'S5', tma: 3.5, volume: 44 },
+  { week: 'S6', tma: 3.2, volume: 47 },
+];
+
 describe('PerformanceChart', () => {
   describe('rendering', () => {
     it('should render the section title', () => {
-      render(<PerformanceChart />);
-      expect(screen.getByText('Evolução de Desempenho')).toBeInTheDocument();
+      render(<PerformanceChart data={mockData} />);
+      expect(
+        screen.getByText('Evolução de Desempenho (TMA)')
+      ).toBeInTheDocument();
     });
 
-    it('should render the "Ver Histórico" action link', () => {
-      render(<PerformanceChart />);
-      expect(screen.getByText(/Ver Histórico/)).toBeInTheDocument();
+    it('should render the subtitle', () => {
+      render(<PerformanceChart data={mockData} />);
+      expect(
+        screen.getByText('Tempo Médio de Atendimento vs Volume Recebido')
+      ).toBeInTheDocument();
     });
 
     it('should render the chart container', () => {
-      render(<PerformanceChart />);
+      render(<PerformanceChart data={mockData} />);
       expect(screen.getByTestId('responsive-container')).toBeInTheDocument();
     });
 
-    it('should render the line for cases data', () => {
-      render(<PerformanceChart />);
-      expect(screen.getByTestId('line-cases')).toBeInTheDocument();
+    it('should render the TMA line', () => {
+      render(<PerformanceChart data={mockData} />);
+      expect(screen.getByTestId('line-tma')).toBeInTheDocument();
     });
 
-    it('should render the line for SLA data', () => {
-      render(<PerformanceChart />);
-      expect(screen.getByTestId('line-sla')).toBeInTheDocument();
-    });
-
-    it('should render the line for points data', () => {
-      render(<PerformanceChart />);
-      expect(screen.getByTestId('line-points')).toBeInTheDocument();
+    it('should render the volume line', () => {
+      render(<PerformanceChart data={mockData} />);
+      expect(screen.getByTestId('line-volume')).toBeInTheDocument();
     });
   });
 });

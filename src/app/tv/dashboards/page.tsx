@@ -9,13 +9,14 @@ import {
   KpiCardsSkeleton,
   RankingSkeleton,
 } from '@/app/components/dashboards/skeletons';
+import AutoRefresh from '@/app/components/tv/auto-refresh';
 import { getCurrentUser } from '@/app/libs/session';
 import { adminRoles } from '@/app/utils/roles';
 import { TrophyIcon } from '@heroicons/react/24/outline';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 
-export default async function Page() {
+export default async function TvDashboardPage() {
   const user = await getCurrentUser();
 
   if (!user) {
@@ -27,17 +28,15 @@ export default async function Page() {
   }
 
   return (
-    <main className="flex flex-col gap-6">
-      <div>
+    <main className="flex min-h-screen flex-col gap-4 p-4 lg:gap-6 lg:p-6 2xl:p-8">
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <TrophyIcon className="h-6 w-6 text-amber-500" />
-          <h1 className="text-xl font-bold text-gray-900 md:text-2xl">
+          <TrophyIcon className="h-5 w-5 text-amber-500 lg:h-6 lg:w-6" />
+          <h1 className="text-lg font-bold text-gray-900 lg:text-xl 2xl:text-2xl">
             Desempenho do Time
           </h1>
         </div>
-        <p className="mt-0.5 text-sm text-gray-500">
-          Acompanhe rankings, assiduidade e evolução no atendimento
-        </p>
+        <AutoRefresh />
       </div>
 
       <Suspense
@@ -50,19 +49,18 @@ export default async function Page() {
         <KpiCards />
       </Suspense>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <div className="grid flex-1 grid-cols-1 gap-4 lg:grid-cols-2 2xl:grid-cols-3">
         <Suspense fallback={<RankingSkeleton />}>
           <Ranking />
         </Suspense>
 
-        <div className="flex flex-col gap-4">
-          <Suspense fallback={<AttendanceBonusSkeleton />}>
-            <AttendanceBonusServer />
-          </Suspense>
-          <Suspense fallback={<ChartSkeleton />}>
-            <PerformanceChartServer />
-          </Suspense>
-        </div>
+        <Suspense fallback={<AttendanceBonusSkeleton />}>
+          <AttendanceBonusServer />
+        </Suspense>
+
+        <Suspense fallback={<ChartSkeleton />}>
+          <PerformanceChartServer />
+        </Suspense>
       </div>
     </main>
   );
