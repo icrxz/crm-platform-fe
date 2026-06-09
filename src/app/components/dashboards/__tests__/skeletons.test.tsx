@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import {
+  AttendanceBonusSkeleton,
   ChartSkeleton,
   GenericSkeleton,
   KpiCardsSkeleton,
@@ -8,10 +9,10 @@ import {
 
 describe('Skeletons', () => {
   describe('KpiCardsSkeleton', () => {
-    it('should render four skeleton cards', () => {
+    it('should render two skeleton cards', () => {
       const { container } = render(<KpiCardsSkeleton />);
       const skeletonCards = container.querySelectorAll('.rounded-xl');
-      expect(skeletonCards).toHaveLength(4);
+      expect(skeletonCards).toHaveLength(2);
     });
   });
 
@@ -38,6 +39,19 @@ describe('Skeletons', () => {
       const { container } = render(<ChartSkeleton />);
       const chartArea = container.querySelector('.h-48');
       expect(chartArea).toBeInTheDocument();
+    });
+  });
+
+  describe('AttendanceBonusSkeleton', () => {
+    it('should render without crashing', () => {
+      const { container } = render(<AttendanceBonusSkeleton />);
+      expect(container.firstChild).toBeInTheDocument();
+    });
+
+    it('should render twelve avatar placeholders', () => {
+      const { container } = render(<AttendanceBonusSkeleton />);
+      const avatars = container.querySelectorAll('.rounded-full');
+      expect(avatars.length).toBeGreaterThanOrEqual(12);
     });
   });
 

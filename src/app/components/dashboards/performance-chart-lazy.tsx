@@ -1,4 +1,5 @@
 'use client';
+import { PerformanceWeek } from '@/app/services/cases/fetch_performance_chart';
 import dynamic from 'next/dynamic';
 import { ChartSkeleton } from './skeletons';
 
@@ -7,6 +8,10 @@ const PerformanceChart = dynamic(() => import('./performance-chart'), {
   loading: () => <ChartSkeleton />,
 });
 
-export default function PerformanceChartLazy() {
-  return <PerformanceChart />;
+export default function PerformanceChartLazy({
+  data,
+}: {
+  data: PerformanceWeek[];
+}) {
+  return <PerformanceChart data={data} />;
 }

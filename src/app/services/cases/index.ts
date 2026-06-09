@@ -3,6 +3,9 @@ import { changePartner } from './change_partner';
 import { changeStatus } from './change_status';
 import { createCaseBatch } from './create_batch';
 import { createCase } from './create_case';
+import { fetchDashboardKpis } from './fetch_dashboard_kpis';
+import { fetchPerformanceData } from './fetch_performance_chart';
+import { fetchRankingData } from './fetch_ranking';
 import { getCaseByID } from './get_by_id';
 import { getCaseFullByID } from './get_full_by_id';
 import { publishCase } from './publish_case';
@@ -19,6 +22,9 @@ export {
   changeStatus,
   createCase,
   fetchCases,
+  fetchDashboardKpis,
+  fetchPerformanceData,
+  fetchRankingData,
   getCaseByID,
   createCaseBatch,
   publishCase,

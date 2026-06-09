@@ -1,5 +1,6 @@
 'use client';
 
+import { PerformanceWeek } from '@/app/services/cases/fetch_performance_chart';
 import { ChartBarIcon } from '@heroicons/react/24/outline';
 import {
   CartesianGrid,
@@ -12,42 +13,36 @@ import {
   YAxis,
 } from 'recharts';
 
-const data = [
-  { day: 'Seg', cases: 30, sla: 40, points: 20 },
-  { day: 'Seg', cases: 25, sla: 45, points: 22 },
-  { day: 'Ter', cases: 35, sla: 42, points: 28 },
-  { day: 'Qua', cases: 40, sla: 48, points: 35 },
-  { day: 'Qui', cases: 38, sla: 50, points: 40 },
-  { day: 'Sáb', cases: 45, sla: 47, points: 42 },
-  { day: 'Seg', cases: 50, sla: 52, points: 48 },
-  { day: 'Sáb', cases: 55, sla: 55, points: 55 },
-];
-
 const LEGEND_LABELS: Record<string, string> = {
-  cases: 'Casos Finalizados',
-  sla: 'SLA no prazo',
-  points: 'Pontos do Time',
+  tma: 'TMA (dias)',
+  volume: 'Volume de Casos',
 };
 
-export default function PerformanceChart() {
+export default function PerformanceChart({
+  data,
+}: {
+  data: PerformanceWeek[];
+}) {
   return (
     <div className="flex flex-col gap-3 rounded-xl bg-gray-50 p-4 shadow-sm">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <ChartBarIcon className="h-5 w-5 text-blue-500" />
-          <span className="font-semibold text-gray-800">
-            Evolução de Desempenho
-          </span>
+      <div className="flex items-start justify-between">
+        <div className="flex items-start gap-2">
+          <ChartBarIcon className="mt-0.5 h-5 w-5 shrink-0 text-blue-500" />
+          <div>
+            <span className="font-semibold text-gray-800">
+              Evolução de Desempenho (TMA)
+            </span>
+            <p className="text-xs text-gray-500">
+              Tempo Médio de Atendimento vs Volume Recebido
+            </p>
+          </div>
         </div>
-        <button className="flex items-center gap-1 text-sm text-blue-600 hover:underline">
-          Ver Histórico <span>›</span>
-        </button>
       </div>
 
       <ResponsiveContainer width="100%" height={200}>
         <LineChart
           data={data}
-          margin={{ top: 4, right: 8, left: -20, bottom: 0 }}
+          margin={{ top: 4, right: 16, left: -20, bottom: 0 }}
         >
           <CartesianGrid
             strokeDasharray="3 3"
@@ -55,13 +50,23 @@ export default function PerformanceChart() {
             stroke="#e5e7eb"
           />
           <XAxis
-            dataKey="day"
+            dataKey="week"
             tick={{ fontSize: 11, fill: '#9ca3af' }}
             axisLine={false}
             tickLine={false}
           />
           <YAxis
-            domain={[0, 60]}
+            yAxisId="tma"
+            orientation="left"
+            domain={[0, 'auto']}
+            tick={{ fontSize: 11, fill: '#9ca3af' }}
+            axisLine={false}
+            tickLine={false}
+          />
+          <YAxis
+            yAxisId="volume"
+            orientation="right"
+            domain={[0, 'auto']}
             tick={{ fontSize: 11, fill: '#9ca3af' }}
             axisLine={false}
             tickLine={false}
@@ -79,25 +84,19 @@ export default function PerformanceChart() {
             formatter={(value) => LEGEND_LABELS[value] ?? value}
           />
           <Line
+            yAxisId="tma"
             type="monotone"
-            dataKey="cases"
+            dataKey="tma"
             stroke="#3b82f6"
             strokeWidth={2}
             dot={{ r: 3 }}
             activeDot={{ r: 5 }}
           />
           <Line
+            yAxisId="volume"
             type="monotone"
-            dataKey="sla"
+            dataKey="volume"
             stroke="#f97316"
-            strokeWidth={2}
-            dot={{ r: 3 }}
-            activeDot={{ r: 5 }}
-          />
-          <Line
-            type="monotone"
-            dataKey="points"
-            stroke="#10b981"
             strokeWidth={2}
             dot={{ r: 3 }}
             activeDot={{ r: 5 }}

@@ -1,3 +1,7 @@
+import {
+  fetchRankingData,
+  RankingAgent,
+} from '@/app/services/cases/fetch_ranking';
 import { TrophyIcon } from '@heroicons/react/24/outline';
 
 const AVATAR_COLORS = [
@@ -27,53 +31,76 @@ function getInitials(name: string): string {
 
 const MEDAL: Record<number, string> = { 0: '🥇', 1: '🥈', 2: '🥉' };
 
-const agents = [
-  {
-    name: 'Daniel',
-    closed: [15, 7, 1] as [number, number, number],
-    visitRepair: [8, 17] as [number, number],
-  },
-  {
-    name: 'Maria',
-    closed: [15, 7, 1] as [number, number, number],
-    visitRepair: [8, 17] as [number, number],
-  },
-  {
-    name: 'João',
-    closed: [15, 7, 1] as [number, number, number],
-    visitRepair: [8, 17] as [number, number],
-  },
-  {
-    name: 'Ana',
-    closed: [15, 7, 1] as [number, number, number],
-    visitRepair: [8, 17] as [number, number],
-  },
-];
+function DelayBar({ inProgress }: { inProgress: RankingAgent['inProgress'] }) {
+  const total = inProgress.green + inProgress.yellow + inProgress.red;
+  if (total === 0)
+    return (
+      <div className="h-6 w-full rounded bg-gray-100 text-center text-xs leading-6 text-gray-400">
+        Sem casos em andamento
+      </div>
+    );
 
-function SegmentedBar({
-  segments,
-  colors,
-}: {
-  segments: number[];
-  colors: string[];
-}) {
-  const total = segments.reduce((a, b) => a + b, 0);
   return (
-    <div className="flex h-6 w-full overflow-hidden rounded">
-      {segments.map((val, i) => (
+    <div className="flex h-6 w-full overflow-hidden rounded text-xs font-bold text-white">
+      {inProgress.green > 0 && (
         <div
-          key={i}
-          className={`${colors[i]} flex items-center justify-center text-xs font-bold text-white`}
-          style={{ width: `${(val / total) * 100}%` }}
+          className="flex items-center justify-center bg-emerald-500"
+          style={{ width: `${(inProgress.green / total) * 100}%` }}
         >
-          {val}
+          {inProgress.green}
         </div>
-      ))}
+      )}
+      {inProgress.yellow > 0 && (
+        <div
+          className="flex items-center justify-center bg-amber-400"
+          style={{ width: `${(inProgress.yellow / total) * 100}%` }}
+        >
+          {inProgress.yellow}
+        </div>
+      )}
+      {inProgress.red > 0 && (
+        <div
+          className="flex items-center justify-center gap-1 bg-red-500"
+          style={{ width: `${(inProgress.red / total) * 100}%` }}
+        >
+          <span>{inProgress.red}</span>
+          {inProgress.mostDelayed && (
+            <span className="hidden truncate sm:inline">
+              #{inProgress.mostDelayed}
+            </span>
+          )}
+        </div>
+      )}
     </div>
   );
 }
 
-export default function Ranking() {
+function FinalizedBar({ finalized }: { finalized: RankingAgent['finalized'] }) {
+  const total = finalized.vistoria + finalized.reparo;
+  if (total === 0) return null;
+
+  return (
+    <div className="flex h-6 w-full overflow-hidden rounded text-xs font-bold text-white">
+      <div
+        className="flex items-center justify-center bg-blue-500"
+        style={{ width: `${(finalized.vistoria / total) * 100}%` }}
+      >
+        {finalized.vistoria}
+      </div>
+      <div
+        className="flex items-center justify-center bg-violet-500"
+        style={{ width: `${(finalized.reparo / total) * 100}%` }}
+      >
+        {finalized.reparo}
+      </div>
+    </div>
+  );
+}
+
+export default async function Ranking() {
+  const result = await fetchRankingData();
+  const agents = result.data ?? [];
+
   return (
     <div className="flex flex-col gap-3 rounded-xl bg-gray-50 p-4 shadow-sm">
       <div className="flex items-center justify-between">
@@ -88,43 +115,91 @@ export default function Ranking() {
         </button>
       </div>
 
-      <div className="grid grid-cols-[auto_auto_1fr_1fr] items-center gap-x-3 gap-y-1 px-1 text-xs font-semibold uppercase tracking-wide text-gray-500">
-        <span>#</span>
-        <span>Atendente</span>
-        <span>FINALIZADOS</span>
-        <span>VIST. / REPARO</span>
+      <div className="rounded-lg bg-gradient-to-r from-amber-400 to-orange-400 px-4 py-2 text-center text-sm font-bold text-white shadow-sm">
+        🏆 Bônus Liderança Geral: R$ 400,00
       </div>
 
-      {agents.map((agent, idx) => (
-        <div
-          key={agent.name}
-          className="grid grid-cols-[auto_auto_1fr_1fr] items-center gap-x-3"
-        >
-          <span className="w-8 text-center text-lg">
-            {MEDAL[idx] ?? (
-              <span className="text-sm font-semibold text-gray-500">
-                {idx + 1}
-              </span>
-            )}
-          </span>
-
-          <div
-            className={`h-8 w-8 rounded-full ${getAvatarColor(agent.name)} flex items-center justify-center text-xs font-bold text-white`}
-          >
-            {getInitials(agent.name)}
+      <div className="grid grid-cols-[16px_1fr] gap-x-3 gap-y-0.5 px-1 text-[10px] font-semibold uppercase tracking-wide text-gray-400">
+        <span>#</span>
+        <div className="grid grid-cols-[auto_1fr] gap-x-3">
+          <span className="w-20">Atendente</span>
+          <div className="grid grid-cols-2 gap-x-2">
+            <span>Em Andamento</span>
+            <span>Finalizados</span>
           </div>
-
-          <SegmentedBar
-            segments={agent.closed}
-            colors={['bg-emerald-500', 'bg-orange-400', 'bg-red-500']}
-          />
-
-          <SegmentedBar
-            segments={agent.visitRepair}
-            colors={['bg-cyan-500', 'bg-blue-500']}
-          />
         </div>
-      ))}
+      </div>
+
+      {agents.map((agent, idx) => {
+        const totalFinalized =
+          agent.finalized.vistoria + agent.finalized.reparo;
+        return (
+          <div
+            key={agent.name}
+            className="grid grid-cols-[16px_1fr] items-center gap-x-3"
+          >
+            <span className="text-center text-base leading-none">
+              {MEDAL[idx] ?? (
+                <span className="text-xs font-semibold text-gray-500">
+                  {idx + 1}
+                </span>
+              )}
+            </span>
+
+            <div className="grid grid-cols-[auto_1fr] items-center gap-x-3">
+              <div className="flex items-center gap-2">
+                <div
+                  className={`h-8 w-8 shrink-0 rounded-full ${getAvatarColor(agent.name)} flex items-center justify-center text-xs font-bold text-white`}
+                >
+                  {getInitials(agent.name)}
+                </div>
+                <div className="hidden min-w-[72px] sm:block">
+                  <p className="text-xs font-semibold leading-tight text-gray-800">
+                    {agent.name.split(' ')[0]}
+                  </p>
+                  <p className="text-[10px] text-gray-500">
+                    {totalFinalized} fin.
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-x-2">
+                <div className="flex flex-col gap-0.5">
+                  <DelayBar inProgress={agent.inProgress} />
+                  <div className="flex gap-2 text-[9px] text-gray-400">
+                    <span className="flex items-center gap-0.5">
+                      <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" />
+                      ≤5d
+                    </span>
+                    <span className="flex items-center gap-0.5">
+                      <span className="inline-block h-2 w-2 rounded-full bg-amber-400" />
+                      5–10d
+                    </span>
+                    <span className="flex items-center gap-0.5">
+                      <span className="inline-block h-2 w-2 rounded-full bg-red-500" />
+                      &gt;10d
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-0.5">
+                  <FinalizedBar finalized={agent.finalized} />
+                  <div className="flex gap-2 text-[9px] text-gray-400">
+                    <span className="flex items-center gap-0.5">
+                      <span className="inline-block h-2 w-2 rounded-full bg-blue-500" />
+                      Vist.
+                    </span>
+                    <span className="flex items-center gap-0.5">
+                      <span className="inline-block h-2 w-2 rounded-full bg-violet-500" />
+                      Rep.
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

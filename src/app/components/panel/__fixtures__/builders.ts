@@ -1,6 +1,7 @@
 import { CaseFull, CaseStatus } from '@/app/types/case';
 import { Contractor } from '@/app/types/contractor';
 import { Customer } from '@/app/types/customer';
+import { PanelCaseItem } from '@/app/types/panel-case-item';
 import { Partner } from '@/app/types/partner';
 import { SearchResponse } from '@/app/types/search_response';
 
@@ -85,6 +86,25 @@ export function buildCaseFull(overrides: Partial<CaseFull> = {}): CaseFull {
     customer: buildCustomer(),
     contractor: buildContractor(),
     partner: buildPartner(),
+    transactions: [],
+    ...overrides,
+  };
+}
+
+export function buildPanelCaseItem(
+  overrides: Partial<PanelCaseItem> = {}
+): PanelCaseItem {
+  return {
+    case_id: 'case-001',
+    created_at: '2024-03-15T10:00:00Z',
+    type: 'repair',
+    external_reference: 'SIN-001',
+    customer_document: '111.222.333-44',
+    customer_first_name: 'Maria',
+    customer_last_name: 'Santos',
+    customer_city: 'São Paulo',
+    partner_first_name: 'João',
+    contractor_company_name: 'Seguradora ABC',
     transactions: [],
     ...overrides,
   };
