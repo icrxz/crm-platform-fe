@@ -1,8 +1,10 @@
 'use client';
 import { brazilStates } from '@/app/types/address';
-import { Contractor } from '@/app/types/contractor';
 import { months } from '@/app/types/month';
-import { Partner } from '@/app/types/partner';
+import {
+  PanelContractorOption,
+  PanelPartnerOption,
+} from '@/app/types/panel-case-item';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '../common/button';
 import { Dropdown } from '../common/dropdown/dropdown';
@@ -12,8 +14,8 @@ import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import type { Key } from '@react-types/shared';
 
 interface ControlPanelSearchProps {
-  contractors: Contractor[];
-  partners?: Partner[];
+  contractors: PanelContractorOption[];
+  partners?: PanelPartnerOption[];
 }
 
 const currentYear = new Date().getFullYear();
@@ -164,7 +166,7 @@ export default function ControlPanelSearch({
           >
             {(item) => (
               <AutocompleteItem key={item.partner_id}>
-                {`${item.first_name} ${item.last_name} - ${item.shipping.city} / ${item.shipping.state}`}
+                {`${item.first_name} ${item.last_name}${item.city ? ` - ${item.city}` : ''}${item.state ? ` / ${item.state}` : ''}`}
               </AutocompleteItem>
             )}
           </Autocomplete>
