@@ -14,6 +14,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Button } from '../common/button';
+import { TextInput } from '../common/text-input/text-input';
 
 interface CaseFormProps {
   case?: Case;
@@ -75,23 +76,12 @@ export default function CaseForm({
 
         <div className="w-full">
           <div className="mb-4 columns-2">
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="claim"
-              >
-                Sinistro
-              </label>
-
-              <input
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                id="first_name"
-                type="text"
-                name="claim"
-                placeholder="Digite o sinistro"
-                required
-              />
-            </div>
+            <TextInput
+              label="Sinistro"
+              name="claim"
+              placeholder="Digite o sinistro"
+              required
+            />
 
             <div>
               <label
@@ -148,41 +138,19 @@ export default function CaseForm({
           <hr />
 
           <div className="my-4 columns-3">
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="brand"
-              >
-                Marca
-              </label>
+            <TextInput
+              label="Marca"
+              name="brand"
+              placeholder="Digite a marca"
+              required
+            />
 
-              <input
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                id="brand"
-                type="text"
-                name="brand"
-                placeholder="Digite a marca"
-                required
-              />
-            </div>
-
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="model"
-              >
-                Modelo
-              </label>
-
-              <input
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                id="model"
-                type="text"
-                name="model"
-                placeholder="Digite o modelo"
-                required
-              />
-            </div>
+            <TextInput
+              label="Modelo"
+              name="model"
+              placeholder="Digite o modelo"
+              required
+            />
 
             <div>
               <label
@@ -268,67 +236,34 @@ export default function CaseForm({
           </div>
 
           <div className="my-4 columns-2">
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="first_name"
-              >
-                Nome
-              </label>
+            <TextInput
+              label="Nome"
+              name="first_name"
+              placeholder="Digite o nome do cliente"
+              required
+              disabled={!hasSearchedCustomer || !!customer}
+              defaultValue={customer?.first_name || ''}
+            />
 
-              <input
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500 disabled:cursor-not-allowed disabled:bg-gray-100"
-                id="first_name"
-                type="text"
-                name="first_name"
-                placeholder="Digite o nome do cliente"
-                required
-                disabled={!hasSearchedCustomer || !!customer}
-                defaultValue={customer?.first_name || ''}
-              />
-            </div>
-
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="last_name"
-              >
-                Sobrenome
-              </label>
-
-              <input
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500 disabled:cursor-not-allowed disabled:bg-gray-100"
-                id="last_name"
-                type="text"
-                name="last_name"
-                placeholder="Digite o sobrenome do cliente"
-                required
-                disabled={!hasSearchedCustomer || !!customer}
-                defaultValue={customer?.last_name || ''}
-              />
-            </div>
+            <TextInput
+              label="Sobrenome"
+              name="last_name"
+              placeholder="Digite o sobrenome do cliente"
+              required
+              disabled={!hasSearchedCustomer || !!customer}
+              defaultValue={customer?.last_name || ''}
+            />
           </div>
 
           <div className="my-4 columns-2">
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="first_name"
-              >
-                Cidade
-              </label>
-
-              <input
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500 disabled:cursor-not-allowed disabled:bg-gray-100"
-                id="city"
-                type="text"
-                name="city"
-                placeholder="Digite a cidade"
-                required
-                disabled={!hasSearchedCustomer || !!customer}
-                defaultValue={customer?.shipping.city || ''}
-              />
-            </div>
+            <TextInput
+              label="Cidade"
+              name="city"
+              placeholder="Digite a cidade"
+              required
+              disabled={!hasSearchedCustomer || !!customer}
+              defaultValue={customer?.shipping.city || ''}
+            />
 
             <div>
               <label
