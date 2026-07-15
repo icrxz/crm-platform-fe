@@ -61,47 +61,21 @@ export default function PartnerForm({
 
         <div className="w-full">
           <div className="mb-4 columns-3">
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="first_name"
-              >
-                Nome
-              </label>
+            <TextInput
+              label="Nome"
+              name="first_name"
+              placeholder="Digite o nome"
+              defaultValue={partner?.first_name || ''}
+              required
+            />
 
-              <div className="relative">
-                <input
-                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                  id="first_name"
-                  type="text"
-                  name="first_name"
-                  placeholder="Digite o nome"
-                  defaultValue={partner?.first_name || ''}
-                  required
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="last_name"
-              >
-                Sobrenome
-              </label>
-
-              <div className="relative">
-                <input
-                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                  id="last_name"
-                  type="text"
-                  name="last_name"
-                  placeholder="Digite o sobrenome"
-                  defaultValue={partner?.last_name || ''}
-                  required
-                />
-              </div>
-            </div>
+            <TextInput
+              label="Sobrenome"
+              name="last_name"
+              placeholder="Digite o sobrenome"
+              defaultValue={partner?.last_name || ''}
+              required
+            />
 
             <div>
               <label
@@ -150,26 +124,13 @@ export default function PartnerForm({
           </div>
 
           <div className="mb-4 columns-2">
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="payment_key"
-              >
-                Chave PIX
-              </label>
-
-              <div className="relative">
-                <input
-                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                  id="payment_key"
-                  type="text"
-                  name="payment_key"
-                  placeholder="Digite a chave pix"
-                  defaultValue={partner?.payment_key || ''}
-                  required
-                />
-              </div>
-            </div>
+            <TextInput
+              label="Chave PIX"
+              name="payment_key"
+              placeholder="Digite a chave pix"
+              defaultValue={partner?.payment_key || ''}
+              required
+            />
 
             <div>
               <label
@@ -227,25 +188,12 @@ export default function PartnerForm({
           <hr />
 
           <div className="my-4 columns-2">
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="city"
-              >
-                Cidade
-              </label>
-
-              <div className="relative">
-                <input
-                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                  id="city"
-                  type="text"
-                  name="city"
-                  defaultValue={partner?.shipping?.city || ''}
-                  placeholder="Digite a cidade"
-                />
-              </div>
-            </div>
+            <TextInput
+              label="Cidade"
+              name="city"
+              defaultValue={partner?.shipping?.city || ''}
+              placeholder="Digite a cidade"
+            />
 
             <div>
               <label
@@ -296,25 +244,13 @@ export default function PartnerForm({
               </div>
             </div>
 
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="email"
-              >
-                Email
-              </label>
-
-              <div className="relative">
-                <input
-                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                  id="email"
-                  type="email"
-                  name="email"
-                  placeholder="Digite o email"
-                  defaultValue={partner?.personal_contact?.email || ''}
-                />
-              </div>
-            </div>
+            <TextInput
+              label="Email"
+              name="email"
+              type="email"
+              placeholder="Digite o email"
+              defaultValue={partner?.personal_contact?.email || ''}
+            />
           </div>
 
           <div className="mt-6 flex space-x-8">
