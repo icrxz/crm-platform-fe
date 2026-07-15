@@ -9,6 +9,7 @@ import { roboto } from '../../ui/fonts';
 import { Button } from '../common/button';
 import { parseDocument } from '@/app/libs/parser';
 import { TextInput } from '../common/text-input/text-input';
+import { Dropdown } from '../common/dropdown/dropdown';
 
 interface CustomerFormProps {
   customer?: Customer;
@@ -136,29 +137,16 @@ export default function CustomerForm({
               defaultValue={customer?.shipping.city || ''}
             />
 
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="state"
-              >
-                Estado
-              </label>
-
-              <div className="relative">
-                <select
-                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                  id="state"
-                  name="state"
-                  defaultValue={customer?.shipping.state || ''}
-                >
-                  {brazilStates.map((state) => (
-                    <option key={`state-${state}`} value={state}>
-                      {state}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
+            <Dropdown
+              label="Estado"
+              name="state"
+              options={brazilStates.map((state) => ({
+                id: state,
+                value: state,
+                label: state,
+              }))}
+              defaultValue={customer?.shipping.state || ''}
+            />
 
             <div>
               <label
