@@ -66,4 +66,12 @@ describe('Button', () => {
 
     expect(screen.getByRole('button')).toHaveClass('bg-blue-500');
   });
+
+  it('applies disabled visual styling when disabled', () => {
+    render(<Button disabled>Salvar</Button>);
+
+    const button = screen.getByRole('button');
+    expect(button).toHaveClass('disabled:opacity-50');
+    expect(button).toHaveClass('disabled:cursor-not-allowed');
+  });
 });
