@@ -51,7 +51,7 @@ export default async function TvDashboardPage() {
         </Suspense>
       </div>
 
-      <div className="grid min-h-0 flex-1 auto-rows-fr grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-4 2xl:grid-cols-3">
+      <div className="grid min-h-0 flex-1 auto-rows-fr grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-4 2xl:grid-cols-[3fr_2fr_1.5fr]">
         <div className="min-h-0 overflow-hidden">
           <Suspense fallback={<RankingSkeleton />}>
             <Ranking />
@@ -59,14 +59,14 @@ export default async function TvDashboardPage() {
         </div>
 
         <div className="min-h-0 overflow-hidden">
-          <Suspense fallback={<AttendanceBonusSkeleton />}>
-            <AttendanceBonusServer />
+          <Suspense fallback={<ChartSkeleton />}>
+            <PerformanceChartServer />
           </Suspense>
         </div>
 
         <div className="min-h-0 overflow-hidden">
-          <Suspense fallback={<ChartSkeleton />}>
-            <PerformanceChartServer />
+          <Suspense fallback={<AttendanceBonusSkeleton />}>
+            <AttendanceBonusServer />
           </Suspense>
         </div>
       </div>

@@ -1,3 +1,4 @@
+import { Tooltip } from '@/app/components/common/tooltip';
 import {
   fetchRankingData,
   RankingAgent,
@@ -31,69 +32,92 @@ function getInitials(name: string): string {
 
 const MEDAL: Record<number, string> = { 0: '🥇', 1: '🥈', 2: '🥉' };
 
-function DelayBar({ inProgress }: { inProgress: RankingAgent['inProgress'] }) {
+function DelayBar({
+  inProgress,
+  tooltipBelow,
+}: {
+  inProgress: RankingAgent['inProgress'];
+  tooltipBelow?: boolean;
+}) {
   const total = inProgress.green + inProgress.yellow + inProgress.red;
+  const tooltip = `≤5d: ${inProgress.green} · 5-10d: ${inProgress.yellow} · >10d: ${inProgress.red}`;
+
   if (total === 0)
     return (
-      <div className="h-6 w-full rounded bg-gray-100 text-center text-xs leading-6 text-gray-400">
+      <div className="h-8 w-full rounded bg-gray-100 text-center text-xs leading-8 text-gray-400">
         Sem casos em andamento
       </div>
     );
 
   return (
-    <div className="flex h-6 w-full overflow-hidden rounded text-xs font-bold text-white">
-      {inProgress.green > 0 && (
-        <div
-          className="flex items-center justify-center bg-emerald-500"
-          style={{ width: `${(inProgress.green / total) * 100}%` }}
-        >
-          {inProgress.green}
-        </div>
-      )}
-      {inProgress.yellow > 0 && (
-        <div
-          className="flex items-center justify-center bg-amber-400"
-          style={{ width: `${(inProgress.yellow / total) * 100}%` }}
-        >
-          {inProgress.yellow}
-        </div>
-      )}
-      {inProgress.red > 0 && (
-        <div
-          className="flex items-center justify-center gap-1 bg-red-500"
-          style={{ width: `${(inProgress.red / total) * 100}%` }}
-        >
-          <span>{inProgress.red}</span>
-          {inProgress.mostDelayed && (
-            <span className="hidden truncate sm:inline">
-              #{inProgress.mostDelayed}
-            </span>
-          )}
-        </div>
-      )}
-    </div>
+    <Tooltip
+      content={tooltip}
+      position={tooltipBelow ? 'bottom' : 'top'}
+      className="h-8 w-full"
+    >
+      <div className="flex h-full w-full overflow-hidden rounded text-xs font-bold text-white">
+        {inProgress.green > 0 && (
+          <div
+            className="flex items-center justify-center bg-emerald-500"
+            style={{ width: `${(inProgress.green / total) * 100}%` }}
+          >
+            {inProgress.green}
+          </div>
+        )}
+        {inProgress.yellow > 0 && (
+          <div
+            className="flex items-center justify-center bg-amber-400"
+            style={{ width: `${(inProgress.yellow / total) * 100}%` }}
+          >
+            {inProgress.yellow}
+          </div>
+        )}
+        {inProgress.red > 0 && (
+          <div
+            className="flex items-center justify-center gap-1 bg-red-500"
+            style={{ width: `${(inProgress.red / total) * 100}%` }}
+          >
+            <span>{inProgress.red}</span>
+          </div>
+        )}
+      </div>
+    </Tooltip>
   );
 }
 
-function FinalizedBar({ finalized }: { finalized: RankingAgent['finalized'] }) {
+function FinalizedBar({
+  finalized,
+  tooltipBelow,
+}: {
+  finalized: RankingAgent['finalized'];
+  tooltipBelow?: boolean;
+}) {
   const total = finalized.vistoria + finalized.reparo;
   if (total === 0) return null;
 
+  const tooltip = `Vistoria: ${finalized.vistoria} · Reparo: ${finalized.reparo}`;
+
   return (
-    <div className="flex h-6 w-full overflow-hidden rounded text-xs font-bold text-white">
-      <div
-        className="flex items-center justify-center bg-blue-500"
-        style={{ width: `${(finalized.vistoria / total) * 100}%` }}
-      >
-        {finalized.vistoria}
+    <Tooltip
+      content={tooltip}
+      position={tooltipBelow ? 'bottom' : 'top'}
+      className="h-6 w-full"
+    >
+      <div className="flex h-full w-full overflow-hidden rounded text-xs font-bold text-white">
+        <div
+          className="flex items-center justify-center bg-blue-500"
+          style={{ width: `${(finalized.vistoria / total) * 100}%` }}
+        >
+          {finalized.vistoria}
+        </div>
+        <div
+          className="flex items-center justify-center bg-violet-500"
+          style={{ width: `${(finalized.reparo / total) * 100}%` }}
+        >
+          {finalized.reparo}
+        </div>
       </div>
-      <div
-        className="flex items-center justify-center bg-violet-500"
-        style={{ width: `${(finalized.reparo / total) * 100}%` }}
-      >
-        {finalized.reparo}
-      </div>
-    </div>
+    </Tooltip>
   );
 }
 
@@ -123,7 +147,7 @@ export default async function Ranking() {
         <span>#</span>
         <div className="grid grid-cols-[auto_1fr] gap-x-3">
           <span className="w-20">Atendente</span>
-          <div className="grid grid-cols-2 gap-x-2">
+          <div className="grid grid-cols-[3fr_2fr] gap-x-2">
             <span>Em Andamento</span>
             <span>Finalizados</span>
           </div>
@@ -164,9 +188,12 @@ export default async function Ranking() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-x-2">
+                <div className="grid grid-cols-[3fr_2fr] gap-x-2">
                   <div className="flex flex-col gap-0.5">
-                    <DelayBar inProgress={agent.inProgress} />
+                    <DelayBar
+                      inProgress={agent.inProgress}
+                      tooltipBelow={idx === 0}
+                    />
                     <div className="flex gap-2 text-[9px] text-gray-400">
                       <span className="flex items-center gap-0.5">
                         <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" />
@@ -184,7 +211,10 @@ export default async function Ranking() {
                   </div>
 
                   <div className="flex flex-col gap-0.5">
-                    <FinalizedBar finalized={agent.finalized} />
+                    <FinalizedBar
+                      finalized={agent.finalized}
+                      tooltipBelow={idx === 0}
+                    />
                     <div className="flex gap-2 text-[9px] text-gray-400">
                       <span className="flex items-center gap-0.5">
                         <span className="inline-block h-2 w-2 rounded-full bg-blue-500" />

@@ -22,7 +22,6 @@ export interface RankingAgent {
     green: number;
     yellow: number;
     red: number;
-    mostDelayed: string;
   };
   finalized: {
     vistoria: number;
@@ -120,7 +119,6 @@ export async function fetchRankingData(): Promise<
     }
 
     const rankingMap = new Map<string, RankingAgent>();
-    const oldestRedCase = new Map<string, { date: Date; ref: string }>();
 
     const getOrCreate = (ownerId: string): RankingAgent | null => {
       if (!usersMap.has(ownerId)) return null;
@@ -129,7 +127,7 @@ export async function fetchRankingData(): Promise<
         const name = `${user.first_name} ${user.last_name}`.trim();
         rankingMap.set(ownerId, {
           name,
-          inProgress: { green: 0, yellow: 0, red: 0, mostDelayed: '' },
+          inProgress: { green: 0, yellow: 0, red: 0 },
           finalized: { vistoria: 0, reparo: 0 },
         });
       }
@@ -148,20 +146,7 @@ export async function fetchRankingData(): Promise<
         agent.inProgress.yellow++;
       } else {
         agent.inProgress.red++;
-        const caseDate = new Date(c.created_at);
-        const current = oldestRedCase.get(c.owner_id);
-        if (!current || caseDate < current.date) {
-          oldestRedCase.set(c.owner_id, {
-            date: caseDate,
-            ref: c.external_reference || c.case_id.slice(0, 8),
-          });
-        }
       }
-    }
-
-    for (const [ownerId, oldest] of oldestRedCase) {
-      const agent = rankingMap.get(ownerId);
-      if (agent) agent.inProgress.mostDelayed = oldest.ref;
     }
 
     for (const c of closedCases) {
