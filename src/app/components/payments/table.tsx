@@ -12,6 +12,7 @@ import { ConfirmPaymentModal } from './confirm-payment';
 import { EditPaymentModal } from './edit-payment';
 import { Partner } from '@/app/types/partner';
 import PaymentsSearchBar from './search-bar';
+import { IconButton } from '../common/icon-button';
 
 interface PaymentTableProps {
   transactions: SearchResponse<TransactionItem>;
@@ -143,21 +144,23 @@ export default function PaymentTable({
                         <div className="flex gap-2">
                           {transaction.status == TransactionStatus.PENDING && (
                             <>
-                              <button
-                                className="text-green-500 hover:text-green-700"
+                              <IconButton
+                                color="success"
+                                icon={
+                                  <CheckIcon className="h-5 w-5 md:h-6 md:w-6" />
+                                }
                                 onClick={() =>
                                   handleConfirmPayment(transaction)
                                 }
-                              >
-                                <CheckIcon className="w-5 md:w-6" />
-                              </button>
+                              />
 
-                              <button
-                                className="text-blue-600 hover:text-blue-900"
+                              <IconButton
+                                color="info"
+                                icon={
+                                  <PencilIcon className="h-5 w-5 md:h-6 md:w-6" />
+                                }
                                 onClick={() => handleEditPayment(transaction)}
-                              >
-                                <PencilIcon className="w-5 md:w-6" />
-                              </button>
+                              />
                             </>
                           )}
                         </div>
