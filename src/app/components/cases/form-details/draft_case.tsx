@@ -219,14 +219,16 @@ export function DraftStatusForm({ crmCase }: DraftStatusFormProps) {
                 disabled={!!crmCase.customer?.document}
               />
 
-              <button
+              <Button
                 type="button"
+                size="md"
+                color="info"
+                className="ml-2"
                 disabled={pending || searchingUser || hasSearchedCustomer}
-                className="ml-2 rounded-md bg-blue-500 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-gray-200"
                 onClick={handleSearchUser}
               >
                 Buscar
-              </button>
+              </Button>
               <input
                 type="hidden"
                 name="customer_id"
