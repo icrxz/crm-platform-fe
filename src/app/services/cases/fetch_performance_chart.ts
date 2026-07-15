@@ -16,6 +16,33 @@ function formatDate(d: Date): string {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 
+function businessDaysBetween(start: Date, end: Date): number {
+  if (end <= start) return 0;
+
+  let count = 0;
+  const cursor = new Date(start);
+  cursor.setHours(0, 0, 0, 0);
+  const endDay = new Date(end);
+  endDay.setHours(0, 0, 0, 0);
+
+  while (cursor < endDay) {
+    cursor.setDate(cursor.getDate() + 1);
+    const dayOfWeek = cursor.getDay();
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) count++;
+  }
+
+  return count;
+}
+
+function median(values: number[]): number {
+  if (values.length === 0) return 0;
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 !== 0
+    ? sorted[mid]
+    : (sorted[mid - 1] + sorted[mid]) / 2;
+}
+
 function buildWeekBuckets(numWeeks = 6) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -103,18 +130,13 @@ export async function fetchPerformanceData(): Promise<
 
       weekData[bucketIdx].count++;
       const createdDate = new Date(c.created_at);
-      const days = (closedDate.getTime() - createdDate.getTime()) / 86_400_000;
+      const days = businessDaysBetween(createdDate, closedDate);
       weekData[bucketIdx].tmas.push(days);
     }
 
     const data: PerformanceWeek[] = weekData.map((w) => ({
       week: w.week,
-      tma:
-        w.tmas.length > 0
-          ? Math.round(
-              (w.tmas.reduce((a, b) => a + b, 0) / w.tmas.length) * 10
-            ) / 10
-          : 0,
+      tma: Math.round(median(w.tmas) * 10) / 10,
       volume: w.count,
     }));
 

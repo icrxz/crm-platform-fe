@@ -14,7 +14,7 @@ import {
 } from 'recharts';
 
 const LEGEND_LABELS: Record<string, string> = {
-  tma: 'TMA (dias)',
+  tma: 'TMA (dias úteis)',
   volume: 'Volume de Casos',
 };
 
@@ -33,7 +33,7 @@ export default function PerformanceChart({
               Evolução de Desempenho (TMA)
             </span>
             <p className="text-xs text-gray-500">
-              Tempo Médio de Atendimento vs Volume Recebido
+              Tempo Mediano de Atendimento (dias úteis) vs Volume Recebido
             </p>
           </div>
         </div>
