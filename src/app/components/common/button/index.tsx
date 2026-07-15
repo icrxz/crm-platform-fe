@@ -36,7 +36,7 @@ export function Button({
       {...rest}
       disabled={isLoading || rest.disabled}
       className={clsx(
-        `flex ${buttonSizes[size]} ${buttonColors[color]} min-w-20 items-center justify-center rounded-lg px-4 text-center text-sm font-medium text-white transition-colors focus:ring-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 aria-disabled:cursor-not-allowed aria-disabled:opacity-50`,
+        `flex ${buttonSizes[size]} ${buttonColors[color]} min-w-20 items-center justify-center rounded-lg px-4 text-center text-sm font-medium text-white transition-colors focus:ring-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50 aria-disabled:cursor-not-allowed aria-disabled:opacity-50`,
         className
       )}
     >
