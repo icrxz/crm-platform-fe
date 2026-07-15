@@ -2,7 +2,7 @@
 import { Case, CaseStatus } from '@/app/types/case';
 import { SearchResponse } from '@/app/types/search_response';
 import { ServiceResponse } from '@/app/types/service';
-import { User } from '@/app/types/user';
+import { User, UserRole } from '@/app/types/user';
 import { cookies } from 'next/headers';
 import { crmCoreApiKey, crmCoreEndpoint } from '.';
 
@@ -110,7 +110,7 @@ export async function fetchRankingData(): Promise<
     if (ownerIds.length > 0) {
       const userQuery = ownerIds.map((id) => `user_id=${id}`).join('&');
       const resp = await fetch(
-        `${base}/users?${userQuery}&limit=${ownerIds.length + 10}`,
+        `${base}/users?${userQuery}&role=${UserRole.OPERATOR}&active=true&limit=${ownerIds.length + 10}`,
         { method: 'GET', headers }
       );
       if (resp.ok) {
@@ -122,12 +122,11 @@ export async function fetchRankingData(): Promise<
     const rankingMap = new Map<string, RankingAgent>();
     const oldestRedCase = new Map<string, { date: Date; ref: string }>();
 
-    const getOrCreate = (ownerId: string): RankingAgent => {
+    const getOrCreate = (ownerId: string): RankingAgent | null => {
+      if (!usersMap.has(ownerId)) return null;
       if (!rankingMap.has(ownerId)) {
-        const user = usersMap.get(ownerId);
-        const name = user
-          ? `${user.first_name} ${user.last_name}`.trim()
-          : ownerId.slice(0, 8);
+        const user = usersMap.get(ownerId)!;
+        const name = `${user.first_name} ${user.last_name}`.trim();
         rankingMap.set(ownerId, {
           name,
           inProgress: { green: 0, yellow: 0, red: 0, mostDelayed: '' },
@@ -140,6 +139,7 @@ export async function fetchRankingData(): Promise<
     for (const c of inProgressCases) {
       if (!c.owner_id) continue;
       const agent = getOrCreate(c.owner_id);
+      if (!agent) continue;
       const days = daysSince(c.created_at);
 
       if (days <= 5) {
@@ -167,6 +167,7 @@ export async function fetchRankingData(): Promise<
     for (const c of closedCases) {
       if (!c.owner_id) continue;
       const agent = getOrCreate(c.owner_id);
+      if (!agent) continue;
       if (c.type === 'inspection') {
         agent.finalized.vistoria++;
       } else if (c.type === 'repair') {
