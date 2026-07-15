@@ -1,4 +1,4 @@
-'useClient';
+'use client';
 
 import { HTMLInputTypeAttribute } from 'react';
 import { ErrorMessage } from '../error-message';

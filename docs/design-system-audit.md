@@ -1,6 +1,8 @@
-V# Auditoria de componentes comuns — base para o Design System
+# Auditoria de componentes comuns — base para o Design System
 
 > Documento de mapeamento (não implica nenhuma alteração de código). Objetivo: entender o que já existe, onde está duplicado, e priorizar os próximos passos de consolidação do design system.
+>
+> **Atualização (branch `feature/design-system-textinput`):** o `TextInput` descrito na seção 2 e nas linhas "Input de texto" da seção 3 já foi consolidado nos 4 formulários de entidade (`customer-form.tsx`, `contractor-form.tsx`, `partner-form.tsx`, `case-form.tsx`) para os campos de texto simples/não-mascarados — ver `docs/superpowers/specs/2026-07-14-textinput-consolidation-design.md` e `docs/superpowers/plans/2026-07-14-textinput-consolidation.md`. Os números abaixo refletem o estado _antes_ dessa migração.
 
 ## 1. Panorama
 
