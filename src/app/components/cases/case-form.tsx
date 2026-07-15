@@ -205,14 +205,16 @@ export default function CaseForm({
                   onChange={(e) => setUserDocument(e.target.value)}
                 />
 
-                <button
+                <Button
                   type="button"
+                  size="md"
+                  color="info"
+                  className="ml-2"
                   disabled={pending || searchingUser}
-                  className="ml-2 rounded-md bg-blue-500 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   onClick={handleSearchUser}
                 >
                   Buscar
-                </button>
+                </Button>
                 <input
                   type="hidden"
                   name="customer_id"
