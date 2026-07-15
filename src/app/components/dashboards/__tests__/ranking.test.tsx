@@ -12,22 +12,22 @@ const { fetchRankingData } = jest.requireMock(
 const mockAgents = [
   {
     name: 'João Silva',
-    inProgress: { green: 8, yellow: 3, red: 2, mostDelayed: 'CASO-099' },
+    inProgress: { green: 8, yellow: 3, red: 2 },
     finalized: { vistoria: 20, reparo: 14 },
   },
   {
     name: 'Maria Oliveira',
-    inProgress: { green: 6, yellow: 4, red: 1, mostDelayed: 'CASO-074' },
+    inProgress: { green: 6, yellow: 4, red: 1 },
     finalized: { vistoria: 15, reparo: 13 },
   },
   {
     name: 'Daniel Costa',
-    inProgress: { green: 5, yellow: 2, red: 3, mostDelayed: 'CASO-051' },
+    inProgress: { green: 5, yellow: 2, red: 3 },
     finalized: { vistoria: 12, reparo: 9 },
   },
   {
     name: 'Ana Ferreira',
-    inProgress: { green: 4, yellow: 5, red: 0, mostDelayed: '' },
+    inProgress: { green: 4, yellow: 5, red: 0 },
     finalized: { vistoria: 10, reparo: 8 },
   },
 ];
@@ -94,9 +94,11 @@ describe('Ranking', () => {
       expect(labels.length).toBeGreaterThan(0);
     });
 
-    it('should render the most delayed case number', async () => {
+    it('should render the delay bucket breakdown as a tooltip', async () => {
       render(await Ranking());
-      expect(screen.getByText(/CASO-099/)).toBeInTheDocument();
+      expect(
+        screen.getByText('≤5d: 8 · 5-10d: 3 · >10d: 2')
+      ).toBeInTheDocument();
     });
 
     it('should render an empty state when service returns no agents', async () => {

@@ -39,7 +39,9 @@ describe('PerformanceChart', () => {
     it('should render the subtitle', () => {
       render(<PerformanceChart data={mockData} />);
       expect(
-        screen.getByText('Tempo Médio de Atendimento vs Volume Recebido')
+        screen.getByText(
+          'Tempo Mediano de Atendimento (dias úteis) vs Volume Recebido'
+        )
       ).toBeInTheDocument();
     });
 
