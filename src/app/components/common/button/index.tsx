@@ -8,31 +8,41 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const buttonSizes = {
-  'sm': 'h-6',
-  'md': 'h-8',
-  'lg': 'h-10',
-}
+  sm: 'h-6',
+  md: 'h-8',
+  lg: 'h-10',
+};
 
 const buttonColors = {
-  success: 'bg-green-500 hover:bg-green-400 focus-visible:outline-green-500 active:bg-green-600',
-  error: 'bg-red-500 hover:bg-red-400 focus-visible:outline-red-500 active:bg-red-600',
-  warning: 'bg-orange-500 hover:bg-orange-400 focus-visible:outline-orange-500 active:bg-orange-600',
+  success:
+    'bg-green-500 hover:bg-green-400 focus-visible:outline-green-500 active:bg-green-600',
+  error:
+    'bg-red-500 hover:bg-red-400 focus-visible:outline-red-500 active:bg-red-600',
+  warning:
+    'bg-orange-500 hover:bg-orange-400 focus-visible:outline-orange-500 active:bg-orange-600',
   info: 'bg-blue-500 hover:bg-blue-400 focus-visible:outline-blue-500 active:bg-blue-600',
-}
+};
 
-export function Button({ children, className, size = 'lg', color = 'info', isLoading, ...rest }: ButtonProps) {
+export function Button({
+  children,
+  className,
+  size = 'lg',
+  color = 'info',
+  isLoading,
+  ...rest
+}: ButtonProps) {
   return (
     <button
       {...rest}
-      disabled={isLoading}
+      disabled={isLoading || rest.disabled}
       className={clsx(
-        `flex ${buttonSizes[size]} ${buttonColors[color]} items-center text-center rounded-lg px-4 text-sm font-medium text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 aria-disabled:cursor-not-allowed aria-disabled:opacity-50 focus:ring-2 min-w-20 text-center justify-center`,
-        className,
+        `flex ${buttonSizes[size]} ${buttonColors[color]} min-w-20 items-center justify-center rounded-lg px-4 text-center text-sm font-medium text-white transition-colors focus:ring-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 aria-disabled:cursor-not-allowed aria-disabled:opacity-50`,
+        className
       )}
     >
       {isLoading && (
         <svg
-          className="animate-spin h-5 w-5 mr-3"
+          className="mr-3 h-5 w-5 animate-spin"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
@@ -53,9 +63,7 @@ export function Button({ children, className, size = 'lg', color = 'info', isLoa
         </svg>
       )}
 
-      {!isLoading && (
-        children
-      )}
+      {!isLoading && children}
     </button>
   );
 }
