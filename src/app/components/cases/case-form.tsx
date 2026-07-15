@@ -14,6 +14,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Button } from '../common/button';
+import { Dropdown } from '../common/dropdown/dropdown';
 import { TextInput } from '../common/text-input/text-input';
 
 interface CaseFormProps {
@@ -83,31 +84,17 @@ export default function CaseForm({
               required
             />
 
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="contractor"
-              >
-                Seguradora
-              </label>
-
-              <select
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                id="contractor"
-                name="contractor"
-                required
-              >
-                <option value="">Selecione a seguradora</option>
-                {contractors.map((contractor) => (
-                  <option
-                    key={contractor.contractor_id}
-                    value={contractor.contractor_id}
-                  >
-                    {contractor.company_name}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <Dropdown
+              label="Seguradora"
+              name="contractor"
+              placeholder="Selecione a seguradora"
+              required
+              options={contractors.map((contractor) => ({
+                id: contractor.contractor_id,
+                value: contractor.contractor_id,
+                label: contractor.company_name,
+              }))}
+            />
           </div>
 
           <div className="mb-4 columns-1">
@@ -265,31 +252,18 @@ export default function CaseForm({
               defaultValue={customer?.shipping.city || ''}
             />
 
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="state"
-              >
-                Estado
-              </label>
-
-              <div className="relative">
-                <select
-                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                  id="state"
-                  name="state"
-                  value={customer?.shipping.state}
-                  required
-                  disabled={!hasSearchedCustomer || !!customer}
-                >
-                  {brazilStates.map((state) => (
-                    <option key={`state-${state}`} value={state}>
-                      {state}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
+            <Dropdown
+              label="Estado"
+              name="state"
+              required
+              disabled={!hasSearchedCustomer || !!customer}
+              defaultValue={customer?.shipping.state || ''}
+              options={brazilStates.map((state) => ({
+                id: state,
+                value: state,
+                label: state,
+              }))}
+            />
           </div>
         </div>
 
