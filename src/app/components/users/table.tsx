@@ -7,6 +7,7 @@ import { EyeIcon } from '@heroicons/react/24/outline';
 import { Pagination } from '@heroui/pagination';
 import { useRouter } from 'next/navigation';
 import { roboto } from '../../ui/fonts';
+import { IconButton } from '../common/icon-button';
 
 interface UsersTableProps {
   users?: SearchResponse<UserListItem>;
@@ -85,13 +86,14 @@ export default function UsersTable({
                         </td>
                         <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                           <div className="flex gap-2">
-                            <button
+                            <IconButton
+                              color="info"
                               disabled={!user.active}
-                              className="text-blue-500 hover:text-blue-700"
+                              icon={
+                                <EyeIcon className="h-5 w-5 md:h-6 md:w-6" />
+                              }
                               onClick={() => handleRowClick(user.user_id)}
-                            >
-                              <EyeIcon className="h-5 w-5" />
-                            </button>
+                            />
                           </div>
                         </td>
                       </tr>
