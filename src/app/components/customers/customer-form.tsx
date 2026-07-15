@@ -8,6 +8,7 @@ import { useFormStatus } from 'react-dom';
 import { roboto } from '../../ui/fonts';
 import { Button } from '../common/button';
 import { parseDocument } from '@/app/libs/parser';
+import { TextInput } from '../common/text-input/text-input';
 
 interface CustomerFormProps {
   customer?: Customer;
@@ -60,47 +61,21 @@ export default function CustomerForm({
 
         <div className="w-full">
           <div className="mb-4 columns-3">
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="first_name"
-              >
-                Nome
-              </label>
+            <TextInput
+              label="Nome"
+              name="first_name"
+              placeholder="Digite o nome"
+              required
+              defaultValue={customer?.first_name || ''}
+            />
 
-              <div className="relative">
-                <input
-                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                  id="first_name"
-                  type="text"
-                  name="first_name"
-                  placeholder="Digite o nome"
-                  required
-                  defaultValue={customer?.first_name || ''}
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="last_name"
-              >
-                Sobrenome
-              </label>
-
-              <div className="relative">
-                <input
-                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                  id="last_name"
-                  type="text"
-                  name="last_name"
-                  placeholder="Digite o sobrenome"
-                  required
-                  defaultValue={customer?.last_name || ''}
-                />
-              </div>
-            </div>
+            <TextInput
+              label="Sobrenome"
+              name="last_name"
+              placeholder="Digite o sobrenome"
+              required
+              defaultValue={customer?.last_name || ''}
+            />
 
             <div>
               <label
@@ -128,90 +103,38 @@ export default function CustomerForm({
           <hr />
 
           <div className="my-4 columns-3">
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="address"
-              >
-                Endereço
-              </label>
+            <TextInput
+              label="Endereço"
+              name="address"
+              placeholder="Digite o endereço"
+              defaultValue={getCustomerAddress(customer)}
+              required
+            />
 
-              <div className="relative">
-                <input
-                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                  id="address"
-                  type="text"
-                  name="address"
-                  placeholder="Digite o endereço"
-                  defaultValue={getCustomerAddress(customer)}
-                  required
-                />
-              </div>
-            </div>
+            <TextInput
+              label="Número"
+              name="number"
+              placeholder="Digite o número do endereço"
+              defaultValue={getCustomerAddressNumber(customer)}
+              required
+            />
 
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="number"
-              >
-                Número
-              </label>
-
-              <div className="relative">
-                <input
-                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                  id="number"
-                  type="text"
-                  name="number"
-                  placeholder="Digite o número do endereço"
-                  defaultValue={getCustomerAddressNumber(customer)}
-                  required
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="complement"
-              >
-                Complemento
-              </label>
-
-              <div className="relative">
-                <input
-                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                  id="complement"
-                  type="text"
-                  name="complement"
-                  placeholder="Digite o complemento, se houver"
-                  defaultValue={getCustomerAddressComplement(customer)}
-                />
-              </div>
-            </div>
+            <TextInput
+              label="Complemento"
+              name="complement"
+              placeholder="Digite o complemento, se houver"
+              defaultValue={getCustomerAddressComplement(customer)}
+            />
           </div>
 
           <div className="mb-4 columns-3">
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="city"
-              >
-                Cidade
-              </label>
-
-              <div className="relative">
-                <input
-                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                  id="city"
-                  type="text"
-                  name="city"
-                  placeholder="Digite a cidade"
-                  required
-                  defaultValue={customer?.shipping.city || ''}
-                />
-              </div>
-            </div>
+            <TextInput
+              label="Cidade"
+              name="city"
+              placeholder="Digite a cidade"
+              required
+              defaultValue={customer?.shipping.city || ''}
+            />
 
             <div>
               <label
@@ -284,25 +207,13 @@ export default function CustomerForm({
               </div>
             </div>
 
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="email"
-              >
-                Email
-              </label>
-
-              <div className="relative">
-                <input
-                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                  id="email"
-                  type="email"
-                  name="email"
-                  placeholder="Digite o email"
-                  defaultValue={customer?.personal_contact?.email || ''}
-                />
-              </div>
-            </div>
+            <TextInput
+              label="Email"
+              name="email"
+              type="email"
+              placeholder="Digite o email"
+              defaultValue={customer?.personal_contact?.email || ''}
+            />
           </div>
         </div>
 
