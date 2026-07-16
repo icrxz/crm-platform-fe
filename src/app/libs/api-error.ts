@@ -4,7 +4,7 @@ export async function getApiErrorMessage(
 ): Promise<string> {
   try {
     const data = await resp.json();
-    return data.message || fallback;
+    return data.message || data.error || fallback;
   } catch {
     return fallback;
   }
