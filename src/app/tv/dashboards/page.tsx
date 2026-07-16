@@ -28,8 +28,8 @@ export default async function TvDashboardPage() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col gap-4 p-4 lg:gap-6 lg:p-6 2xl:p-8">
-      <div className="flex items-center justify-between">
+    <main className="flex h-screen w-screen flex-col gap-3 overflow-hidden p-3 lg:gap-4 lg:p-4 2xl:p-6">
+      <div className="flex shrink-0 items-center justify-between">
         <div className="flex items-center gap-2">
           <TrophyIcon className="h-5 w-5 text-amber-500 lg:h-6 lg:w-6" />
           <h1 className="text-lg font-bold text-gray-900 lg:text-xl 2xl:text-2xl">
@@ -39,28 +39,36 @@ export default async function TvDashboardPage() {
         <AutoRefresh />
       </div>
 
-      <Suspense
-        fallback={
-          <div className="grid grid-cols-2 gap-4">
-            <KpiCardsSkeleton />
-          </div>
-        }
-      >
-        <KpiCards />
-      </Suspense>
-
-      <div className="grid flex-1 grid-cols-1 gap-4 lg:grid-cols-2 2xl:grid-cols-3">
-        <Suspense fallback={<RankingSkeleton />}>
-          <Ranking />
+      <div className="shrink-0">
+        <Suspense
+          fallback={
+            <div className="grid grid-cols-2 gap-3 lg:gap-4">
+              <KpiCardsSkeleton />
+            </div>
+          }
+        >
+          <KpiCards />
         </Suspense>
+      </div>
 
-        <Suspense fallback={<AttendanceBonusSkeleton />}>
-          <AttendanceBonusServer />
-        </Suspense>
+      <div className="grid min-h-0 flex-1 auto-rows-fr grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-4 2xl:grid-cols-[3fr_2fr_1.5fr]">
+        <div className="min-h-0 overflow-hidden">
+          <Suspense fallback={<RankingSkeleton />}>
+            <Ranking />
+          </Suspense>
+        </div>
 
-        <Suspense fallback={<ChartSkeleton />}>
-          <PerformanceChartServer />
-        </Suspense>
+        <div className="min-h-0 overflow-hidden">
+          <Suspense fallback={<ChartSkeleton />}>
+            <PerformanceChartServer />
+          </Suspense>
+        </div>
+
+        <div className="min-h-0 overflow-hidden">
+          <Suspense fallback={<AttendanceBonusSkeleton />}>
+            <AttendanceBonusServer />
+          </Suspense>
+        </div>
       </div>
     </main>
   );

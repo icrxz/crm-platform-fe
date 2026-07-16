@@ -14,7 +14,7 @@ import {
 } from 'recharts';
 
 const LEGEND_LABELS: Record<string, string> = {
-  tma: 'TMA (dias)',
+  tma: 'TMA (dias úteis)',
   volume: 'Volume de Casos',
 };
 
@@ -24,8 +24,8 @@ export default function PerformanceChart({
   data: PerformanceWeek[];
 }) {
   return (
-    <div className="flex flex-col gap-3 rounded-xl bg-gray-50 p-4 shadow-sm">
-      <div className="flex items-start justify-between">
+    <div className="flex h-full flex-col gap-3 overflow-hidden rounded-xl bg-gray-50 p-4 shadow-sm">
+      <div className="flex shrink-0 items-start justify-between">
         <div className="flex items-start gap-2">
           <ChartBarIcon className="mt-0.5 h-5 w-5 shrink-0 text-blue-500" />
           <div>
@@ -33,13 +33,17 @@ export default function PerformanceChart({
               Evolução de Desempenho (TMA)
             </span>
             <p className="text-xs text-gray-500">
-              Tempo Médio de Atendimento vs Volume Recebido
+              Tempo Mediano de Atendimento (dias úteis) vs Volume Recebido
             </p>
           </div>
         </div>
       </div>
 
-      <ResponsiveContainer width="100%" height={200}>
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+        className="min-h-0 flex-1"
+      >
         <LineChart
           data={data}
           margin={{ top: 4, right: 16, left: -20, bottom: 0 }}

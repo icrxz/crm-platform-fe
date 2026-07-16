@@ -1,3 +1,7 @@
 export default function TvLayout({ children }: { children: React.ReactNode }) {
-  return <div className="min-h-screen bg-gray-100">{children}</div>;
+  return (
+    <div className="h-screen w-screen overflow-hidden bg-gray-100">
+      {children}
+    </div>
+  );
 }

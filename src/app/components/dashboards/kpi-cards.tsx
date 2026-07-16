@@ -1,3 +1,4 @@
+import { Tooltip } from '@/app/components/common/tooltip';
 import {
   fetchDashboardKpis,
   MonthlyClosedCount,
@@ -10,12 +11,14 @@ function MiniHistoryBars({ history }: { history: MonthlyClosedCount[] }) {
     <div className="flex items-end gap-1.5">
       {history.map((d) => (
         <div key={d.month} className="flex flex-col items-center gap-1">
-          <div
-            className="w-6 rounded-t bg-blue-400"
-            style={{
-              height: `${Math.max(Math.round((d.count / max) * 32), 4)}px`,
-            }}
-          />
+          <Tooltip content={`${d.month}: ${d.count} casos`}>
+            <div
+              className="w-6 rounded-t bg-blue-400"
+              style={{
+                height: `${Math.max(Math.round((d.count / max) * 32), 4)}px`,
+              }}
+            />
+          </Tooltip>
           <span className="text-[10px] text-gray-400">{d.month}</span>
         </div>
       ))}
