@@ -52,15 +52,15 @@ export default function AttendanceBonus({
   const active = employees.length - eliminated.size;
 
   return (
-    <div className="flex flex-col gap-3 rounded-xl bg-gray-50 p-4 shadow-sm">
-      <div className="flex items-center justify-between">
+    <div className="flex h-full flex-col gap-3 overflow-hidden rounded-xl bg-gray-50 p-4 shadow-sm">
+      <div className="flex shrink-0 items-center justify-between">
         <span className="font-semibold text-gray-800">Bônus Assiduidade</span>
         <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-bold text-amber-700">
           R$ 200,00
         </span>
       </div>
 
-      <div className="flex items-center justify-between text-xs text-gray-500">
+      <div className="flex shrink-0 items-center justify-between text-xs text-gray-500">
         <span>
           <span className="font-semibold text-emerald-600">{active}</span>{' '}
           ativos &nbsp;·&nbsp;
@@ -71,7 +71,7 @@ export default function AttendanceBonus({
         </span>
       </div>
 
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid min-h-0 flex-1 grid-cols-4 content-start gap-3 overflow-hidden">
         {employees.map((name, idx) => {
           const isEliminated = eliminated.has(idx);
           return (
@@ -109,7 +109,7 @@ export default function AttendanceBonus({
         })}
       </div>
 
-      <p className="text-center text-[10px] text-gray-400">
+      <p className="shrink-0 text-center text-[10px] text-gray-400">
         Clique no avatar para registrar ausência ou atraso
       </p>
     </div>
