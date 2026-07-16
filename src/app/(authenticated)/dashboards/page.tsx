@@ -51,17 +51,23 @@ export default async function Page() {
       </Suspense>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <Suspense fallback={<RankingSkeleton />}>
-          <Ranking />
-        </Suspense>
+        <div className="min-h-[640px]">
+          <Suspense fallback={<RankingSkeleton />}>
+            <Ranking />
+          </Suspense>
+        </div>
 
         <div className="flex flex-col gap-4">
-          <Suspense fallback={<AttendanceBonusSkeleton />}>
-            <AttendanceBonusServer />
-          </Suspense>
-          <Suspense fallback={<ChartSkeleton />}>
-            <PerformanceChartServer />
-          </Suspense>
+          <div className="min-h-[340px]">
+            <Suspense fallback={<AttendanceBonusSkeleton />}>
+              <AttendanceBonusServer />
+            </Suspense>
+          </div>
+          <div className="min-h-[340px]">
+            <Suspense fallback={<ChartSkeleton />}>
+              <PerformanceChartServer />
+            </Suspense>
+          </div>
         </div>
       </div>
     </main>
