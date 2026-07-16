@@ -50,14 +50,43 @@ beforeEach(() => {
   changePassword.mockResolvedValue({ success: true, message: 'ok' });
 });
 
+function enterEditMode() {
+  fireEvent.click(screen.getByRole('button', { name: 'Editar' }));
+}
+
 describe('ProfileForm', () => {
   describe('rendering', () => {
-    it('should render current user data as defaults', () => {
+    it('should render read-only user data by default, including username and role', () => {
       render(<ProfileForm user={mockUser} />);
+
+      expect(screen.getByText('joao.silva')).toBeInTheDocument();
+      expect(screen.getByText('Operador')).toBeInTheDocument();
+      expect(screen.getByText('João')).toBeInTheDocument();
+      expect(screen.getByText('Silva')).toBeInTheDocument();
+      expect(screen.getByText('joao@example.com')).toBeInTheDocument();
+      expect(screen.queryByLabelText('Nome')).not.toBeInTheDocument();
+    });
+
+    it('should switch to edit mode when the Editar button is clicked', () => {
+      render(<ProfileForm user={mockUser} />);
+
+      enterEditMode();
 
       expect(screen.getByLabelText('Nome')).toHaveValue('João');
       expect(screen.getByLabelText('Sobrenome')).toHaveValue('Silva');
       expect(screen.getByLabelText('Email')).toHaveValue('joao@example.com');
+    });
+
+    it('should return to read-only mode when Cancelar is clicked', () => {
+      render(<ProfileForm user={mockUser} />);
+
+      enterEditMode();
+      fireEvent.click(screen.getByRole('button', { name: 'Cancelar' }));
+
+      expect(screen.queryByLabelText('Nome')).not.toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Editar' })
+      ).toBeInTheDocument();
     });
   });
 
@@ -65,6 +94,7 @@ describe('ProfileForm', () => {
     it('should submit updated first name, last name and email', async () => {
       render(<ProfileForm user={mockUser} />);
 
+      enterEditMode();
       fireEvent.change(screen.getByLabelText('Nome'), {
         target: { value: 'Joaquim' },
       });
@@ -88,6 +118,7 @@ describe('ProfileForm', () => {
       isEmailTaken.mockResolvedValue(true);
       render(<ProfileForm user={mockUser} />);
 
+      enterEditMode();
       fireEvent.change(screen.getByLabelText('Email'), {
         target: { value: 'other@example.com' },
       });
@@ -109,6 +140,7 @@ describe('ProfileForm', () => {
       });
       render(<ProfileForm user={mockUser} />);
 
+      enterEditMode();
       fireEvent.click(screen.getByRole('button', { name: 'Salvar dados' }));
 
       await waitFor(() => {

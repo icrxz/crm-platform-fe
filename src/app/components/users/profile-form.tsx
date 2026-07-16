@@ -2,12 +2,30 @@
 import { useSnackbar } from '@/app/context/SnackbarProvider';
 import { changePassword, isEmailTaken, updateUser } from '@/app/services/user';
 import { User } from '@/app/types/user';
+import { roleLabels } from '@/app/utils/roles';
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Button } from '../common/button';
 import { ErrorMessage } from '../common/error-message';
 import { TextInput } from '../common/text-input/text-input';
+
+function ReadOnlyField({
+  label,
+  value,
+  className,
+}: {
+  label: string;
+  value: string;
+  className?: string;
+}) {
+  return (
+    <div className={className}>
+      <p className="mb-1 block text-xs font-medium text-gray-900">{label}</p>
+      <p className="block w-full text-sm text-gray-700">{value}</p>
+    </div>
+  );
+}
 
 const PASSWORD_MIN_LENGTH = 8;
 const PASSWORD_SPECIAL_CHAR_REGEX = /[^A-Za-z0-9]/;
@@ -34,6 +52,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
   const { showSnackbar } = useSnackbar();
   const { refresh } = useRouter();
 
+  const [isEditingInfo, setIsEditingInfo] = useState(false);
   const [isSavingInfo, setIsSavingInfo] = useState(false);
   const [infoError, setInfoError] = useState<string | undefined>();
 
@@ -81,6 +100,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
       }
 
       showSnackbar('Dados atualizados com sucesso', 'success');
+      setIsEditingInfo(false);
       refresh();
     } finally {
       setIsSavingInfo(false);
@@ -140,44 +160,90 @@ export function ProfileForm({ user }: ProfileFormProps) {
         onSubmit={onSubmitInfo}
         className="rounded-xl bg-gray-50 p-6 shadow-sm"
       >
-        <h2 className="text-lg font-semibold text-gray-900">Meus dados</h2>
-        <p className="mb-4 text-xs text-gray-500">
-          Atualize seu nome e email de acesso
-        </p>
+        <div className="mb-4 flex items-start justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900">Meus dados</h2>
+            <p className="text-xs text-gray-500">
+              {isEditingInfo
+                ? 'Atualize seu nome e email de acesso'
+                : 'Seus dados de acesso e cadastro'}
+            </p>
+          </div>
+
+          {!isEditingInfo && (
+            <Button
+              type="button"
+              size="sm"
+              onClick={() => setIsEditingInfo(true)}
+            >
+              Editar
+            </Button>
+          )}
+        </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <TextInput
-            name="first_name"
-            label="Nome"
-            placeholder="Digite seu nome"
-            defaultValue={user.first_name}
-            required
-          />
-          <TextInput
-            name="last_name"
-            label="Sobrenome"
-            placeholder="Digite seu sobrenome"
-            defaultValue={user.last_name}
-            required
-          />
-          <TextInput
-            name="email"
-            label="Email"
-            type="email"
-            placeholder="Digite seu email"
-            defaultValue={user.email}
-            className="md:col-span-2"
-            required
-          />
+          <ReadOnlyField label="Usuário" value={user.username} />
+          <ReadOnlyField label="Perfil" value={roleLabels[user.role]} />
+
+          {isEditingInfo ? (
+            <>
+              <TextInput
+                name="first_name"
+                label="Nome"
+                placeholder="Digite seu nome"
+                defaultValue={user.first_name}
+                required
+              />
+              <TextInput
+                name="last_name"
+                label="Sobrenome"
+                placeholder="Digite seu sobrenome"
+                defaultValue={user.last_name}
+                required
+              />
+              <TextInput
+                name="email"
+                label="Email"
+                type="email"
+                placeholder="Digite seu email"
+                defaultValue={user.email}
+                className="md:col-span-2"
+                required
+              />
+            </>
+          ) : (
+            <>
+              <ReadOnlyField label="Nome" value={user.first_name} />
+              <ReadOnlyField label="Sobrenome" value={user.last_name} />
+              <ReadOnlyField
+                label="Email"
+                value={user.email}
+                className="md:col-span-2"
+              />
+            </>
+          )}
         </div>
 
         {infoError && <ErrorMessage message={infoError} />}
 
-        <div className="mt-4">
-          <Button type="submit" size="md" isLoading={isSavingInfo}>
-            Salvar dados
-          </Button>
-        </div>
+        {isEditingInfo && (
+          <div className="mt-4 flex gap-3">
+            <Button type="submit" size="md" isLoading={isSavingInfo}>
+              Salvar dados
+            </Button>
+            <Button
+              type="button"
+              size="md"
+              color="warning"
+              onClick={() => {
+                setInfoError(undefined);
+                setIsEditingInfo(false);
+              }}
+            >
+              Cancelar
+            </Button>
+          </div>
+        )}
       </form>
 
       <form
