@@ -1,45 +1,100 @@
-"use client";
-import { roboto } from "@/app/ui/fonts";
-import Modal from "../common/modal";
-import { Button } from "../common/button";
-import { TextInput } from "../common/text-input/text-input";
-import { Dropdown } from "../common/dropdown/dropdown";
+'use client';
+import { fetchContractors } from '@/app/services/contractors';
+import { roboto } from '@/app/ui/fonts';
+import { Select, SelectItem, Selection } from '@heroui/react';
+import { useEffect, useState } from 'react';
+import { CaseFilters } from '../../libs/case-filters-storage';
 import { CaseStatus, caseStatusMap } from '../../types/case';
+import { Contractor } from '../../types/contractor';
+import { Button } from '../common/button';
+import Modal from '../common/modal';
 
 interface FilterModalProps {
   isModalOpen: boolean;
   onClose(): void;
+  onApply(filters: CaseFilters): void;
+  initialStatus: string[];
+  initialContractorId: string[];
 }
 
-export function FilterModal({ onClose, isModalOpen }: FilterModalProps) {
-  const statusOptions = Object.values(CaseStatus).map((status) => ({
-    id: status,
-    value: status,
-    label: caseStatusMap[status],
-  }));
+export function FilterModal({
+  onClose,
+  isModalOpen,
+  onApply,
+  initialStatus,
+  initialContractorId,
+}: FilterModalProps) {
+  const [status, setStatus] = useState<Set<string>>(new Set(initialStatus));
+  const [contractorId, setContractorId] = useState<Set<string>>(
+    new Set(initialContractorId)
+  );
+  const [contractors, setContractors] = useState<Contractor[]>([]);
 
-  async function submitFilters(formData: FormData) {
-    const x = formData.entries().forEach(([key, value]) => console.log(key, value));
+  useEffect(() => {
+    fetchContractors('active=true', 1, 1000).then((res) => {
+      setContractors(res.data?.result || []);
+    });
+  }, []);
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    onApply({
+      status: Array.from(status),
+      contractorId: Array.from(contractorId),
+    });
+  }
+
+  function toStringSet(keys: Selection): Set<string> {
+    return keys === 'all' ? new Set() : new Set(Array.from(keys, String));
+  }
+
+  function renderSelectionCount(count: number, emptyLabel: string) {
+    if (count === 0) return emptyLabel;
+    return count === 1 ? '1 selecionado' : `${count} selecionados`;
   }
 
   return (
     <Modal isOpen={isModalOpen} onClose={onClose}>
-      <form action={submitFilters} className="flex space-y-3 min-w-80">
+      <form onSubmit={handleSubmit} className="flex w-80 space-y-3">
         <div className="flex-1">
-          <h1 className={`${roboto.className} mb-5 text-2xl`}>
-            Filtros
-          </h1>
+          <h1 className={`${roboto.className} mb-5 text-2xl`}>Filtros</h1>
 
-          <div className="w-full">
-            <Dropdown label="Status" name="sinistro" className="mb-2" options={statusOptions} />
+          <div className="flex w-full flex-col gap-4">
+            <Select
+              label="Estado"
+              placeholder="Todos"
+              selectionMode="multiple"
+              selectedKeys={status}
+              onSelectionChange={(keys) => setStatus(toStringSet(keys))}
+              renderValue={() => renderSelectionCount(status.size, 'Todos')}
+              classNames={{ trigger: 'min-h-10 h-10' }}
+            >
+              {Object.values(CaseStatus).map((value) => (
+                <SelectItem key={value}>{caseStatusMap[value]}</SelectItem>
+              ))}
+            </Select>
 
-            <TextInput label="Cliente" name="cliente" className="mb-2" />
-
-            <TextInput label="Técnico" name="tecnico" />
+            <Select
+              label="Seguradora"
+              placeholder="Todas"
+              selectionMode="multiple"
+              selectedKeys={contractorId}
+              onSelectionChange={(keys) => setContractorId(toStringSet(keys))}
+              renderValue={() =>
+                renderSelectionCount(contractorId.size, 'Todas')
+              }
+              classNames={{ trigger: 'min-h-10 h-10' }}
+            >
+              {contractors.map((contractor) => (
+                <SelectItem key={contractor.contractor_id}>
+                  {contractor.company_name}
+                </SelectItem>
+              ))}
+            </Select>
           </div>
 
-          <div className="flex space-x-8 mt-6 justify-end">
-            <Button className="w-24 justify-center">
+          <div className="mt-6 flex justify-end space-x-8">
+            <Button type="submit" className="w-24 justify-center">
               Buscar
             </Button>
           </div>
