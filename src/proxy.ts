@@ -17,7 +17,7 @@ function isTvDevice(userAgent: string): boolean {
   return TV_UA_PATTERNS.some((pattern) => pattern.test(userAgent));
 }
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const jwt = req.cookies.get('jwt');
   const { pathname } = req.nextUrl;
   const isLoginPage = pathname === '/login';

@@ -89,7 +89,13 @@ export default async function Page({ searchParams }: CasePageParams) {
   return (
     <main>
       <Suspense fallback={<p>carregando casos...</p>}>
-        {data && <CasesTable cases={data} initialPage={page || 1} />}
+        {data && (
+          <CasesTable
+            cases={data}
+            initialPage={page || 1}
+            userRole={user.role}
+          />
+        )}
       </Suspense>
     </main>
   );

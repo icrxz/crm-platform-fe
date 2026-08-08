@@ -48,14 +48,11 @@ describe('Ranking', () => {
       expect(screen.getByText('Ranking – Atendimento')).toBeInTheDocument();
     });
 
-    it('should render the "Ver Todos" action link', async () => {
+    it('should render the bonus banners', async () => {
       render(await Ranking());
-      expect(screen.getByText('Ver Todos')).toBeInTheDocument();
-    });
-
-    it('should render the bonus banner', async () => {
-      render(await Ranking());
-      expect(screen.getByText(/Bônus Liderança Geral/)).toBeInTheDocument();
+      expect(screen.getByText(/Liderança Geral/)).toBeInTheDocument();
+      expect(screen.getByText(/R\$ 200,00/)).toBeInTheDocument();
+      expect(screen.getByText(/Liderança Reparo/)).toBeInTheDocument();
       expect(screen.getByText(/R\$ 400,00/)).toBeInTheDocument();
     });
 

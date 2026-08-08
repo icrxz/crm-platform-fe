@@ -6,6 +6,9 @@ import { useEffect, useState } from 'react';
 import { CaseFilters } from '../../libs/case-filters-storage';
 import { CaseStatus, caseStatusMap } from '../../types/case';
 import { Contractor } from '../../types/contractor';
+import { UserRole } from '../../types/user';
+import { adminRoles } from '../../utils/roles';
+import { onlyAdminStatuses } from '../../utils/case_status';
 import { Button } from '../common/button';
 import Modal from '../common/modal';
 
@@ -15,6 +18,7 @@ interface FilterModalProps {
   onApply(filters: CaseFilters): void;
   initialStatus: string[];
   initialContractorId: string[];
+  userRole?: UserRole;
 }
 
 export function FilterModal({
@@ -23,7 +27,14 @@ export function FilterModal({
   onApply,
   initialStatus,
   initialContractorId,
+  userRole,
 }: FilterModalProps) {
+  const isAdmin = userRole !== undefined && adminRoles.includes(userRole);
+  const availableStatuses = isAdmin
+    ? Object.values(CaseStatus)
+    : Object.values(CaseStatus).filter(
+        (status) => !onlyAdminStatuses.includes(status)
+      );
   const [status, setStatus] = useState<Set<string>>(new Set(initialStatus));
   const [contractorId, setContractorId] = useState<Set<string>>(
     new Set(initialContractorId)
@@ -69,7 +80,7 @@ export function FilterModal({
               renderValue={() => renderSelectionCount(status.size, 'Todos')}
               classNames={{ trigger: 'min-h-10 h-10' }}
             >
-              {Object.values(CaseStatus).map((value) => (
+              {availableStatuses.map((value) => (
                 <SelectItem key={value}>{caseStatusMap[value]}</SelectItem>
               ))}
             </Select>

@@ -80,6 +80,7 @@ async function fetchAllPages<T>(
     const resp = await fetch(buildUrl(limit, offset), {
       method: 'GET',
       headers,
+      next: { revalidate: 60 },
     });
     if (!resp.ok) break;
     const data = (await resp.json()) as SearchResponse<T>;

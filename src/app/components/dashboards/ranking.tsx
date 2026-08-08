@@ -127,20 +127,20 @@ export default async function Ranking() {
 
   return (
     <div className="flex h-full flex-col gap-3 overflow-hidden rounded-xl bg-gray-50 p-4 shadow-sm">
-      <div className="flex shrink-0 items-center justify-between">
-        <div className="flex items-center gap-2">
-          <TrophyIcon className="h-5 w-5 text-amber-500" />
-          <span className="font-semibold text-gray-800">
-            Ranking – Atendimento
-          </span>
-        </div>
-        <button className="text-sm text-blue-600 hover:underline">
-          Ver Todos
-        </button>
+      <div className="flex shrink-0 items-center gap-2">
+        <TrophyIcon className="h-5 w-5 text-amber-500" />
+        <span className="font-semibold text-gray-800">
+          Ranking – Atendimento
+        </span>
       </div>
 
-      <div className="shrink-0 rounded-lg bg-gradient-to-r from-amber-400 to-orange-400 px-4 py-2 text-center text-sm font-bold text-white shadow-sm">
-        🏆 Bônus Liderança Geral: R$ 400,00
+      <div className="grid shrink-0 grid-cols-2 gap-2">
+        <div className="rounded-lg bg-gradient-to-r from-amber-400 to-orange-400 px-3 py-2 text-center text-sm font-bold text-white shadow-sm">
+          🏆 Liderança Geral: R$ 200,00
+        </div>
+        <div className="rounded-lg bg-gradient-to-r from-amber-400 to-orange-400 px-3 py-2 text-center text-sm font-bold text-white shadow-sm">
+          🔧 Liderança Reparo: R$ 400,00
+        </div>
       </div>
 
       <div className="grid shrink-0 grid-cols-[16px_1fr] gap-x-3 gap-y-0.5 px-1 text-[10px] font-semibold uppercase tracking-wide text-gray-400">
@@ -160,7 +160,7 @@ export default async function Ranking() {
             agent.finalized.vistoria + agent.finalized.reparo;
           return (
             <div
-              key={agent.name}
+              key={`${agent.name}-${idx}`}
               className="grid grid-cols-[16px_1fr] items-center gap-x-3"
             >
               <span className="text-center text-base leading-none">

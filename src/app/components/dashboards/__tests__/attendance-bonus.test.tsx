@@ -1,11 +1,15 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import AttendanceBonus from '../attendance-bonus';
 
+jest.mock('../../../actions/toggle_absence', () => ({
+  toggleAbsence: jest.fn().mockResolvedValue({ success: true, message: '' }),
+}));
+
 const mockEmployees = [
-  'João Silva',
-  'Maria Oliveira',
-  'Daniel Costa',
-  'Ana Ferreira',
+  { id: '1', name: 'João Silva', isAbsent: false },
+  { id: '2', name: 'Maria Oliveira', isAbsent: false },
+  { id: '3', name: 'Daniel Costa', isAbsent: false },
+  { id: '4', name: 'Ana Ferreira', isAbsent: false },
 ];
 
 describe('AttendanceBonus', () => {
