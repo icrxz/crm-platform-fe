@@ -35,7 +35,11 @@ export function FilterModal({
     : Object.values(CaseStatus).filter(
         (status) => !onlyAdminStatuses.includes(status)
       );
-  const [status, setStatus] = useState<Set<string>>(new Set(initialStatus));
+  const [status, setStatus] = useState<Set<string>>(
+    new Set(
+      initialStatus.filter((s) => availableStatuses.includes(s as CaseStatus))
+    )
+  );
   const [contractorId, setContractorId] = useState<Set<string>>(
     new Set(initialContractorId)
   );
