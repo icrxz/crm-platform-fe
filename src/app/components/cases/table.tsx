@@ -13,7 +13,7 @@ import {
   setStoredCaseFilters,
 } from '../../libs/case-filters-storage';
 import { parseDateTime } from '../../libs/date';
-import { caseStatusMap } from '../../types/case';
+import { caseCategoryMap, caseStatusMap, CaseCategory } from '../../types/case';
 import { defaultCaseStatuses } from '../../utils/case_status';
 import { roboto } from '../../ui/fonts';
 import { CreateCaseBatchModal } from './batch-form-modal';
@@ -95,6 +95,9 @@ export default function CasesTable({
                     <th scope="col" className="px-3 py-5 font-medium">
                       Seguradora
                     </th>
+                    <th scope="col" className="px-3 py-5 font-medium">
+                      Categoria
+                    </th>
                     <th scope="col" className="px-4 py-5 font-medium">
                       Técnico
                     </th>
@@ -127,6 +130,12 @@ export default function CasesTable({
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                         {crmCase.contractor_company_name || '-'}
+                      </td>
+                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                        {crmCase.category
+                          ? caseCategoryMap[crmCase.category as CaseCategory] ||
+                            crmCase.category
+                          : '-'}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
                         {crmCase.partner_first_name || '-'}

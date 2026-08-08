@@ -145,6 +145,34 @@ describe('CasesTable', () => {
       expect(screen.getByText('Em andamento')).toBeInTheDocument();
     });
 
+    it('should render the category column with the mapped label', () => {
+      // Arrange
+      setupMocks();
+      const item = buildCaseListItem({ category: 'd+' });
+      const cases = buildSearchResponse([item]);
+
+      // Act
+      render(<CasesTable cases={cases} />);
+
+      // Assert
+      expect(screen.getByText('Categoria')).toBeInTheDocument();
+      expect(screen.getByText('D+')).toBeInTheDocument();
+    });
+
+    it('should render a dash when category is missing', () => {
+      // Arrange
+      setupMocks();
+      const item = buildCaseListItem({ category: undefined });
+      const cases = buildSearchResponse([item]);
+
+      // Act
+      render(<CasesTable cases={cases} />);
+
+      // Assert
+      const row = screen.getByText(item.external_reference).closest('tr');
+      expect(row).toHaveTextContent('-');
+    });
+
     it('should render the pagination with correct total pages', () => {
       // Arrange
       setupMocks();

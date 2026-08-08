@@ -67,6 +67,17 @@ describe('mapCasesToListItems', () => {
     expect(result.partner_first_name).toBe('Maria');
   });
 
+  it('should map the category from metadata when present', () => {
+    // Arrange
+    const cases = [buildCaseFull({ metadata: { category: 'd+' } })];
+
+    // Act
+    const [result] = mapCasesToListItems(cases);
+
+    // Assert
+    expect(result.category).toBe('d+');
+  });
+
   it('should leave optional fields undefined when nested relations are missing', () => {
     // Arrange
     const cases = [buildCaseFull()];
@@ -80,6 +91,7 @@ describe('mapCasesToListItems', () => {
     expect(result.customer_city).toBeUndefined();
     expect(result.contractor_company_name).toBeUndefined();
     expect(result.partner_first_name).toBeUndefined();
+    expect(result.category).toBeUndefined();
   });
 
   it('should return an empty array for an empty input', () => {
