@@ -4,6 +4,7 @@ import { getCurrentUser } from '../../../libs/session';
 import { fetchCasesFull } from '../../../services/cases';
 import { CaseStatus } from '../../../types/case';
 import { UserRole } from '../../../types/user';
+import { onlyAdminStatuses } from '../../../utils/case_status';
 import Page from '../page';
 import {
   buildCaseListItem,
@@ -203,21 +204,36 @@ describe('Cases Page', () => {
       expect(mockFetchCasesFull).toHaveBeenCalledWith(expect.any(String), 3);
     });
 
-    it('should filter out admin-only statuses for operator users', async () => {
+    it('should exclude admin-only statuses from the request query for operator users', async () => {
       // Arrange
       setupAuthenticatedSession({ role: UserRole.OPERATOR });
-      setupCases([
-        buildCaseListItem({ case_id: 'case-1', status: CaseStatus.NEW }),
-        buildCaseListItem({ case_id: 'case-2', status: CaseStatus.CLOSED }),
-      ]);
+      setupCases();
       const searchParams = Promise.resolve({});
 
       // Act
-      const jsx = await Page({ searchParams });
-      render(jsx);
+      await Page({ searchParams });
 
       // Assert
-      expect(screen.getByTestId('case-count').textContent).toBe('1');
+      const query = mockFetchCasesFull.mock.calls[0][0] as string;
+      onlyAdminStatuses.forEach((status) => {
+        expect(query).not.toContain(`status=${status}`);
+      });
+    });
+
+    it('should include admin-only statuses in the request query for admin users', async () => {
+      // Arrange
+      setupAuthenticatedSession({ role: UserRole.ADMIN });
+      setupCases();
+      const searchParams = Promise.resolve({
+        status: [CaseStatus.NEW, CaseStatus.CLOSED],
+      });
+
+      // Act
+      await Page({ searchParams });
+
+      // Assert
+      const query = mockFetchCasesFull.mock.calls[0][0] as string;
+      expect(query).toContain(`status=${CaseStatus.CLOSED}`);
     });
   });
 
