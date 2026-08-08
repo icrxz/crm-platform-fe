@@ -2,6 +2,7 @@
 import { unauthorizedRedirect } from '@/app/libs/auth-redirect';
 import { getCurrentUser } from '@/app/libs/session';
 import { CaseListItem } from '@/app/types/case-list-item';
+import { CaseStatus } from '@/app/types/case';
 import { SearchResponse } from '@/app/types/search_response';
 import { UserRole } from '@/app/types/user';
 import { mapCasesToListItems } from '@/app/utils/case_list_item';
@@ -9,6 +10,7 @@ import {
   defaultCaseStatuses,
   onlyAdminStatuses,
 } from '@/app/utils/case_status';
+import { adminRoles } from '@/app/utils/roles';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import CasesTable from '../../components/cases/table';
@@ -38,11 +40,24 @@ async function getData(
   userRole: UserRole | undefined,
   page: number
 ): Promise<SearchResponse<CaseListItem>> {
+  const isAdmin = userRole !== undefined && adminRoles.includes(userRole);
+
+  const requestedStatuses =
+    status !== undefined
+      ? Array.isArray(status)
+        ? status
+        : [status]
+      : defaultCaseStatuses;
+
+  const allowedStatuses = isAdmin
+    ? requestedStatuses
+    : requestedStatuses.filter(
+        (s) => !onlyAdminStatuses.includes(s as CaseStatus)
+      );
+
   const queryParts: string[] = [
     ...(sinistro ? [`external_reference=${sinistro}`] : []),
-    ...(status !== undefined
-      ? toQueryParts('status', status)
-      : defaultCaseStatuses.map((s) => `status=${s}`)),
+    ...allowedStatuses.map((s) => `status=${s}`),
     ...toQueryParts('contractor_id', contractorId),
     ...(ownerId ? [`owner_id=${ownerId}`] : []),
   ];
@@ -56,15 +71,7 @@ async function getData(
     return { result: [], paging: { limit: 10, offset: page * 10, total: 0 } };
   }
 
-  let filteredCases = data.result;
-
-  if (userRole === UserRole.OPERATOR) {
-    filteredCases = filteredCases.filter(
-      (crmCase) => !onlyAdminStatuses.includes(crmCase.status)
-    );
-  }
-
-  return { result: mapCasesToListItems(filteredCases), paging: data.paging };
+  return { result: mapCasesToListItems(data.result), paging: data.paging };
 }
 
 export default async function Page({ searchParams }: CasePageParams) {

@@ -10,4 +10,5 @@ export type CaseListItem = {
   customer_city?: string;
   contractor_company_name?: string;
   partner_first_name?: string;
+  category?: string;
 };

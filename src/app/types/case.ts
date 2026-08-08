@@ -1,10 +1,10 @@
 import { Comment } from './comment';
-import { Contractor } from "./contractor";
-import { Customer } from "./customer";
-import { Partner } from "./partner";
-import { Product } from "./product";
+import { Contractor } from './contractor';
+import { Customer } from './customer';
+import { Partner } from './partner';
+import { Product } from './product';
 import { Transaction } from './transaction';
-import { User } from "./user";
+import { User } from './user';
 
 export type CreateCase = {
   contractor_id: string;
@@ -21,6 +21,7 @@ export type CreateCase = {
   product_description?: string;
   value?: number;
   serial_number?: string;
+  metadata?: Record<string, string>;
 };
 
 export type CreateCaseResponse = {
@@ -53,6 +54,7 @@ export type Case = {
   external_reference: string;
   product_id?: string;
   target_date?: string;
+  metadata?: Record<string, string>;
 };
 
 export interface CaseFull extends Case {
@@ -66,39 +68,49 @@ export interface CaseFull extends Case {
 }
 
 export enum CaseStatus {
-  DRAFT = "Draft",
-  NEW = "New",
-  CUSTOMER_INFO = "CustomerInfo",
-  WAITING_PARTNER = "WaitingPartner",
-  ONGOING = "Ongoing",
-  REPORT = "Report",
-  PAYMENT = "Payment",
-  RECEIPT = "Receipt",
-  CLOSED = "Closed",
-  CANCELED = "Canceled",
+  DRAFT = 'Draft',
+  NEW = 'New',
+  CUSTOMER_INFO = 'CustomerInfo',
+  WAITING_PARTNER = 'WaitingPartner',
+  ONGOING = 'Ongoing',
+  REPORT = 'Report',
+  PAYMENT = 'Payment',
+  RECEIPT = 'Receipt',
+  CLOSED = 'Closed',
+  CANCELED = 'Canceled',
 }
 
 export enum CasePriority {
-  LOW = "Low",
-  MEDIUM = "Medium",
-  HIGH = "High",
+  LOW = 'Low',
+  MEDIUM = 'Medium',
+  HIGH = 'High',
 }
 
 export const caseStatusMap: Record<CaseStatus, string> = {
-  Draft: "Rascunho",
-  New: "Novo",
-  CustomerInfo: "Informações cliente",
-  WaitingPartner: "Aguardando técnico",
-  Ongoing: "Em andamento",
-  Report: "Laudo",
-  Payment: "Pagamento",
-  Receipt: "Comprovante",
-  Closed: "Encerrado",
-  Canceled: "Cancelado",
+  Draft: 'Rascunho',
+  New: 'Novo',
+  CustomerInfo: 'Informações cliente',
+  WaitingPartner: 'Aguardando técnico',
+  Ongoing: 'Em andamento',
+  Report: 'Laudo',
+  Payment: 'Pagamento',
+  Receipt: 'Comprovante',
+  Closed: 'Encerrado',
+  Canceled: 'Cancelado',
 };
 
 export const casePriorityMap: Record<CasePriority, string> = {
-  Low: "Baixa",
-  Medium: "Média",
-  High: "Alta",
+  Low: 'Baixa',
+  Medium: 'Média',
+  High: 'Alta',
+};
+
+export enum CaseCategory {
+  D_PLUS = 'd+',
+  FURNITURE = 'furniture',
+}
+
+export const caseCategoryMap: Record<CaseCategory, string> = {
+  [CaseCategory.D_PLUS]: 'D+',
+  [CaseCategory.FURNITURE]: 'Móveis',
 };
