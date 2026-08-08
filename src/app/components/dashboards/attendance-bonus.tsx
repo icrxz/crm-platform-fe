@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { toggleAbsence } from '@/app/actions/toggle_absence';
+import { Tooltip } from '@/app/components/common/tooltip';
+import { useState, useTransition } from 'react';
 
 const AVATAR_COLORS = [
   'bg-blue-500',
@@ -30,22 +32,47 @@ function getInitials(name: string): string {
     .slice(0, 2);
 }
 
+export interface Employee {
+  id: string;
+  name: string;
+  isAbsent: boolean;
+}
+
 export default function AttendanceBonus({
   employees,
 }: {
-  employees: string[];
+  employees: Employee[];
 }) {
-  const [eliminated, setEliminated] = useState<Set<number>>(new Set());
+  const [eliminated, setEliminated] = useState<Set<string>>(
+    () => new Set(employees.filter((e) => e.isAbsent).map((e) => e.id))
+  );
+  const [, startTransition] = useTransition();
 
-  function toggle(index: number) {
+  function toggle(id: string) {
+    const wasEliminated = eliminated.has(id);
     setEliminated((prev) => {
       const next = new Set(prev);
-      if (next.has(index)) {
-        next.delete(index);
+      if (wasEliminated) {
+        next.delete(id);
       } else {
-        next.add(index);
+        next.add(id);
       }
       return next;
+    });
+
+    startTransition(async () => {
+      const result = await toggleAbsence(id, !wasEliminated);
+      if (!result.success) {
+        setEliminated((prev) => {
+          const next = new Set(prev);
+          if (wasEliminated) {
+            next.add(id);
+          } else {
+            next.delete(id);
+          }
+          return next;
+        });
+      }
     });
   }
 
@@ -71,40 +98,46 @@ export default function AttendanceBonus({
         </span>
       </div>
 
-      <div className="grid min-h-0 flex-1 grid-cols-4 content-start gap-3 overflow-hidden">
-        {employees.map((name, idx) => {
-          const isEliminated = eliminated.has(idx);
+      <div className="grid min-h-0 flex-1 grid-cols-4 content-start gap-3 overflow-hidden p-1">
+        {employees.map(({ id, name }, idx) => {
+          const isEliminated = eliminated.has(id);
           return (
-            <button
-              key={name}
-              onClick={() => toggle(idx)}
-              className="group flex flex-col items-center gap-1"
-              title={isEliminated ? `Reativar ${name}` : `Eliminar ${name}`}
+            <Tooltip
+              key={id}
+              content={name}
+              className="w-full"
+              position={idx < 4 ? 'bottom' : 'top'}
             >
-              <div className="relative">
-                <div
-                  className={[
-                    'flex h-12 w-12 items-center justify-center rounded-full text-sm font-bold text-white transition-all',
-                    getAvatarColor(name, idx),
-                    isEliminated
-                      ? 'ring-2 ring-gray-300 grayscale'
-                      : 'ring-2 ring-green-400 ring-offset-1',
-                  ].join(' ')}
-                >
-                  {getInitials(name)}
-                </div>
-                {isEliminated && (
-                  <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/30">
-                    <span className="text-base font-bold text-white">✕</span>
-                  </div>
-                )}
-              </div>
-              <span
-                className={`max-w-full truncate text-[10px] leading-tight ${isEliminated ? 'text-gray-400 line-through' : 'text-gray-600'}`}
+              <button
+                onClick={() => toggle(id)}
+                className="group flex w-full flex-col items-center gap-1"
+                title={isEliminated ? `Reativar ${name}` : `Eliminar ${name}`}
               >
-                {name.split(' ')[0]}
-              </span>
-            </button>
+                <div className="relative">
+                  <div
+                    className={[
+                      'flex h-12 w-12 items-center justify-center rounded-full text-sm font-bold text-white transition-all',
+                      getAvatarColor(name, idx),
+                      isEliminated
+                        ? 'ring-2 ring-gray-300 grayscale'
+                        : 'ring-2 ring-green-400 ring-offset-1',
+                    ].join(' ')}
+                  >
+                    {getInitials(name)}
+                  </div>
+                  {isEliminated && (
+                    <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/30">
+                      <span className="text-base font-bold text-white">✕</span>
+                    </div>
+                  )}
+                </div>
+                <span
+                  className={`max-w-full truncate text-[10px] leading-tight ${isEliminated ? 'text-gray-400 line-through' : 'text-gray-600'}`}
+                >
+                  {name.split(' ')[0]}
+                </span>
+              </button>
+            </Tooltip>
           );
         })}
       </div>

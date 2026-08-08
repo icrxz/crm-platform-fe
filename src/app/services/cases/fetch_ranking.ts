@@ -12,9 +12,9 @@ const IN_PROGRESS_STATUSES = [
   CaseStatus.WAITING_PARTNER,
   CaseStatus.ONGOING,
   CaseStatus.REPORT,
-  CaseStatus.PAYMENT,
-  CaseStatus.RECEIPT,
 ];
+
+const FINALIZED_OPEN_STATUSES = [CaseStatus.PAYMENT, CaseStatus.RECEIPT];
 
 export interface RankingAgent {
   name: string;
@@ -44,6 +44,25 @@ function currentMonthRange(): { start: string; end: string } {
   return { start, end };
 }
 
+function isInCurrentMonth(dateStr: string): boolean {
+  const now = new Date();
+  const date = new Date(dateStr);
+  return (
+    date.getUTCFullYear() === now.getUTCFullYear() &&
+    date.getUTCMonth() === now.getUTCMonth()
+  );
+}
+
+function last3MonthsRange(): { start: string; end: string } {
+  const now = new Date();
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const start = new Date(now.getFullYear(), now.getMonth() - 2, 1);
+  const startStr = `${start.getFullYear()}-${pad(start.getMonth() + 1)}-01`;
+  const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+  const end = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(lastDay)}`;
+  return { start: startStr, end };
+}
+
 async function fetchAllPages<T>(
   buildUrl: (limit: number, offset: number) => string,
   headers: HeadersInit
@@ -56,6 +75,7 @@ async function fetchAllPages<T>(
     const resp = await fetch(buildUrl(limit, offset), {
       method: 'GET',
       headers,
+      next: { revalidate: 60 },
     });
     if (!resp.ok) break;
     const data = (await resp.json()) as SearchResponse<T>;
@@ -79,27 +99,42 @@ export async function fetchRankingData(): Promise<
     };
 
     const base = `${crmCoreEndpoint}/crm/core/api/v1`;
-    const { start, end } = currentMonthRange();
+    const { start: monthStart, end: monthEnd } = currentMonthRange();
+    const { start: last3Start, end: last3End } = last3MonthsRange();
     const inProgressQuery = IN_PROGRESS_STATUSES.map((s) => `status=${s}`).join(
       '&'
     );
+    const finalizedOpenQuery = FINALIZED_OPEN_STATUSES.map(
+      (s) => `status=${s}`
+    ).join('&');
 
-    const [inProgressCases, closedCases] = await Promise.all([
-      fetchAllPages<Case>(
-        (limit, offset) =>
-          `${base}/cases?${inProgressQuery}&limit=${limit}&offset=${offset}`,
-        headers
-      ),
-      fetchAllPages<Case>(
-        (limit, offset) =>
-          `${base}/cases?status=Closed&closed_at_start=${start}&closed_at_end=${end}&limit=${limit}&offset=${offset}`,
-        headers
-      ),
-    ]);
+    const [inProgressCases, finalizedOpenCases, closedCases] =
+      await Promise.all([
+        fetchAllPages<Case>(
+          (limit, offset) =>
+            `${base}/cases?${inProgressQuery}&start_date=${last3Start}&end_date=${last3End}&limit=${limit}&offset=${offset}`,
+          headers
+        ),
+        fetchAllPages<Case>(
+          (limit, offset) =>
+            `${base}/cases?${finalizedOpenQuery}&limit=${limit}&offset=${offset}`,
+          headers
+        ),
+        fetchAllPages<Case>(
+          (limit, offset) =>
+            `${base}/cases?status=Closed&closed_at_start=${monthStart}&closed_at_end=${monthEnd}&limit=${limit}&offset=${offset}`,
+          headers
+        ),
+      ]);
+
+    const finalizedCases = [
+      ...finalizedOpenCases.filter((c) => isInCurrentMonth(c.updated_at)),
+      ...closedCases,
+    ];
 
     const ownerIds = [
       ...new Set(
-        [...inProgressCases, ...closedCases]
+        [...inProgressCases, ...finalizedCases]
           .map((c) => c.owner_id)
           .filter((id): id is string => Boolean(id))
       ),
@@ -110,7 +145,7 @@ export async function fetchRankingData(): Promise<
       const userQuery = ownerIds.map((id) => `user_id=${id}`).join('&');
       const resp = await fetch(
         `${base}/users?${userQuery}&role=${UserRole.OPERATOR}&active=true&limit=${ownerIds.length + 10}`,
-        { method: 'GET', headers }
+        { method: 'GET', headers, next: { revalidate: 60 } }
       );
       if (resp.ok) {
         const data = (await resp.json()) as SearchResponse<User>;
@@ -149,7 +184,7 @@ export async function fetchRankingData(): Promise<
       }
     }
 
-    for (const c of closedCases) {
+    for (const c of finalizedCases) {
       if (!c.owner_id) continue;
       const agent = getOrCreate(c.owner_id);
       if (!agent) continue;

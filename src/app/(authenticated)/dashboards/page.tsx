@@ -1,5 +1,6 @@
 'use server';
 import AttendanceBonusServer from '@/app/components/dashboards/attendance-bonus-server';
+import DailyEntriesChartServer from '@/app/components/dashboards/daily-entries-chart-server';
 import KpiCards from '@/app/components/dashboards/kpi-cards';
 import PerformanceChartServer from '@/app/components/dashboards/performance-chart-server';
 import Ranking from '@/app/components/dashboards/ranking';
@@ -69,6 +70,12 @@ export default async function Page() {
             </Suspense>
           </div>
         </div>
+      </div>
+
+      <div className="min-h-[360px]">
+        <Suspense fallback={<ChartSkeleton />}>
+          <DailyEntriesChartServer />
+        </Suspense>
       </div>
     </main>
   );

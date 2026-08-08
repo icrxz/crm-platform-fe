@@ -40,6 +40,7 @@ const mockUser: User = {
   created_by: '',
   updated_by: '',
   active: true,
+  last_absence_at: null,
 };
 
 beforeEach(() => {

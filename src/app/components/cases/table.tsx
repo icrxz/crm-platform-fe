@@ -1,25 +1,37 @@
 'use client';
 import { CaseListItem } from '@/app/types/case-list-item';
 import { SearchResponse } from '@/app/types/search_response';
+import { UserRole } from '@/app/types/user';
 import { Pagination } from '@heroui/pagination';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 
+import {
+  CaseFilters,
+  getStoredCaseFilters,
+  setStoredCaseFilters,
+} from '../../libs/case-filters-storage';
 import { parseDateTime } from '../../libs/date';
 import { caseStatusMap } from '../../types/case';
+import { defaultCaseStatuses } from '../../utils/case_status';
 import { roboto } from '../../ui/fonts';
-import Modal from '../common/modal';
 import { CreateCaseBatchModal } from './batch-form-modal';
 import CreateCaseModal from './create-case';
+import { FilterModal } from './filter-modal';
 import CasesSearchBar from './search-bar';
 
 interface CasesTableProps {
   cases: SearchResponse<CaseListItem>;
   initialPage?: number;
+  userRole?: UserRole;
 }
 
-export default function CasesTable({ cases, initialPage }: CasesTableProps) {
+export default function CasesTable({
+  cases,
+  initialPage,
+  userRole,
+}: CasesTableProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -33,6 +45,25 @@ export default function CasesTable({ cases, initialPage }: CasesTableProps) {
     params.set('page', value.toString());
 
     router.push(pathname + '?' + params.toString());
+  }
+
+  function handleApplyFilters(filters: CaseFilters) {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('status');
+    params.delete('contractor_id');
+    filters.status?.forEach((value) => params.append('status', value));
+    filters.contractorId?.forEach((value) =>
+      params.append('contractor_id', value)
+    );
+    params.set('page', '1');
+
+    setStoredCaseFilters({
+      ...getStoredCaseFilters(),
+      status: filters.status,
+      contractorId: filters.contractorId,
+    });
+    router.push(pathname + '?' + params.toString());
+    setIsFilterModalOpen(false);
   }
 
   return (
@@ -68,7 +99,7 @@ export default function CasesTable({ cases, initialPage }: CasesTableProps) {
                       Técnico
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium">
-                      Status
+                      Estado
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium">
                       Vencimento
@@ -128,12 +159,18 @@ export default function CasesTable({ cases, initialPage }: CasesTableProps) {
       </div>
 
       {isFilterModalOpen && (
-        <Modal
-          isOpen={isFilterModalOpen}
+        <FilterModal
+          isModalOpen={isFilterModalOpen}
           onClose={() => setIsFilterModalOpen(false)}
-        >
-          <div>Filtro</div>
-        </Modal>
+          onApply={handleApplyFilters}
+          initialStatus={
+            searchParams.has('status')
+              ? searchParams.getAll('status')
+              : defaultCaseStatuses
+          }
+          initialContractorId={searchParams.getAll('contractor_id')}
+          userRole={userRole}
+        />
       )}
 
       {isCreateModalOpen && (

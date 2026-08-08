@@ -4,7 +4,11 @@ import { getCurrentUser } from '@/app/libs/session';
 import { CaseListItem } from '@/app/types/case-list-item';
 import { SearchResponse } from '@/app/types/search_response';
 import { UserRole } from '@/app/types/user';
-import { onlyAdminStatuses } from '@/app/utils/case_status';
+import { mapCasesToListItems } from '@/app/utils/case_list_item';
+import {
+  defaultCaseStatuses,
+  onlyAdminStatuses,
+} from '@/app/utils/case_status';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import CasesTable from '../../components/cases/table';
@@ -13,19 +17,36 @@ import { fetchCasesFull } from '../../services/cases';
 type CasePageParams = {
   searchParams: Promise<{
     sinistro?: string;
+    status?: string | string[];
+    contractor_id?: string | string[];
+    only_mine?: string;
     page?: number;
   }>;
 };
 
+function toQueryParts(key: string, value?: string | string[]): string[] {
+  if (!value) return [];
+  const values = Array.isArray(value) ? value : [value];
+  return values.filter(Boolean).map((v) => `${key}=${v}`);
+}
+
 async function getData(
   sinistro: string,
+  status: string | string[] | undefined,
+  contractorId: string | string[] | undefined,
+  ownerId: string,
   userRole: UserRole | undefined,
   page: number
 ): Promise<SearchResponse<CaseListItem>> {
-  let query = '';
-  if (sinistro) {
-    query = `external_reference=${sinistro}`;
-  }
+  const queryParts: string[] = [
+    ...(sinistro ? [`external_reference=${sinistro}`] : []),
+    ...(status !== undefined
+      ? toQueryParts('status', status)
+      : defaultCaseStatuses.map((s) => `status=${s}`)),
+    ...toQueryParts('contractor_id', contractorId),
+    ...(ownerId ? [`owner_id=${ownerId}`] : []),
+  ];
+  const query = queryParts.join('&');
 
   const { success, unauthorized, data } = await fetchCasesFull(query, page);
   if (!success || !data) {
@@ -43,36 +64,38 @@ async function getData(
     );
   }
 
-  const listItems = filteredCases.map(
-    (c): CaseListItem => ({
-      case_id: c.case_id,
-      external_reference: c.external_reference,
-      status: c.status,
-      due_date: c.due_date,
-      customer_first_name: c.customer?.first_name,
-      customer_last_name: c.customer?.last_name,
-      customer_city: c.customer?.shipping?.city,
-      contractor_company_name: c.contractor?.company_name,
-      partner_first_name: c.partner?.first_name,
-    })
-  );
-
-  return { result: listItems, paging: data.paging };
+  return { result: mapCasesToListItems(filteredCases), paging: data.paging };
 }
 
 export default async function Page({ searchParams }: CasePageParams) {
-  const { sinistro, page } = await searchParams;
+  const { sinistro, status, contractor_id, only_mine, page } =
+    await searchParams;
   const user = await getCurrentUser();
   if (!user) {
     redirect('/login');
   }
 
-  const data = await getData(sinistro || '', user?.role, page || 1);
+  const ownerId = only_mine === 'true' ? user.user_id : '';
+
+  const data = await getData(
+    sinistro || '',
+    status,
+    contractor_id,
+    ownerId,
+    user?.role,
+    page || 1
+  );
 
   return (
     <main>
       <Suspense fallback={<p>carregando casos...</p>}>
-        {data && <CasesTable cases={data} initialPage={page || 1} />}
+        {data && (
+          <CasesTable
+            cases={data}
+            initialPage={page || 1}
+            userRole={user.role}
+          />
+        )}
       </Suspense>
     </main>
   );

@@ -11,6 +11,7 @@ export type User = {
   created_by: string;
   updated_by: string;
   active: boolean;
+  last_absence_at: string | null;
 };
 
 export type UpdateUser = {
@@ -20,12 +21,13 @@ export type UpdateUser = {
   active?: boolean;
   password?: string;
   first_login_completed?: boolean;
+  last_absence_at?: string | null;
   updated_by: string;
 };
 
 export enum UserRole {
-  THAVANNA_ADMIN = "thavanna_admin",
-  ADMIN = "admin",
-  OPERATOR = "operator",
-  ADMIN_OPERATOR = "admin_operator",
+  THAVANNA_ADMIN = 'thavanna_admin',
+  ADMIN = 'admin',
+  OPERATOR = 'operator',
+  ADMIN_OPERATOR = 'admin_operator',
 }

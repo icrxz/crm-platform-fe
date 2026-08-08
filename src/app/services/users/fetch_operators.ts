@@ -22,7 +22,7 @@ export async function fetchOperators(): Promise<ServiceResponse<User[]>> {
     while (true) {
       const resp = await fetch(
         `${base}/users?role=${UserRole.OPERATOR}&active=true&limit=${limit}&offset=${offset}`,
-        { method: 'GET', headers }
+        { method: 'GET', headers, next: { revalidate: 60 } }
       );
       if (!resp.ok) break;
       const data = (await resp.json()) as SearchResponse<User>;
@@ -30,6 +30,14 @@ export async function fetchOperators(): Promise<ServiceResponse<User[]>> {
       if (offset + limit >= data.paging.total) break;
       offset += limit;
     }
+
+    result.sort((a, b) => {
+      const createdDiff =
+        new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+      return createdDiff !== 0
+        ? createdDiff
+        : a.user_id.localeCompare(b.user_id);
+    });
 
     return { success: true, message: '', data: result };
   } catch (ex) {

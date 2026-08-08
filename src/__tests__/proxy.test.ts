@@ -2,7 +2,7 @@
  * @jest-environment node
  */
 import { NextRequest } from 'next/server';
-import { middleware } from '../middleware';
+import { proxy } from '../proxy';
 
 function buildRequest(
   pathname: string,
@@ -37,17 +37,17 @@ const BROWSER_USER_AGENTS = [
   'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0) Mobile/15E148',
 ];
 
-describe('middleware', () => {
+describe('proxy', () => {
   describe('unauthenticated user', () => {
     it('should redirect to /login when accessing a protected route', () => {
       const req = buildRequest('/home');
-      const res = middleware(req);
+      const res = proxy(req);
       expect(res?.headers.get('location')).toContain('/login');
     });
 
     it('should allow access to /login', () => {
       const req = buildRequest('/login');
-      const res = middleware(req);
+      const res = proxy(req);
       expect(res?.headers.get('location')).toBeNull();
     });
   });
@@ -55,13 +55,13 @@ describe('middleware', () => {
   describe('authenticated browser user', () => {
     it('should redirect from /login to /home', () => {
       const req = buildRequest('/login', { jwt: 'token' });
-      const res = middleware(req);
+      const res = proxy(req);
       expect(res?.headers.get('location')).toContain('/home');
     });
 
     it('should not redirect from /home to /tv/dashboards', () => {
       const req = buildRequest('/home', { jwt: 'token' });
-      const res = middleware(req);
+      const res = proxy(req);
       expect(res?.headers.get('location')).toBeNull();
     });
   });
@@ -70,13 +70,13 @@ describe('middleware', () => {
     TV_USER_AGENTS.forEach((ua) => {
       it(`should redirect from /login to /tv/dashboards — ${ua.slice(0, 50)}`, () => {
         const req = buildRequest('/login', { jwt: 'token', userAgent: ua });
-        const res = middleware(req);
+        const res = proxy(req);
         expect(res?.headers.get('location')).toContain('/tv/dashboards');
       });
 
       it(`should redirect from /home to /tv/dashboards — ${ua.slice(0, 50)}`, () => {
         const req = buildRequest('/home', { jwt: 'token', userAgent: ua });
-        const res = middleware(req);
+        const res = proxy(req);
         expect(res?.headers.get('location')).toContain('/tv/dashboards');
       });
     });
@@ -84,7 +84,7 @@ describe('middleware', () => {
     BROWSER_USER_AGENTS.forEach((ua) => {
       it(`should NOT detect as TV — ${ua.slice(0, 50)}`, () => {
         const req = buildRequest('/login', { jwt: 'token', userAgent: ua });
-        const res = middleware(req);
+        const res = proxy(req);
         expect(res?.headers.get('location')).not.toContain('/tv/dashboards');
       });
     });
@@ -93,7 +93,7 @@ describe('middleware', () => {
   describe('TV route protection', () => {
     it('should redirect unauthenticated user from /tv/dashboards to /login', () => {
       const req = buildRequest('/tv/dashboards');
-      const res = middleware(req);
+      const res = proxy(req);
       expect(res?.headers.get('location')).toContain('/login');
     });
   });

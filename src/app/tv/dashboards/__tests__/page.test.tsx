@@ -32,6 +32,11 @@ jest.mock('../../../components/dashboards/performance-chart-server', () => ({
   default: () => <div data-testid="performance-chart" />,
 }));
 
+jest.mock('../../../components/dashboards/daily-entries-chart-server', () => ({
+  __esModule: true,
+  default: () => <div data-testid="daily-entries-chart" />,
+}));
+
 jest.mock('../../../components/dashboards/skeletons', () => ({
   KpiCardsSkeleton: () => <div data-testid="kpi-cards-skeleton" />,
   RankingSkeleton: () => <div data-testid="ranking-skeleton" />,
@@ -111,6 +116,11 @@ describe('TvDashboardPage', () => {
     it('should render the performance chart', async () => {
       render(await Page());
       expect(screen.getByTestId('performance-chart')).toBeInTheDocument();
+    });
+
+    it('should render the daily entries chart', async () => {
+      render(await Page());
+      expect(screen.getByTestId('daily-entries-chart')).toBeInTheDocument();
     });
   });
 });
