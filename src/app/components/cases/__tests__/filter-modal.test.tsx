@@ -2,7 +2,9 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { FilterModal } from '../filter-modal';
 import { fetchContractors } from '../../../services/contractors';
 import { buildContractor, buildSearchResponse } from '../__fixtures__/builders';
-import { CaseStatus } from '../../../types/case';
+import { CaseStatus, caseStatusMap } from '../../../types/case';
+import { UserRole } from '../../../types/user';
+import { onlyAdminStatuses } from '../../../utils/case_status';
 
 jest.mock('../../../services/contractors', () => ({
   fetchContractors: jest.fn(),
@@ -151,6 +153,62 @@ describe('FilterModal', () => {
 
       // Assert
       expect(onApply).toHaveBeenCalledWith({ status: [], contractorId: [] });
+    });
+  });
+
+  describe('status options by role', () => {
+    it('should hide admin-only statuses for operators', () => {
+      render(
+        <FilterModal
+          isModalOpen
+          onClose={jest.fn()}
+          onApply={jest.fn()}
+          initialStatus={[]}
+          initialContractorId={[]}
+          userRole={UserRole.OPERATOR}
+        />
+      );
+
+      onlyAdminStatuses.forEach((status) => {
+        expect(
+          screen.queryByText(caseStatusMap[status])
+        ).not.toBeInTheDocument();
+      });
+    });
+
+    it('should show admin-only statuses for admins', () => {
+      render(
+        <FilterModal
+          isModalOpen
+          onClose={jest.fn()}
+          onApply={jest.fn()}
+          initialStatus={[]}
+          initialContractorId={[]}
+          userRole={UserRole.ADMIN}
+        />
+      );
+
+      onlyAdminStatuses.forEach((status) => {
+        expect(screen.getByText(caseStatusMap[status])).toBeInTheDocument();
+      });
+    });
+
+    it('should hide admin-only statuses when no role is provided', () => {
+      render(
+        <FilterModal
+          isModalOpen
+          onClose={jest.fn()}
+          onApply={jest.fn()}
+          initialStatus={[]}
+          initialContractorId={[]}
+        />
+      );
+
+      onlyAdminStatuses.forEach((status) => {
+        expect(
+          screen.queryByText(caseStatusMap[status])
+        ).not.toBeInTheDocument();
+      });
     });
   });
 });

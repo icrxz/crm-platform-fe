@@ -1,6 +1,7 @@
 'use client';
 import { CaseListItem } from '@/app/types/case-list-item';
 import { SearchResponse } from '@/app/types/search_response';
+import { UserRole } from '@/app/types/user';
 import { Pagination } from '@heroui/pagination';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
@@ -23,9 +24,14 @@ import CasesSearchBar from './search-bar';
 interface CasesTableProps {
   cases: SearchResponse<CaseListItem>;
   initialPage?: number;
+  userRole?: UserRole;
 }
 
-export default function CasesTable({ cases, initialPage }: CasesTableProps) {
+export default function CasesTable({
+  cases,
+  initialPage,
+  userRole,
+}: CasesTableProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -163,6 +169,7 @@ export default function CasesTable({ cases, initialPage }: CasesTableProps) {
               : defaultCaseStatuses
           }
           initialContractorId={searchParams.getAll('contractor_id')}
+          userRole={userRole}
         />
       )}
 
