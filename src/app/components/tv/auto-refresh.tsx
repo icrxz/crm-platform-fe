@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-const REFRESH_MS = Number(process.env.NEXT_PUBLIC_TV_REFRESH_MS ?? 120_000);
+const REFRESH_MS = Number(process.env.NEXT_PUBLIC_TV_REFRESH_MS ?? 300_000);
 
 export default function AutoRefresh() {
   const router = useRouter();

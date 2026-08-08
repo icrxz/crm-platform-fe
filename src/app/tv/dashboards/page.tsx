@@ -1,5 +1,6 @@
 'use server';
 import AttendanceBonusServer from '@/app/components/dashboards/attendance-bonus-server';
+import DailyEntriesChartServer from '@/app/components/dashboards/daily-entries-chart-server';
 import KpiCards from '@/app/components/dashboards/kpi-cards';
 import PerformanceChartServer from '@/app/components/dashboards/performance-chart-server';
 import Ranking from '@/app/components/dashboards/ranking';
@@ -39,35 +40,45 @@ export default async function TvDashboardPage() {
         <AutoRefresh />
       </div>
 
-      <div className="shrink-0">
-        <Suspense
-          fallback={
-            <div className="grid grid-cols-2 gap-3 lg:gap-4">
-              <KpiCardsSkeleton />
-            </div>
-          }
-        >
-          <KpiCards />
-        </Suspense>
-      </div>
-
-      <div className="grid min-h-0 flex-1 auto-rows-fr grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-4 2xl:grid-cols-[3fr_2fr_1.5fr]">
+      <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 lg:grid-cols-[1fr_1.4fr] lg:gap-4">
         <div className="min-h-0 overflow-hidden">
           <Suspense fallback={<RankingSkeleton />}>
             <Ranking />
           </Suspense>
         </div>
 
-        <div className="min-h-0 overflow-hidden">
-          <Suspense fallback={<ChartSkeleton />}>
-            <PerformanceChartServer />
-          </Suspense>
-        </div>
+        <div className="grid min-h-0 grid-rows-[1.3fr_1fr] gap-3 lg:gap-4">
+          <div className="grid min-h-0 grid-cols-1 gap-3 lg:grid-cols-[1.6fr_1fr] lg:grid-rows-[auto_1fr] lg:gap-4">
+            <div className="shrink-0 lg:col-start-1 lg:row-start-1">
+              <Suspense
+                fallback={
+                  <div className="grid grid-cols-2 gap-3 lg:gap-4">
+                    <KpiCardsSkeleton />
+                  </div>
+                }
+              >
+                <KpiCards />
+              </Suspense>
+            </div>
 
-        <div className="min-h-0 overflow-hidden">
-          <Suspense fallback={<AttendanceBonusSkeleton />}>
-            <AttendanceBonusServer />
-          </Suspense>
+            <div className="min-h-0 overflow-hidden lg:col-start-1 lg:row-start-2">
+              <Suspense fallback={<ChartSkeleton />}>
+                <PerformanceChartServer />
+              </Suspense>
+            </div>
+
+            <div className="min-h-0 overflow-hidden lg:col-start-2 lg:row-span-2 lg:row-start-1">
+              <Suspense fallback={<AttendanceBonusSkeleton />}>
+                <AttendanceBonusServer />
+              </Suspense>
+            </div>
+          </div>
+
+          <div className="min-h-0 overflow-hidden">
+            <Suspense fallback={<ChartSkeleton />}>
+              <DailyEntriesChartServer />
+            </Suspense>
+          </div>
         </div>
       </div>
     </main>

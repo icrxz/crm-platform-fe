@@ -9,8 +9,8 @@ function MiniHistoryBars({ history }: { history: MonthlyClosedCount[] }) {
   const max = Math.max(...history.map((d) => d.count), 1);
   return (
     <div className="flex items-end gap-1.5">
-      {history.map((d) => (
-        <div key={d.month} className="flex flex-col items-center gap-1">
+      {history.map((d, idx) => (
+        <div key={idx} className="flex flex-col items-center gap-1">
           <Tooltip content={`${d.month}: ${d.count} casos`}>
             <div
               className="w-6 rounded-t bg-blue-400"
@@ -106,11 +106,9 @@ function SlaOnTimeCard({
 export default async function KpiCards() {
   const kpisResult = await fetchDashboardKpis();
 
-  const history = kpisResult.data?.closedHistory ?? [
-    { month: '-', count: 0 },
-    { month: '-', count: 0 },
-    { month: '-', count: 0 },
-  ];
+  const history =
+    kpisResult.data?.closedHistory ??
+    Array.from({ length: 6 }, () => ({ month: '-', count: 0 }));
   const slaPercentage = kpisResult.data?.slaPercentage ?? 0;
   const slaGoal = kpisResult.data?.slaGoal ?? 90;
 

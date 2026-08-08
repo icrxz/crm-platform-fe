@@ -46,7 +46,11 @@ async function fetchClosedCount(
   headers: HeadersInit
 ): Promise<number> {
   const url = `${crmCoreEndpoint}/crm/core/api/v1/cases?status=Closed&closed_at_start=${start}&closed_at_end=${end}&limit=1&offset=0`;
-  const resp = await fetch(url, { method: 'GET', headers });
+  const resp = await fetch(url, {
+    method: 'GET',
+    headers,
+    next: { revalidate: 60 },
+  });
   if (!resp.ok) return 0;
   const data = (await resp.json()) as SearchResponse<Case>;
   return data.paging.total;
@@ -63,7 +67,11 @@ async function fetchAllClosedInPeriod(
 
   while (true) {
     const url = `${crmCoreEndpoint}/crm/core/api/v1/cases?status=Closed&closed_at_start=${start}&closed_at_end=${end}&limit=${limit}&offset=${offset}`;
-    const resp = await fetch(url, { method: 'GET', headers });
+    const resp = await fetch(url, {
+      method: 'GET',
+      headers,
+      next: { revalidate: 60 },
+    });
     if (!resp.ok) break;
 
     const data = (await resp.json()) as SearchResponse<Case>;
@@ -84,11 +92,9 @@ export async function fetchDashboardKpis(): Promise<
     const headers = await buildHeaders(jwt);
 
     const now = new Date();
-    const months = [
-      getMonthDateRange(now.getFullYear(), now.getMonth() - 2),
-      getMonthDateRange(now.getFullYear(), now.getMonth() - 1),
-      getMonthDateRange(now.getFullYear(), now.getMonth()),
-    ];
+    const months = Array.from({ length: 6 }, (_, i) =>
+      getMonthDateRange(now.getFullYear(), now.getMonth() - (5 - i))
+    );
 
     const currentMonth = months[months.length - 1];
 
