@@ -92,9 +92,9 @@ async function fetchAllPages<T>(
   return result;
 }
 
-export async function fetchPerformanceData(): Promise<
-  ServiceResponse<PerformanceWeek[]>
-> {
+export async function fetchPerformanceData(
+  category?: string
+): Promise<ServiceResponse<PerformanceWeek[]>> {
   try {
     const jwt = (await cookies()).get('jwt')?.value;
     const headers: HeadersInit = {
@@ -106,11 +106,14 @@ export async function fetchPerformanceData(): Promise<
     const buckets = buildWeekBuckets(6);
     const startDate = formatDate(buckets[0].start);
     const endDate = formatDate(buckets[buckets.length - 1].end);
+    const categoryQuery = category
+      ? `&category=${encodeURIComponent(category)}`
+      : '';
 
     const base = `${crmCoreEndpoint}/crm/core/api/v1`;
     const closedCases = await fetchAllPages<Case>(
       (limit, offset) =>
-        `${base}/cases?status=Closed&closed_at_start=${startDate}&closed_at_end=${endDate}&limit=${limit}&offset=${offset}`,
+        `${base}/cases?status=Closed&closed_at_start=${startDate}&closed_at_end=${endDate}&limit=${limit}&offset=${offset}${categoryQuery}`,
       headers
     );
 

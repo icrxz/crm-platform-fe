@@ -1,8 +1,10 @@
 import { fetchDailyEntries } from '@/app/services/cases/fetch_daily_entries';
 import DailyEntriesChartLazy from './daily-entries-chart-lazy';
 
-export default async function DailyEntriesChartServer() {
-  const result = await fetchDailyEntries();
+export default async function DailyEntriesChartServer({
+  category,
+}: { category?: string } = {}) {
+  const result = await fetchDailyEntries(category);
   const data = result.data?.data ?? [];
   const contractors = result.data?.contractors ?? [];
   const month =

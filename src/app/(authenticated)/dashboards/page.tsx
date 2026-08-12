@@ -1,5 +1,6 @@
 'use server';
 import AttendanceBonusServer from '@/app/components/dashboards/attendance-bonus-server';
+import CategoryFilter from '@/app/components/dashboards/category-filter';
 import DailyEntriesChartServer from '@/app/components/dashboards/daily-entries-chart-server';
 import KpiCards from '@/app/components/dashboards/kpi-cards';
 import PerformanceChartServer from '@/app/components/dashboards/performance-chart-server';
@@ -11,12 +12,17 @@ import {
   RankingSkeleton,
 } from '@/app/components/dashboards/skeletons';
 import { getCurrentUser } from '@/app/libs/session';
+import { parseCaseCategory } from '@/app/types/case';
 import { adminRoles } from '@/app/utils/roles';
 import { TrophyIcon } from '@heroicons/react/24/outline';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 
-export default async function Page() {
+type DashboardsPageParams = {
+  searchParams: Promise<{ category?: string }>;
+};
+
+export default async function Page({ searchParams }: DashboardsPageParams) {
   const user = await getCurrentUser();
 
   if (!user) {
@@ -27,18 +33,25 @@ export default async function Page() {
     redirect('/home');
   }
 
+  const { category: categoryParam } = await searchParams;
+  const category = parseCaseCategory(categoryParam);
+
   return (
     <main className="flex flex-col gap-6">
-      <div>
-        <div className="flex items-center gap-2">
-          <TrophyIcon className="h-6 w-6 text-amber-500" />
-          <h1 className="text-xl font-bold text-gray-900 md:text-2xl">
-            Desempenho do Time
-          </h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <div className="flex items-center gap-2">
+            <TrophyIcon className="h-6 w-6 text-amber-500" />
+            <h1 className="text-xl font-bold text-gray-900 md:text-2xl">
+              Desempenho do Time
+            </h1>
+          </div>
+          <p className="mt-0.5 text-sm text-gray-500">
+            Acompanhe rankings, assiduidade e evolução no atendimento
+          </p>
         </div>
-        <p className="mt-0.5 text-sm text-gray-500">
-          Acompanhe rankings, assiduidade e evolução no atendimento
-        </p>
+
+        <CategoryFilter />
       </div>
 
       <Suspense
@@ -48,13 +61,13 @@ export default async function Page() {
           </div>
         }
       >
-        <KpiCards />
+        <KpiCards category={category} />
       </Suspense>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <div className="min-h-[640px]">
           <Suspense fallback={<RankingSkeleton />}>
-            <Ranking />
+            <Ranking category={category} />
           </Suspense>
         </div>
 
@@ -66,7 +79,7 @@ export default async function Page() {
           </div>
           <div className="min-h-[340px]">
             <Suspense fallback={<ChartSkeleton />}>
-              <PerformanceChartServer />
+              <PerformanceChartServer category={category} />
             </Suspense>
           </div>
         </div>
@@ -74,7 +87,7 @@ export default async function Page() {
 
       <div className="min-h-[360px]">
         <Suspense fallback={<ChartSkeleton />}>
-          <DailyEntriesChartServer />
+          <DailyEntriesChartServer category={category} />
         </Suspense>
       </div>
     </main>
