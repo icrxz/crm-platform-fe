@@ -14,7 +14,8 @@ import {
 } from '../../libs/case-filters-storage';
 import { parseDateTime } from '../../libs/date';
 import { caseCategoryMap, caseStatusMap, CaseCategory } from '../../types/case';
-import { defaultCaseStatuses } from '../../utils/case_status';
+import { getDefaultCaseStatuses } from '../../utils/case_status';
+import { adminRoles } from '../../utils/roles';
 import { roboto } from '../../ui/fonts';
 import { CreateCaseBatchModal } from './batch-form-modal';
 import CreateCaseModal from './create-case';
@@ -35,6 +36,8 @@ export default function CasesTable({
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
+
+  const isAdmin = userRole !== undefined && adminRoles.includes(userRole);
 
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -175,7 +178,7 @@ export default function CasesTable({
           initialStatus={
             searchParams.has('status')
               ? searchParams.getAll('status')
-              : defaultCaseStatuses
+              : getDefaultCaseStatuses(isAdmin)
           }
           initialContractorId={searchParams.getAll('contractor_id')}
           userRole={userRole}

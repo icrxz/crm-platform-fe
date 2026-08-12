@@ -19,3 +19,7 @@ export const finalCaseStatuses = [CaseStatus.CLOSED, CaseStatus.CANCELED];
 export const defaultCaseStatuses = Object.values(CaseStatus).filter(
   (status) => !finalCaseStatuses.includes(status)
 );
+
+export function getDefaultCaseStatuses(isAdmin: boolean): CaseStatus[] {
+  return isAdmin ? Object.values(CaseStatus) : defaultCaseStatuses;
+}
