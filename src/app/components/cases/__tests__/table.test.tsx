@@ -7,6 +7,7 @@ import {
 } from '../__fixtures__/builders';
 import { getStoredCaseFilters } from '../../../libs/case-filters-storage';
 import { CaseStatus } from '../../../types/case';
+import { UserRole } from '../../../types/user';
 
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
@@ -48,10 +49,13 @@ jest.mock('@heroui/pagination', () => ({
 jest.mock('../filter-modal', () => ({
   FilterModal: ({
     onApply,
+    initialStatus,
   }: {
     onApply: (filters: { status: string[]; contractorId: string[] }) => void;
+    initialStatus: string[];
   }) => (
     <div data-testid="filter-modal">
+      <span data-testid="initial-status">{initialStatus.join(',')}</span>
       <button
         onClick={() =>
           onApply({ status: ['Ongoing'], contractorId: ['contractor-1'] })
@@ -260,6 +264,38 @@ describe('CasesTable', () => {
 
       // Assert
       expect(screen.queryByTestId('filter-modal')).not.toBeInTheDocument();
+    });
+
+    it('should default the final statuses as selected for admin users', () => {
+      // Arrange
+      setupMocks();
+      const cases = buildSearchResponse([]);
+      render(<CasesTable cases={cases} userRole={UserRole.ADMIN} />);
+
+      // Act
+      fireEvent.click(screen.getByText('Open filters'));
+
+      // Assert
+      const initialStatus =
+        screen.getByTestId('initial-status').textContent?.split(',') || [];
+      expect(initialStatus).toContain(CaseStatus.CLOSED);
+      expect(initialStatus).toContain(CaseStatus.CANCELED);
+    });
+
+    it('should not default the final statuses as selected for operator users', () => {
+      // Arrange
+      setupMocks();
+      const cases = buildSearchResponse([]);
+      render(<CasesTable cases={cases} userRole={UserRole.OPERATOR} />);
+
+      // Act
+      fireEvent.click(screen.getByText('Open filters'));
+
+      // Assert
+      const initialStatus =
+        screen.getByTestId('initial-status').textContent?.split(',') || [];
+      expect(initialStatus).not.toContain(CaseStatus.CLOSED);
+      expect(initialStatus).not.toContain(CaseStatus.CANCELED);
     });
   });
 });

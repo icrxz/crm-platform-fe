@@ -7,7 +7,7 @@ import { SearchResponse } from '@/app/types/search_response';
 import { UserRole } from '@/app/types/user';
 import { mapCasesToListItems } from '@/app/utils/case_list_item';
 import {
-  defaultCaseStatuses,
+  getDefaultCaseStatuses,
   onlyAdminStatuses,
 } from '@/app/utils/case_status';
 import { adminRoles } from '@/app/utils/roles';
@@ -47,7 +47,7 @@ async function getData(
       ? Array.isArray(status)
         ? status
         : [status]
-      : defaultCaseStatuses;
+      : getDefaultCaseStatuses(isAdmin);
 
   const allowedStatuses = isAdmin
     ? requestedStatuses
