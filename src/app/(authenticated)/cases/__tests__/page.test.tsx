@@ -94,9 +94,9 @@ describe('Cases Page', () => {
   });
 
   describe('data fetching', () => {
-    it('should apply the default (non-final) status filter when none is provided', async () => {
+    it('should apply the default (non-final) status filter for operators when none is provided', async () => {
       // Arrange
-      setupAuthenticatedSession();
+      setupAuthenticatedSession({ role: UserRole.OPERATOR });
       setupCases();
       const searchParams = Promise.resolve({});
 
@@ -107,6 +107,22 @@ describe('Cases Page', () => {
       const query = mockFetchCasesFull.mock.calls[0][0] as string;
       expect(query).not.toContain(`status=${CaseStatus.CLOSED}`);
       expect(query).not.toContain(`status=${CaseStatus.CANCELED}`);
+      expect(query).toContain(`status=${CaseStatus.NEW}`);
+    });
+
+    it('should include the final statuses by default for admin users', async () => {
+      // Arrange
+      setupAuthenticatedSession({ role: UserRole.ADMIN });
+      setupCases();
+      const searchParams = Promise.resolve({});
+
+      // Act
+      await Page({ searchParams });
+
+      // Assert
+      const query = mockFetchCasesFull.mock.calls[0][0] as string;
+      expect(query).toContain(`status=${CaseStatus.CLOSED}`);
+      expect(query).toContain(`status=${CaseStatus.CANCELED}`);
       expect(query).toContain(`status=${CaseStatus.NEW}`);
     });
 

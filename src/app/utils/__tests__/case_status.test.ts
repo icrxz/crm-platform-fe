@@ -1,5 +1,9 @@
 import { CaseStatus } from '../../types/case';
-import { defaultCaseStatuses, finalCaseStatuses } from '../case_status';
+import {
+  defaultCaseStatuses,
+  finalCaseStatuses,
+  getDefaultCaseStatuses,
+} from '../case_status';
 
 describe('case_status utils', () => {
   describe('finalCaseStatuses', () => {
@@ -28,6 +32,20 @@ describe('case_status utils', () => {
 
       // Assert
       expect(defaultCaseStatuses.sort()).toEqual(nonFinalStatuses.sort());
+    });
+  });
+
+  describe('getDefaultCaseStatuses', () => {
+    it('should include every status, including the final ones, for admins', () => {
+      // Assert
+      expect(getDefaultCaseStatuses(true).sort()).toEqual(
+        Object.values(CaseStatus).sort()
+      );
+    });
+
+    it('should exclude the final statuses for non-admins', () => {
+      // Assert
+      expect(getDefaultCaseStatuses(false)).toEqual(defaultCaseStatuses);
     });
   });
 });

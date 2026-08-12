@@ -1,4 +1,4 @@
-import { CaseStatus } from "./case";
+import { CaseStatus } from './case';
 
 export type PublishCase = {
   subject: string;
@@ -6,4 +6,5 @@ export type PublishCase = {
   customer_id: string;
   status: CaseStatus;
   updated_by: string;
+  metadata?: Record<string, string>;
 };
