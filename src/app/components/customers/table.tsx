@@ -6,11 +6,11 @@ import { SearchResponse } from '@/app/types/search_response';
 import EyeIcon from '@heroicons/react/24/outline/EyeIcon';
 import PencilIcon from '@heroicons/react/24/outline/PencilIcon';
 import TrashIcon from '@heroicons/react/24/outline/TrashIcon';
-import { Pagination } from '@heroui/pagination';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { roboto } from '../../ui/fonts';
 import Modal from '../common/modal';
+import { Pagination } from '../common/pagination';
 import CreateCustomerModal from './create-customer';
 import { DeleteCustomerModal } from './delete-customer';
 import EditCustomerModal from './edit-customer';
@@ -44,10 +44,6 @@ export default function CustomersTable({
 
   function handleRowClick(costumerID: string) {
     router.push(`/customers/${costumerID}`);
-  }
-
-  function handleChangePage(value: number) {
-    router.push(`?page=${value}`);
   }
 
   return (
@@ -138,19 +134,7 @@ export default function CustomersTable({
         </div>
       </div>
 
-      <div className="mt-2">
-        <Pagination
-          onChange={handleChangePage}
-          siblings={3}
-          showControls
-          total={Math.ceil(
-            Number(
-              (customers?.paging.total || 1) / (customers?.paging.limit || 1)
-            )
-          )}
-          page={Number(initialPage || 1)}
-        />
-      </div>
+      <Pagination paging={customers?.paging} page={initialPage} />
 
       {isFilterModalOpen && (
         <Modal

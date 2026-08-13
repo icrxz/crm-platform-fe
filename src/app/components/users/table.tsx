@@ -4,9 +4,9 @@ import { UserRole } from '@/app/types/user';
 import { SearchResponse } from '@/app/types/search_response';
 import { roleLabels } from '@/app/utils/roles';
 import { EyeIcon } from '@heroicons/react/24/outline';
-import { Pagination } from '@heroui/pagination';
 import { useRouter } from 'next/navigation';
 import { roboto } from '../../ui/fonts';
+import { Pagination } from '../common/pagination';
 
 interface UsersTableProps {
   users?: SearchResponse<UserListItem>;
@@ -21,10 +21,6 @@ export default function UsersTable({
 
   function handleRowClick(userID: string) {
     router.push(`/users/${userID}`);
-  }
-
-  function handleChangePage(value: number) {
-    router.push(`?page=${value}`);
   }
 
   return (
@@ -103,17 +99,7 @@ export default function UsersTable({
         </div>
       </div>
 
-      <div className="mt-2">
-        <Pagination
-          onChange={handleChangePage}
-          siblings={3}
-          showControls
-          total={Math.ceil(
-            Number((users?.paging.total || 1) / (users?.paging.limit || 1))
-          )}
-          page={Number(initialPage || 1)}
-        />
-      </div>
+      <Pagination paging={users?.paging} page={initialPage} />
 
       {/* {isDeleteModalOpen && <DeletePartnerModal isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)} partnerID={partnerID} />} */}
     </div>

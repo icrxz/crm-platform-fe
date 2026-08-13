@@ -3,11 +3,11 @@ import { parseDateTime } from '@/app/libs/date';
 import { parseDocument, parseToCurrency } from '@/app/libs/parser';
 import { SearchResponse } from '@/app/types/search_response';
 import { CheckIcon, PencilIcon } from '@heroicons/react/24/outline';
-import { Pagination } from '@heroui/pagination';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { TransactionItem, TransactionStatus } from '../../types/transaction';
 import { roboto } from '../../ui/fonts';
+import { Pagination } from '../common/pagination';
 import { ConfirmPaymentModal } from './confirm-payment';
 import { EditPaymentModal } from './edit-payment';
 import { Partner } from '@/app/types/partner';
@@ -29,7 +29,6 @@ export default function PaymentTable({
   partners,
 }: PaymentTableProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [isConfirmPaymentModal, setIsConfirmPaymentModal] = useState(false);
   const [isEditPaymentModal, setIsEditPaymentModal] = useState(false);
   const [selectedTransaction, setSelectedTransaction] =
@@ -37,12 +36,6 @@ export default function PaymentTable({
 
   function handleRowClick(paymentID: string) {
     router.push(`/payments/${paymentID}`);
-  }
-
-  function handleChangePage(value: number) {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('page', String(value));
-    router.push(`?${params.toString()}`);
   }
 
   function handleConfirmPayment(transaction: TransactionItem) {
@@ -171,20 +164,7 @@ export default function PaymentTable({
         </div>
       </div>
 
-      <div className="mt-2">
-        <Pagination
-          onChange={handleChangePage}
-          siblings={3}
-          showControls
-          total={Math.ceil(
-            Number(
-              (transactions?.paging.total || 1) /
-                (transactions?.paging.limit || 1)
-            )
-          )}
-          page={Number(initialPage || 1)}
-        />
-      </div>
+      <Pagination paging={transactions?.paging} page={initialPage} />
 
       {isConfirmPaymentModal && (
         <ConfirmPaymentModal

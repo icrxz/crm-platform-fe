@@ -2,7 +2,6 @@
 import { CaseListItem } from '@/app/types/case-list-item';
 import { SearchResponse } from '@/app/types/search_response';
 import { UserRole } from '@/app/types/user';
-import { Pagination } from '@heroui/pagination';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
@@ -17,6 +16,7 @@ import { caseCategoryMap, caseStatusMap, CaseCategory } from '../../types/case';
 import { getDefaultCaseStatuses } from '../../utils/case_status';
 import { adminRoles } from '../../utils/roles';
 import { roboto } from '../../ui/fonts';
+import { Pagination } from '../common/pagination';
 import { CreateCaseBatchModal } from './batch-form-modal';
 import CreateCaseModal from './create-case';
 import { FilterModal } from './filter-modal';
@@ -42,13 +42,6 @@ export default function CasesTable({
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isCreateBatchModalOpen, setIsCreateBatchModalOpen] = useState(false);
-
-  function handleChangePage(value: number) {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('page', value.toString());
-
-    router.push(pathname + '?' + params.toString());
-  }
 
   function handleApplyFilters(filters: CaseFilters) {
     const params = new URLSearchParams(searchParams.toString());
@@ -158,17 +151,7 @@ export default function CasesTable({
         </div>
       </div>
 
-      <div className="mt-2">
-        <Pagination
-          onChange={handleChangePage}
-          siblings={3}
-          showControls
-          total={Math.ceil(
-            Number((cases?.paging.total || 1) / (cases?.paging.limit || 1))
-          )}
-          page={Number(initialPage || 1)}
-        />
-      </div>
+      <Pagination paging={cases?.paging} page={initialPage} />
 
       {isFilterModalOpen && (
         <FilterModal
