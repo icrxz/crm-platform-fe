@@ -12,6 +12,11 @@ jest.mock('../../../libs/session', () => ({
   getCurrentUser: jest.fn(),
 }));
 
+jest.mock('../../../components/dashboards/category-filter', () => ({
+  __esModule: true,
+  default: () => <div data-testid="category-filter" />,
+}));
+
 jest.mock('../../../components/dashboards/kpi-cards', () => ({
   __esModule: true,
   default: () => <div data-testid="kpi-cards" />,
@@ -66,19 +71,23 @@ describe('TvDashboardPage', () => {
   describe('authentication', () => {
     it('should redirect to /login when user is not authenticated', async () => {
       getCurrentUser.mockResolvedValue(null);
-      await expect(Page()).rejects.toThrow('NEXT_REDIRECT:/login');
+      await expect(Page({ searchParams: Promise.resolve({}) })).rejects.toThrow(
+        'NEXT_REDIRECT:/login'
+      );
       expect(redirect).toHaveBeenCalledWith('/login');
     });
 
     it('should redirect to /home when user lacks admin role', async () => {
       getCurrentUser.mockResolvedValue({ id: 'user-2', role: 'operator' });
-      await expect(Page()).rejects.toThrow('NEXT_REDIRECT:/home');
+      await expect(Page({ searchParams: Promise.resolve({}) })).rejects.toThrow(
+        'NEXT_REDIRECT:/home'
+      );
       expect(redirect).toHaveBeenCalledWith('/home');
     });
 
     it('should not redirect when user has admin role', async () => {
       getCurrentUser.mockResolvedValue(mockAdminUser);
-      await Page();
+      await Page({ searchParams: Promise.resolve({}) });
       expect(redirect).not.toHaveBeenCalled();
     });
   });
@@ -89,37 +98,37 @@ describe('TvDashboardPage', () => {
     });
 
     it('should render the page title', async () => {
-      render(await Page());
+      render(await Page({ searchParams: Promise.resolve({}) }));
       expect(screen.getByText('Desempenho do Time')).toBeInTheDocument();
     });
 
     it('should render the auto-refresh component', async () => {
-      render(await Page());
+      render(await Page({ searchParams: Promise.resolve({}) }));
       expect(screen.getByTestId('auto-refresh')).toBeInTheDocument();
     });
 
     it('should render KPI cards', async () => {
-      render(await Page());
+      render(await Page({ searchParams: Promise.resolve({}) }));
       expect(screen.getByTestId('kpi-cards')).toBeInTheDocument();
     });
 
     it('should render the ranking', async () => {
-      render(await Page());
+      render(await Page({ searchParams: Promise.resolve({}) }));
       expect(screen.getByTestId('ranking')).toBeInTheDocument();
     });
 
     it('should render the attendance bonus board', async () => {
-      render(await Page());
+      render(await Page({ searchParams: Promise.resolve({}) }));
       expect(screen.getByTestId('attendance-bonus')).toBeInTheDocument();
     });
 
     it('should render the performance chart', async () => {
-      render(await Page());
+      render(await Page({ searchParams: Promise.resolve({}) }));
       expect(screen.getByTestId('performance-chart')).toBeInTheDocument();
     });
 
     it('should render the daily entries chart', async () => {
-      render(await Page());
+      render(await Page({ searchParams: Promise.resolve({}) }));
       expect(screen.getByTestId('daily-entries-chart')).toBeInTheDocument();
     });
   });

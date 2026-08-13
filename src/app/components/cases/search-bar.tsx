@@ -104,7 +104,7 @@ export default function CasesSearchBar({
           name="only_mine"
           size="sm"
         >
-          Somente meus casos
+          Atribuídos a mim
         </Checkbox>
       </div>
 

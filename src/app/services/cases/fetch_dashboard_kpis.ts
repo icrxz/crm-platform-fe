@@ -43,9 +43,13 @@ async function buildHeaders(jwt: string | undefined): Promise<HeadersInit> {
 async function fetchClosedCount(
   start: string,
   end: string,
-  headers: HeadersInit
+  headers: HeadersInit,
+  category?: string
 ): Promise<number> {
-  const url = `${crmCoreEndpoint}/crm/core/api/v1/cases?status=Closed&closed_at_start=${start}&closed_at_end=${end}&limit=1&offset=0`;
+  const categoryQuery = category
+    ? `&metadata[category]=${encodeURIComponent(category)}`
+    : '';
+  const url = `${crmCoreEndpoint}/crm/core/api/v1/cases?status=Closed&closed_at_start=${start}&closed_at_end=${end}&limit=1&offset=0${categoryQuery}`;
   const resp = await fetch(url, {
     method: 'GET',
     headers,
@@ -59,14 +63,18 @@ async function fetchClosedCount(
 async function fetchAllClosedInPeriod(
   start: string,
   end: string,
-  headers: HeadersInit
+  headers: HeadersInit,
+  category?: string
 ): Promise<Case[]> {
   const limit = 500;
   let offset = 0;
   const result: Case[] = [];
+  const categoryQuery = category
+    ? `&metadata[category]=${encodeURIComponent(category)}`
+    : '';
 
   while (true) {
-    const url = `${crmCoreEndpoint}/crm/core/api/v1/cases?status=Closed&closed_at_start=${start}&closed_at_end=${end}&limit=${limit}&offset=${offset}`;
+    const url = `${crmCoreEndpoint}/crm/core/api/v1/cases?status=Closed&closed_at_start=${start}&closed_at_end=${end}&limit=${limit}&offset=${offset}${categoryQuery}`;
     const resp = await fetch(url, {
       method: 'GET',
       headers,
@@ -84,9 +92,9 @@ async function fetchAllClosedInPeriod(
   return result;
 }
 
-export async function fetchDashboardKpis(): Promise<
-  ServiceResponse<DashboardKpis>
-> {
+export async function fetchDashboardKpis(
+  category?: string
+): Promise<ServiceResponse<DashboardKpis>> {
   try {
     const jwt = (await cookies()).get('jwt')?.value;
     const headers = await buildHeaders(jwt);
@@ -99,8 +107,15 @@ export async function fetchDashboardKpis(): Promise<
     const currentMonth = months[months.length - 1];
 
     const [countResults, currentMonthCases] = await Promise.all([
-      Promise.all(months.map((m) => fetchClosedCount(m.start, m.end, headers))),
-      fetchAllClosedInPeriod(currentMonth.start, currentMonth.end, headers),
+      Promise.all(
+        months.map((m) => fetchClosedCount(m.start, m.end, headers, category))
+      ),
+      fetchAllClosedInPeriod(
+        currentMonth.start,
+        currentMonth.end,
+        headers,
+        category
+      ),
     ]);
 
     const closedHistory: MonthlyClosedCount[] = months.map((m, i) => ({

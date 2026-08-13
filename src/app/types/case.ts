@@ -114,3 +114,9 @@ export const caseCategoryMap: Record<CaseCategory, string> = {
   [CaseCategory.D_PLUS]: 'D+',
   [CaseCategory.FURNITURE]: 'Móveis',
 };
+
+export function parseCaseCategory(value?: string): CaseCategory | undefined {
+  return (Object.values(CaseCategory) as string[]).includes(value ?? '')
+    ? (value as CaseCategory)
+    : undefined;
+}

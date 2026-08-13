@@ -104,7 +104,7 @@ describe('CasesSearchBar', () => {
       renderSearchBar();
 
       // Assert
-      expect(screen.getByText('Somente meus casos')).toBeInTheDocument();
+      expect(screen.getByText('Atribuídos a mim')).toBeInTheDocument();
     });
 
     it('should render the filters button', () => {
@@ -164,7 +164,7 @@ describe('CasesSearchBar', () => {
       renderSearchBar();
 
       // Act
-      fireEvent.click(screen.getByLabelText('Somente meus casos'));
+      fireEvent.click(screen.getByLabelText('Atribuídos a mim'));
 
       // Assert
       expect(mockPush).toHaveBeenCalledWith('/cases?only_mine=true&page=1');
@@ -177,7 +177,7 @@ describe('CasesSearchBar', () => {
       renderSearchBar();
 
       // Act
-      fireEvent.click(screen.getByLabelText('Somente meus casos'));
+      fireEvent.click(screen.getByLabelText('Atribuídos a mim'));
 
       // Assert
       expect(mockPush).toHaveBeenCalledWith('/cases?page=1');
