@@ -98,28 +98,17 @@ export default function CaseForm({
           </div>
 
           <div className="mb-4 columns-1">
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="category"
-              >
-                Categoria
-              </label>
-
-              <select
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                id="category"
-                name="category"
-                required
-              >
-                <option value="">Selecione a categoria</option>
-                {Object.values(CaseCategory).map((category) => (
-                  <option key={category} value={category}>
-                    {caseCategoryMap[category]}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <Dropdown
+              label="Categoria"
+              name="category"
+              placeholder="Selecione a categoria"
+              required
+              options={Object.values(CaseCategory).map((category) => ({
+                id: category,
+                value: category,
+                label: caseCategoryMap[category],
+              }))}
+            />
           </div>
 
           <hr />
