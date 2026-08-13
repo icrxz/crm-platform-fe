@@ -65,19 +65,22 @@ async function fetchAllPages<T>(
   return result;
 }
 
-export async function fetchDailyEntries(): Promise<
-  ServiceResponse<DailyEntriesData>
-> {
+export async function fetchDailyEntries(
+  category?: string
+): Promise<ServiceResponse<DailyEntriesData>> {
   try {
     const jwt = (await cookies()).get('jwt')?.value;
     const headers = await buildHeaders(jwt);
     const base = `${crmCoreEndpoint}/crm/core/api/v1`;
     const { start, end, daysInMonth, month } = currentMonthRange();
+    const categoryQuery = category
+      ? `&metadata[category]=${encodeURIComponent(category)}`
+      : '';
 
     const [cases, contractors] = await Promise.all([
       fetchAllPages<Case>(
         (limit, offset) =>
-          `${base}/cases?start_date=${start}&end_date=${end}&limit=${limit}&offset=${offset}`,
+          `${base}/cases?start_date=${start}&end_date=${end}&limit=${limit}&offset=${offset}${categoryQuery}`,
         headers
       ),
       fetchAllPages<Contractor>(

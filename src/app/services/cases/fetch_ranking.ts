@@ -87,9 +87,9 @@ async function fetchAllPages<T>(
   return result;
 }
 
-export async function fetchRankingData(): Promise<
-  ServiceResponse<RankingAgent[]>
-> {
+export async function fetchRankingData(
+  category?: string
+): Promise<ServiceResponse<RankingAgent[]>> {
   try {
     const jwt = (await cookies()).get('jwt')?.value;
     const headers: HeadersInit = {
@@ -107,22 +107,25 @@ export async function fetchRankingData(): Promise<
     const finalizedOpenQuery = FINALIZED_OPEN_STATUSES.map(
       (s) => `status=${s}`
     ).join('&');
+    const categoryQuery = category
+      ? `&metadata[category]=${encodeURIComponent(category)}`
+      : '';
 
     const [inProgressCases, finalizedOpenCases, closedCases] =
       await Promise.all([
         fetchAllPages<Case>(
           (limit, offset) =>
-            `${base}/cases?${inProgressQuery}&start_date=${last3Start}&end_date=${last3End}&limit=${limit}&offset=${offset}`,
+            `${base}/cases?${inProgressQuery}&start_date=${last3Start}&end_date=${last3End}&limit=${limit}&offset=${offset}${categoryQuery}`,
           headers
         ),
         fetchAllPages<Case>(
           (limit, offset) =>
-            `${base}/cases?${finalizedOpenQuery}&limit=${limit}&offset=${offset}`,
+            `${base}/cases?${finalizedOpenQuery}&limit=${limit}&offset=${offset}${categoryQuery}`,
           headers
         ),
         fetchAllPages<Case>(
           (limit, offset) =>
-            `${base}/cases?status=Closed&closed_at_start=${monthStart}&closed_at_end=${monthEnd}&limit=${limit}&offset=${offset}`,
+            `${base}/cases?status=Closed&closed_at_start=${monthStart}&closed_at_end=${monthEnd}&limit=${limit}&offset=${offset}${categoryQuery}`,
           headers
         ),
       ]);

@@ -103,8 +103,10 @@ function SlaOnTimeCard({
   );
 }
 
-export default async function KpiCards() {
-  const kpisResult = await fetchDashboardKpis();
+export default async function KpiCards({
+  category,
+}: { category?: string } = {}) {
+  const kpisResult = await fetchDashboardKpis(category);
 
   const history =
     kpisResult.data?.closedHistory ??

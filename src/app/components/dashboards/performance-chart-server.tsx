@@ -10,8 +10,10 @@ const FALLBACK_DATA: PerformanceWeek[] = Array.from({ length: 6 }, (_, i) => ({
   volume: 0,
 }));
 
-export default async function PerformanceChartServer() {
-  const result = await fetchPerformanceData();
+export default async function PerformanceChartServer({
+  category,
+}: { category?: string } = {}) {
+  const result = await fetchPerformanceData(category);
   const data = result.data ?? FALLBACK_DATA;
   return <PerformanceChartLazy data={data} />;
 }

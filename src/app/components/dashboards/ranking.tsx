@@ -121,8 +121,10 @@ function FinalizedBar({
   );
 }
 
-export default async function Ranking() {
-  const result = await fetchRankingData();
+export default async function Ranking({
+  category,
+}: { category?: string } = {}) {
+  const result = await fetchRankingData(category);
   const agents = result.data ?? [];
 
   return (
