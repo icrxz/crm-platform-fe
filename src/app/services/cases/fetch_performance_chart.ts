@@ -107,7 +107,7 @@ export async function fetchPerformanceData(
     const startDate = formatDate(buckets[0].start);
     const endDate = formatDate(buckets[buckets.length - 1].end);
     const categoryQuery = category
-      ? `&category=${encodeURIComponent(category)}`
+      ? `&metadata[category]=${encodeURIComponent(category)}`
       : '';
 
     const base = `${crmCoreEndpoint}/crm/core/api/v1`;

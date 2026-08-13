@@ -47,7 +47,7 @@ async function fetchClosedCount(
   category?: string
 ): Promise<number> {
   const categoryQuery = category
-    ? `&category=${encodeURIComponent(category)}`
+    ? `&metadata[category]=${encodeURIComponent(category)}`
     : '';
   const url = `${crmCoreEndpoint}/crm/core/api/v1/cases?status=Closed&closed_at_start=${start}&closed_at_end=${end}&limit=1&offset=0${categoryQuery}`;
   const resp = await fetch(url, {
@@ -70,7 +70,7 @@ async function fetchAllClosedInPeriod(
   let offset = 0;
   const result: Case[] = [];
   const categoryQuery = category
-    ? `&category=${encodeURIComponent(category)}`
+    ? `&metadata[category]=${encodeURIComponent(category)}`
     : '';
 
   while (true) {

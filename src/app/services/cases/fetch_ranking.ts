@@ -108,7 +108,7 @@ export async function fetchRankingData(
       (s) => `status=${s}`
     ).join('&');
     const categoryQuery = category
-      ? `&category=${encodeURIComponent(category)}`
+      ? `&metadata[category]=${encodeURIComponent(category)}`
       : '';
 
     const [inProgressCases, finalizedOpenCases, closedCases] =

@@ -74,7 +74,7 @@ export async function fetchDailyEntries(
     const base = `${crmCoreEndpoint}/crm/core/api/v1`;
     const { start, end, daysInMonth, month } = currentMonthRange();
     const categoryQuery = category
-      ? `&category=${encodeURIComponent(category)}`
+      ? `&metadata[category]=${encodeURIComponent(category)}`
       : '';
 
     const [cases, contractors] = await Promise.all([
