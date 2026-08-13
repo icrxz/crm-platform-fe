@@ -98,6 +98,12 @@ describe('Ranking', () => {
       ).toBeInTheDocument();
     });
 
+    it('should render each agent full name as a tooltip on the displayed first name', async () => {
+      render(await Ranking());
+      expect(screen.getByText('João Silva')).toBeInTheDocument();
+      expect(screen.getByText('Maria Oliveira')).toBeInTheDocument();
+    });
+
     it('should render an empty state when service returns no agents', async () => {
       fetchRankingData.mockResolvedValue({
         success: true,
