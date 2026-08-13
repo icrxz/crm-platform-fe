@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import PaymentTable from '../table';
 import {
   buildPartner,
@@ -9,6 +9,7 @@ import {
 
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
+  usePathname: jest.fn(),
   useSearchParams: jest.fn(),
 }));
 
@@ -53,6 +54,7 @@ function setupMocks(searchParamsEntries: Record<string, string> = {}) {
     get: (key: string) => params.get(key),
   });
   (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
+  (usePathname as jest.Mock).mockReturnValue('/payments');
 }
 
 beforeEach(() => {
@@ -144,7 +146,7 @@ describe('PaymentTable', () => {
 
       // Assert
       expect(mockPush).toHaveBeenCalledWith(
-        '?sinistro=SIN-001&tecnico=partner-123&page=2'
+        '/payments?sinistro=SIN-001&tecnico=partner-123&page=2'
       );
     });
 
@@ -158,7 +160,7 @@ describe('PaymentTable', () => {
       fireEvent.click(screen.getByText('Go to page 3'));
 
       // Assert
-      expect(mockPush).toHaveBeenCalledWith('?page=3');
+      expect(mockPush).toHaveBeenCalledWith('/payments?page=3');
     });
 
     it('should overwrite the existing page param when changing page', () => {
@@ -171,7 +173,9 @@ describe('PaymentTable', () => {
       fireEvent.click(screen.getByText('Go to page 2'));
 
       // Assert
-      expect(mockPush).toHaveBeenCalledWith('?page=2&sinistro=SIN-001');
+      expect(mockPush).toHaveBeenCalledWith(
+        '/payments?page=2&sinistro=SIN-001'
+      );
     });
   });
 });
