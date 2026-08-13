@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { PartnerListItem } from '@/app/types/partner-list-item';
 import { SearchResponse } from '@/app/types/search_response';
 import { roboto } from '../../ui/fonts';
+import { IconButton } from '../common/icon-button';
 import CreatePartnerModal from './create-partner';
 import { DeletePartnerModal } from './delete-partner';
 import EditPartnerModal from './edit-partner';
@@ -117,31 +118,32 @@ export default function PartnersTable({
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                         <div className="flex gap-2">
-                          <button
-                            className="text-green-500 hover:text-green-700"
+                          <IconButton
+                            color="success"
+                            icon={<EyeIcon className="h-5 w-5 md:h-6 md:w-6" />}
                             onClick={() => handleRowClick(partner.partner_id)}
-                          >
-                            <EyeIcon className="h-5 w-5" />
-                          </button>
+                          />
 
-                          <button
-                            className="text-blue-600 hover:text-blue-900"
+                          <IconButton
+                            color="info"
+                            icon={
+                              <PencilIcon className="h-5 w-5 md:h-6 md:w-6" />
+                            }
                             onClick={() =>
                               handlePartnerEdit(partner.partner_id)
                             }
-                          >
-                            <PencilIcon className="w-5 md:w-6" />
-                          </button>
+                          />
 
                           {partner.active && (
-                            <button
-                              className="text-red-600 hover:text-red-900"
+                            <IconButton
+                              color="error"
+                              icon={
+                                <TrashIcon className="h-5 w-5 md:h-6 md:w-6" />
+                              }
                               onClick={() =>
                                 handlePartnerDelete(partner.partner_id)
                               }
-                            >
-                              <TrashIcon className="w-5 md:w-6" />
-                            </button>
+                            />
                           )}
                         </div>
                       </td>

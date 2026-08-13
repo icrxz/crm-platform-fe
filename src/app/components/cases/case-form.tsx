@@ -14,6 +14,8 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Button } from '../common/button';
+import { Dropdown } from '../common/dropdown/dropdown';
+import { TextInput } from '../common/text-input/text-input';
 
 interface CaseFormProps {
   case?: Case;
@@ -75,114 +77,56 @@ export default function CaseForm({
 
         <div className="w-full">
           <div className="mb-4 columns-2">
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="claim"
-              >
-                Sinistro
-              </label>
+            <TextInput
+              label="Sinistro"
+              name="claim"
+              placeholder="Digite o sinistro"
+              required
+            />
 
-              <input
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                id="first_name"
-                type="text"
-                name="claim"
-                placeholder="Digite o sinistro"
-                required
-              />
-            </div>
-
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="contractor"
-              >
-                Seguradora
-              </label>
-
-              <select
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                id="contractor"
-                name="contractor"
-                required
-              >
-                <option value="">Selecione a seguradora</option>
-                {contractors.map((contractor) => (
-                  <option
-                    key={contractor.contractor_id}
-                    value={contractor.contractor_id}
-                  >
-                    {contractor.company_name}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <Dropdown
+              label="Seguradora"
+              name="contractor"
+              placeholder="Selecione a seguradora"
+              required
+              options={contractors.map((contractor) => ({
+                id: contractor.contractor_id,
+                value: contractor.contractor_id,
+                label: contractor.company_name,
+              }))}
+            />
           </div>
 
           <div className="mb-4 columns-1">
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="category"
-              >
-                Categoria
-              </label>
-
-              <select
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                id="category"
-                name="category"
-                required
-              >
-                <option value="">Selecione a categoria</option>
-                {Object.values(CaseCategory).map((category) => (
-                  <option key={category} value={category}>
-                    {caseCategoryMap[category]}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <Dropdown
+              label="Categoria"
+              name="category"
+              placeholder="Selecione a categoria"
+              required
+              options={Object.values(CaseCategory).map((category) => ({
+                id: category,
+                value: category,
+                label: caseCategoryMap[category],
+              }))}
+            />
           </div>
 
           <hr />
 
           <div className="my-4 columns-3">
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="brand"
-              >
-                Marca
-              </label>
+            <TextInput
+              label="Marca"
+              name="brand"
+              placeholder="Digite a marca"
+              required
+            />
 
-              <input
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                id="brand"
-                type="text"
-                name="brand"
-                placeholder="Digite a marca"
-                required
-              />
-            </div>
-
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="model"
-              >
-                Modelo
-              </label>
-
-              <input
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                id="model"
-                type="text"
-                name="model"
-                placeholder="Digite o modelo"
-                required
-              />
-            </div>
+            <TextInput
+              label="Modelo"
+              name="model"
+              placeholder="Digite o modelo"
+              required
+            />
 
             <div>
               <label
@@ -250,14 +194,16 @@ export default function CaseForm({
                   onChange={(e) => setUserDocument(e.target.value)}
                 />
 
-                <button
+                <Button
                   type="button"
+                  size="md"
+                  color="info"
+                  className="ml-2"
                   disabled={pending || searchingUser}
-                  className="ml-2 rounded-md bg-blue-500 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   onClick={handleSearchUser}
                 >
                   Buscar
-                </button>
+                </Button>
                 <input
                   type="hidden"
                   name="customer_id"
@@ -268,93 +214,47 @@ export default function CaseForm({
           </div>
 
           <div className="my-4 columns-2">
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="first_name"
-              >
-                Nome
-              </label>
+            <TextInput
+              label="Nome"
+              name="first_name"
+              placeholder="Digite o nome do cliente"
+              required
+              disabled={!hasSearchedCustomer || !!customer}
+              defaultValue={customer?.first_name || ''}
+            />
 
-              <input
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500 disabled:cursor-not-allowed disabled:bg-gray-100"
-                id="first_name"
-                type="text"
-                name="first_name"
-                placeholder="Digite o nome do cliente"
-                required
-                disabled={!hasSearchedCustomer || !!customer}
-                defaultValue={customer?.first_name || ''}
-              />
-            </div>
-
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="last_name"
-              >
-                Sobrenome
-              </label>
-
-              <input
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500 disabled:cursor-not-allowed disabled:bg-gray-100"
-                id="last_name"
-                type="text"
-                name="last_name"
-                placeholder="Digite o sobrenome do cliente"
-                required
-                disabled={!hasSearchedCustomer || !!customer}
-                defaultValue={customer?.last_name || ''}
-              />
-            </div>
+            <TextInput
+              label="Sobrenome"
+              name="last_name"
+              placeholder="Digite o sobrenome do cliente"
+              required
+              disabled={!hasSearchedCustomer || !!customer}
+              defaultValue={customer?.last_name || ''}
+            />
           </div>
 
           <div className="my-4 columns-2">
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="first_name"
-              >
-                Cidade
-              </label>
+            <TextInput
+              label="Cidade"
+              name="city"
+              placeholder="Digite a cidade"
+              required
+              disabled={!hasSearchedCustomer || !!customer}
+              defaultValue={customer?.shipping.city || ''}
+            />
 
-              <input
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500 disabled:cursor-not-allowed disabled:bg-gray-100"
-                id="city"
-                type="text"
-                name="city"
-                placeholder="Digite a cidade"
-                required
-                disabled={!hasSearchedCustomer || !!customer}
-                defaultValue={customer?.shipping.city || ''}
-              />
-            </div>
-
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="state"
-              >
-                Estado
-              </label>
-
-              <div className="relative">
-                <select
-                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                  id="state"
-                  name="state"
-                  value={customer?.shipping.state}
-                  required
-                  disabled={!hasSearchedCustomer || !!customer}
-                >
-                  {brazilStates.map((state) => (
-                    <option key={`state-${state}`} value={state}>
-                      {state}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
+            <Dropdown
+              label="Estado"
+              name="state"
+              required
+              disabled={!hasSearchedCustomer || !!customer}
+              defaultValue={customer?.shipping.state || ''}
+              options={brazilStates.map((state) => ({
+                id: state,
+                value: state,
+                label: state,
+              }))}
+            />
           </div>
         </div>
 

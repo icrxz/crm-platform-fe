@@ -10,6 +10,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Button } from '../common/button';
+import { Dropdown } from '../common/dropdown/dropdown';
 import { TextInput } from '../common/text-input/text-input';
 
 interface PartnerFormProps {
@@ -61,47 +62,21 @@ export default function PartnerForm({
 
         <div className="w-full">
           <div className="mb-4 columns-3">
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="first_name"
-              >
-                Nome
-              </label>
+            <TextInput
+              label="Nome"
+              name="first_name"
+              placeholder="Digite o nome"
+              defaultValue={partner?.first_name || ''}
+              required
+            />
 
-              <div className="relative">
-                <input
-                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                  id="first_name"
-                  type="text"
-                  name="first_name"
-                  placeholder="Digite o nome"
-                  defaultValue={partner?.first_name || ''}
-                  required
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="last_name"
-              >
-                Sobrenome
-              </label>
-
-              <div className="relative">
-                <input
-                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                  id="last_name"
-                  type="text"
-                  name="last_name"
-                  placeholder="Digite o sobrenome"
-                  defaultValue={partner?.last_name || ''}
-                  required
-                />
-              </div>
-            </div>
+            <TextInput
+              label="Sobrenome"
+              name="last_name"
+              placeholder="Digite o sobrenome"
+              defaultValue={partner?.last_name || ''}
+              required
+            />
 
             <div>
               <label
@@ -127,75 +102,36 @@ export default function PartnerForm({
           </div>
 
           <div className="mb-4 columns-1">
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="partner_type"
-              >
-                Tipo
-              </label>
-
-              <div className="relative">
-                <select
-                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                  id="partner_type"
-                  name="partner_type"
-                  defaultValue={partner?.partner_type || ''}
-                >
-                  <option value="Montador">Montador</option>
-                  <option value="Tapeceiro">Tapeceiro</option>
-                </select>
-              </div>
-            </div>
+            <Dropdown
+              label="Tipo"
+              name="partner_type"
+              options={[
+                { id: 'Montador', value: 'Montador', label: 'Montador' },
+                { id: 'Tapeceiro', value: 'Tapeceiro', label: 'Tapeceiro' },
+              ]}
+              defaultValue={partner?.partner_type || ''}
+            />
           </div>
 
           <div className="mb-4 columns-2">
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="payment_key"
-              >
-                Chave PIX
-              </label>
+            <TextInput
+              label="Chave PIX"
+              name="payment_key"
+              placeholder="Digite a chave pix"
+              defaultValue={partner?.payment_key || ''}
+              required
+            />
 
-              <div className="relative">
-                <input
-                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                  id="payment_key"
-                  type="text"
-                  name="payment_key"
-                  placeholder="Digite a chave pix"
-                  defaultValue={partner?.payment_key || ''}
-                  required
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="payment_key_option"
-              >
-                Tipo da chave
-              </label>
-
-              <div className="relative">
-                <select
-                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                  id="payment_key_option"
-                  name="payment_key_option"
-                  defaultValue={partner?.payment_key_option || ''}
-                >
-                  {Object.values(PaymentOptions).map((pOption) => {
-                    return (
-                      <option key={pOption} value={pOption}>
-                        {paymentOptionMap[pOption]}
-                      </option>
-                    );
-                  })}
-                </select>
-              </div>
-            </div>
+            <Dropdown
+              label="Tipo da chave"
+              name="payment_key_option"
+              options={Object.values(PaymentOptions).map((pOption) => ({
+                id: pOption,
+                value: pOption,
+                label: paymentOptionMap[pOption],
+              }))}
+              defaultValue={partner?.payment_key_option || ''}
+            />
           </div>
 
           <div className="my-4 flex w-full flex-row items-center">
@@ -227,49 +163,23 @@ export default function PartnerForm({
           <hr />
 
           <div className="my-4 columns-2">
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="city"
-              >
-                Cidade
-              </label>
+            <TextInput
+              label="Cidade"
+              name="city"
+              defaultValue={partner?.shipping?.city || ''}
+              placeholder="Digite a cidade"
+            />
 
-              <div className="relative">
-                <input
-                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                  id="city"
-                  type="text"
-                  name="city"
-                  defaultValue={partner?.shipping?.city || ''}
-                  placeholder="Digite a cidade"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="state"
-              >
-                Estado
-              </label>
-
-              <div className="relative">
-                <select
-                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                  id="state"
-                  name="state"
-                  defaultValue={partner?.shipping?.state || ''}
-                >
-                  {brazilStates.map((state) => (
-                    <option key={`state-${state}`} value={state}>
-                      {state}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
+            <Dropdown
+              label="Estado"
+              name="state"
+              options={brazilStates.map((state) => ({
+                id: state,
+                value: state,
+                label: state,
+              }))}
+              defaultValue={partner?.shipping?.state || ''}
+            />
           </div>
 
           <hr />
@@ -296,25 +206,13 @@ export default function PartnerForm({
               </div>
             </div>
 
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="email"
-              >
-                Email
-              </label>
-
-              <div className="relative">
-                <input
-                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                  id="email"
-                  type="email"
-                  name="email"
-                  placeholder="Digite o email"
-                  defaultValue={partner?.personal_contact?.email || ''}
-                />
-              </div>
-            </div>
+            <TextInput
+              label="Email"
+              name="email"
+              type="email"
+              placeholder="Digite o email"
+              defaultValue={partner?.personal_contact?.email || ''}
+            />
           </div>
 
           <div className="mt-6 flex space-x-8">
