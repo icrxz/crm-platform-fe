@@ -88,16 +88,17 @@ export default function CasesSearchBar({
   const hasActiveFilters = hasFilterParams;
 
   return (
-    <div className="flex w-full flex-wrap items-start justify-between gap-3 rounded-lg bg-gray-100 p-4 shadow-md">
-      <div className="flex w-full max-w-md flex-col gap-2">
+    <div className="flex w-full flex-wrap items-center justify-between gap-3 rounded-lg bg-gray-100 p-4 shadow-md">
+      <div className="w-full max-w-md">
         <Search
           placeholder="Buscar casos..."
           initialValue={searchParams.get('sinistro') || ''}
           handleSearch={handleSearch}
         />
+      </div>
 
+      <div className="flex flex-wrap items-center gap-4">
         <Checkbox
-          className="pl-4"
           isSelected={searchParams.get('only_mine') === 'true'}
           onValueChange={handleOnlyMineChange}
           id="only_mine"
@@ -106,9 +107,7 @@ export default function CasesSearchBar({
         >
           Atribuídos a mim
         </Checkbox>
-      </div>
 
-      <div className="flex items-center gap-2">
         <div className="flex h-10 items-stretch overflow-hidden rounded-lg">
           <Button
             className="rounded-r-none bg-gray-500 p-2 text-white hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
