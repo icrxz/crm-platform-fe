@@ -181,9 +181,14 @@ export default async function Ranking({
                     {getInitials(agent.name)}
                   </div>
                   <div className="hidden min-w-[72px] sm:block">
-                    <p className="text-xs font-semibold leading-tight text-gray-800">
-                      {agent.name.split(' ')[0]}
-                    </p>
+                    <Tooltip
+                      content={agent.name}
+                      position={idx === 0 ? 'bottom' : 'top'}
+                    >
+                      <p className="truncate text-xs font-semibold leading-tight text-gray-800">
+                        {agent.name.split(' ')[0]}
+                      </p>
+                    </Tooltip>
                     <p className="text-[10px] text-gray-500">
                       {totalFinalized} fin.
                     </p>
