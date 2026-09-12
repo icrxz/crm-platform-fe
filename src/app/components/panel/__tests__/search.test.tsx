@@ -141,6 +141,28 @@ describe('ControlPanelSearch', () => {
       expect(screen.getByText('Móveis')).toBeInTheDocument();
     });
 
+    it('should render the Seguradora dropdown by default', () => {
+      // Arrange
+      setupMocks();
+
+      // Act
+      render(<ControlPanelSearch contractors={[]} partners={[]} />);
+
+      // Assert
+      expect(screen.getByLabelText('Seguradora')).toBeInTheDocument();
+    });
+
+    it('should not render the Seguradora dropdown when hideSeguradoraFilter is set', () => {
+      // Arrange
+      setupMocks();
+
+      // Act
+      render(<ControlPanelSearch hideSeguradoraFilter />);
+
+      // Assert
+      expect(screen.queryByLabelText('Seguradora')).not.toBeInTheDocument();
+    });
+
     it('should render the Técnico autocomplete', () => {
       // Arrange
       setupMocks();
@@ -345,6 +367,20 @@ describe('ControlPanelSearch', () => {
       // Assert
       expect(mockPush).toHaveBeenCalledWith(
         expect.stringContaining('seguradora=contractor-001')
+      );
+    });
+
+    it('should not include seguradora in URL when hideSeguradoraFilter is set', () => {
+      // Arrange
+      setupMocks({ seguradora: 'contractor-001' });
+      render(<ControlPanelSearch hideSeguradoraFilter />);
+
+      // Act
+      fireEvent.click(screen.getByText('Filtrar'));
+
+      // Assert
+      expect(mockPush).not.toHaveBeenCalledWith(
+        expect.stringContaining('seguradora=')
       );
     });
 

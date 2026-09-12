@@ -2,14 +2,14 @@
 
 import PartnerDetails from '@/app/components/partners/details';
 import ControlPanelSearch from '@/app/components/panel/search';
-import ControlPanelTable from '@/app/components/panel/table';
+import PartnerBookTable from '@/app/components/partners/book-table';
 import { unauthorizedRedirect } from '@/app/libs/auth-redirect';
 import { getCurrentUser } from '@/app/libs/session';
+import { toPartnerBookCaseItem } from '@/app/libs/partner-book';
 import { fetchCasesFull } from '@/app/services/cases';
-import { fetchContractors } from '@/app/services/contractors';
 import { getPartnerByID } from '@/app/services/partners';
 import { CaseFull, CaseStatus } from '@/app/types/case';
-import { Contractor } from '@/app/types/contractor';
+import { PartnerBookCaseItem } from '@/app/types/partner-book-item';
 import { SearchResponse } from '@/app/types/search_response';
 import { monthsNumeric } from '@/app/types/month';
 import { adminRoles } from '@/app/utils/roles';
@@ -20,7 +20,6 @@ interface PartnerCaseFilters {
   mes?: string;
   ano?: string;
   estado?: string;
-  seguradora?: string;
 }
 
 type PartnerPageParams = {
@@ -30,10 +29,6 @@ type PartnerPageParams = {
 
 function prepareQuery(partnerID: string, filters?: PartnerCaseFilters): string {
   let query = `partner_id=${partnerID}&`;
-
-  if (filters?.seguradora) {
-    query += `contractor_id=${filters.seguradora}&`;
-  }
 
   if (filters?.estado) {
     query += `state=${filters.estado}&`;
@@ -70,14 +65,10 @@ function prepareQuery(partnerID: string, filters?: PartnerCaseFilters): string {
   return query;
 }
 
-interface PartnerCasesResult extends SearchResponse<CaseFull> {
-  contractors?: Contractor[];
-}
-
 async function getCases(
   partnerID: string,
   filters: PartnerCaseFilters
-): Promise<PartnerCasesResult> {
+): Promise<SearchResponse<PartnerBookCaseItem>> {
   const query = prepareQuery(partnerID, filters);
 
   const { success, unauthorized, data } = await fetchCasesFull(query, 1, 10000);
@@ -90,8 +81,6 @@ async function getCases(
       paging: { limit: 10000, offset: 10000, total: 0 },
     };
   }
-
-  const contractors = await fetchContractors('', 1, 10000);
 
   const sortedByDate = [...data.result].sort(
     (a, b) =>
@@ -106,9 +95,8 @@ async function getCases(
   }
 
   return {
-    result: [...groupsByDocument.values()].flat(),
+    result: [...groupsByDocument.values()].flat().map(toPartnerBookCaseItem),
     paging: data.paging,
-    contractors: contractors.data?.result,
   };
 }
 
@@ -140,10 +128,8 @@ export default async function Page({
       {isAdmin && casesData && (
         <Suspense>
           <div className="mt-8">
-            {casesData.contractors && (
-              <ControlPanelSearch contractors={casesData.contractors} />
-            )}
-            <ControlPanelTable cases={casesData} hideTecnicoColumn />
+            <ControlPanelSearch hideSeguradoraFilter />
+            <PartnerBookTable cases={casesData} />
           </div>
         </Suspense>
       )}

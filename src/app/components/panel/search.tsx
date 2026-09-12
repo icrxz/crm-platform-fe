@@ -15,8 +15,9 @@ import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import type { Key } from '@react-types/shared';
 
 interface ControlPanelSearchProps {
-  contractors: PanelContractorOption[];
+  contractors?: PanelContractorOption[];
   partners?: PanelPartnerOption[];
+  hideSeguradoraFilter?: boolean;
 }
 
 const currentYear = new Date().getFullYear();
@@ -25,6 +26,7 @@ const years = Array.from({ length: 5 }, (_, i) => String(currentYear - i));
 export default function ControlPanelSearch({
   contractors,
   partners,
+  hideSeguradoraFilter,
 }: ControlPanelSearchProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -59,9 +61,13 @@ export default function ControlPanelSearch({
 
     partnerId ? params.set('tecnico', partnerId) : params.delete('tecnico');
     state ? params.set('estado', state) : params.delete('estado');
-    contractorId
-      ? params.set('seguradora', contractorId)
-      : params.delete('seguradora');
+    if (hideSeguradoraFilter) {
+      params.delete('seguradora');
+    } else {
+      contractorId
+        ? params.set('seguradora', contractorId)
+        : params.delete('seguradora');
+    }
     categoria ? params.set('categoria', categoria) : params.delete('categoria');
     month ? params.set('mes', month) : params.delete('mes');
     ano ? params.set('ano', ano) : params.delete('ano');
@@ -143,21 +149,23 @@ export default function ControlPanelSearch({
           value={state}
         />
 
-        <Dropdown
-          onChange={(val) => setContractorId(val)}
-          label="Seguradora"
-          name="contractor"
-          className="mb-2 min-w-[200px] flex-1"
-          options={
-            contractors?.map((contractor) => ({
-              id: contractor.contractor_id,
-              value: contractor.contractor_id,
-              label: contractor.company_name,
-            })) || []
-          }
-          optional
-          value={contractorId}
-        />
+        {!hideSeguradoraFilter && (
+          <Dropdown
+            onChange={(val) => setContractorId(val)}
+            label="Seguradora"
+            name="contractor"
+            className="mb-2 min-w-[200px] flex-1"
+            options={
+              contractors?.map((contractor) => ({
+                id: contractor.contractor_id,
+                value: contractor.contractor_id,
+                label: contractor.company_name,
+              })) || []
+            }
+            optional
+            value={contractorId}
+          />
+        )}
 
         {partners && (
           <Autocomplete
