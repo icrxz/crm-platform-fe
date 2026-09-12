@@ -4,7 +4,7 @@ import { unauthorizedRedirect } from '@/app/libs/auth-redirect';
 import { getCurrentUser } from '@/app/libs/session';
 import { fetchContractors } from '@/app/services/contractors';
 import { fetchPartners } from '@/app/services/partners';
-import { CaseStatus } from '@/app/types/case';
+import { CaseStatus, parseCaseCategory } from '@/app/types/case';
 import {
   PanelCaseItem,
   PanelContractorOption,
@@ -25,6 +25,7 @@ interface PanelFilters {
   estado?: string;
   seguradora?: string;
   tecnico?: string;
+  categoria?: string;
 }
 
 type PanelPageParams = {
@@ -44,6 +45,11 @@ function prepareQuery(filters: PanelFilters): string {
 
   if (filters.estado) {
     query += `state=${filters.estado}&`;
+  }
+
+  const category = parseCaseCategory(filters.categoria);
+  if (category) {
+    query += `metadata[category]=${encodeURIComponent(category)}&`;
   }
 
   if (filters.mes && filters.mes in monthsNumeric && filters.ano) {

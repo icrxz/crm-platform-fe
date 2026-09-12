@@ -1,5 +1,6 @@
 'use client';
 import { brazilStates } from '@/app/types/address';
+import { CaseCategory, caseCategoryMap } from '@/app/types/case';
 import { months } from '@/app/types/month';
 import {
   PanelContractorOption,
@@ -34,6 +35,9 @@ export default function ControlPanelSearch({
   const [contractorId, setContractorId] = useState(
     searchParams.get('seguradora') || ''
   );
+  const [categoria, setCategoria] = useState(
+    searchParams.get('categoria') || ''
+  );
   const [month, setMonth] = useState(
     searchParams.get('mes') || months[new Date().getMonth()]
   );
@@ -58,6 +62,7 @@ export default function ControlPanelSearch({
     contractorId
       ? params.set('seguradora', contractorId)
       : params.delete('seguradora');
+    categoria ? params.set('categoria', categoria) : params.delete('categoria');
     month ? params.set('mes', month) : params.delete('mes');
     ano ? params.set('ano', ano) : params.delete('ano');
 
@@ -68,6 +73,7 @@ export default function ControlPanelSearch({
     setPartnerId('');
     setState('');
     setContractorId('');
+    setCategoria('');
     const currentMonth = months[new Date().getMonth()];
     const currentAno = String(new Date().getFullYear());
     setMonth(currentMonth);
@@ -79,13 +85,13 @@ export default function ControlPanelSearch({
   };
 
   return (
-    <div className="mb-6 flex items-center rounded-lg bg-gray-100 px-4 pb-2 pt-4 shadow-md">
-      <div className="flex w-full items-end gap-3">
+    <div className="mb-6 flex flex-col gap-3 rounded-lg bg-gray-100 px-4 pb-4 pt-4 shadow-md">
+      <div className="flex flex-wrap items-end gap-3">
         <Dropdown
           onChange={(val) => setMonth(val)}
           label="Mês"
           name="month"
-          className="mb-2 w-28 shrink-0"
+          className="mb-2 w-32 shrink-0"
           options={months.map((m) => ({
             id: m,
             value: m,
@@ -110,10 +116,24 @@ export default function ControlPanelSearch({
         />
 
         <Dropdown
+          onChange={(val) => setCategoria(val)}
+          label="Categoria"
+          name="categoria"
+          className="mb-2 w-32 shrink-0"
+          options={Object.values(CaseCategory).map((category) => ({
+            id: category,
+            value: category,
+            label: caseCategoryMap[category],
+          }))}
+          optional
+          value={categoria}
+        />
+
+        <Dropdown
           onChange={(val) => setState(val)}
           label="Estado"
           name="state"
-          className="mb-2 flex-1"
+          className="mb-2 min-w-[130px] flex-1"
           options={brazilStates.map((s) => ({
             id: s,
             value: s,
@@ -127,7 +147,7 @@ export default function ControlPanelSearch({
           onChange={(val) => setContractorId(val)}
           label="Seguradora"
           name="contractor"
-          className="mb-2 flex-1"
+          className="mb-2 min-w-[200px] flex-1"
           options={
             contractors?.map((contractor) => ({
               id: contractor.contractor_id,
@@ -146,7 +166,7 @@ export default function ControlPanelSearch({
             classNames={{
               listboxWrapper: 'max-h-[320px]',
               selectorButton: 'text-default-500',
-              base: 'flex-1 mb-2 text-sm font-medium text-gray-700',
+              base: 'flex-1 mb-2 min-w-[260px] text-sm font-medium text-gray-700',
             }}
             labelPlacement="outside"
             variant="bordered"
@@ -173,7 +193,7 @@ export default function ControlPanelSearch({
         )}
       </div>
 
-      <div className="mr-4 flex w-1/2 justify-end gap-4">
+      <div className="flex justify-end gap-4">
         <Button size="lg" color="success" onClick={() => handleSearch()}>
           Filtrar
         </Button>
