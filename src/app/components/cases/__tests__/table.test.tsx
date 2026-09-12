@@ -129,7 +129,7 @@ describe('CasesTable', () => {
       expect(screen.getByTestId('cases-search-bar')).toBeInTheDocument();
     });
 
-    it('should render case data with the Estado column label', () => {
+    it('should render case data with the Status column label', () => {
       // Arrange
       setupMocks();
       const item = buildCaseListItem({
@@ -143,8 +143,8 @@ describe('CasesTable', () => {
       render(<CasesTable cases={cases} />);
 
       // Assert
-      expect(screen.getByText('Estado')).toBeInTheDocument();
-      expect(screen.queryByText('Status')).not.toBeInTheDocument();
+      expect(screen.getByText('Status')).toBeInTheDocument();
+      expect(screen.queryByText('Estado')).not.toBeInTheDocument();
       expect(screen.getByText('SIN-001')).toBeInTheDocument();
       expect(screen.getByText('Em andamento')).toBeInTheDocument();
     });

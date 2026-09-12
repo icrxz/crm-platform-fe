@@ -105,7 +105,7 @@ export default function CasesTable({
                       Técnico
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium">
-                      Estado
+                      Status
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium">
                       Vencimento
