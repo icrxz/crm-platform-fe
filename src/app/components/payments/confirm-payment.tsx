@@ -92,8 +92,10 @@ export function ConfirmPaymentModal({
         </h1>
 
         <div className="mb-4 flex flex-col items-center">
-          <label className="mb-2">Adicione o comprovante do pagamento</label>
-          <GenericUploader ref={fileUploaderRef} minFiles={1} maxFiles={1} />
+          <label className="mb-2">
+            Adicione o(s) comprovante(s) do pagamento
+          </label>
+          <GenericUploader ref={fileUploaderRef} minFiles={1} maxFiles={10} />
         </div>
 
         {errorMessage && <ErrorMessage message={errorMessage} />}
