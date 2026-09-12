@@ -163,6 +163,39 @@ describe('CasesTable', () => {
       expect(screen.getByText('D+')).toBeInTheDocument();
     });
 
+    it('should render the técnico name as a link to the partner detail page', () => {
+      // Arrange
+      setupMocks();
+      const item = buildCaseListItem({
+        partner_id: 'partner-123',
+        partner_first_name: 'Maria',
+      });
+      const cases = buildSearchResponse([item]);
+
+      // Act
+      render(<CasesTable cases={cases} />);
+
+      // Assert
+      const link = screen.getByText('Maria').closest('a');
+      expect(link).toHaveAttribute('href', '/partners/partner-123');
+    });
+
+    it('should render the técnico name as plain text when partner_id is missing', () => {
+      // Arrange
+      setupMocks();
+      const item = buildCaseListItem({
+        partner_id: undefined,
+        partner_first_name: 'Maria',
+      });
+      const cases = buildSearchResponse([item]);
+
+      // Act
+      render(<CasesTable cases={cases} />);
+
+      // Assert
+      expect(screen.getByText('Maria').closest('a')).toBeNull();
+    });
+
     it('should render a dash when category is missing', () => {
       // Arrange
       setupMocks();

@@ -12,6 +12,7 @@ export function mapCasesToListItems(cases: CaseFull[]): CaseListItem[] {
       customer_last_name: c.customer?.last_name,
       customer_city: c.customer?.shipping?.city,
       contractor_company_name: c.contractor?.company_name,
+      partner_id: c.partner_id,
       partner_first_name: c.partner?.first_name,
       category: c.metadata?.category,
     })

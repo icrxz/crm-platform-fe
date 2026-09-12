@@ -123,6 +123,41 @@ describe('PaymentTable', () => {
       );
     });
 
+    it('should render the técnico name as a link to the partner detail page', () => {
+      // Arrange
+      setupMocks();
+      const transaction = buildTransactionItem({
+        partner_id: 'partner-123',
+        partner_name: 'João Silva',
+      });
+      const transactions = buildSearchResponse([transaction]);
+
+      // Act
+      render(<PaymentTable transactions={transactions} />);
+
+      // Assert
+      expect(screen.getByText('João Silva').closest('a')).toHaveAttribute(
+        'href',
+        '/partners/partner-123'
+      );
+    });
+
+    it('should render the técnico name as plain text when partner_id is missing', () => {
+      // Arrange
+      setupMocks();
+      const transaction = buildTransactionItem({
+        partner_id: undefined,
+        partner_name: 'João Silva',
+      });
+      const transactions = buildSearchResponse([transaction]);
+
+      // Act
+      render(<PaymentTable transactions={transactions} />);
+
+      // Assert
+      expect(screen.getByText('João Silva').closest('a')).toBeNull();
+    });
+
     it('should render a dash when the customer name is missing', () => {
       // Arrange
       setupMocks();

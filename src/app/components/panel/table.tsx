@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import { PanelCaseItem } from '@/app/types/panel-case-item';
 import { SearchResponse } from '@/app/types/search_response';
 
@@ -109,7 +110,20 @@ export default function ControlPanelTable({
                 </td>
                 {!hideTecnicoColumn && (
                   <td className="whitespace-nowrap bg-white py-5 pl-6 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                    {crmCase.partner_first_name || '-'}
+                    {crmCase.partner_first_name ? (
+                      crmCase.partner_id ? (
+                        <Link
+                          className="text-blue-500 underline"
+                          href={`/partners/${crmCase.partner_id}`}
+                        >
+                          {crmCase.partner_first_name}
+                        </Link>
+                      ) : (
+                        crmCase.partner_first_name
+                      )
+                    ) : (
+                      '-'
+                    )}
                   </td>
                 )}
                 <td className="whitespace-nowrap bg-white py-5 pl-6 text-sm">

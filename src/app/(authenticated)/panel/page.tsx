@@ -131,6 +131,7 @@ async function getData(filters: PanelFilters): Promise<PanelData> {
       customer_first_name: c.customer?.first_name,
       customer_last_name: c.customer?.last_name,
       customer_city: c.customer?.shipping?.city,
+      partner_id: c.partner_id,
       partner_first_name: c.partner?.first_name,
       contractor_company_name: c.contractor?.company_name,
       transactions: c.transactions?.map(

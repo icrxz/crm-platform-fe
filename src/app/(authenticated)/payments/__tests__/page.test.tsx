@@ -38,7 +38,11 @@ jest.mock('../../../components/payments/table', () => ({
     initialPage,
   }: {
     transactions: {
-      result: { external_reference: string; customer_name?: string }[];
+      result: {
+        external_reference: string;
+        customer_name?: string;
+        partner_id?: string;
+      }[];
     };
     partners: { partner_id: string }[];
     initialPage?: number;
@@ -47,6 +51,9 @@ jest.mock('../../../components/payments/table', () => ({
       <span data-testid="transaction-count">{transactions.result.length}</span>
       <span data-testid="customer-name">
         {transactions.result[0]?.customer_name}
+      </span>
+      <span data-testid="transaction-partner-id">
+        {transactions.result[0]?.partner_id}
       </span>
       <span data-testid="partner-count">{partners?.length ?? 0}</span>
       <span data-testid="initial-page">{initialPage ?? 1}</span>
@@ -260,6 +267,24 @@ describe('Payments Page', () => {
       // Assert
       expect(screen.getByTestId('customer-name').textContent).toBe(
         'Ana Pereira'
+      );
+    });
+
+    it('should map the case partner_id onto the transaction', async () => {
+      // Arrange
+      setupAuthenticatedSession();
+      setupServices({
+        cases: [buildCaseFull({ partner_id: 'partner-999' })],
+      });
+      const searchParams = Promise.resolve({});
+
+      // Act
+      const jsx = await Page({ searchParams });
+      render(jsx);
+
+      // Assert
+      expect(screen.getByTestId('transaction-partner-id').textContent).toBe(
+        'partner-999'
       );
     });
 

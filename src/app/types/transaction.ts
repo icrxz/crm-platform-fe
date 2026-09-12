@@ -48,6 +48,7 @@ export type TransactionItem = {
   status: TransactionStatus;
   created_at: string;
   customer_name?: string;
+  partner_id?: string;
   partner_name?: string;
   partner_document?: string;
   partner_account?: string;

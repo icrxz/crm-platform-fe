@@ -52,6 +52,7 @@ describe('mapCasesToListItems', () => {
         contractor: {
           company_name: 'Seguradora ABC',
         } as CaseFull['contractor'],
+        partner_id: 'partner-123',
         partner: { first_name: 'Maria' } as CaseFull['partner'],
       }),
     ];
@@ -64,6 +65,7 @@ describe('mapCasesToListItems', () => {
     expect(result.customer_last_name).toBe('Silva');
     expect(result.customer_city).toBe('São Paulo');
     expect(result.contractor_company_name).toBe('Seguradora ABC');
+    expect(result.partner_id).toBe('partner-123');
     expect(result.partner_first_name).toBe('Maria');
   });
 
@@ -90,6 +92,7 @@ describe('mapCasesToListItems', () => {
     expect(result.customer_last_name).toBeUndefined();
     expect(result.customer_city).toBeUndefined();
     expect(result.contractor_company_name).toBeUndefined();
+    expect(result.partner_id).toBeUndefined();
     expect(result.partner_first_name).toBeUndefined();
     expect(result.category).toBeUndefined();
   });

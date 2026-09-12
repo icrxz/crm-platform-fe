@@ -97,6 +97,7 @@ async function getData(
           `${caseItem.customer?.first_name || ''} ${caseItem.customer?.last_name || ''}`.trim(),
         total: transactionVal,
         partner_document: partner?.document,
+        partner_id: caseItem.partner_id,
         partner_name: `${partner?.first_name} ${partner?.last_name}`,
         partner_account: partnerAccount,
         mo: {

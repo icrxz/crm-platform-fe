@@ -124,7 +124,16 @@ export default function PaymentTable({
                       </td>
                       <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
-                          <p>{transaction.partner_name}</p>
+                          {transaction.partner_id ? (
+                            <Link
+                              className="text-blue-500 underline"
+                              href={`/partners/${transaction.partner_id}`}
+                            >
+                              {transaction.partner_name}
+                            </Link>
+                          ) : (
+                            <p>{transaction.partner_name}</p>
+                          )}
                         </div>
                       </td>
                       <td className="whitespace-pre-wrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
