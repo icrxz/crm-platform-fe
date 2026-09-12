@@ -1,6 +1,6 @@
 `use server`;
 import PaymentTable from '@/app/components/payments/table';
-import { fetchCases } from '@/app/services/cases';
+import { fetchCasesFull } from '@/app/services/cases';
 import { fetchPartners, getPartnerByID } from '@/app/services/partners';
 import { fetchTransactions } from '@/app/services/transactions';
 import { Partner, paymentOptionMap } from '@/app/types/partner';
@@ -46,7 +46,7 @@ async function getData(
   page = page || 1;
 
   const caseQuery = prepareQuery(rest);
-  const casesInReceipt = await fetchCases(caseQuery, page).then((resp) => {
+  const casesInReceipt = await fetchCasesFull(caseQuery, page).then((resp) => {
     return (
       resp.data || {
         result: [],
@@ -93,6 +93,8 @@ async function getData(
         external_reference: caseItem.external_reference,
         created_at: caseItem.updated_at,
         status: TransactionStatus.PENDING,
+        customer_name:
+          `${caseItem.customer?.first_name || ''} ${caseItem.customer?.last_name || ''}`.trim(),
         total: transactionVal,
         partner_document: partner?.document,
         partner_name: `${partner?.first_name} ${partner?.last_name}`,

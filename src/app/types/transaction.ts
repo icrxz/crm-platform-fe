@@ -31,14 +31,14 @@ export type Transaction = {
 };
 
 export enum TransactionType {
-  INCOMING = "incoming",
-  OUTGOING = "outgoing",
+  INCOMING = 'incoming',
+  OUTGOING = 'outgoing',
 }
 
 export enum TransactionStatus {
-  PENDING = "pending",
-  APPROVED = "approved",
-  REJECTED = "rejected",
+  PENDING = 'pending',
+  APPROVED = 'approved',
+  REJECTED = 'rejected',
 }
 
 export type TransactionItem = {
@@ -47,6 +47,7 @@ export type TransactionItem = {
   total: number;
   status: TransactionStatus;
   created_at: string;
+  customer_name?: string;
   partner_name?: string;
   partner_document?: string;
   partner_account?: string;
@@ -65,17 +66,17 @@ export type TransactionItem = {
 };
 
 export type TransactionForm = {
-  transaction_id: string,
-  type: TransactionType,
-  description: string,
-  value: string,
-}
+  transaction_id: string;
+  type: TransactionType;
+  description: string;
+  value: string;
+};
 
 export const TransactionDescMap = {
-  "MO": "Mão de Obra",
-  "Peças técnico": "Peças",
-  "Deslocamento Técnico": "Deslocamento",
-  "Cobrado seguradora": "Mão de Obra",
-  "Peças": "Peças",
-  "Deslocamento": "Deslocamento",
-}
+  MO: 'Mão de Obra',
+  'Peças técnico': 'Peças',
+  'Deslocamento Técnico': 'Deslocamento',
+  'Cobrado seguradora': 'Mão de Obra',
+  Peças: 'Peças',
+  Deslocamento: 'Deslocamento',
+};

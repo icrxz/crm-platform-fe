@@ -4,6 +4,7 @@ import { parseDocument, parseToCurrency } from '@/app/libs/parser';
 import { SearchResponse } from '@/app/types/search_response';
 import { CheckIcon, PencilIcon } from '@heroicons/react/24/outline';
 import { Pagination } from '@heroui/pagination';
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { TransactionItem, TransactionStatus } from '../../types/transaction';
@@ -74,6 +75,9 @@ export default function PaymentTable({
                       Sinistro
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium">
+                      Segurada
+                    </th>
+                    <th scope="col" className="px-4 py-5 font-medium">
                       Técnico
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium">
@@ -106,9 +110,16 @@ export default function PaymentTable({
                 <tbody className="divide-y divide-gray-200 text-gray-900">
                   {transactions?.result.map((transaction) => (
                     <tr key={transaction.case_id} className="group">
+                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-blue-500 underline group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                        <div className="flex items-center gap-3">
+                          <Link href={`/cases/${transaction.case_id}`}>
+                            {transaction.external_reference}
+                          </Link>
+                        </div>
+                      </td>
                       <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
-                          <p>{transaction.external_reference}</p>
+                          <p>{transaction.customer_name || '-'}</p>
                         </div>
                       </td>
                       <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">

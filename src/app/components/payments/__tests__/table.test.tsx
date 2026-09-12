@@ -91,6 +91,7 @@ describe('PaymentTable', () => {
       const transaction = buildTransactionItem({
         external_reference: 'SIN-001',
         partner_name: 'João Silva',
+        customer_name: 'Maria Souza',
       });
       const transactions = buildSearchResponse([transaction]);
 
@@ -100,6 +101,42 @@ describe('PaymentTable', () => {
       // Assert
       expect(screen.getByText('SIN-001')).toBeInTheDocument();
       expect(screen.getByText('João Silva')).toBeInTheDocument();
+      expect(screen.getByText('Maria Souza')).toBeInTheDocument();
+    });
+
+    it('should render the Sinistro as a link to the case', () => {
+      // Arrange
+      setupMocks();
+      const transaction = buildTransactionItem({
+        case_id: 'case-abc',
+        external_reference: 'SIN-001',
+      });
+      const transactions = buildSearchResponse([transaction]);
+
+      // Act
+      render(<PaymentTable transactions={transactions} />);
+
+      // Assert
+      expect(screen.getByText('SIN-001').closest('a')).toHaveAttribute(
+        'href',
+        '/cases/case-abc'
+      );
+    });
+
+    it('should render a dash when the customer name is missing', () => {
+      // Arrange
+      setupMocks();
+      const transaction = buildTransactionItem({ customer_name: undefined });
+      const transactions = buildSearchResponse([transaction]);
+
+      // Act
+      render(<PaymentTable transactions={transactions} />);
+
+      // Assert
+      const row = screen
+        .getByText(transaction.external_reference)
+        .closest('tr');
+      expect(row).toHaveTextContent('-');
     });
 
     it('should render the pagination with correct total pages', () => {

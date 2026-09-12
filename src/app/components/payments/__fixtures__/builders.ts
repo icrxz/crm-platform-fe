@@ -1,4 +1,5 @@
-import { Case } from '@/app/types/case';
+import { Case, CaseFull } from '@/app/types/case';
+import { Customer } from '@/app/types/customer';
 import { Partner } from '@/app/types/partner';
 import {
   Transaction,
@@ -42,6 +43,7 @@ export function buildTransactionItem(
     total: 500,
     status: TransactionStatus.PENDING,
     created_at: '2024-01-01T00:00:00Z',
+    customer_name: 'Maria Souza',
     partner_name: 'João Silva',
     partner_document: '123.456.789-00',
     partner_account: 'PIX: joao@email.com',
@@ -67,6 +69,35 @@ export function buildCase(overrides: Partial<Case> = {}): Case {
     updated_by: 'user-1',
     due_date: '2024-02-01T00:00:00Z',
     external_reference: 'SIN-001',
+    ...overrides,
+  };
+}
+
+export function buildCustomer(overrides: Partial<Customer> = {}): Customer {
+  return {
+    customer_id: 'customer-001',
+    first_name: 'Maria',
+    last_name: 'Souza',
+    company_name: '',
+    legal_name: '',
+    document: '987.654.321-00',
+    document_type: 'CPF',
+    shipping: { city: 'São Paulo', state: 'SP' },
+    billing: { city: 'São Paulo', state: 'SP' },
+    created_at: '2024-01-01T00:00:00Z',
+    created_by: 'user-1',
+    updated_at: '2024-01-01T00:00:00Z',
+    updated_by: 'user-1',
+    cases: [],
+    active: true,
+    ...overrides,
+  };
+}
+
+export function buildCaseFull(overrides: Partial<CaseFull> = {}): CaseFull {
+  return {
+    ...buildCase(overrides),
+    customer: buildCustomer(),
     ...overrides,
   };
 }
