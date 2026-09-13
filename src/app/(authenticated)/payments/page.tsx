@@ -88,8 +88,7 @@ async function getData(
         external_reference: caseItem.external_reference,
         created_at: caseItem.updated_at,
         status: TransactionStatus.PENDING,
-        customer_name:
-          `${caseItem.customer?.first_name || ''} ${caseItem.customer?.last_name || ''}`.trim(),
+        contractor_company_name: caseItem.contractor?.company_name,
         total: transactionVal,
         partner_document: partner?.document,
         partner_id: partner?.partner_id,

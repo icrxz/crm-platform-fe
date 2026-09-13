@@ -7,7 +7,7 @@ import { fetchTransactions } from '../../../services/transactions';
 import Page from '../page';
 import {
   buildCaseFull,
-  buildCustomer,
+  buildContractor,
   buildPartner,
   buildTransaction,
   buildSearchResponse,
@@ -39,7 +39,7 @@ jest.mock('../../../components/payments/table', () => ({
     transactions: {
       result: {
         external_reference: string;
-        customer_name?: string;
+        contractor_company_name?: string;
         partner_id?: string;
         partner_name?: string;
         partner_account?: string;
@@ -50,8 +50,8 @@ jest.mock('../../../components/payments/table', () => ({
   }) => (
     <div data-testid="payment-table">
       <span data-testid="transaction-count">{transactions.result.length}</span>
-      <span data-testid="customer-name">
-        {transactions.result[0]?.customer_name}
+      <span data-testid="contractor-company-name">
+        {transactions.result[0]?.contractor_company_name}
       </span>
       <span data-testid="transaction-partner-id">
         {transactions.result[0]?.partner_id}
@@ -249,15 +249,14 @@ describe('Payments Page', () => {
       expect(screen.getByTestId('transaction-count').textContent).toBe('2');
     });
 
-    it('should map the case customer into customer_name on the transaction', async () => {
+    it('should map the case contractor into contractor_company_name on the transaction', async () => {
       // Arrange
       setupAuthenticatedSession();
       setupServices({
         cases: [
           buildCaseFull({
-            customer: buildCustomer({
-              first_name: 'Ana',
-              last_name: 'Pereira',
+            contractor: buildContractor({
+              company_name: 'Seguradora XPTO',
             }),
           }),
         ],
@@ -269,8 +268,8 @@ describe('Payments Page', () => {
       render(jsx);
 
       // Assert
-      expect(screen.getByTestId('customer-name').textContent).toBe(
-        'Ana Pereira'
+      expect(screen.getByTestId('contractor-company-name').textContent).toBe(
+        'Seguradora XPTO'
       );
     });
 

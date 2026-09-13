@@ -1,4 +1,5 @@
 import { Case, CaseFull } from '@/app/types/case';
+import { Contractor } from '@/app/types/contractor';
 import { Customer } from '@/app/types/customer';
 import { Partner } from '@/app/types/partner';
 import {
@@ -43,7 +44,7 @@ export function buildTransactionItem(
     total: 500,
     status: TransactionStatus.PENDING,
     created_at: '2024-01-01T00:00:00Z',
-    customer_name: 'Maria Souza',
+    contractor_company_name: 'Seguradora ABC',
     partner_name: 'João Silva',
     partner_document: '123.456.789-00',
     partner_account: 'PIX: joao@email.com',
@@ -94,11 +95,29 @@ export function buildCustomer(overrides: Partial<Customer> = {}): Customer {
   };
 }
 
+export function buildContractor(
+  overrides: Partial<Contractor> = {}
+): Contractor {
+  return {
+    contractor_id: 'contractor-001',
+    company_name: 'Seguradora ABC',
+    legal_name: 'Seguradora ABC Ltda',
+    document: '12.345.678/0001-90',
+    created_by: 'user-1',
+    created_at: '2024-01-01T00:00:00Z',
+    updated_by: 'user-1',
+    updated_at: '2024-01-01T00:00:00Z',
+    active: true,
+    ...overrides,
+  };
+}
+
 export function buildCaseFull(overrides: Partial<CaseFull> = {}): CaseFull {
   return {
     ...buildCase(overrides),
     customer: buildCustomer(),
     partner: buildPartner(),
+    contractor: buildContractor(),
     ...overrides,
   };
 }
