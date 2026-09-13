@@ -1,7 +1,7 @@
-"use client";
-import { parseDocument } from "@/app/libs/parser";
-import { Partner } from "@/app/types/partner";
-import { Button } from "../common/button";
+'use client';
+import { parseDocument } from '@/app/libs/parser';
+import { Partner } from '@/app/types/partner';
+import { Button } from '../common/button';
 
 interface PartnerDetailsProps {
   partner: Partner;
@@ -9,35 +9,30 @@ interface PartnerDetailsProps {
 
 export default function PartnerDetails({ partner }: PartnerDetailsProps) {
   const handleUpdateDescription = (e: any) => {
-    console.log(e)
-  }
+    console.log(e);
+  };
 
   return (
     <div className="rounded-xl bg-gray-50 p-8 shadow-sm">
-      <div>
-        <h1 className="text-2xl font-bold">Dados do técnico</h1>
-      </div>
+      <div className="border-b border-gray-200 pb-6">
+        <p className="text-sm font-medium uppercase tracking-wide text-gray-500">
+          Dados do técnico
+        </p>
+        <h1 className="mt-1 text-3xl font-bold text-gray-900">
+          {partner.first_name} {partner.last_name}
+        </h1>
 
-      <div className="mt-4">
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <p className="text-sm font-medium text-gray-500">Nome:</p>
-            <p className="text-sm font-medium text-gray-900">{partner.first_name} {partner.last_name}</p>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <p className="text-sm font-medium text-gray-500">Documento:</p>
-            <p className="text-sm font-medium text-gray-900">{parseDocument(partner.document) || '-'}</p>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <p className="text-sm font-medium text-gray-500">Tipo:</p>
-            <p className="text-sm font-medium text-gray-900">{partner.partner_type}</p>
-          </div>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <span className="inline-flex items-center rounded-full bg-gray-200 px-3 py-1 text-sm font-medium text-gray-700">
+            {parseDocument(partner.document) || '-'}
+          </span>
+          <span className="inline-flex items-center rounded-full bg-gray-200 px-3 py-1 text-sm font-medium text-gray-700">
+            {partner.partner_type}
+          </span>
         </div>
       </div>
 
-      <div className="mt-4">
+      <div className="mt-6">
         <div className="w-full">
           <div>
             <label

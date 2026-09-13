@@ -76,7 +76,7 @@ export function FilterModal({
 
           <div className="flex w-full flex-col gap-4">
             <Select
-              label="Estado"
+              label="Status"
               placeholder="Todos"
               selectionMode="multiple"
               selectedKeys={status}

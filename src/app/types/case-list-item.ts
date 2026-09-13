@@ -9,6 +9,7 @@ export type CaseListItem = {
   customer_last_name?: string;
   customer_city?: string;
   contractor_company_name?: string;
+  partner_id?: string;
   partner_first_name?: string;
   category?: string;
 };

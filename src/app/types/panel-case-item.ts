@@ -15,6 +15,7 @@ export type PanelCaseItem = {
   customer_first_name?: string;
   customer_last_name?: string;
   customer_city?: string;
+  partner_id?: string;
   partner_first_name?: string;
   contractor_company_name?: string;
   transactions?: PanelTransactionItem[];

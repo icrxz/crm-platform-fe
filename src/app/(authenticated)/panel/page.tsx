@@ -4,7 +4,7 @@ import { unauthorizedRedirect } from '@/app/libs/auth-redirect';
 import { getCurrentUser } from '@/app/libs/session';
 import { fetchContractors } from '@/app/services/contractors';
 import { fetchPartners } from '@/app/services/partners';
-import { CaseStatus } from '@/app/types/case';
+import { CaseStatus, parseCaseCategory } from '@/app/types/case';
 import {
   PanelCaseItem,
   PanelContractorOption,
@@ -25,6 +25,7 @@ interface PanelFilters {
   estado?: string;
   seguradora?: string;
   tecnico?: string;
+  categoria?: string;
 }
 
 type PanelPageParams = {
@@ -44,6 +45,11 @@ function prepareQuery(filters: PanelFilters): string {
 
   if (filters.estado) {
     query += `state=${filters.estado}&`;
+  }
+
+  const category = parseCaseCategory(filters.categoria);
+  if (category) {
+    query += `metadata[category]=${encodeURIComponent(category)}&`;
   }
 
   if (filters.mes && filters.mes in monthsNumeric && filters.ano) {
@@ -125,6 +131,7 @@ async function getData(filters: PanelFilters): Promise<PanelData> {
       customer_first_name: c.customer?.first_name,
       customer_last_name: c.customer?.last_name,
       customer_city: c.customer?.shipping?.city,
+      partner_id: c.partner?.partner_id,
       partner_first_name: c.partner?.first_name,
       contractor_company_name: c.contractor?.company_name,
       transactions: c.transactions?.map(

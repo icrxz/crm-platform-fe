@@ -127,6 +127,42 @@ describe('ControlPanelSearch', () => {
       expect(screen.getByLabelText('Ano')).toBeInTheDocument();
     });
 
+    it('should render the Categoria dropdown with D+ and Móveis options', () => {
+      // Arrange
+      setupMocks();
+
+      // Act
+      render(<ControlPanelSearch contractors={[]} partners={[]} />);
+
+      // Assert
+      const categoriaSelect = screen.getByLabelText('Categoria');
+      expect(categoriaSelect).toBeInTheDocument();
+      expect(screen.getByText('D+')).toBeInTheDocument();
+      expect(screen.getByText('Móveis')).toBeInTheDocument();
+    });
+
+    it('should render the Seguradora dropdown by default', () => {
+      // Arrange
+      setupMocks();
+
+      // Act
+      render(<ControlPanelSearch contractors={[]} partners={[]} />);
+
+      // Assert
+      expect(screen.getByLabelText('Seguradora')).toBeInTheDocument();
+    });
+
+    it('should not render the Seguradora dropdown when hideSeguradoraFilter is set', () => {
+      // Arrange
+      setupMocks();
+
+      // Act
+      render(<ControlPanelSearch hideSeguradoraFilter />);
+
+      // Assert
+      expect(screen.queryByLabelText('Seguradora')).not.toBeInTheDocument();
+    });
+
     it('should render the Técnico autocomplete', () => {
       // Arrange
       setupMocks();
@@ -331,6 +367,48 @@ describe('ControlPanelSearch', () => {
       // Assert
       expect(mockPush).toHaveBeenCalledWith(
         expect.stringContaining('seguradora=contractor-001')
+      );
+    });
+
+    it('should not include seguradora in URL when hideSeguradoraFilter is set', () => {
+      // Arrange
+      setupMocks({ seguradora: 'contractor-001' });
+      render(<ControlPanelSearch hideSeguradoraFilter />);
+
+      // Act
+      fireEvent.click(screen.getByText('Filtrar'));
+
+      // Assert
+      expect(mockPush).not.toHaveBeenCalledWith(
+        expect.stringContaining('seguradora=')
+      );
+    });
+
+    it('should include categoria in URL when a category is selected', () => {
+      // Arrange
+      setupMocks({ categoria: 'd+' });
+      render(<ControlPanelSearch contractors={[]} partners={[]} />);
+
+      // Act
+      fireEvent.click(screen.getByText('Filtrar'));
+
+      // Assert
+      expect(mockPush).toHaveBeenCalledWith(
+        expect.stringContaining('categoria=d%2B')
+      );
+    });
+
+    it('should not include categoria in URL when no category is selected', () => {
+      // Arrange
+      setupMocks();
+      render(<ControlPanelSearch contractors={[]} partners={[]} />);
+
+      // Act
+      fireEvent.click(screen.getByText('Filtrar'));
+
+      // Assert
+      expect(mockPush).not.toHaveBeenCalledWith(
+        expect.stringContaining('categoria=')
       );
     });
 
