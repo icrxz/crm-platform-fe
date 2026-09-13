@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { getCurrentUser } from '../../../libs/session';
 import { redirect } from 'next/navigation';
 import { fetchCasesFull } from '../../../services/cases';
-import { fetchPartners, getPartnerByID } from '../../../services/partners';
+import { fetchPartners } from '../../../services/partners';
 import { fetchTransactions } from '../../../services/transactions';
 import Page from '../page';
 import {
@@ -24,7 +24,6 @@ jest.mock('next/navigation', () => ({
 jest.mock('../../../services/cases', () => ({ fetchCasesFull: jest.fn() }));
 jest.mock('../../../services/partners', () => ({
   fetchPartners: jest.fn(),
-  getPartnerByID: jest.fn(),
 }));
 jest.mock('../../../services/transactions', () => ({
   fetchTransactions: jest.fn(),
@@ -42,6 +41,8 @@ jest.mock('../../../components/payments/table', () => ({
         external_reference: string;
         customer_name?: string;
         partner_id?: string;
+        partner_name?: string;
+        partner_account?: string;
       }[];
     };
     partners: { partner_id: string }[];
@@ -55,6 +56,12 @@ jest.mock('../../../components/payments/table', () => ({
       <span data-testid="transaction-partner-id">
         {transactions.result[0]?.partner_id}
       </span>
+      <span data-testid="transaction-partner-name">
+        {transactions.result[0]?.partner_name}
+      </span>
+      <span data-testid="transaction-partner-account">
+        {transactions.result[0]?.partner_account}
+      </span>
       <span data-testid="partner-count">{partners?.length ?? 0}</span>
       <span data-testid="initial-page">{initialPage ?? 1}</span>
     </div>
@@ -63,7 +70,6 @@ jest.mock('../../../components/payments/table', () => ({
 
 const mockFetchCasesFull = fetchCasesFull as jest.Mock;
 const mockFetchPartners = fetchPartners as jest.Mock;
-const mockGetPartnerByID = getPartnerByID as jest.Mock;
 const mockFetchTransactions = fetchTransactions as jest.Mock;
 const mockGetCurrentUser = getCurrentUser as jest.Mock;
 const mockRedirect = redirect as unknown as jest.Mock;
@@ -74,7 +80,6 @@ function setupAuthenticatedSession() {
 
 function setupServices({
   cases = [buildCaseFull()],
-  partner = buildPartner(),
   transactions = [buildTransaction({ description: 'MO', value: 300 })],
   partners = [buildPartner()],
 } = {}) {
@@ -82,7 +87,6 @@ function setupServices({
     success: true,
     data: buildSearchResponse(cases),
   });
-  mockGetPartnerByID.mockResolvedValue({ success: true, data: partner });
   mockFetchTransactions.mockResolvedValue({
     success: true,
     data: transactions,
@@ -274,7 +278,11 @@ describe('Payments Page', () => {
       // Arrange
       setupAuthenticatedSession();
       setupServices({
-        cases: [buildCaseFull({ partner_id: 'partner-999' })],
+        cases: [
+          buildCaseFull({
+            partner: buildPartner({ partner_id: 'partner-999' }),
+          }),
+        ],
       });
       const searchParams = Promise.resolve({});
 
@@ -286,6 +294,35 @@ describe('Payments Page', () => {
       expect(screen.getByTestId('transaction-partner-id').textContent).toBe(
         'partner-999'
       );
+    });
+
+    it('should build partner_name from the case embedded partner, not "undefined undefined"', async () => {
+      // Arrange
+      setupAuthenticatedSession();
+      setupServices({
+        cases: [
+          buildCaseFull({
+            partner: buildPartner({
+              first_name: 'Carlos',
+              last_name: 'Tec',
+              payment_key: 'carlos@pix.com',
+            }),
+          }),
+        ],
+      });
+      const searchParams = Promise.resolve({});
+
+      // Act
+      const jsx = await Page({ searchParams });
+      render(jsx);
+
+      // Assert
+      expect(screen.getByTestId('transaction-partner-name').textContent).toBe(
+        'Carlos Tec'
+      );
+      expect(
+        screen.getByTestId('transaction-partner-account').textContent
+      ).toContain('carlos@pix.com');
     });
 
     it('should pass the page number to PaymentTable', async () => {

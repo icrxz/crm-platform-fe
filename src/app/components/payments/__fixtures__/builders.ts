@@ -98,6 +98,7 @@ export function buildCaseFull(overrides: Partial<CaseFull> = {}): CaseFull {
   return {
     ...buildCase(overrides),
     customer: buildCustomer(),
+    partner: buildPartner(),
     ...overrides,
   };
 }

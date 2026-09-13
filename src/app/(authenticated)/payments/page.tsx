@@ -1,7 +1,7 @@
 `use server`;
 import PaymentTable from '@/app/components/payments/table';
 import { fetchCasesFull } from '@/app/services/cases';
-import { fetchPartners, getPartnerByID } from '@/app/services/partners';
+import { fetchPartners } from '@/app/services/partners';
 import { fetchTransactions } from '@/app/services/transactions';
 import { Partner, paymentOptionMap } from '@/app/types/partner';
 import { SearchResponse } from '@/app/types/search_response';
@@ -57,12 +57,7 @@ async function getData(
 
   const outgoingCasesTransactions = await Promise.all(
     casesInReceipt.result.map(async (caseItem): Promise<TransactionItem> => {
-      let partner: Partner | null = null;
-      if (caseItem.partner_id) {
-        partner = await getPartnerByID(caseItem.partner_id).then((resp) => {
-          return resp.data || null;
-        });
-      }
+      const partner = caseItem.partner || null;
 
       const outgoingTransactions = await fetchTransactions(
         `case_id=${caseItem.case_id}&type=${TransactionType.OUTGOING}`
@@ -97,8 +92,10 @@ async function getData(
           `${caseItem.customer?.first_name || ''} ${caseItem.customer?.last_name || ''}`.trim(),
         total: transactionVal,
         partner_document: partner?.document,
-        partner_id: caseItem.partner_id,
-        partner_name: `${partner?.first_name} ${partner?.last_name}`,
+        partner_id: partner?.partner_id,
+        partner_name: partner
+          ? `${partner.first_name} ${partner.last_name}`
+          : '',
         partner_account: partnerAccount,
         mo: {
           transaction_id:

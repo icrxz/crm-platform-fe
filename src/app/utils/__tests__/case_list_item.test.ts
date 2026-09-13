@@ -52,8 +52,10 @@ describe('mapCasesToListItems', () => {
         contractor: {
           company_name: 'Seguradora ABC',
         } as CaseFull['contractor'],
-        partner_id: 'partner-123',
-        partner: { first_name: 'Maria' } as CaseFull['partner'],
+        partner: {
+          partner_id: 'partner-123',
+          first_name: 'Maria',
+        } as CaseFull['partner'],
       }),
     ];
 
