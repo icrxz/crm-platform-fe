@@ -37,6 +37,12 @@ export default function PartnerForm({
       : partner.payment_is_from_same_owner
   );
 
+  const [documentType, setDocumentType] = useState<'CPF' | 'CNPJ'>(
+    partner?.document_type === 'CNPJ' ? 'CNPJ' : 'CPF'
+  );
+  const documentMask =
+    documentType === 'CPF' ? '___.___.___-__' : '__.___.___/____-__';
+
   useEffect(() => {
     if (submitState) {
       submitState(state);
@@ -60,7 +66,7 @@ export default function PartnerForm({
         </h1>
 
         <div className="w-full">
-          <div className="mb-4 columns-3">
+          <div className="mb-4 columns-4">
             <div>
               <label
                 className="mb-3 block text-xs font-medium text-gray-900"
@@ -106,6 +112,30 @@ export default function PartnerForm({
             <div>
               <label
                 className="mb-3 block text-xs font-medium text-gray-900"
+                htmlFor="document_type"
+              >
+                Tipo de documento
+              </label>
+
+              <div className="relative">
+                <select
+                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
+                  id="document_type"
+                  name="document_type"
+                  value={documentType}
+                  onChange={(e) =>
+                    setDocumentType(e.target.value as 'CPF' | 'CNPJ')
+                  }
+                >
+                  <option value="CPF">CPF</option>
+                  <option value="CNPJ">CNPJ</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label
+                className="mb-3 block text-xs font-medium text-gray-900"
                 htmlFor="document"
               >
                 Documento
@@ -113,13 +143,20 @@ export default function PartnerForm({
 
               <div className="relative">
                 <InputMask
+                  key={documentType}
                   className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
                   id="document"
                   name="document"
-                  placeholder="Digite o CPF"
-                  mask="___.___.___-__"
+                  placeholder={
+                    documentType === 'CPF' ? 'Digite o CPF' : 'Digite o CNPJ'
+                  }
+                  mask={documentMask}
                   replacement={{ _: /\d/ }}
-                  defaultValue={parseDocument(partner?.document || '')}
+                  defaultValue={
+                    documentType === (partner?.document_type || 'CPF')
+                      ? parseDocument(partner?.document || '')
+                      : ''
+                  }
                   required
                 />
               </div>

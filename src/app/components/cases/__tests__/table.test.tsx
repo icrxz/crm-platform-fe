@@ -129,7 +129,7 @@ describe('CasesTable', () => {
       expect(screen.getByTestId('cases-search-bar')).toBeInTheDocument();
     });
 
-    it('should render case data with the Estado column label', () => {
+    it('should render case data with the Status column label', () => {
       // Arrange
       setupMocks();
       const item = buildCaseListItem({
@@ -143,8 +143,8 @@ describe('CasesTable', () => {
       render(<CasesTable cases={cases} />);
 
       // Assert
-      expect(screen.getByText('Estado')).toBeInTheDocument();
-      expect(screen.queryByText('Status')).not.toBeInTheDocument();
+      expect(screen.getByText('Status')).toBeInTheDocument();
+      expect(screen.queryByText('Estado')).not.toBeInTheDocument();
       expect(screen.getByText('SIN-001')).toBeInTheDocument();
       expect(screen.getByText('Em andamento')).toBeInTheDocument();
     });
@@ -161,6 +161,39 @@ describe('CasesTable', () => {
       // Assert
       expect(screen.getByText('Categoria')).toBeInTheDocument();
       expect(screen.getByText('D+')).toBeInTheDocument();
+    });
+
+    it('should render the técnico name as a link to the partner detail page', () => {
+      // Arrange
+      setupMocks();
+      const item = buildCaseListItem({
+        partner_id: 'partner-123',
+        partner_first_name: 'Maria',
+      });
+      const cases = buildSearchResponse([item]);
+
+      // Act
+      render(<CasesTable cases={cases} />);
+
+      // Assert
+      const link = screen.getByText('Maria').closest('a');
+      expect(link).toHaveAttribute('href', '/partners/partner-123');
+    });
+
+    it('should render the técnico name as plain text when partner_id is missing', () => {
+      // Arrange
+      setupMocks();
+      const item = buildCaseListItem({
+        partner_id: undefined,
+        partner_first_name: 'Maria',
+      });
+      const cases = buildSearchResponse([item]);
+
+      // Act
+      render(<CasesTable cases={cases} />);
+
+      // Assert
+      expect(screen.getByText('Maria').closest('a')).toBeNull();
     });
 
     it('should render a dash when category is missing', () => {

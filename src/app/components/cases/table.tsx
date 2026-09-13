@@ -105,7 +105,7 @@ export default function CasesTable({
                       Técnico
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium">
-                      Estado
+                      Status
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium">
                       Vencimento
@@ -141,7 +141,20 @@ export default function CasesTable({
                           : '-'}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                        {crmCase.partner_first_name || '-'}
+                        {crmCase.partner_first_name ? (
+                          crmCase.partner_id ? (
+                            <Link
+                              className="text-blue-500 underline"
+                              href={`/partners/${crmCase.partner_id}`}
+                            >
+                              {crmCase.partner_first_name}
+                            </Link>
+                          ) : (
+                            crmCase.partner_first_name
+                          )
+                        ) : (
+                          '-'
+                        )}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
                         {caseStatusMap[crmCase.status]}

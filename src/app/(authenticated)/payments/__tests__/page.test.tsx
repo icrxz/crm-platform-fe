@@ -1,12 +1,13 @@
 import { render, screen } from '@testing-library/react';
 import { getCurrentUser } from '../../../libs/session';
 import { redirect } from 'next/navigation';
-import { fetchCases } from '../../../services/cases';
-import { fetchPartners, getPartnerByID } from '../../../services/partners';
+import { fetchCasesFull } from '../../../services/cases';
+import { fetchPartners } from '../../../services/partners';
 import { fetchTransactions } from '../../../services/transactions';
 import Page from '../page';
 import {
-  buildCase,
+  buildCaseFull,
+  buildContractor,
   buildPartner,
   buildTransaction,
   buildSearchResponse,
@@ -20,10 +21,9 @@ jest.mock('next/navigation', () => ({
   }),
 }));
 
-jest.mock('../../../services/cases', () => ({ fetchCases: jest.fn() }));
+jest.mock('../../../services/cases', () => ({ fetchCasesFull: jest.fn() }));
 jest.mock('../../../services/partners', () => ({
   fetchPartners: jest.fn(),
-  getPartnerByID: jest.fn(),
 }));
 jest.mock('../../../services/transactions', () => ({
   fetchTransactions: jest.fn(),
@@ -36,21 +36,40 @@ jest.mock('../../../components/payments/table', () => ({
     partners,
     initialPage,
   }: {
-    transactions: { result: { external_reference: string }[] };
+    transactions: {
+      result: {
+        external_reference: string;
+        contractor_company_name?: string;
+        partner_id?: string;
+        partner_name?: string;
+        partner_account?: string;
+      }[];
+    };
     partners: { partner_id: string }[];
     initialPage?: number;
   }) => (
     <div data-testid="payment-table">
       <span data-testid="transaction-count">{transactions.result.length}</span>
+      <span data-testid="contractor-company-name">
+        {transactions.result[0]?.contractor_company_name}
+      </span>
+      <span data-testid="transaction-partner-id">
+        {transactions.result[0]?.partner_id}
+      </span>
+      <span data-testid="transaction-partner-name">
+        {transactions.result[0]?.partner_name}
+      </span>
+      <span data-testid="transaction-partner-account">
+        {transactions.result[0]?.partner_account}
+      </span>
       <span data-testid="partner-count">{partners?.length ?? 0}</span>
       <span data-testid="initial-page">{initialPage ?? 1}</span>
     </div>
   ),
 }));
 
-const mockFetchCases = fetchCases as jest.Mock;
+const mockFetchCasesFull = fetchCasesFull as jest.Mock;
 const mockFetchPartners = fetchPartners as jest.Mock;
-const mockGetPartnerByID = getPartnerByID as jest.Mock;
 const mockFetchTransactions = fetchTransactions as jest.Mock;
 const mockGetCurrentUser = getCurrentUser as jest.Mock;
 const mockRedirect = redirect as unknown as jest.Mock;
@@ -60,16 +79,14 @@ function setupAuthenticatedSession() {
 }
 
 function setupServices({
-  cases = [buildCase()],
-  partner = buildPartner(),
+  cases = [buildCaseFull()],
   transactions = [buildTransaction({ description: 'MO', value: 300 })],
   partners = [buildPartner()],
 } = {}) {
-  mockFetchCases.mockResolvedValue({
+  mockFetchCasesFull.mockResolvedValue({
     success: true,
     data: buildSearchResponse(cases),
   });
-  mockGetPartnerByID.mockResolvedValue({ success: true, data: partner });
   mockFetchTransactions.mockResolvedValue({
     success: true,
     data: transactions,
@@ -123,7 +140,7 @@ describe('Payments Page', () => {
       await Page({ searchParams });
 
       // Assert
-      expect(mockFetchCases).toHaveBeenCalledWith(
+      expect(mockFetchCasesFull).toHaveBeenCalledWith(
         expect.stringContaining('sort_order=DESC'),
         1
       );
@@ -139,7 +156,7 @@ describe('Payments Page', () => {
       await Page({ searchParams });
 
       // Assert
-      expect(mockFetchCases).toHaveBeenCalledWith(
+      expect(mockFetchCasesFull).toHaveBeenCalledWith(
         expect.stringContaining('external_reference=SIN-001'),
         1
       );
@@ -155,7 +172,7 @@ describe('Payments Page', () => {
       await Page({ searchParams });
 
       // Assert
-      expect(mockFetchCases).toHaveBeenCalledWith(
+      expect(mockFetchCasesFull).toHaveBeenCalledWith(
         expect.stringContaining('partner_id=partner-123'),
         1
       );
@@ -174,7 +191,7 @@ describe('Payments Page', () => {
       await Page({ searchParams });
 
       // Assert
-      expect(mockFetchCases).toHaveBeenCalledWith(
+      expect(mockFetchCasesFull).toHaveBeenCalledWith(
         expect.stringMatching(
           /external_reference=SIN-001.*partner_id=partner-123/
         ),
@@ -192,7 +209,7 @@ describe('Payments Page', () => {
       await Page({ searchParams });
 
       // Assert
-      expect(mockFetchCases).toHaveBeenCalledWith(expect.any(String), 3);
+      expect(mockFetchCasesFull).toHaveBeenCalledWith(expect.any(String), 3);
     });
 
     it('should fetch partners to populate the filter dropdown', async () => {
@@ -218,8 +235,8 @@ describe('Payments Page', () => {
       setupAuthenticatedSession();
       setupServices({
         cases: [
-          buildCase(),
-          buildCase({ case_id: 'case-002', external_reference: 'SIN-002' }),
+          buildCaseFull(),
+          buildCaseFull({ case_id: 'case-002', external_reference: 'SIN-002' }),
         ],
       });
       const searchParams = Promise.resolve({});
@@ -230,6 +247,81 @@ describe('Payments Page', () => {
 
       // Assert
       expect(screen.getByTestId('transaction-count').textContent).toBe('2');
+    });
+
+    it('should map the case contractor into contractor_company_name on the transaction', async () => {
+      // Arrange
+      setupAuthenticatedSession();
+      setupServices({
+        cases: [
+          buildCaseFull({
+            contractor: buildContractor({
+              company_name: 'Seguradora XPTO',
+            }),
+          }),
+        ],
+      });
+      const searchParams = Promise.resolve({});
+
+      // Act
+      const jsx = await Page({ searchParams });
+      render(jsx);
+
+      // Assert
+      expect(screen.getByTestId('contractor-company-name').textContent).toBe(
+        'Seguradora XPTO'
+      );
+    });
+
+    it('should map the case partner_id onto the transaction', async () => {
+      // Arrange
+      setupAuthenticatedSession();
+      setupServices({
+        cases: [
+          buildCaseFull({
+            partner: buildPartner({ partner_id: 'partner-999' }),
+          }),
+        ],
+      });
+      const searchParams = Promise.resolve({});
+
+      // Act
+      const jsx = await Page({ searchParams });
+      render(jsx);
+
+      // Assert
+      expect(screen.getByTestId('transaction-partner-id').textContent).toBe(
+        'partner-999'
+      );
+    });
+
+    it('should build partner_name from the case embedded partner, not "undefined undefined"', async () => {
+      // Arrange
+      setupAuthenticatedSession();
+      setupServices({
+        cases: [
+          buildCaseFull({
+            partner: buildPartner({
+              first_name: 'Carlos',
+              last_name: 'Tec',
+              payment_key: 'carlos@pix.com',
+            }),
+          }),
+        ],
+      });
+      const searchParams = Promise.resolve({});
+
+      // Act
+      const jsx = await Page({ searchParams });
+      render(jsx);
+
+      // Assert
+      expect(screen.getByTestId('transaction-partner-name').textContent).toBe(
+        'Carlos Tec'
+      );
+      expect(
+        screen.getByTestId('transaction-partner-account').textContent
+      ).toContain('carlos@pix.com');
     });
 
     it('should pass the page number to PaymentTable', async () => {

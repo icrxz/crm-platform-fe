@@ -55,7 +55,7 @@ beforeEach(() => {
 
 describe('FilterModal', () => {
   describe('rendering', () => {
-    it('should render the Estado and Seguradora selects', () => {
+    it('should render the Status and Seguradora selects', () => {
       // Arrange & Act
       render(
         <FilterModal
@@ -68,7 +68,7 @@ describe('FilterModal', () => {
       );
 
       // Assert
-      expect(screen.getByText('Estado')).toBeInTheDocument();
+      expect(screen.getByText('Status')).toBeInTheDocument();
       expect(screen.getByText('Seguradora')).toBeInTheDocument();
     });
 

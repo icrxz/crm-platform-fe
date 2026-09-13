@@ -12,6 +12,7 @@ import { ErrorMessage } from '../common/error-message';
 import Modal from '../common/modal';
 import { Contractor } from '@/app/types/contractor';
 import { fetchContractors } from '@/app/services/contractors';
+import { CaseCategory, caseCategoryMap } from '@/app/types/case';
 
 interface CreateCaseBatchModalProps {
   isOpen: boolean;
@@ -83,6 +84,29 @@ export function CreateCaseBatchModal({
                 value={contractor.company_name}
               >
                 {contractor.company_name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label
+            className="mb-3 block text-xs font-medium text-gray-900"
+            htmlFor="category"
+          >
+            Categoria
+          </label>
+
+          <select
+            className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
+            id="category"
+            name="category"
+            required
+          >
+            <option value="">Selecione a categoria</option>
+            {Object.values(CaseCategory).map((category) => (
+              <option key={category} value={category}>
+                {caseCategoryMap[category]}
               </option>
             ))}
           </select>

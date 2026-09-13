@@ -65,6 +65,33 @@ describe('ControlPanelTable', () => {
       expect(screen.getByText('João')).toBeInTheDocument();
     });
 
+    it('should render the técnico name as a link to the partner detail page', () => {
+      const crmCase = buildPanelCaseItem({
+        partner_id: 'partner-123',
+        partner_first_name: 'João',
+      });
+      const cases = buildSearchResponse([crmCase]);
+
+      render(<ControlPanelTable cases={cases} />);
+
+      expect(screen.getByText('João').closest('a')).toHaveAttribute(
+        'href',
+        '/partners/partner-123'
+      );
+    });
+
+    it('should render the técnico name as plain text when partner_id is missing', () => {
+      const crmCase = buildPanelCaseItem({
+        partner_id: undefined,
+        partner_first_name: 'João',
+      });
+      const cases = buildSearchResponse([crmCase]);
+
+      render(<ControlPanelTable cases={cases} />);
+
+      expect(screen.getByText('João').closest('a')).toBeNull();
+    });
+
     it('should render external reference in Senha column', () => {
       const crmCase = buildPanelCaseItem({ external_reference: 'SIN-999' });
       const cases = buildSearchResponse([crmCase]);
