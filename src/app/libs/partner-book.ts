@@ -40,12 +40,7 @@ export function toPartnerBookCaseItem(crmCase: CaseFull): PartnerBookCaseItem {
         (t) => t.status === TransactionStatus.APPROVED
       ));
 
-  const paid_at = isPaid
-    ? partnerTransactions
-        .map((t) => t.updated_at)
-        .sort()
-        .at(-1)
-    : undefined;
+  const paid_at = isPaid ? crmCase.closed_at : undefined;
 
   return {
     case_id: crmCase.case_id,
