@@ -8,13 +8,12 @@ import { getCurrentUser } from '@/app/libs/session';
 import { toPartnerBookCaseItem } from '@/app/libs/partner-book';
 import { fetchCasesFull } from '@/app/services/cases';
 import { getPartnerByID } from '@/app/services/partners';
-import { CaseFull, CaseStatus } from '@/app/types/case';
+import { CaseFull } from '@/app/types/case';
 import { PartnerBookCaseItem } from '@/app/types/partner-book-item';
 import { SearchResponse } from '@/app/types/search_response';
 import { monthsNumeric } from '@/app/types/month';
 import { adminRoles } from '@/app/utils/roles';
 import { redirect } from 'next/navigation';
-import { Suspense } from 'react';
 
 interface PartnerCaseFilters {
   mes?: string;
@@ -59,8 +58,7 @@ function prepareQuery(partnerID: string, filters?: PartnerCaseFilters): string {
   finalMonthDate.setUTCHours(23, 59, 59, 999);
 
   query += `start_date=${initialMonthDate.toISOString()}&`;
-  query += `end_date=${finalMonthDate.toISOString()}&`;
-  query += `status=${CaseStatus.CLOSED}`;
+  query += `end_date=${finalMonthDate.toISOString()}`;
 
   return query;
 }
@@ -121,17 +119,13 @@ export default async function Page({
 
   return (
     <main>
-      <Suspense fallback={<p>Carregando técnico...</p>}>
-        {partner?.data && <PartnerDetails partner={partner.data} />}
-      </Suspense>
+      {partner?.data && <PartnerDetails partner={partner.data} />}
 
       {isAdmin && casesData && (
-        <Suspense>
-          <div className="mt-8">
-            <ControlPanelSearch hideSeguradoraFilter />
-            <PartnerBookTable cases={casesData} />
-          </div>
-        </Suspense>
+        <div className="mt-8">
+          <ControlPanelSearch hideSeguradoraFilter />
+          <PartnerBookTable cases={casesData} />
+        </div>
       )}
     </main>
   );

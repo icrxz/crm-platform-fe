@@ -13,7 +13,6 @@ import {
 import { getCurrentUser } from '@/app/libs/session';
 import { adminRoles } from '@/app/utils/roles';
 import { redirect } from 'next/navigation';
-import { Suspense } from 'react';
 
 interface PaymentFilters {
   tecnico?: string;
@@ -88,7 +87,8 @@ async function getData(
         external_reference: caseItem.external_reference,
         created_at: caseItem.updated_at,
         status: TransactionStatus.PENDING,
-        contractor_company_name: caseItem.contractor?.company_name,
+        customer_first_name: caseItem.customer?.first_name,
+        customer_last_name: caseItem.customer?.last_name,
         total: transactionVal,
         partner_document: partner?.document,
         partner_id: partner?.partner_id,
@@ -166,13 +166,11 @@ export default async function Page({ searchParams }: TransactionPageParams) {
 
   return (
     <main>
-      <Suspense fallback={<p>Carregando pagamentos...</p>}>
-        <PaymentTable
-          transactions={payments || []}
-          initialPage={page}
-          partners={partners}
-        />
-      </Suspense>
+      <PaymentTable
+        transactions={payments || []}
+        initialPage={page}
+        partners={partners}
+      />
     </main>
   );
 }

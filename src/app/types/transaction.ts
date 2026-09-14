@@ -47,7 +47,8 @@ export type TransactionItem = {
   total: number;
   status: TransactionStatus;
   created_at: string;
-  contractor_company_name?: string;
+  customer_first_name?: string;
+  customer_last_name?: string;
   partner_id?: string;
   partner_name?: string;
   partner_document?: string;

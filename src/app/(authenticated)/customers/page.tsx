@@ -5,7 +5,6 @@ import { getCurrentUser } from '@/app/libs/session';
 import { CustomerListItem } from '@/app/types/customer-list-item';
 import { SearchResponse } from '@/app/types/search_response';
 import { redirect } from 'next/navigation';
-import { Suspense } from 'react';
 import CustomersTable from '../../components/customers/table';
 import { fetchCustomers } from '../../services/customers';
 
@@ -60,9 +59,7 @@ export default async function Page({ searchParams }: CustomerPageParams) {
 
   return (
     <main>
-      <Suspense fallback={<p>Carregando clientes...</p>}>
-        <CustomersTable customers={data} initialPage={page} />
-      </Suspense>
+      <CustomersTable customers={data} initialPage={page} />
     </main>
   );
 }

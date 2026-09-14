@@ -12,7 +12,6 @@ import {
 } from '@/app/utils/case_status';
 import { adminRoles } from '@/app/utils/roles';
 import { redirect } from 'next/navigation';
-import { Suspense } from 'react';
 import CasesTable from '../../components/cases/table';
 import { fetchCasesFull } from '../../services/cases';
 
@@ -95,15 +94,9 @@ export default async function Page({ searchParams }: CasePageParams) {
 
   return (
     <main>
-      <Suspense fallback={<p>carregando casos...</p>}>
-        {data && (
-          <CasesTable
-            cases={data}
-            initialPage={page || 1}
-            userRole={user.role}
-          />
-        )}
-      </Suspense>
+      {data && (
+        <CasesTable cases={data} initialPage={page || 1} userRole={user.role} />
+      )}
     </main>
   );
 }
