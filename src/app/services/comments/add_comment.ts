@@ -10,8 +10,9 @@ import { crmCoreApiKey, crmCoreEndpoint } from '.';
 export async function addComment(
   caseID: string,
   formData: FormData,
-  attachments?: CreateAttachment[]
-): Promise<ServiceResponse<any>> {
+  attachments?: CreateAttachment[],
+  commentType: CommentType = CommentType.COMMENT
+): Promise<ServiceResponse<Comment>> {
   try {
     if (!caseID) {
       return {
@@ -29,7 +30,7 @@ export async function addComment(
     const payload: CreateComment = {
       content: formData.get('content')?.toString() || '',
       created_by: author,
-      comment_type: CommentType.COMMENT,
+      comment_type: commentType,
       case_id: caseID,
       attachments: attachments,
     };
@@ -61,7 +62,7 @@ export async function addComment(
       };
     }
 
-    const data = (await response.json()) as Comment[];
+    const data = (await response.json()) as Comment;
 
     return {
       success: true,

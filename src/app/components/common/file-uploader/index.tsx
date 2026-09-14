@@ -12,7 +12,7 @@ export interface FileUploaderGenericRef {
   length: number;
 }
 
-interface FileUploaderProps {
+export interface FileUploaderProps {
   maxFileSize?: number;
   maxFiles?: number;
   minFiles?: number;

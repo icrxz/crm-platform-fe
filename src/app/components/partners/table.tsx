@@ -5,8 +5,8 @@ import { Pagination } from '@heroui/pagination';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useState } from 'react';
 
+import { PartnerListItem } from '@/app/types/partner-list-item';
 import { SearchResponse } from '@/app/types/search_response';
-import { Partner } from '../../types/partner';
 import { roboto } from '../../ui/fonts';
 import CreatePartnerModal from './create-partner';
 import { DeletePartnerModal } from './delete-partner';
@@ -14,7 +14,7 @@ import EditPartnerModal from './edit-partner';
 import PartnersSearchBar from './search-bar';
 
 interface PartnersTableProps {
-  partners?: SearchResponse<Partner>;
+  partners?: SearchResponse<PartnerListItem>;
   initialPage?: number;
 }
 
@@ -107,10 +107,10 @@ export default function PartnersTable({
                         {parseDocument(partner.document) || '-'}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {partner.shipping.city}
+                        {partner.city}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {partner.shipping.state}
+                        {partner.state}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                         {partner.active ? 'Ativo' : 'Inativo'}

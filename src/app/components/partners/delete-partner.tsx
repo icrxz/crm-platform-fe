@@ -36,7 +36,7 @@ export function DeletePartnerModal({
       onClose();
     } else {
       if (state?.unauthorized) {
-        signOut();
+        signOut({ callbackUrl: '/login' });
       }
       showSnackbar(state?.message || '', 'error');
     }

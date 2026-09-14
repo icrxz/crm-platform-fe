@@ -1,9 +1,10 @@
 `use server`;
 import PartnersTable from '@/app/components/partners/table';
+import { unauthorizedRedirect } from '@/app/libs/auth-redirect';
 import { removeDocumentSymbols } from '@/app/libs/parser';
 import { getCurrentUser } from '@/app/libs/session';
 import { fetchPartners } from '@/app/services/partners';
-import { Partner } from '@/app/types/partner';
+import { PartnerListItem } from '@/app/types/partner-list-item';
 import { SearchResponse } from '@/app/types/search_response';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
@@ -13,6 +14,8 @@ interface PartnerFilters {
   cidade?: string;
   estado?: string;
   nome?: string;
+  first_name?: string;
+  last_name?: string;
   page?: number;
 }
 
@@ -29,23 +32,24 @@ function prepareQuery(filters?: PartnerFilters): string {
   }
 
   if (filters?.nome) {
-    const fullName = filters.nome.trim().split(' ');
-    const firstName = fullName[0];
-    const lastName = fullName.slice(1).join(' ');
-
-    query += `first_name=${firstName}&`;
-
-    if (lastName) {
-      query += `last_name=${lastName}&`;
-    }
+    const fullName = filters.nome.trim();
+    query += `name=${fullName}&`;
   }
 
   if (filters?.cidade) {
-    query += `city=${filters.cidade}&`;
+    query += `city=${filters.cidade.trim()}&`;
   }
 
   if (filters?.estado) {
-    query += `state=${filters.estado}&`;
+    query += `state=${filters.estado.trim()}&`;
+  }
+
+  if (filters?.first_name) {
+    query += `first_name=${filters.first_name.trim()}&`;
+  }
+
+  if (filters?.last_name) {
+    query += `last_name=${filters.last_name.trim()}&`;
   }
 
   if (query.endsWith('&')) {
@@ -57,7 +61,7 @@ function prepareQuery(filters?: PartnerFilters): string {
 
 async function getData(
   filters?: PartnerFilters
-): Promise<SearchResponse<Partner>> {
+): Promise<SearchResponse<PartnerListItem>> {
   let { page, ...rest } = filters || {};
   page = page || 1;
 
@@ -66,17 +70,25 @@ async function getData(
   const { success, unauthorized, data } = await fetchPartners(query, page);
   if (!success || !data) {
     if (unauthorized) {
-      redirect('/login');
+      await unauthorizedRedirect();
     }
     return { result: [], paging: { limit: 10, offset: page * 10, total: 0 } };
   }
 
-  const partners = data.result;
+  const listItems = data.result.map(
+    (p): PartnerListItem => ({
+      partner_id: p.partner_id,
+      first_name: p.first_name,
+      last_name: p.last_name,
+      partner_type: p.partner_type,
+      document: p.document,
+      city: p.shipping.city,
+      state: p.shipping.state,
+      active: p.active,
+    })
+  );
 
-  return {
-    result: partners,
-    paging: data.paging,
-  };
+  return { result: listItems, paging: data.paging };
 }
 
 export default async function Page({ searchParams }: PartnerPageParams) {

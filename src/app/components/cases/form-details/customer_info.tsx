@@ -5,15 +5,31 @@ import { CreateAttachment } from '@/app/types/attachments';
 import { CaseFull, CaseStatus } from '@/app/types/case';
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useRef, useState } from 'react';
+import {
+  type ForwardRefExoticComponent,
+  type RefAttributes,
+  useRef,
+  useState,
+} from 'react';
 import { useActionState } from 'react';
 import { Button } from '../../common/button';
 import { Card } from '../../common/card';
 import { ErrorMessage } from '../../common/error-message';
-import {
+import dynamic from 'next/dynamic';
+import type {
   FileUploaderGenericRef,
-  GenericUploader,
+  FileUploaderProps,
 } from '../../common/file-uploader';
+
+const GenericUploader = dynamic(
+  () =>
+    import('../../common/file-uploader').then((m) => ({
+      default: m.GenericUploader,
+    })),
+  { ssr: false }
+) as ForwardRefExoticComponent<
+  FileUploaderProps & RefAttributes<FileUploaderGenericRef>
+>;
 
 interface CustomerInfoStatusFormProps {
   crmCase: CaseFull;
@@ -50,7 +66,7 @@ export function CustomerInfoStatusForm({
       .then((response) => {
         if (!response.success) {
           if (response.unauthorized) {
-            signOut();
+            signOut({ callbackUrl: '/login' });
           }
           setErrorMessage(response.message || '');
           return;

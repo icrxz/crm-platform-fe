@@ -1,10 +1,16 @@
 `use server`;
+import { unauthorizedRedirect } from '@/app/libs/auth-redirect';
 import { getCurrentUser } from '@/app/libs/session';
-import { CaseFull } from '@/app/types/case';
+import { CaseListItem } from '@/app/types/case-list-item';
+import { CaseStatus } from '@/app/types/case';
 import { SearchResponse } from '@/app/types/search_response';
 import { UserRole } from '@/app/types/user';
-import { onlyAdminStatuses } from '@/app/utils/case_status';
-import { signOut } from 'next-auth/react';
+import { mapCasesToListItems } from '@/app/utils/case_list_item';
+import {
+  getDefaultCaseStatuses,
+  onlyAdminStatuses,
+} from '@/app/utils/case_status';
+import { adminRoles } from '@/app/utils/roles';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import CasesTable from '../../components/cases/table';
@@ -13,57 +19,90 @@ import { fetchCasesFull } from '../../services/cases';
 type CasePageParams = {
   searchParams: Promise<{
     sinistro?: string;
+    status?: string | string[];
+    contractor_id?: string | string[];
+    only_mine?: string;
     page?: number;
   }>;
 };
 
+function toQueryParts(key: string, value?: string | string[]): string[] {
+  if (!value) return [];
+  const values = Array.isArray(value) ? value : [value];
+  return values.filter(Boolean).map((v) => `${key}=${v}`);
+}
+
 async function getData(
   sinistro: string,
+  status: string | string[] | undefined,
+  contractorId: string | string[] | undefined,
+  ownerId: string,
   userRole: UserRole | undefined,
   page: number
-): Promise<SearchResponse<CaseFull>> {
-  let query = '';
-  if (sinistro) {
-    query = `external_reference=${sinistro}`;
-  }
+): Promise<SearchResponse<CaseListItem>> {
+  const isAdmin = userRole !== undefined && adminRoles.includes(userRole);
+
+  const requestedStatuses =
+    status !== undefined
+      ? Array.isArray(status)
+        ? status
+        : [status]
+      : getDefaultCaseStatuses(isAdmin);
+
+  const allowedStatuses = isAdmin
+    ? requestedStatuses
+    : requestedStatuses.filter(
+        (s) => !onlyAdminStatuses.includes(s as CaseStatus)
+      );
+
+  const queryParts: string[] = [
+    ...(sinistro ? [`external_reference=${sinistro}`] : []),
+    ...allowedStatuses.map((s) => `status=${s}`),
+    ...toQueryParts('contractor_id', contractorId),
+    ...(ownerId ? [`owner_id=${ownerId}`] : []),
+  ];
+  const query = queryParts.join('&');
 
   const { success, unauthorized, data } = await fetchCasesFull(query, page);
   if (!success || !data) {
     if (unauthorized) {
-      redirect('/login');
+      await unauthorizedRedirect();
     }
     return { result: [], paging: { limit: 10, offset: page * 10, total: 0 } };
   }
 
-  const cases = data.result;
-
-  let filteredCases = cases;
-
-  if (userRole === UserRole.OPERATOR) {
-    filteredCases = cases.filter(
-      (crmCase) => !onlyAdminStatuses.includes(crmCase.status)
-    );
-  }
-
-  return {
-    result: filteredCases,
-    paging: data.paging,
-  };
+  return { result: mapCasesToListItems(data.result), paging: data.paging };
 }
 
 export default async function Page({ searchParams }: CasePageParams) {
-  const { sinistro, page } = await searchParams;
+  const { sinistro, status, contractor_id, only_mine, page } =
+    await searchParams;
   const user = await getCurrentUser();
   if (!user) {
-    signOut();
+    redirect('/login');
   }
 
-  const data = await getData(sinistro || '', user?.role, page || 1);
+  const ownerId = only_mine === 'true' ? user.user_id : '';
+
+  const data = await getData(
+    sinistro || '',
+    status,
+    contractor_id,
+    ownerId,
+    user?.role,
+    page || 1
+  );
 
   return (
     <main>
       <Suspense fallback={<p>carregando casos...</p>}>
-        {data && <CasesTable cases={data} initialPage={page || 1} />}
+        {data && (
+          <CasesTable
+            cases={data}
+            initialPage={page || 1}
+            userRole={user.role}
+          />
+        )}
       </Suspense>
     </main>
   );

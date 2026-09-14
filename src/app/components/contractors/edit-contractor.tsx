@@ -62,7 +62,7 @@ export default function EditContractorModal({
       refresh();
       onClose();
     } else if (state.unauthorized) {
-      signOut();
+      signOut({ callbackUrl: '/login' });
     }
   }, [state, showSnackbar, refresh, onClose]);
 

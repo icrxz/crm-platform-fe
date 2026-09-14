@@ -40,7 +40,7 @@ export function PartnerInfoStatusForm({ crmCase }: PartnerInfoFormProps) {
       fetchPartners(query, 1, 10000).then((response) => {
         if (!response.success || !response.data) {
           if (response.unauthorized) {
-            signOut();
+            signOut({ callbackUrl: '/login' });
           }
           setErrorMessage(response.message || '');
           return;
@@ -73,7 +73,7 @@ export function PartnerInfoStatusForm({ crmCase }: PartnerInfoFormProps) {
       changePartner(crmCase.case_id, formData).then((response) => {
         if (!response.success) {
           if (response.unauthorized) {
-            signOut();
+            signOut({ callbackUrl: '/login' });
           }
           setErrorMessage(response.message || '');
           return;

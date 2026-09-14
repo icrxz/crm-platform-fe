@@ -29,13 +29,12 @@ export async function editPartner(_currentState: unknown, formData: FormData) {
 
     const formDocument = formData.get('document')?.toString() || '';
     const document = removeDocumentSymbols(formDocument);
-    const isCPF = document.length === 11;
 
     const payload = {
       first_name: formData.get('first_name')?.toString() || '',
       last_name: formData.get('last_name')?.toString() || '',
       document: document,
-      document_type: isCPF ? 'CPF' : 'CNPJ',
+      document_type: formData.get('document_type')?.toString() || '',
       partner_type: formData.get('partner_type')?.toString() || '',
       shipping: {
         address: address,

@@ -73,12 +73,15 @@ export async function publishCase(
       }
     }
 
+    const category = formData?.get('category')?.toString() || '';
+
     const payload: PublishCase = {
       status: CaseStatus.NEW,
       customer_id: customerID,
       product_id: productID,
       subject: formData?.get('subject')?.toString() || '',
       updated_by: author,
+      ...(category ? { metadata: { category } } : {}),
     };
 
     const response = await fetch(url, {

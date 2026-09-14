@@ -1,5 +1,9 @@
-import { S3Client } from "@aws-sdk/client-s3";
+import { S3Client } from '@aws-sdk/client-s3';
 import { uploadAttachments } from './upload-attachment';
+import { deleteAttachment } from './delete-attachment';
+
+export const crmCoreEndpoint = process.env.CRM_CORE_ENDPOINT;
+export const crmCoreApiKey = process.env.CRM_CORE_API_KEY;
 
 export const s3Client = new S3Client({
   region: process.env.AWS_REGION as string,
@@ -9,6 +13,4 @@ export const s3Client = new S3Client({
   },
 });
 
-export {
-  uploadAttachments
-};
+export { uploadAttachments, deleteAttachment };

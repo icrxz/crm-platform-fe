@@ -1,4 +1,5 @@
 'use server';
+import { getApiErrorMessage } from '@/app/libs/api-error';
 import { removeDocumentSymbols } from '@/app/libs/parser';
 import { getCurrentUser } from '@/app/libs/session';
 import { CreatePartner } from '@/app/types/partner';
@@ -24,13 +25,12 @@ export async function createPartner(
 
     const formDocument = formData.get('document')?.toString() || '';
     const document = removeDocumentSymbols(formDocument);
-    const isCPF = document.length === 11;
 
     const payload: CreatePartner = {
       first_name: formData.get('first_name')?.toString() || '',
       last_name: formData.get('last_name')?.toString() || '',
       document,
-      document_type: isCPF ? 'CPF' : 'CNPJ',
+      document_type: formData.get('document_type')?.toString() || '',
       partner_type: formData.get('partner_type')?.toString() || '',
       shipping: {
         address: address,
@@ -62,10 +62,16 @@ export async function createPartner(
     });
 
     if (!resp.ok) {
+      const unauthorized = resp.status === 401;
+      const errorMessageDefault = unauthorized
+        ? 'usuário não autorizado'
+        : 'Falha na criação do técnico';
+      const errorMessage = await getApiErrorMessage(resp, errorMessageDefault);
+
       return {
         success: false,
-        message: 'Falha na criação do técnico',
-        unauthorized: resp.status === 401,
+        message: errorMessage,
+        unauthorized,
       };
     }
 

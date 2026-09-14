@@ -90,7 +90,7 @@ export function TransactionStatusForm({ crmCase }: TransactionStatusFormProps) {
       );
       if (!transactionResp.success) {
         if (transactionResp.unauthorized) {
-          signOut();
+          signOut({ callbackUrl: '/login' });
         }
         showSnackbar(transactionResp.message, 'error');
         return;
@@ -102,7 +102,7 @@ export function TransactionStatusForm({ crmCase }: TransactionStatusFormProps) {
       );
       if (!statusResp.success) {
         if (statusResp.unauthorized) {
-          signOut();
+          signOut({ callbackUrl: '/login' });
         }
         showSnackbar(statusResp.message, 'error');
         return;
@@ -148,7 +148,7 @@ export function TransactionStatusForm({ crmCase }: TransactionStatusFormProps) {
                   <div className="items-center gap-4">
                     <label
                       className="block text-sm font-medium text-gray-700"
-                      htmlFor="amount"
+                      htmlFor={`amount-${transaction.transaction_id}`}
                     >
                       {
                         TransactionDescMap[
@@ -159,8 +159,9 @@ export function TransactionStatusForm({ crmCase }: TransactionStatusFormProps) {
 
                     <InputNumberFormat
                       className="peer block rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                      id="amount"
-                      name="amount"
+                      id={`amount-${transaction.transaction_id}`}
+                      name={`amount-${transaction.transaction_id}`}
+                      autoComplete="off"
                       placeholder="Digite o valor"
                       required
                       locales={'pt-BR'}
@@ -192,7 +193,7 @@ export function TransactionStatusForm({ crmCase }: TransactionStatusFormProps) {
                   <div className="items-center gap-4">
                     <label
                       className="block text-sm font-medium text-gray-700"
-                      htmlFor="amount"
+                      htmlFor={`amount-${transaction.transaction_id}`}
                     >
                       {
                         TransactionDescMap[
@@ -203,8 +204,9 @@ export function TransactionStatusForm({ crmCase }: TransactionStatusFormProps) {
 
                     <InputNumberFormat
                       className="peer block rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                      id="amount"
-                      name="amount"
+                      id={`amount-${transaction.transaction_id}`}
+                      name={`amount-${transaction.transaction_id}`}
+                      autoComplete="off"
                       placeholder="Digite o valor"
                       required
                       locales={'pt-BR'}

@@ -4,16 +4,20 @@ import { parseDocument, parseToCurrency } from '@/app/libs/parser';
 import { SearchResponse } from '@/app/types/search_response';
 import { CheckIcon, PencilIcon } from '@heroicons/react/24/outline';
 import { Pagination } from '@heroui/pagination';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { TransactionItem, TransactionStatus } from '../../types/transaction';
 import { roboto } from '../../ui/fonts';
 import { ConfirmPaymentModal } from './confirm-payment';
 import { EditPaymentModal } from './edit-payment';
+import { Partner } from '@/app/types/partner';
+import PaymentsSearchBar from './search-bar';
 
 interface PaymentTableProps {
   transactions: SearchResponse<TransactionItem>;
   initialPage?: number;
+  partners?: Partner[];
 }
 
 const transactionStatusTranslate: Record<string, string> = {
@@ -23,8 +27,10 @@ const transactionStatusTranslate: Record<string, string> = {
 export default function PaymentTable({
   transactions,
   initialPage,
+  partners,
 }: PaymentTableProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isConfirmPaymentModal, setIsConfirmPaymentModal] = useState(false);
   const [isEditPaymentModal, setIsEditPaymentModal] = useState(false);
   const [selectedTransaction, setSelectedTransaction] =
@@ -35,7 +41,9 @@ export default function PaymentTable({
   }
 
   function handleChangePage(value: number) {
-    router.push(`?page=${value}`);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', String(value));
+    router.push(`?${params.toString()}`);
   }
 
   function handleConfirmPayment(transaction: TransactionItem) {
@@ -54,6 +62,8 @@ export default function PaymentTable({
         Pagamentos
       </h1>
 
+      <PaymentsSearchBar partners={partners} />
+
       <div className="mt-6 flow-root">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
@@ -62,7 +72,10 @@ export default function PaymentTable({
                 <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
                   <tr>
                     <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                      Caso
+                      Sinistro
+                    </th>
+                    <th scope="col" className="px-4 py-5 font-medium">
+                      Segurado
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium">
                       Técnico
@@ -97,14 +110,34 @@ export default function PaymentTable({
                 <tbody className="divide-y divide-gray-200 text-gray-900">
                   {transactions?.result.map((transaction) => (
                     <tr key={transaction.case_id} className="group">
-                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-blue-500 underline group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
-                          <p>{transaction.external_reference}</p>
+                          <Link href={`/cases/${transaction.case_id}`}>
+                            {transaction.external_reference}
+                          </Link>
                         </div>
                       </td>
                       <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
-                          <p>{transaction.partner_name}</p>
+                          <p>
+                            {transaction.customer_first_name
+                              ? `${transaction.customer_first_name} ${transaction.customer_last_name || ''}`.trim()
+                              : '-'}
+                          </p>
+                        </div>
+                      </td>
+                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                        <div className="flex items-center gap-3">
+                          {transaction.partner_id ? (
+                            <Link
+                              className="text-blue-500 underline"
+                              href={`/partners/${transaction.partner_id}`}
+                            >
+                              {transaction.partner_name}
+                            </Link>
+                          ) : (
+                            <p>{transaction.partner_name}</p>
+                          )}
                         </div>
                       </td>
                       <td className="whitespace-pre-wrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">

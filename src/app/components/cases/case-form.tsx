@@ -3,7 +3,7 @@ import { removeDocumentSymbols } from '@/app/libs/parser';
 import { fetchContractors } from '@/app/services/contractors';
 import { fetchCustomers } from '@/app/services/customers';
 import { brazilStates } from '@/app/types/address';
-import { Case } from '@/app/types/case';
+import { Case, CaseCategory, caseCategoryMap } from '@/app/types/case';
 import { Contractor } from '@/app/types/contractor';
 import { Customer } from '@/app/types/customer';
 import { ServiceResponse } from '@/app/types/service';
@@ -69,7 +69,7 @@ export default function CaseForm({
   }, [state, submitState]);
 
   return (
-    <form action={dispatch} className="space-y-3">
+    <form action={dispatch} className="w-[36rem] space-y-3">
       <div className="flex-1">
         <h1 className={`${roboto.className} mb-5 text-2xl`}>Criar caso</h1>
 
@@ -114,6 +114,31 @@ export default function CaseForm({
                     value={contractor.contractor_id}
                   >
                     {contractor.company_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="mb-4 columns-1">
+            <div>
+              <label
+                className="mb-3 block text-xs font-medium text-gray-900"
+                htmlFor="category"
+              >
+                Categoria
+              </label>
+
+              <select
+                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
+                id="category"
+                name="category"
+                required
+              >
+                <option value="">Selecione a categoria</option>
+                {Object.values(CaseCategory).map((category) => (
+                  <option key={category} value={category}>
+                    {caseCategoryMap[category]}
                   </option>
                 ))}
               </select>

@@ -10,6 +10,12 @@ export async function GET(
   const { caseID } = await params;
   const url = `${crmCoreEndpoint}/crm/core/api/v1/cases/${caseID}/report`;
   const jwt = (await cookies()).get('jwt')?.value;
+  if (!jwt) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
 
   const resp = await fetch(url, {
     method: 'GET',

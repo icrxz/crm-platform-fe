@@ -1,13 +1,13 @@
-"use server";
+'use server';
 
-import { parseToCurrency } from "@/app/libs/parser";
-import { CaseFull } from "@/app/types/case";
-import { Transaction, TransactionType } from "@/app/types/transaction";
-import { roboto } from "@/app/ui/fonts";
-import { Card } from "../common/card";
+import { parseToCurrency } from '@/app/libs/parser';
+import { PanelCaseItem } from '@/app/types/panel-case-item';
+import { TransactionType } from '@/app/types/transaction';
+import { roboto } from '@/app/ui/fonts';
+import { Card } from '../common/card';
 
 interface ControlPanelSummaryProps {
-  cases: CaseFull[];
+  cases: PanelCaseItem[];
 }
 
 interface PanelSummaryData {
@@ -19,9 +19,10 @@ interface PanelSummaryData {
   totalIncomingParts: number;
   totalIncoming: number;
   totalOutgoing: number;
+  totalProfit: number;
 }
 
-async function getData(cases: CaseFull[]): Promise<PanelSummaryData> {
+async function getData(cases: PanelCaseItem[]): Promise<PanelSummaryData> {
   let totalLabor = 0;
   let totalDisplacement = 0;
   let totalParts = 0;
@@ -62,7 +63,7 @@ async function getData(cases: CaseFull[]): Promise<PanelSummaryData> {
             break;
         }
       }
-    })
+    });
   });
 
   return {
@@ -74,67 +75,96 @@ async function getData(cases: CaseFull[]): Promise<PanelSummaryData> {
     totalIncomingLabor,
     totalIncomingDisplacement,
     totalIncomingParts,
+    totalProfit: totalIncoming - totalOutgoing,
   };
 }
 
-export default async function ControlPanelSummary({ cases }: ControlPanelSummaryProps) {
-  const data = await getData(cases);
+function SummaryValue({
+  value,
+  emphasis,
+}: {
+  value: string;
+  emphasis?: 'incoming' | 'outgoing';
+}) {
+  const emphasisClass =
+    emphasis === 'incoming'
+      ? 'bg-emerald-50 text-emerald-700'
+      : emphasis === 'outgoing'
+        ? 'bg-rose-50 text-rose-700'
+        : 'bg-white text-gray-900';
 
   return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      <Card title="Mão de obra Técnico">
-        <p className={`${roboto.className} truncate rounded-xl bg-white px-2 py-4 text-center font-semibold text-md`}>
-          {parseToCurrency(data.totalLabor)}
-        </p>
-      </Card>
+    <p
+      className={`${roboto.className} text-md truncate rounded-xl px-2 py-3 text-center font-semibold ${emphasisClass}`}
+    >
+      {value}
+    </p>
+  );
+}
 
-      <Card title="Deslocamento Técnico">
-      <p className={`${roboto.className} truncate rounded-xl bg-white px-2 py-4 text-center font-semibold text-md`}>
-          {parseToCurrency(data.totalDisplacement)}
-        </p>
-      </Card>
+export default async function ControlPanelSummary({
+  cases,
+}: ControlPanelSummaryProps) {
+  const data = await getData(cases);
 
-      <Card title="Peças Técnico">
-      <p className={`${roboto.className} truncate rounded-xl bg-white px-2 py-4 text-center font-semibold text-md`}>
-          {parseToCurrency(data.totalParts)}
-        </p>
-      </Card>
+  const profitClass =
+    data.totalProfit >= 0 ? 'text-emerald-700' : 'text-rose-700';
 
-      <Card title="Mão de obra Seguradora">
-      <p className={`${roboto.className} truncate rounded-xl bg-white px-2 py-4 text-center font-semibold text-md`}>
-          {parseToCurrency(data.totalIncomingLabor)}
+  return (
+    <div>
+      <div className="mb-4 flex flex-wrap items-center gap-x-6 gap-y-1 px-1">
+        <p className={`${roboto.className} text-sm text-gray-600`}>
+          Total de casos: <span className="font-semibold">{cases.length}</span>
         </p>
-      </Card>
+        <p className={`${roboto.className} text-sm text-gray-600`}>
+          Lucro:{' '}
+          <span className={`font-semibold ${profitClass}`}>
+            {parseToCurrency(data.totalProfit)}
+          </span>
+        </p>
+      </div>
 
-      <Card title="Deslocamento Seguradora">
-      <p className={`${roboto.className} truncate rounded-xl bg-white px-2 py-4 text-center font-semibold text-md`}>
-          {parseToCurrency(data.totalIncomingDisplacement)}
-        </p>
-      </Card>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Card title="Mão de obra Seguradora">
+          <SummaryValue value={parseToCurrency(data.totalIncomingLabor)} />
+        </Card>
 
-      <Card title="Peças Seguradora">
-      <p className={`${roboto.className} truncate rounded-xl bg-white px-2 py-4 text-center font-semibold text-md`}>
-          {parseToCurrency(data.totalIncomingParts)}
-        </p>
-      </Card>
+        <Card title="Deslocamento Seguradora">
+          <SummaryValue
+            value={parseToCurrency(data.totalIncomingDisplacement)}
+          />
+        </Card>
 
-      <Card title="Total entrada">
-      <p className={`${roboto.className} truncate rounded-xl bg-white px-2 py-4 text-center font-semibold text-md`}>
-          {parseToCurrency(data.totalIncoming)}
-        </p>
-      </Card>
+        <Card title="Peças Seguradora">
+          <SummaryValue value={parseToCurrency(data.totalIncomingParts)} />
+        </Card>
 
-      <Card title="Total saída">
-      <p className={`${roboto.className} truncate rounded-xl bg-white px-2 py-4 text-center font-semibold text-md`}>
-          {parseToCurrency(data.totalOutgoing)}
-        </p>
-      </Card>
+        <Card title="Total entrada">
+          <SummaryValue
+            value={parseToCurrency(data.totalIncoming)}
+            emphasis="incoming"
+          />
+        </Card>
 
-      <Card title="Total de casos">
-      <p className={`${roboto.className} truncate rounded-xl bg-white px-2 py-4 text-center font-semibold text-md`}>
-          {cases.length}
-        </p>
-      </Card>
+        <Card title="Mão de obra Técnico">
+          <SummaryValue value={parseToCurrency(data.totalLabor)} />
+        </Card>
+
+        <Card title="Deslocamento Técnico">
+          <SummaryValue value={parseToCurrency(data.totalDisplacement)} />
+        </Card>
+
+        <Card title="Peças Técnico">
+          <SummaryValue value={parseToCurrency(data.totalParts)} />
+        </Card>
+
+        <Card title="Total saída">
+          <SummaryValue
+            value={parseToCurrency(data.totalOutgoing)}
+            emphasis="outgoing"
+          />
+        </Card>
+      </div>
     </div>
   );
 }

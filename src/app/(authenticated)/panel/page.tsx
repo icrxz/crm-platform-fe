@@ -1,88 +1,106 @@
 'use server';
 import ControlPanelTable from '@/app/components/panel/table';
+import { unauthorizedRedirect } from '@/app/libs/auth-redirect';
 import { getCurrentUser } from '@/app/libs/session';
 import { fetchContractors } from '@/app/services/contractors';
 import { fetchPartners } from '@/app/services/partners';
-import { CaseFull, CaseStatus } from '@/app/types/case';
-import { Contractor } from '@/app/types/contractor';
-import { Partner } from '@/app/types/partner';
-import { SearchResponse } from '@/app/types/search_response';
-import { UserRole } from '@/app/types/user';
-import { signOut } from 'next-auth/react';
+import { CaseStatus, parseCaseCategory } from '@/app/types/case';
+import {
+  PanelCaseItem,
+  PanelContractorOption,
+  PanelPartnerOption,
+  PanelTransactionItem,
+} from '@/app/types/panel-case-item';
 import { redirect } from 'next/navigation';
-import { Suspense } from 'react';
-import { CardsSkeleton } from '../../components/dashboard/skeletons';
+import { adminRoles } from '@/app/utils/roles';
 import { fetchCasesFull } from '../../services/cases';
 import { roboto } from '../../ui/fonts';
 import ControlPanelSummary from '@/app/components/panel/summary';
 import ControlPanelSearch from '@/app/components/panel/search';
-import { monthsNumeric } from '@/app/types/month';
+import { months, monthsNumeric } from '@/app/types/month';
 
 interface PanelFilters {
   mes?: string;
+  ano?: string;
   estado?: string;
   seguradora?: string;
   tecnico?: string;
+  categoria?: string;
 }
 
 type PanelPageParams = {
   searchParams: Promise<PanelFilters>;
 };
 
-function prepareQuery(filters?: PanelFilters): string {
+function prepareQuery(filters: PanelFilters): string {
   let query = '';
 
-  if (filters?.seguradora) {
+  if (filters.seguradora) {
     query += `contractor_id=${filters.seguradora}&`;
   }
 
-  if (filters?.tecnico) {
+  if (filters.tecnico) {
     query += `partner_id=${filters.tecnico}&`;
   }
 
-  if (filters?.estado) {
+  if (filters.estado) {
     query += `state=${filters.estado}&`;
   }
 
-  let selectedMonth = new Date().getUTCMonth();
-  if (filters?.mes) {
-    if (Object.keys(monthsNumeric).find((key) => key === filters.mes)) {
-      selectedMonth = monthsNumeric[filters.mes] - 1;
-    }
+  const category = parseCaseCategory(filters.categoria);
+  if (category) {
+    query += `metadata[category]=${encodeURIComponent(category)}&`;
   }
 
-  const currentDate = new Date();
-  const isLastYear = currentDate.getMonth() < selectedMonth;
-  const searchYear = isLastYear
-    ? currentDate.getFullYear() - 1
-    : currentDate.getFullYear();
+  if (filters.mes && filters.mes in monthsNumeric && filters.ano) {
+    const selectedMonth = monthsNumeric[filters.mes] - 1;
+    const searchYear = parseInt(filters.ano, 10);
 
-  const initialMonthDate = new Date(searchYear, selectedMonth, 1);
-  initialMonthDate.setUTCHours(0, 0, 0, 0);
+    const initialMonthDate = new Date(searchYear, selectedMonth, 1);
+    initialMonthDate.setUTCHours(0, 0, 0, 0);
 
-  const finalMonthDate = new Date(searchYear, selectedMonth + 1, 0);
-  finalMonthDate.setUTCHours(23, 59, 59, 999);
+    const finalMonthDate = new Date(searchYear, selectedMonth + 1, 0);
+    finalMonthDate.setUTCHours(23, 59, 59, 999);
 
-  query += `start_date=${initialMonthDate.toISOString()}&`;
-  query += `end_date=${finalMonthDate.toISOString()}&`;
+    query += `start_date=${initialMonthDate.toISOString()}&`;
+    query += `end_date=${finalMonthDate.toISOString()}&`;
+  }
 
   query += `status=${CaseStatus.CLOSED}`;
 
   return query;
 }
 
-interface PanelResult extends SearchResponse<CaseFull> {
-  contractors?: Contractor[];
-  partners?: Partner[];
+function applyDefaultFilters(filters: PanelFilters): PanelFilters {
+  if (Object.keys(filters).length > 0) return filters;
+
+  const now = new Date();
+  return {
+    mes: months[now.getMonth()],
+    ano: String(now.getFullYear()),
+  };
 }
 
-async function getData(filters: PanelFilters): Promise<PanelResult> {
+interface PanelData {
+  result: PanelCaseItem[];
+  paging: { total: number; limit: number; offset: number };
+  contractors?: PanelContractorOption[];
+  partners?: PanelPartnerOption[];
+}
+
+async function getData(filters: PanelFilters): Promise<PanelData> {
   const query = prepareQuery(filters);
 
-  const { success, unauthorized, data } = await fetchCasesFull(query, 1, 10000);
-  if (!success || !data) {
-    if (unauthorized) {
-      redirect('/login');
+  const [casesResponse, contractorsResponse, partnersResponse] =
+    await Promise.all([
+      fetchCasesFull(query, 1, 10000),
+      fetchContractors('', 1, 10000),
+      fetchPartners('', 1, 10000),
+    ]);
+
+  if (!casesResponse.success || !casesResponse.data) {
+    if (casesResponse.unauthorized) {
+      await unauthorizedRedirect();
     }
     return {
       result: [],
@@ -90,15 +108,60 @@ async function getData(filters: PanelFilters): Promise<PanelResult> {
     };
   }
 
-  const contractors = await fetchContractors('', 1, 10000);
+  const sortedByDate = [...casesResponse.data.result].sort(
+    (a, b) =>
+      new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+  );
 
-  const partners = await fetchPartners('', 1, 10000);
+  const groupsByDocument = new Map<string, typeof sortedByDate>();
+  for (const c of sortedByDate) {
+    const key = c.customer?.document || c.case_id;
+    if (!groupsByDocument.has(key)) groupsByDocument.set(key, []);
+    groupsByDocument.get(key)!.push(c);
+  }
+  const processedResult = [...groupsByDocument.values()].flat();
+
+  const projectedCases = processedResult.map(
+    (c): PanelCaseItem => ({
+      case_id: c.case_id,
+      created_at: c.created_at,
+      type: c.type,
+      external_reference: c.external_reference,
+      customer_document: c.customer?.document,
+      customer_first_name: c.customer?.first_name,
+      customer_last_name: c.customer?.last_name,
+      customer_city: c.customer?.shipping?.city,
+      partner_id: c.partner?.partner_id,
+      partner_first_name: c.partner?.first_name,
+      contractor_company_name: c.contractor?.company_name,
+      transactions: c.transactions?.map(
+        (t): PanelTransactionItem => ({
+          type: t.type,
+          description: t.description,
+          value: t.value,
+        })
+      ),
+    })
+  );
 
   return {
-    result: data.result,
-    paging: data.paging,
-    contractors: contractors.data?.result,
-    partners: partners.data?.result,
+    result: projectedCases,
+    paging: casesResponse.data.paging,
+    contractors: contractorsResponse.data?.result.map(
+      (c): PanelContractorOption => ({
+        contractor_id: c.contractor_id,
+        company_name: c.company_name,
+      })
+    ),
+    partners: partnersResponse.data?.result.map(
+      (p): PanelPartnerOption => ({
+        partner_id: p.partner_id,
+        first_name: p.first_name,
+        last_name: p.last_name,
+        city: p.shipping.city,
+        state: p.shipping.state,
+      })
+    ),
   };
 }
 
@@ -106,14 +169,14 @@ export default async function Page({ searchParams }: PanelPageParams) {
   const filters = await searchParams;
   const user = await getCurrentUser();
   if (!user) {
-    signOut();
+    redirect('/login');
   }
 
-  if (user?.role === UserRole.OPERATOR) {
+  if (!adminRoles.includes(user.role)) {
     redirect('/home');
   }
 
-  const data = await getData(filters);
+  const data = await getData(applyDefaultFilters(filters));
 
   return (
     <main>
@@ -122,21 +185,21 @@ export default async function Page({ searchParams }: PanelPageParams) {
       </h1>
 
       <div>
-        <Suspense fallback={<CardsSkeleton />}>
-          {data.contractors && data.partners && (
-            <ControlPanelSearch
-              contractors={data.contractors || []}
-              partners={data.partners || []}
-            />
-          )}
+        {data.contractors && data.partners && (
+          <ControlPanelSearch
+            contractors={data.contractors || []}
+            partners={data.partners || []}
+          />
+        )}
 
-          {data.result && (
-            <>
-              <ControlPanelSummary cases={data.result} />
-              <ControlPanelTable cases={data} />
-            </>
-          )}
-        </Suspense>
+        {data.result && (
+          <>
+            <ControlPanelSummary cases={data.result} />
+            <ControlPanelTable
+              cases={{ result: data.result, paging: data.paging }}
+            />
+          </>
+        )}
       </div>
     </main>
   );

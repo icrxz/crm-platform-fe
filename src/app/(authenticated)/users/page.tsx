@@ -1,7 +1,9 @@
 `use server`;
 import UsersTable from '@/app/components/users/table';
 import { fetchUsers } from '@/app/services/user';
-import { getServerSession } from 'next-auth';
+import { getCurrentUser } from '@/app/libs/session';
+import { UserListItem } from '@/app/types/user-list-item';
+import { adminRoles } from '@/app/utils/roles';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 
@@ -14,16 +16,37 @@ type UserPageParams = {
 
 export default async function Page({ searchParams }: UserPageParams) {
   const { query, page } = await searchParams;
-  const session = await getServerSession();
+  const session = await getCurrentUser();
 
   if (!session) {
     redirect('/login');
   }
 
-  const { data: users } = await fetchUsers(
+  if (!adminRoles.includes(session.role)) {
+    redirect('/home');
+  }
+
+  const { data: usersData } = await fetchUsers(
     (query || '') + '&role=operator&role=admin&role=admin_operator',
     page || 1
   );
+
+  const users = usersData
+    ? {
+        result: usersData.result.map(
+          (u): UserListItem => ({
+            user_id: u.user_id,
+            username: u.username,
+            first_name: u.first_name,
+            last_name: u.last_name,
+            email: u.email,
+            role: u.role,
+            active: u.active,
+          })
+        ),
+        paging: usersData.paging,
+      }
+    : undefined;
 
   return (
     <main>

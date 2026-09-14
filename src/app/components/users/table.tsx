@@ -1,22 +1,17 @@
 'use client';
+import { UserListItem } from '@/app/types/user-list-item';
+import { UserRole } from '@/app/types/user';
 import { SearchResponse } from '@/app/types/search_response';
-import { User, UserRole } from '@/app/types/user';
+import { roleLabels } from '@/app/utils/roles';
 import { EyeIcon } from '@heroicons/react/24/outline';
 import { Pagination } from '@heroui/pagination';
 import { useRouter } from 'next/navigation';
 import { roboto } from '../../ui/fonts';
 
 interface UsersTableProps {
-  users?: SearchResponse<User>;
+  users?: SearchResponse<UserListItem>;
   initialPage?: number;
 }
-
-const roleMap: Record<UserRole, string> = {
-  operator: 'Operador',
-  admin: 'Administrador',
-  thavanna_admin: 'Thavanna Admin',
-  admin_operator: 'Administrador',
-};
 
 export default function UsersTable({
   users,
@@ -83,7 +78,7 @@ export default function UsersTable({
                           {user.email}
                         </td>
                         <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                          {roleMap[user.role]}
+                          {roleLabels[user.role]}
                         </td>
                         <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                           {user.active ? 'Ativo' : 'Inativo'}

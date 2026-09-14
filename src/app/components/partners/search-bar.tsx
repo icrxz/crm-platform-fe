@@ -26,10 +26,12 @@ export default function PartnersSearchBar({ setIsCreationModalOpen }: PartnersSe
         params.set('documento', receivedValue);
       } else {
         params.set('nome', receivedValue);
+        params.set('cidade', receivedValue);
       }
     } else {
       params.delete('documento');
       params.delete('nome');
+      params.delete('cidade');
     }
     
     params.set('page', '1');
@@ -39,7 +41,7 @@ export default function PartnersSearchBar({ setIsCreationModalOpen }: PartnersSe
 
   return (
     <div className="flex w-full p-4 bg-gray-100 rounded-lg shadow-md">
-      <Search placeholder="Buscar técnicos pelo nome ou documento..." handleSearch={handleSearch} initialValue={searchParams.get('documento') || ''} />
+      <Search placeholder="Buscar técnicos pelo nome, cidade ou documento..." handleSearch={handleSearch} initialValue={searchParams.get('documento') || ''} />
 
       <Button
           className="p-2 text-white bg-green-500 rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"

@@ -1,6 +1,7 @@
 'use client';
 import { parseDateTime } from '@/app/libs/date';
 import { parseDocument } from '@/app/libs/parser';
+import { ContractorListItem } from '@/app/types/contractor-list-item';
 import { SearchResponse } from '@/app/types/search_response';
 import { EyeIcon } from '@heroicons/react/24/outline';
 import PencilIcon from '@heroicons/react/24/outline/PencilIcon';
@@ -10,14 +11,13 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Modal from '../../components/common/modal';
 import ContractorsSearchBar from '../../components/contractors/search-bar';
-import { Contractor } from '../../types/contractor';
 import { roboto } from '../../ui/fonts';
 import CreateContractorModal from './create-contractor';
 import { DeleteContractorModal } from './delete-contractor';
 import EditContractorModal from './edit-contractor';
 
 interface ContractorsTableProps {
-  contractors?: SearchResponse<Contractor>;
+  contractors?: SearchResponse<ContractorListItem>;
   initialPage?: number;
 }
 

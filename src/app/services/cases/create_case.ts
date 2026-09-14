@@ -50,6 +50,9 @@ export async function createCase(
       model: formData.get('model')?.toString() || '',
       external_reference: formData.get('claim')?.toString() || '',
       value: productValue,
+      metadata: {
+        category: formData.get('category')?.toString() || '',
+      },
     };
 
     const resp = await fetch(url, {

@@ -1,23 +1,32 @@
 'use client';
 import { brazilStates } from '@/app/types/address';
-import { Contractor } from '@/app/types/contractor';
+import { CaseCategory, caseCategoryMap } from '@/app/types/case';
 import { months } from '@/app/types/month';
-import { Partner } from '@/app/types/partner';
+import {
+  PanelContractorOption,
+  PanelPartnerOption,
+} from '@/app/types/panel-case-item';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '../common/button';
 import { Dropdown } from '../common/dropdown/dropdown';
 import { useState } from 'react';
 import { Autocomplete, AutocompleteItem } from '@heroui/react';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import type { Key } from '@react-types/shared';
 
 interface ControlPanelSearchProps {
-  contractors: Contractor[];
-  partners: Partner[];
+  contractors?: PanelContractorOption[];
+  partners?: PanelPartnerOption[];
+  hideSeguradoraFilter?: boolean;
 }
+
+const currentYear = new Date().getFullYear();
+const years = Array.from({ length: 5 }, (_, i) => String(currentYear - i));
 
 export default function ControlPanelSearch({
   contractors,
   partners,
+  hideSeguradoraFilter,
 }: ControlPanelSearchProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -28,19 +37,40 @@ export default function ControlPanelSearch({
   const [contractorId, setContractorId] = useState(
     searchParams.get('seguradora') || ''
   );
+  const [categoria, setCategoria] = useState(
+    searchParams.get('categoria') || ''
+  );
   const [month, setMonth] = useState(
     searchParams.get('mes') || months[new Date().getMonth()]
   );
+  const [ano, setAno] = useState(
+    searchParams.get('ano') || String(currentYear)
+  );
+
+  const handlePartnerChange = (key: Key | null) => {
+    const newPartnerId = key?.toString() || '';
+    setPartnerId(newPartnerId);
+    if (!newPartnerId) {
+      setMonth(months[new Date().getMonth()]);
+      setAno(String(currentYear));
+    }
+  };
 
   const handleSearch = () => {
     const params = new URLSearchParams(searchParams.toString());
 
     partnerId ? params.set('tecnico', partnerId) : params.delete('tecnico');
     state ? params.set('estado', state) : params.delete('estado');
-    contractorId
-      ? params.set('seguradora', contractorId)
-      : params.delete('seguradora');
+    if (hideSeguradoraFilter) {
+      params.delete('seguradora');
+    } else {
+      contractorId
+        ? params.set('seguradora', contractorId)
+        : params.delete('seguradora');
+    }
+    categoria ? params.set('categoria', categoria) : params.delete('categoria');
     month ? params.set('mes', month) : params.delete('mes');
+    ano ? params.set('ano', ano) : params.delete('ano');
 
     router.push(pathname + '?' + params.toString());
   };
@@ -49,91 +79,129 @@ export default function ControlPanelSearch({
     setPartnerId('');
     setState('');
     setContractorId('');
-    setMonth('');
-    router.push(pathname);
+    setCategoria('');
+    const currentMonth = months[new Date().getMonth()];
+    const currentAno = String(new Date().getFullYear());
+    setMonth(currentMonth);
+    setAno(currentAno);
+    const params = new URLSearchParams();
+    params.set('mes', currentMonth);
+    params.set('ano', currentAno);
+    router.push(pathname + '?' + params.toString());
   };
 
   return (
-    <div className="mb-6 flex items-center rounded-lg bg-gray-100 px-4 pb-2 pt-4 shadow-md">
-      <div className="grid w-full grid-cols-4 gap-3">
+    <div className="mb-6 flex flex-col gap-3 rounded-lg bg-gray-100 px-4 pb-4 pt-4 shadow-md">
+      <div className="flex flex-wrap items-end gap-3">
         <Dropdown
           onChange={(val) => setMonth(val)}
           label="Mês"
           name="month"
-          className="mb-2"
-          options={months.map((month) => ({
-            id: month,
-            value: month,
-            label: month,
+          className="mb-2 w-32 shrink-0"
+          options={months.map((m) => ({
+            id: m,
+            value: m,
+            label: m,
           }))}
+          optional={!partners || !!partnerId}
           value={month}
+        />
+
+        <Dropdown
+          onChange={(val) => setAno(val)}
+          label="Ano"
+          name="year"
+          className="mb-2 w-24 shrink-0"
+          options={years.map((y) => ({
+            id: y,
+            value: y,
+            label: y,
+          }))}
+          optional={!partners || !!partnerId}
+          value={ano}
+        />
+
+        <Dropdown
+          onChange={(val) => setCategoria(val)}
+          label="Categoria"
+          name="categoria"
+          className="mb-2 w-32 shrink-0"
+          options={Object.values(CaseCategory).map((category) => ({
+            id: category,
+            value: category,
+            label: caseCategoryMap[category],
+          }))}
+          optional
+          value={categoria}
         />
 
         <Dropdown
           onChange={(val) => setState(val)}
           label="Estado"
           name="state"
-          className="mb-2"
-          options={brazilStates.map((state) => ({
-            id: state,
-            value: state,
-            label: state,
+          className="mb-2 min-w-[130px] flex-1"
+          options={brazilStates.map((s) => ({
+            id: s,
+            value: s,
+            label: s,
           }))}
           optional
           value={state}
         />
 
-        <Dropdown
-          onChange={(val) => setContractorId(val)}
-          label="Seguradora"
-          name="contractor"
-          className="mb-2"
-          options={
-            contractors?.map((contractor) => ({
-              id: contractor.contractor_id,
-              value: contractor.contractor_id,
-              label: contractor.company_name,
-            })) || []
-          }
-          optional
-          value={contractorId}
-        />
+        {!hideSeguradoraFilter && (
+          <Dropdown
+            onChange={(val) => setContractorId(val)}
+            label="Seguradora"
+            name="contractor"
+            className="mb-2 min-w-[200px] flex-1"
+            options={
+              contractors?.map((contractor) => ({
+                id: contractor.contractor_id,
+                value: contractor.contractor_id,
+                label: contractor.company_name,
+              })) || []
+            }
+            optional
+            value={contractorId}
+          />
+        )}
 
-        <Autocomplete
-          label="Técnico responsável"
-          placeholder="Selecione um técnico"
-          classNames={{
-            listboxWrapper: 'max-h-[320px]',
-            selectorButton: 'text-default-500',
-            base: 'text-sm font-medium text-gray-700',
-          }}
-          labelPlacement="outside"
-          variant="bordered"
-          radius="sm"
-          inputProps={{
-            classNames: {
-              input: 'border-none focus:ring-0',
-              inputWrapper: 'bg-white border border-gray-300',
-            },
-          }}
-          startContent={
-            <MagnifyingGlassIcon className="h-5 w-5 text-gray-500" />
-          }
-          selectedKey={partnerId}
-          onSelectionChange={(key) => {
-            setPartnerId(key?.toString() || '');
-          }}
-          defaultItems={partners}
-        >
-          {(item) => (
-            <AutocompleteItem key={item.partner_id}>
-              {`${item.first_name} ${item.last_name} - ${item.shipping.city} / ${item.shipping.state}`}
-            </AutocompleteItem>
-          )}
-        </Autocomplete>
+        {partners && (
+          <Autocomplete
+            label="Técnico responsável"
+            placeholder="Selecione um técnico"
+            classNames={{
+              listboxWrapper: 'max-h-[320px]',
+              selectorButton: 'text-default-500',
+              base: 'flex-1 mb-2 min-w-[260px] text-sm font-medium text-gray-700',
+            }}
+            labelPlacement="outside"
+            variant="bordered"
+            radius="sm"
+            inputProps={{
+              classNames: {
+                input: 'border-none focus:ring-0',
+                inputWrapper: 'bg-white border border-gray-300',
+              },
+            }}
+            startContent={
+              <MagnifyingGlassIcon className="h-5 w-5 text-gray-500" />
+            }
+            value={partnerId || undefined}
+            onSelectionChange={handlePartnerChange}
+            defaultItems={partners}
+          >
+            {(item) => (
+              <AutocompleteItem key={item.partner_id}>
+                {`${item.first_name} ${item.last_name}${item.city ? ` - ${item.city}` : ''}${item.state ? ` / ${item.state}` : ''}`}
+              </AutocompleteItem>
+            )}
+          </Autocomplete>
+        )}
       </div>
 
-      <div className="mr-4 flex w-1/2 justify-end gap-4">
+      <div className="flex justify-end gap-4">
         <Button size="lg" color="success" onClick={() => handleSearch()}>
           Filtrar
         </Button>
