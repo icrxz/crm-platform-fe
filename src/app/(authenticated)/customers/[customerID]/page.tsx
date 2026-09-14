@@ -3,7 +3,6 @@ import CustomerDetails from '@/app/components/customers/details';
 import { getCustomerByID } from '@/app/services/customers';
 import { getCurrentUser } from '@/app/libs/session';
 import { redirect } from 'next/navigation';
-import { Suspense } from 'react';
 
 export default async function Page({
   params,
@@ -21,9 +20,7 @@ export default async function Page({
 
   return (
     <main>
-      <Suspense fallback={<p>Carregando cliente...</p>}>
-        {customer?.data && <CustomerDetails customer={customer.data} />}
-      </Suspense>
+      {customer?.data && <CustomerDetails customer={customer.data} />}
     </main>
   );
 }

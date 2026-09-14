@@ -7,7 +7,6 @@ import { fetchPartners } from '@/app/services/partners';
 import { PartnerListItem } from '@/app/types/partner-list-item';
 import { SearchResponse } from '@/app/types/search_response';
 import { redirect } from 'next/navigation';
-import { Suspense } from 'react';
 
 interface PartnerFilters {
   documento?: string;
@@ -102,9 +101,7 @@ export default async function Page({ searchParams }: PartnerPageParams) {
 
   return (
     <main>
-      <Suspense fallback={<p>Carregando técnicos...</p>}>
-        <PartnersTable partners={data} initialPage={filters?.page} />
-      </Suspense>
+      <PartnersTable partners={data} initialPage={filters?.page} />
     </main>
   );
 }

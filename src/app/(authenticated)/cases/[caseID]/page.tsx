@@ -5,7 +5,6 @@ import { getCurrentUser } from '@/app/libs/session';
 import { getCaseFullByID } from '@/app/services/cases';
 import { CaseFull } from '@/app/types/case';
 import { redirect } from 'next/navigation';
-import { Suspense } from 'react';
 
 async function getData(caseID: string): Promise<CaseFull | null> {
   const {
@@ -38,9 +37,7 @@ export default async function Page({
 
   return (
     <main>
-      <Suspense fallback={<p>Carregando caso...</p>}>
-        {crmCase && <CaseDetails crmCase={crmCase} userRole={user.role} />}
-      </Suspense>
+      {crmCase && <CaseDetails crmCase={crmCase} userRole={user.role} />}
     </main>
   );
 }
