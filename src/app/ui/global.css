@@ -16,3 +16,16 @@ input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Set by NavigationProgress from the moment an internal link is clicked
+   until the destination route actually finishes loading. */
+html.is-navigating,
+html.is-navigating * {
+  cursor: progress !important;
+}

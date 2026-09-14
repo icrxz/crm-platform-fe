@@ -1,11 +1,11 @@
 import { LoadingMarker } from '../../components/common/loading-marker';
-import DashboardSkeleton from '../../components/dashboard/skeletons';
+import { PaymentsTableSkeleton } from '../../components/payments/table-skeleton';
 
 export default function Loading() {
   return (
     <>
       <LoadingMarker />
-      <DashboardSkeleton />
+      <PaymentsTableSkeleton />
     </>
   );
 }
