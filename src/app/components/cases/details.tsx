@@ -157,7 +157,7 @@ export default function CaseDetails({ crmCase, userRole }: CaseDetailsProps) {
       </div>
 
       <div className="mb-8 flex gap-6">
-        <CommentDetails crmCase={crmCase} />
+        <CommentDetails crmCase={crmCase} userRole={userRole} />
       </div>
 
       <div className="mb-8 flex gap-6">
