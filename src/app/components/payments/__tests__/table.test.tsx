@@ -91,7 +91,8 @@ describe('PaymentTable', () => {
       const transaction = buildTransactionItem({
         external_reference: 'SIN-001',
         partner_name: 'João Silva',
-        contractor_company_name: 'Seguradora ABC',
+        customer_first_name: 'Maria',
+        customer_last_name: 'Souza',
       });
       const transactions = buildSearchResponse([transaction]);
 
@@ -101,7 +102,7 @@ describe('PaymentTable', () => {
       // Assert
       expect(screen.getByText('SIN-001')).toBeInTheDocument();
       expect(screen.getByText('João Silva')).toBeInTheDocument();
-      expect(screen.getByText('Seguradora ABC')).toBeInTheDocument();
+      expect(screen.getByText('Maria Souza')).toBeInTheDocument();
     });
 
     it('should render the Sinistro as a link to the case', () => {
@@ -158,11 +159,12 @@ describe('PaymentTable', () => {
       expect(screen.getByText('João Silva').closest('a')).toBeNull();
     });
 
-    it('should render a dash when the seguradora name is missing', () => {
+    it('should render a dash when the segurado name is missing', () => {
       // Arrange
       setupMocks();
       const transaction = buildTransactionItem({
-        contractor_company_name: undefined,
+        customer_first_name: undefined,
+        customer_last_name: undefined,
       });
       const transactions = buildSearchResponse([transaction]);
 

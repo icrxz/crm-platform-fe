@@ -8,7 +8,7 @@ import { getCurrentUser } from '@/app/libs/session';
 import { toPartnerBookCaseItem } from '@/app/libs/partner-book';
 import { fetchCasesFull } from '@/app/services/cases';
 import { getPartnerByID } from '@/app/services/partners';
-import { CaseFull, CaseStatus } from '@/app/types/case';
+import { CaseFull } from '@/app/types/case';
 import { PartnerBookCaseItem } from '@/app/types/partner-book-item';
 import { SearchResponse } from '@/app/types/search_response';
 import { monthsNumeric } from '@/app/types/month';
@@ -59,8 +59,7 @@ function prepareQuery(partnerID: string, filters?: PartnerCaseFilters): string {
   finalMonthDate.setUTCHours(23, 59, 59, 999);
 
   query += `start_date=${initialMonthDate.toISOString()}&`;
-  query += `end_date=${finalMonthDate.toISOString()}&`;
-  query += `status=${CaseStatus.CLOSED}`;
+  query += `end_date=${finalMonthDate.toISOString()}`;
 
   return query;
 }

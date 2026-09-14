@@ -1,55 +1,43 @@
 'use server';
 import { getApiErrorMessage } from '@/app/libs/api-error';
 import { getCurrentUser } from '@/app/libs/session';
-import { CreateAttachment } from '@/app/types/attachments';
-import { Comment, CommentType, CreateComment } from '@/app/types/comment';
 import { ServiceResponse } from '@/app/types/service';
 import { cookies } from 'next/headers';
 import { crmCoreApiKey, crmCoreEndpoint } from '.';
 
-export async function addComment(
-  caseID: string,
-  formData: FormData,
-  attachments?: CreateAttachment[],
-  commentType: CommentType = CommentType.COMMENT
-): Promise<ServiceResponse<Comment>> {
+export async function updateCommentContent(
+  commentID: string,
+  content: string
+): Promise<ServiceResponse<void>> {
   try {
-    if (!caseID) {
+    if (!commentID) {
       return {
         success: false,
-        message: 'ID do caso não fornecido!',
+        message: 'ID do comentário não fornecido!',
       };
     }
 
-    const url = `${crmCoreEndpoint}/crm/core/api/v1/cases/${caseID}/comments`;
+    const url = `${crmCoreEndpoint}/crm/core/api/v1/comments/${commentID}`;
     const jwt = (await cookies()).get('jwt')?.value;
 
     const session = await getCurrentUser();
     const author = session?.username || '';
 
-    const payload: CreateComment = {
-      content: formData.get('content')?.toString() || '',
-      created_by: author,
-      comment_type: commentType,
-      case_id: caseID,
-      attachments: attachments,
-    };
-
     const response = await fetch(url, {
-      method: 'POST',
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
         'X-API-Key': crmCoreApiKey || '',
         Authorization: `Bearer ${jwt}`,
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({ content, updated_by: author }),
     });
 
     if (!response.ok) {
       const unauthorized = response.status === 401;
       const errorMessageDefault = unauthorized
         ? 'usuário não autorizado'
-        : 'falha ao criar comentários no caso';
+        : 'falha ao atualizar comentário';
       const errorMessage = await getApiErrorMessage(
         response,
         errorMessageDefault
@@ -62,12 +50,9 @@ export async function addComment(
       };
     }
 
-    const data = (await response.json()) as Comment;
-
     return {
       success: true,
-      message: 'comentários criado com sucesso',
-      data: data,
+      message: 'comentário atualizado com sucesso',
     };
   } catch (error) {
     return {

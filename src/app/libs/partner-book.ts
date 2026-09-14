@@ -1,4 +1,4 @@
-import { CaseFull } from '@/app/types/case';
+import { CaseFull, CaseStatus } from '@/app/types/case';
 import { PartnerBookCaseItem } from '@/app/types/partner-book-item';
 import {
   Transaction,
@@ -29,9 +29,16 @@ export function toPartnerBookCaseItem(crmCase: CaseFull): PartnerBookCaseItem {
     0
   );
 
+  // Fallback for cases closed before the backend started auto-approving
+  // technician payments on close: those transactions stay stuck as
+  // "pending" forever, so trust the case status too, not just the
+  // transaction status.
   const isPaid =
-    partnerTransactions.length > 0 &&
-    partnerTransactions.every((t) => t.status === TransactionStatus.APPROVED);
+    crmCase.status === CaseStatus.CLOSED ||
+    (partnerTransactions.length > 0 &&
+      partnerTransactions.every(
+        (t) => t.status === TransactionStatus.APPROVED
+      ));
 
   const paid_at = isPaid
     ? partnerTransactions
