@@ -5,7 +5,6 @@ import { getCurrentUser } from '@/app/libs/session';
 import { UserListItem } from '@/app/types/user-list-item';
 import { adminRoles } from '@/app/utils/roles';
 import { redirect } from 'next/navigation';
-import { Suspense } from 'react';
 
 type UserPageParams = {
   searchParams: Promise<{
@@ -50,9 +49,7 @@ export default async function Page({ searchParams }: UserPageParams) {
 
   return (
     <main>
-      <Suspense fallback={<p>Carregando usuários...</p>}>
-        <UsersTable users={users} initialPage={page} />
-      </Suspense>
+      <UsersTable users={users} initialPage={page} />
     </main>
   );
 }

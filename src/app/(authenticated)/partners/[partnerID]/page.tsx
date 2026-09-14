@@ -14,7 +14,6 @@ import { SearchResponse } from '@/app/types/search_response';
 import { monthsNumeric } from '@/app/types/month';
 import { adminRoles } from '@/app/utils/roles';
 import { redirect } from 'next/navigation';
-import { Suspense } from 'react';
 
 interface PartnerCaseFilters {
   mes?: string;
@@ -120,17 +119,13 @@ export default async function Page({
 
   return (
     <main>
-      <Suspense fallback={<p>Carregando técnico...</p>}>
-        {partner?.data && <PartnerDetails partner={partner.data} />}
-      </Suspense>
+      {partner?.data && <PartnerDetails partner={partner.data} />}
 
       {isAdmin && casesData && (
-        <Suspense>
-          <div className="mt-8">
-            <ControlPanelSearch hideSeguradoraFilter />
-            <PartnerBookTable cases={casesData} />
-          </div>
-        </Suspense>
+        <div className="mt-8">
+          <ControlPanelSearch hideSeguradoraFilter />
+          <PartnerBookTable cases={casesData} />
+        </div>
       )}
     </main>
   );

@@ -1,7 +1,6 @@
 `use server`;
 import { unauthorizedRedirect } from '@/app/libs/auth-redirect';
 import { getCurrentUser } from '@/app/libs/session';
-import { Suspense } from 'react';
 import ContractorsTable from '../../components/contractors/table';
 import { fetchContractors } from '../../services/contractors';
 import { ContractorListItem } from '@/app/types/contractor-list-item';
@@ -57,9 +56,7 @@ export default async function Page({ searchParams }: ContractorPageParams) {
 
   return (
     <main>
-      <Suspense fallback={<p>Carregando seguradoras...</p>}>
-        <ContractorsTable contractors={data} initialPage={page} />
-      </Suspense>
+      <ContractorsTable contractors={data} initialPage={page} />
     </main>
   );
 }

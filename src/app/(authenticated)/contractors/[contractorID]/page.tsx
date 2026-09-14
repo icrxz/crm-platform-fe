@@ -3,7 +3,6 @@ import ContractorDetails from '@/app/components/contractors/details';
 import { getContractorByID } from '@/app/services/contractors';
 import { getCurrentUser } from '@/app/libs/session';
 import { redirect } from 'next/navigation';
-import { Suspense } from 'react';
 
 export default async function Page({
   params,
@@ -21,9 +20,7 @@ export default async function Page({
 
   return (
     <main>
-      <Suspense fallback={<p>Carregando seguradora...</p>}>
-        {contractor?.data && <ContractorDetails contractor={contractor.data} />}
-      </Suspense>
+      {contractor?.data && <ContractorDetails contractor={contractor.data} />}
     </main>
   );
 }
