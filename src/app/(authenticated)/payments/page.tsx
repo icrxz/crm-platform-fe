@@ -13,7 +13,6 @@ import {
 import { getCurrentUser } from '@/app/libs/session';
 import { adminRoles } from '@/app/utils/roles';
 import { redirect } from 'next/navigation';
-import { Suspense } from 'react';
 
 interface PaymentFilters {
   tecnico?: string;
@@ -167,13 +166,11 @@ export default async function Page({ searchParams }: TransactionPageParams) {
 
   return (
     <main>
-      <Suspense fallback={<p>Carregando pagamentos...</p>}>
-        <PaymentTable
-          transactions={payments || []}
-          initialPage={page}
-          partners={partners}
-        />
-      </Suspense>
+      <PaymentTable
+        transactions={payments || []}
+        initialPage={page}
+        partners={partners}
+      />
     </main>
   );
 }
