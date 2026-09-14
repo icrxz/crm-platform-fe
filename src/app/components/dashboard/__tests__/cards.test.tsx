@@ -41,7 +41,7 @@ describe('CardWrapper', () => {
     expect(screen.getByText('11')).toBeInTheDocument();
     expect(screen.getByText('Casos atribuídos pendentes')).toBeInTheDocument();
     expect(screen.getByText('5')).toBeInTheDocument();
-    expect(screen.getByText('Pendentes de pagamento')).toBeInTheDocument();
+    expect(screen.getByText('Pendentes de valores')).toBeInTheDocument();
     expect(screen.getByText('2')).toBeInTheDocument();
     expect(screen.getByText('Pendentes de comprovante')).toBeInTheDocument();
 
@@ -49,7 +49,7 @@ describe('CardWrapper', () => {
       screen.getByText('Casos sem responsável').closest('a')
     ).toHaveAttribute('href', '/cases?status=Draft&status=New');
     expect(
-      screen.getByText('Pendentes de pagamento').closest('a')
+      screen.getByText('Pendentes de valores').closest('a')
     ).toHaveAttribute('href', '/cases?status=Payment');
     expect(
       screen.getByText('Pendentes de comprovante').closest('a')

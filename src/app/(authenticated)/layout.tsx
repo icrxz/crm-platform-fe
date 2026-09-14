@@ -1,4 +1,5 @@
 import Snackbar from '../components/common/snackbar';
+import { NavigationProgress } from '../components/common/navigation-progress';
 import SideNav from '../components/sidebar/sidenav';
 import { SnackbarProvider } from '../context/SnackbarProvider';
 import { getCurrentUser } from '../libs/session';
@@ -17,6 +18,7 @@ export default async function Layout({ children }: LayoutProps) {
 
   return (
     <SnackbarProvider>
+      <NavigationProgress />
       <div className="flex h-screen flex-col md:flex-row md:overflow-hidden">
         <div className="w-full flex-none md:w-64">
           <SideNav userRole={user?.role} />

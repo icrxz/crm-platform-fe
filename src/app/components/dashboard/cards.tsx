@@ -58,7 +58,7 @@ export default async function CardWrapper({ user }: CardWrapperProps) {
           icon={UserIcon}
         />
         <StatCard
-          title="Pendentes de pagamento"
+          title="Pendentes de valores"
           value={pendingPayment}
           href={`/cases?status=${CaseStatus.PAYMENT}`}
           icon={BanknotesIcon}
