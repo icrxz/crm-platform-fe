@@ -1,3 +1,5 @@
+import { TrophyIcon } from '@heroicons/react/24/outline';
+
 const shimmer =
   'before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/60 before:to-transparent';
 
@@ -105,6 +107,53 @@ export function AttendanceBonusSkeleton() {
         ))}
       </div>
     </div>
+  );
+}
+
+export function DashboardsPageSkeleton() {
+  return (
+    <main className="flex flex-col gap-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <div className="flex items-center gap-2">
+            <TrophyIcon className="h-6 w-6 text-amber-500" />
+            <h1 className="text-xl font-bold text-gray-900 md:text-2xl">
+              Desempenho do Time
+            </h1>
+          </div>
+          <p className="mt-0.5 text-sm text-gray-500">
+            Acompanhe rankings, assiduidade e evolução no atendimento
+          </p>
+        </div>
+
+        <div
+          className={`${shimmer} relative h-10 w-40 overflow-hidden rounded-lg bg-gray-100`}
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <KpiCardsSkeleton />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <div className="min-h-[640px]">
+          <RankingSkeleton />
+        </div>
+
+        <div className="flex flex-col gap-4">
+          <div className="min-h-[340px]">
+            <AttendanceBonusSkeleton />
+          </div>
+          <div className="min-h-[340px]">
+            <ChartSkeleton />
+          </div>
+        </div>
+      </div>
+
+      <div className="min-h-[360px]">
+        <ChartSkeleton />
+      </div>
+    </main>
   );
 }
 

@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import {
   AttendanceBonusSkeleton,
   ChartSkeleton,
+  DashboardsPageSkeleton,
   GenericSkeleton,
   KpiCardsSkeleton,
   RankingSkeleton,
@@ -52,6 +53,20 @@ describe('Skeletons', () => {
       const { container } = render(<AttendanceBonusSkeleton />);
       const avatars = container.querySelectorAll('.rounded-full');
       expect(avatars.length).toBeGreaterThanOrEqual(12);
+    });
+  });
+
+  describe('DashboardsPageSkeleton', () => {
+    it('renders the real page title and reuses each section skeleton', () => {
+      render(<DashboardsPageSkeleton />);
+      expect(screen.getByText('Desempenho do Time')).toBeInTheDocument();
+    });
+
+    it('renders the KPI, ranking, attendance and both chart sections', () => {
+      const { container } = render(<DashboardsPageSkeleton />);
+      expect(container.querySelectorAll('.min-h-\\[640px\\]')).toHaveLength(1);
+      expect(container.querySelectorAll('.min-h-\\[340px\\]')).toHaveLength(2);
+      expect(container.querySelectorAll('.min-h-\\[360px\\]')).toHaveLength(1);
     });
   });
 

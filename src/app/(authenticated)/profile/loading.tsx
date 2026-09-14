@@ -1,11 +1,11 @@
 import { LoadingMarker } from '../../components/common/loading-marker';
-import { PageSkeleton } from '../../components/common/page-skeleton';
+import { ProfileSkeleton } from '../../components/users/profile-skeleton';
 
 export default function Loading() {
   return (
     <>
       <LoadingMarker />
-      <PageSkeleton title="Meu Perfil" />
+      <ProfileSkeleton />
     </>
   );
 }

@@ -1,11 +1,11 @@
 import { LoadingMarker } from '../../components/common/loading-marker';
-import { PageSkeleton } from '../../components/common/page-skeleton';
+import { DashboardsPageSkeleton } from '../../components/dashboards/skeletons';
 
 export default function Loading() {
   return (
     <>
       <LoadingMarker />
-      <PageSkeleton title="Desempenho do Time" />
+      <DashboardsPageSkeleton />
     </>
   );
 }
