@@ -1,4 +1,4 @@
-import { Attachment, CreateAttachment } from "./attachments";
+import { Attachment, CreateAttachment } from './attachments';
 
 export type CreateComment = {
   case_id: string;
@@ -21,8 +21,9 @@ export type Comment = {
 };
 
 export enum CommentType {
-  CONTENT = "Content",
-  COMMENT = "Comment",
-  RESOLUTION = "Resolution",
-  REJECTION = "Rejection",
+  CONTENT = 'Content',
+  COMMENT = 'Comment',
+  RESOLUTION = 'Resolution',
+  REJECTION = 'Rejection',
+  PAYMENT_PROOF = 'PaymentProof',
 }

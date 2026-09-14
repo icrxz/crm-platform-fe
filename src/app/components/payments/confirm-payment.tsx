@@ -1,36 +1,18 @@
 import { useSnackbar } from '@/app/context/SnackbarProvider';
 import { changeStatus } from '@/app/services/cases';
-import { CreateAttachment } from '@/app/types/attachments';
+import { getCaseComments, updateCommentContent } from '@/app/services/comments';
+import { Attachment } from '@/app/types/attachments';
 import { CaseStatus } from '@/app/types/case';
+import { CommentType } from '@/app/types/comment';
 import { roboto } from '@/app/ui/fonts';
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import {
-  type ForwardRefExoticComponent,
-  type RefAttributes,
-  useRef,
-  useState,
-} from 'react';
-import { useActionState } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Button } from '../common/button';
 import { ErrorMessage } from '../common/error-message';
-import dynamic from 'next/dynamic';
-import type {
-  FileUploaderGenericRef,
-  FileUploaderProps,
-} from '../common/file-uploader';
-
-const GenericUploader = dynamic(
-  () =>
-    import('../common/file-uploader').then((m) => ({
-      default: m.GenericUploader,
-    })),
-  { ssr: false }
-) as ForwardRefExoticComponent<
-  FileUploaderProps & RefAttributes<FileUploaderGenericRef>
->;
 import Modal from '../common/modal';
+import { PaymentAttachmentUploader } from './payment-attachment-uploader';
 
 interface ConfirmPaymentModalProps {
   isOpen: boolean;
@@ -47,26 +29,33 @@ export function ConfirmPaymentModal({
   const { pending } = useFormStatus();
   const { showSnackbar } = useSnackbar();
   const { refresh } = useRouter();
-  const fileUploaderRef = useRef<FileUploaderGenericRef>(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [commentId, setCommentId] = useState<string | null>(null);
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    getCaseComments(caseId).then((response) => {
+      const paymentProofComment = response.data?.find(
+        (comment) => comment.comment_type === CommentType.PAYMENT_PROOF
+      );
+
+      setErrorMessage('');
+      setCommentId(paymentProofComment?.comment_id || null);
+      setAttachments(paymentProofComment?.attachments || []);
+    });
+  }, [isOpen, caseId]);
 
   async function onSubmit(_: unknown, formData: FormData) {
-    let attachments: CreateAttachment[] = [];
-    await fileUploaderRef.current?.submit().then((response) => {
-      attachments = response || [];
-    });
-
     if (attachments.length === 0) {
       setErrorMessage('Por favor, adicione pelo menos um arquivo');
       return;
     }
 
-    formData.set(
-      'content',
-      `pagamento realizado no dia ${new Date().toLocaleDateString()}`
-    );
-
-    changeStatus(caseId, CaseStatus.CLOSED, formData, attachments)
+    changeStatus(caseId, CaseStatus.CLOSED, formData)
       .then((response) => {
         if (!response.success) {
           if (response.unauthorized) {
@@ -75,6 +64,21 @@ export function ConfirmPaymentModal({
           showSnackbar(response.message, 'error');
           return;
         }
+
+        if (commentId) {
+          updateCommentContent(
+            commentId,
+            `pagamento realizado no dia ${new Date().toLocaleDateString()}`
+          ).then((updateResponse) => {
+            if (!updateResponse.success) {
+              showSnackbar(
+                `Caso encerrado, mas não foi possível atualizar a data no comentário: ${updateResponse.message}`,
+                'error'
+              );
+            }
+          });
+        }
+
         showSnackbar(response.message, 'success');
         refresh();
         onClose();
@@ -95,7 +99,22 @@ export function ConfirmPaymentModal({
           <label className="mb-2">
             Adicione o(s) comprovante(s) do pagamento
           </label>
-          <GenericUploader ref={fileUploaderRef} minFiles={1} maxFiles={10} />
+          <PaymentAttachmentUploader
+            caseId={caseId}
+            commentId={commentId}
+            attachments={attachments}
+            maxFiles={10}
+            onCommentCreated={setCommentId}
+            onAttachmentAdded={(attachment) =>
+              setAttachments((current) => [...current, attachment])
+            }
+            onAttachmentRemoved={(attachmentId) =>
+              setAttachments((current) =>
+                current.filter((a) => a.attachment_id !== attachmentId)
+              )
+            }
+            onError={(message) => showSnackbar(message, 'error')}
+          />
         </div>
 
         {errorMessage && <ErrorMessage message={errorMessage} />}

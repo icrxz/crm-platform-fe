@@ -75,7 +75,7 @@ export default function PaymentTable({
                       Sinistro
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium">
-                      Seguradora
+                      Segurado
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium">
                       Técnico
@@ -119,7 +119,11 @@ export default function PaymentTable({
                       </td>
                       <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
-                          <p>{transaction.contractor_company_name || '-'}</p>
+                          <p>
+                            {transaction.customer_first_name
+                              ? `${transaction.customer_first_name} ${transaction.customer_last_name || ''}`.trim()
+                              : '-'}
+                          </p>
                         </div>
                       </td>
                       <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">

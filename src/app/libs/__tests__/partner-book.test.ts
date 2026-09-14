@@ -1,5 +1,6 @@
 import { toPartnerBookCaseItem } from '../partner-book';
 import { buildCaseFull } from '../../components/panel/__fixtures__/builders';
+import { CaseStatus } from '../../types/case';
 import { TransactionStatus, TransactionType } from '../../types/transaction';
 
 describe('toPartnerBookCaseItem', () => {
@@ -37,6 +38,7 @@ describe('toPartnerBookCaseItem', () => {
 
   it('ignores incoming (seguradora) transactions', () => {
     const crmCase = buildCaseFull({
+      status: CaseStatus.PAYMENT,
       transactions: [
         {
           transaction_id: 't1',
@@ -84,6 +86,7 @@ describe('toPartnerBookCaseItem', () => {
 
   it('marks as pending when at least one technician transaction is not approved', () => {
     const crmCase = buildCaseFull({
+      status: CaseStatus.PAYMENT,
       transactions: [
         {
           transaction_id: 't1',
@@ -110,13 +113,35 @@ describe('toPartnerBookCaseItem', () => {
   });
 
   it('marks as pending with zero total when there are no technician transactions', () => {
-    const crmCase = buildCaseFull({ transactions: [] });
+    const crmCase = buildCaseFull({
+      status: CaseStatus.PAYMENT,
+      transactions: [],
+    });
 
     const result = toPartnerBookCaseItem(crmCase);
 
     expect(result.payment_status).toBe('pending');
     expect(result.payment_total).toBe(0);
     expect(result.paid_at).toBeUndefined();
+  });
+
+  it('marks as paid when the case is closed even if the transaction status was never promoted (legacy cases)', () => {
+    const crmCase = buildCaseFull({
+      status: CaseStatus.CLOSED,
+      transactions: [
+        {
+          transaction_id: 't1',
+          type: TransactionType.OUTGOING,
+          description: 'MO',
+          value: 200,
+          status: TransactionStatus.PENDING,
+        },
+      ] as never,
+    });
+
+    const result = toPartnerBookCaseItem(crmCase);
+
+    expect(result.payment_status).toBe('paid');
   });
 
   it('flattens customer fields from the nested customer object', () => {
