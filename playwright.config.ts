@@ -42,5 +42,24 @@ export default defineConfig({
       name: '1920x1080',
       use: { viewport: { width: 1920, height: 1080 } },
     },
+    // Logical (CSS px) viewports for current-generation phones, per DEV.md's
+    // mobile pass — iPhone 17 and the Galaxy S line. Not from Playwright's
+    // `devices` presets: neither is in the bundled device list yet.
+    {
+      name: 'iphone-17',
+      use: {
+        viewport: { width: 393, height: 852 },
+        isMobile: true,
+        hasTouch: true,
+      },
+    },
+    {
+      name: 'galaxy-s',
+      use: {
+        viewport: { width: 384, height: 854 },
+        isMobile: true,
+        hasTouch: true,
+      },
+    },
   ],
 });
