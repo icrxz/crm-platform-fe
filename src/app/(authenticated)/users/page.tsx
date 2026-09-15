@@ -48,7 +48,7 @@ export default async function Page({ searchParams }: UserPageParams) {
     : undefined;
 
   return (
-    <main>
+    <main className="flex h-full flex-col">
       <UsersTable users={users} initialPage={page} />
     </main>
   );

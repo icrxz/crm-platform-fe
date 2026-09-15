@@ -4,10 +4,10 @@ import { CaseFull } from '@/app/types/case';
 import { UserRole } from '@/app/types/user';
 import { adminRoles } from '@/app/utils/roles';
 import { PencilIcon } from '@heroicons/react/24/outline';
-import Image from 'next/image';
 import { useState } from 'react';
 import { Card } from '../../common/card';
 import { CardText } from '../../common/card/card-text';
+import { ImageCarousel } from '../../common/image-carousel';
 import { EditCommentModal } from './edit-comment-modal';
 
 interface CommentDetailsProps {
@@ -80,26 +80,15 @@ export function CommentDetails({ crmCase, userRole }: CommentDetailsProps) {
                       />
                     </div>
 
-                    {comment.attachments && (
-                      <div className="grid grid-cols-5 gap-4">
-                        {comment.attachments.map((image) => (
-                          <div
-                            key={image.attachment_id}
-                            className="rounded-lg bg-gray-100 p-2"
-                          >
-                            <a href={image.url} target="_blank">
-                              <Image
-                                src={image.url}
-                                alt={image.file_name}
-                                width={250}
-                                height={250}
-                                loading="lazy"
-                                objectFit="cover"
-                              />
-                            </a>
-                          </div>
-                        ))}
-                        {/* <ImageCarrousel images={comment.attachments} /> */}
+                    {comment.attachments && comment.attachments.length > 0 && (
+                      <div className="mt-2">
+                        <ImageCarousel
+                          images={comment.attachments.map((attachment) => ({
+                            id: attachment.attachment_id,
+                            src: attachment.url,
+                            alt: attachment.file_name,
+                          }))}
+                        />
                       </div>
                     )}
                   </div>

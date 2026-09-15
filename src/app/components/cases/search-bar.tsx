@@ -88,7 +88,7 @@ export default function CasesSearchBar({
   const hasActiveFilters = hasFilterParams;
 
   return (
-    <div className="flex w-full flex-wrap items-center justify-between gap-3 rounded-lg bg-gray-100 p-4 shadow-md">
+    <div className="flex w-full flex-wrap items-center justify-between gap-3 rounded-lg bg-gray-100 p-3 shadow-md">
       <div className="w-full max-w-md">
         <Search
           placeholder="Buscar casos..."
@@ -110,7 +110,9 @@ export default function CasesSearchBar({
 
         <div className="flex h-10 items-stretch overflow-hidden rounded-lg">
           <Button
-            className="rounded-r-none bg-gray-500 p-2 text-white hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
+            color="neutral"
+            scheme="quiet"
+            className="rounded-r-none p-2"
             onClick={() => setIsFilterModalOpen(true)}
           >
             Filtros
@@ -122,7 +124,7 @@ export default function CasesSearchBar({
                 type="button"
                 aria-label="Limpar filtros"
                 onClick={handleClearFilters}
-                className="flex h-full w-10 items-center justify-center border-l border-gray-400 bg-gray-500 text-white hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                className="flex h-full w-10 items-center justify-center border-l border-gray-300 bg-gray-200 text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
               >
                 <XMarkIcon className="h-4 w-4" />
               </button>

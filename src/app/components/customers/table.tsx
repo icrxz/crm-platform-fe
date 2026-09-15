@@ -3,14 +3,14 @@ import { parseDateTime } from '@/app/libs/date';
 import { parseDocument } from '@/app/libs/parser';
 import { CustomerListItem } from '@/app/types/customer-list-item';
 import { SearchResponse } from '@/app/types/search_response';
-import EyeIcon from '@heroicons/react/24/outline/EyeIcon';
 import PencilIcon from '@heroicons/react/24/outline/PencilIcon';
 import TrashIcon from '@heroicons/react/24/outline/TrashIcon';
-import { Pagination } from '@heroui/pagination';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { roboto } from '../../ui/fonts';
+import { IconButton } from '../common/icon-button';
+import { ListPageLayout } from '../common/list-page-layout';
 import Modal from '../common/modal';
+import { Pagination } from '../common/pagination';
 import CreateCustomerModal from './create-customer';
 import { DeleteCustomerModal } from './delete-customer';
 import EditCustomerModal from './edit-customer';
@@ -46,111 +46,87 @@ export default function CustomersTable({
     router.push(`/customers/${costumerID}`);
   }
 
-  function handleChangePage(value: number) {
-    router.push(`?page=${value}`);
-  }
-
   return (
-    <div className="w-full">
-      <h1 className={`${roboto.className} mb-8 text-xl md:text-2xl`}>
-        Clientes
-      </h1>
+    <>
+      <ListPageLayout
+        title="Clientes"
+        searchBar={
+          <CustomersSearchBar
+            setIsCreationModalOpen={setIsCreateModalOpen}
+            setIsFilterModalOpen={setIsFilterModalOpen}
+          />
+        }
+        pagination={
+          <Pagination paging={customers?.paging} page={initialPage} />
+        }
+      >
+        <table className="hidden min-w-full rounded-md text-gray-900 md:table">
+          <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
+            <tr>
+              <th scope="col" className="px-4 py-3 font-medium sm:pl-6">
+                Nome
+              </th>
+              <th scope="col" className="px-3 py-3 font-medium">
+                Email
+              </th>
+              <th scope="col" className="px-3 py-3 font-medium">
+                Documento
+              </th>
+              <th scope="col" className="px-3 py-3 font-medium">
+                Data de criação
+              </th>
+              <th scope="col" className="px-3 py-3 font-medium">
+                Ações
+              </th>
+            </tr>
+          </thead>
 
-      <CustomersSearchBar
-        setIsCreationModalOpen={setIsCreateModalOpen}
-        setIsFilterModalOpen={setIsFilterModalOpen}
-      />
+          <tbody className="divide-y divide-gray-200 text-gray-900">
+            {customers?.result.map((customer) => (
+              <tr
+                key={customer.customer_id}
+                className="group cursor-pointer"
+                onClick={() => handleRowClick(customer.customer_id)}
+              >
+                <td className="whitespace-nowrap bg-white py-3 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md group-hover:bg-gray-100 sm:pl-6">
+                  <div className="flex items-center gap-3">
+                    <p>{`${customer.first_name} ${customer.last_name}`}</p>
+                  </div>
+                </td>
+                <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
+                  {customer.email || '-'}
+                </td>
+                <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
+                  {parseDocument(customer.document)}
+                </td>
+                <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
+                  {parseDateTime(customer.created_at)}
+                </td>
+                <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
+                  <div
+                    className="flex gap-2"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <IconButton
+                      color="info"
+                      icon={<PencilIcon className="h-5 w-5 md:h-6 md:w-6" />}
+                      onClick={() => handleEdit(customer.customer_id)}
+                    />
 
-      <div className="mt-6 flow-root">
-        <div className="overflow-x-auto">
-          <div className="inline-block min-w-full align-middle">
-            <div className="overflow-hidden rounded-md bg-gray-50 p-2 md:pt-0">
-              <table className="hidden min-w-full rounded-md text-gray-900 md:table">
-                <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
-                  <tr>
-                    <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                      Nome
-                    </th>
-                    <th scope="col" className="px-3 py-5 font-medium">
-                      Email
-                    </th>
-                    <th scope="col" className="px-3 py-5 font-medium">
-                      Documento
-                    </th>
-                    <th scope="col" className="px-3 py-5 font-medium">
-                      Data de criação
-                    </th>
-                    <th scope="col" className="px-3 py-5 font-medium">
-                      Ações
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody className="divide-y divide-gray-200 text-gray-900">
-                  {customers?.result.map((customer) => (
-                    <tr key={customer.customer_id} className="group">
-                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
-                        <div className="flex items-center gap-3">
-                          <p>{`${customer.first_name} ${customer.last_name}`}</p>
-                        </div>
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {customer.email || '-'}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {parseDocument(customer.document)}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {parseDateTime(customer.created_at)}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        <div className="flex gap-2">
-                          <button
-                            className="text-green-500 hover:text-green-700"
-                            onClick={() => handleRowClick(customer.customer_id)}
-                          >
-                            <EyeIcon className="h-5 w-5" />
-                          </button>
-
-                          <button
-                            className="text-blue-600 hover:text-blue-900"
-                            onClick={() => handleEdit(customer.customer_id)}
-                          >
-                            <PencilIcon className="w-5 md:w-6" />
-                          </button>
-
-                          {customer.active && (
-                            <button
-                              className="text-red-600 hover:text-red-900"
-                              onClick={() => handleDelete(customer.customer_id)}
-                            >
-                              <TrashIcon className="w-5 md:w-6" />
-                            </button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-2">
-        <Pagination
-          onChange={handleChangePage}
-          siblings={3}
-          showControls
-          total={Math.ceil(
-            Number(
-              (customers?.paging.total || 1) / (customers?.paging.limit || 1)
-            )
-          )}
-          page={Number(initialPage || 1)}
-        />
-      </div>
+                    {customer.active && (
+                      <IconButton
+                        color="error"
+                        icon={<TrashIcon className="h-5 w-5 md:h-6 md:w-6" />}
+                        onClick={() => handleDelete(customer.customer_id)}
+                      />
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </ListPageLayout>
 
       {isFilterModalOpen && (
         <Modal
@@ -183,6 +159,6 @@ export default function CustomersTable({
           customerID={costumerID}
         />
       )}
-    </div>
+    </>
   );
 }

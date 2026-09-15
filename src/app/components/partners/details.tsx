@@ -2,6 +2,7 @@
 import { parseDocument } from '@/app/libs/parser';
 import { Partner } from '@/app/types/partner';
 import { Button } from '../common/button';
+import { Pill } from '../common/pill';
 
 interface PartnerDetailsProps {
   partner: Partner;
@@ -23,12 +24,8 @@ export default function PartnerDetails({ partner }: PartnerDetailsProps) {
         </h1>
 
         <div className="mt-3 flex flex-wrap gap-2">
-          <span className="inline-flex items-center rounded-full bg-gray-200 px-3 py-1 text-sm font-medium text-gray-700">
-            {parseDocument(partner.document) || '-'}
-          </span>
-          <span className="inline-flex items-center rounded-full bg-gray-200 px-3 py-1 text-sm font-medium text-gray-700">
-            {partner.partner_type}
-          </span>
+          <Pill text={parseDocument(partner.document) || '-'} textSize="sm" />
+          <Pill text={partner.partner_type} textSize="sm" />
         </div>
       </div>
 

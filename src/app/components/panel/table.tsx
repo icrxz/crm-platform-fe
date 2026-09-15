@@ -113,7 +113,7 @@ export default function ControlPanelTable({
                     {crmCase.partner_first_name ? (
                       crmCase.partner_id ? (
                         <Link
-                          className="text-blue-500 underline"
+                          className="text-blue-500 hover:text-blue-700"
                           href={`/partners/${crmCase.partner_id}`}
                         >
                           {crmCase.partner_first_name}

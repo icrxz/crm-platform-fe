@@ -55,7 +55,7 @@ export default async function Page({ searchParams }: ContractorPageParams) {
   const data = await getData(nome || '', page || 1);
 
   return (
-    <main>
+    <main className="flex h-full flex-col">
       <ContractorsTable contractors={data} initialPage={page} />
     </main>
   );

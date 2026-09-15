@@ -3,12 +3,13 @@ import { parseDateTime } from '@/app/libs/date';
 import { parseDocument, parseToCurrency } from '@/app/libs/parser';
 import { SearchResponse } from '@/app/types/search_response';
 import { CheckIcon, PencilIcon } from '@heroicons/react/24/outline';
-import { Pagination } from '@heroui/pagination';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { TransactionItem, TransactionStatus } from '../../types/transaction';
-import { roboto } from '../../ui/fonts';
+import { IconButton } from '../common/icon-button';
+import { ListPageLayout } from '../common/list-page-layout';
+import { Pagination } from '../common/pagination';
 import { ConfirmPaymentModal } from './confirm-payment';
 import { EditPaymentModal } from './edit-payment';
 import { Partner } from '@/app/types/partner';
@@ -30,7 +31,6 @@ export default function PaymentTable({
   partners,
 }: PaymentTableProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [isConfirmPaymentModal, setIsConfirmPaymentModal] = useState(false);
   const [isEditPaymentModal, setIsEditPaymentModal] = useState(false);
   const [selectedTransaction, setSelectedTransaction] =
@@ -38,12 +38,6 @@ export default function PaymentTable({
 
   function handleRowClick(paymentID: string) {
     router.push(`/payments/${paymentID}`);
-  }
-
-  function handleChangePage(value: number) {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('page', String(value));
-    router.push(`?${params.toString()}`);
   }
 
   function handleConfirmPayment(transaction: TransactionItem) {
@@ -57,158 +51,145 @@ export default function PaymentTable({
   }
 
   return (
-    <div className="w-full">
-      <h1 className={`${roboto.className} mb-8 text-xl md:text-2xl`}>
-        Pagamentos
-      </h1>
+    <>
+      <ListPageLayout
+        title="Pagamentos"
+        searchBar={<PaymentsSearchBar partners={partners} />}
+        pagination={
+          <Pagination paging={transactions?.paging} page={initialPage} />
+        }
+      >
+        {/* 11 columns don't fit at 1280px even with this reduced padding
+            (px-2 vs. px-4 on every other table) — accepted tradeoff, the
+            table keeps horizontal scroll (from ListPageLayout's
+            overflow-x-auto) to reach the last columns. Don't "fix" this
+            back to px-4/pr-3 to match the other tables; see
+            payments/table-skeleton.tsx, which matches this padding so the
+            loading state doesn't shift once real data lands. */}
+        <table className="hidden min-w-full rounded-md text-gray-900 md:table">
+          <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
+            <tr>
+              <th scope="col" className="px-2 py-3 font-medium sm:pl-6">
+                Sinistro
+              </th>
+              <th scope="col" className="px-2 py-3 font-medium">
+                Segurado
+              </th>
+              <th scope="col" className="px-2 py-3 font-medium">
+                Técnico
+              </th>
+              <th scope="col" className="px-2 py-3 font-medium">
+                PIX
+              </th>
+              <th scope="col" className="px-2 py-3 font-medium">
+                MO
+              </th>
+              <th scope="col" className="px-2 py-3 font-medium">
+                Deslocamento
+              </th>
+              <th scope="col" className="px-2 py-3 font-medium">
+                Peças
+              </th>
+              <th scope="col" className="px-2 py-3 font-medium">
+                Total
+              </th>
+              <th scope="col" className="px-2 py-3 font-medium">
+                Status
+              </th>
+              <th scope="col" className="px-2 py-3 font-medium">
+                Data de criação
+              </th>
+              <th scope="col" className="px-2 py-3 font-medium">
+                Ações
+              </th>
+            </tr>
+          </thead>
 
-      <PaymentsSearchBar partners={partners} />
+          <tbody className="divide-y divide-gray-200 text-gray-900">
+            {transactions?.result.map((transaction) => (
+              <tr key={transaction.case_id} className="group">
+                <td className="whitespace-nowrap bg-white py-3 pl-4 pr-2 text-sm text-blue-500 group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                  <div className="flex items-center gap-3">
+                    <Link
+                      className="hover:text-blue-700"
+                      href={`/cases/${transaction.case_id}`}
+                    >
+                      {transaction.external_reference}
+                    </Link>
+                  </div>
+                </td>
+                <td className="whitespace-nowrap bg-white py-3 pl-4 pr-2 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                  <div className="flex items-center gap-3">
+                    <p>
+                      {transaction.customer_first_name
+                        ? `${transaction.customer_first_name} ${transaction.customer_last_name || ''}`.trim()
+                        : '-'}
+                    </p>
+                  </div>
+                </td>
+                <td className="whitespace-nowrap bg-white py-3 pl-4 pr-2 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                  <div className="flex items-center gap-3">
+                    {transaction.partner_id ? (
+                      <Link
+                        className="text-blue-500 hover:text-blue-700"
+                        href={`/partners/${transaction.partner_id}`}
+                      >
+                        {transaction.partner_name}
+                      </Link>
+                    ) : (
+                      <p>{transaction.partner_name}</p>
+                    )}
+                  </div>
+                </td>
+                <td className="whitespace-pre-wrap bg-white py-3 pl-4 pr-2 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                  <div className="flex items-center gap-3">
+                    <p>{transaction.partner_account}</p>
+                  </div>
+                </td>
+                <td className="whitespace-nowrap bg-white px-2 py-3 text-sm">
+                  {parseToCurrency(transaction.mo.value)}
+                </td>
+                <td className="whitespace-nowrap bg-white px-2 py-3 text-sm">
+                  {parseToCurrency(transaction.transport.value)}
+                </td>
+                <td className="whitespace-nowrap bg-white px-2 py-3 text-sm">
+                  {parseToCurrency(transaction.parts.value)}
+                </td>
+                <td className="whitespace-nowrap bg-white px-2 py-3 text-sm">
+                  {parseToCurrency(transaction.total)}
+                </td>
+                <td className="whitespace-nowrap bg-white px-2 py-3 text-sm">
+                  {transactionStatusTranslate[transaction.status]}
+                </td>
+                <td className="whitespace-nowrap bg-white px-2 py-3 text-sm">
+                  {parseDateTime(transaction.created_at)}
+                </td>
+                <td className="whitespace-nowrap bg-white px-2 py-3 text-sm">
+                  <div className="flex gap-2">
+                    {transaction.status == TransactionStatus.PENDING && (
+                      <>
+                        <IconButton
+                          color="success"
+                          icon={<CheckIcon className="h-5 w-5 md:h-6 md:w-6" />}
+                          onClick={() => handleConfirmPayment(transaction)}
+                        />
 
-      <div className="mt-6 flow-root">
-        <div className="overflow-x-auto">
-          <div className="inline-block min-w-full align-middle">
-            <div className="overflow-hidden rounded-md bg-gray-50 p-2 md:pt-0">
-              <table className="hidden min-w-full rounded-md text-gray-900 md:table">
-                <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
-                  <tr>
-                    <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                      Sinistro
-                    </th>
-                    <th scope="col" className="px-4 py-5 font-medium">
-                      Segurado
-                    </th>
-                    <th scope="col" className="px-4 py-5 font-medium">
-                      Técnico
-                    </th>
-                    <th scope="col" className="px-4 py-5 font-medium">
-                      PIX
-                    </th>
-                    <th scope="col" className="px-4 py-5 font-medium">
-                      MO
-                    </th>
-                    <th scope="col" className="px-4 py-5 font-medium">
-                      Deslocamento
-                    </th>
-                    <th scope="col" className="px-4 py-5 font-medium">
-                      Peças
-                    </th>
-                    <th scope="col" className="px-4 py-5 font-medium">
-                      Total
-                    </th>
-                    <th scope="col" className="px-4 py-5 font-medium">
-                      Status
-                    </th>
-                    <th scope="col" className="px-4 py-5 font-medium">
-                      Data de criação
-                    </th>
-                    <th scope="col" className="px-4 py-5 font-medium">
-                      Ações
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody className="divide-y divide-gray-200 text-gray-900">
-                  {transactions?.result.map((transaction) => (
-                    <tr key={transaction.case_id} className="group">
-                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-blue-500 underline group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
-                        <div className="flex items-center gap-3">
-                          <Link href={`/cases/${transaction.case_id}`}>
-                            {transaction.external_reference}
-                          </Link>
-                        </div>
-                      </td>
-                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
-                        <div className="flex items-center gap-3">
-                          <p>
-                            {transaction.customer_first_name
-                              ? `${transaction.customer_first_name} ${transaction.customer_last_name || ''}`.trim()
-                              : '-'}
-                          </p>
-                        </div>
-                      </td>
-                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
-                        <div className="flex items-center gap-3">
-                          {transaction.partner_id ? (
-                            <Link
-                              className="text-blue-500 underline"
-                              href={`/partners/${transaction.partner_id}`}
-                            >
-                              {transaction.partner_name}
-                            </Link>
-                          ) : (
-                            <p>{transaction.partner_name}</p>
-                          )}
-                        </div>
-                      </td>
-                      <td className="whitespace-pre-wrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
-                        <div className="flex items-center gap-3">
-                          <p>{transaction.partner_account}</p>
-                        </div>
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {parseToCurrency(transaction.mo.value)}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {parseToCurrency(transaction.transport.value)}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {parseToCurrency(transaction.parts.value)}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {parseToCurrency(transaction.total)}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {transactionStatusTranslate[transaction.status]}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {parseDateTime(transaction.created_at)}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        <div className="flex gap-2">
-                          {transaction.status == TransactionStatus.PENDING && (
-                            <>
-                              <button
-                                className="text-green-500 hover:text-green-700"
-                                onClick={() =>
-                                  handleConfirmPayment(transaction)
-                                }
-                              >
-                                <CheckIcon className="w-5 md:w-6" />
-                              </button>
-
-                              <button
-                                className="text-blue-600 hover:text-blue-900"
-                                onClick={() => handleEditPayment(transaction)}
-                              >
-                                <PencilIcon className="w-5 md:w-6" />
-                              </button>
-                            </>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-2">
-        <Pagination
-          onChange={handleChangePage}
-          siblings={3}
-          showControls
-          total={Math.ceil(
-            Number(
-              (transactions?.paging.total || 1) /
-                (transactions?.paging.limit || 1)
-            )
-          )}
-          page={Number(initialPage || 1)}
-        />
-      </div>
+                        <IconButton
+                          color="info"
+                          icon={
+                            <PencilIcon className="h-5 w-5 md:h-6 md:w-6" />
+                          }
+                          onClick={() => handleEditPayment(transaction)}
+                        />
+                      </>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </ListPageLayout>
 
       {isConfirmPaymentModal && (
         <ConfirmPaymentModal
@@ -225,6 +206,6 @@ export default function PaymentTable({
           transaction={selectedTransaction}
         />
       )}
-    </div>
+    </>
   );
 }

@@ -3,15 +3,16 @@ import { parseDateTime } from '@/app/libs/date';
 import { parseDocument } from '@/app/libs/parser';
 import { ContractorListItem } from '@/app/types/contractor-list-item';
 import { SearchResponse } from '@/app/types/search_response';
-import { EyeIcon } from '@heroicons/react/24/outline';
 import PencilIcon from '@heroicons/react/24/outline/PencilIcon';
 import TrashIcon from '@heroicons/react/24/outline/TrashIcon';
-import { Pagination } from '@heroui/pagination';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { IconButton } from '../../components/common/icon-button';
+import { ListPageLayout } from '../../components/common/list-page-layout';
 import Modal from '../../components/common/modal';
+import { Pagination } from '../../components/common/pagination';
+import { Pill } from '../../components/common/pill';
 import ContractorsSearchBar from '../../components/contractors/search-bar';
-import { roboto } from '../../ui/fonts';
 import CreateContractorModal from './create-contractor';
 import { DeleteContractorModal } from './delete-contractor';
 import EditContractorModal from './edit-contractor';
@@ -46,124 +47,98 @@ export default function ContractorsTable({
     router.push(`/contractors/${partnerID}`);
   }
 
-  function handleChangePage(value: number) {
-    router.push(`?page=${value}`);
-  }
-
   return (
-    <div className="w-full">
-      <h1 className={`${roboto.className} mb-8 text-xl md:text-2xl`}>
-        Seguradoras
-      </h1>
+    <>
+      <ListPageLayout
+        title="Seguradoras"
+        searchBar={
+          <ContractorsSearchBar
+            setIsCreationModalOpen={setIsCreateModalOpen}
+            setIsFilterModalOpen={setIsFilterModalOpen}
+          />
+        }
+        pagination={
+          <Pagination paging={contractors?.paging} page={initialPage} />
+        }
+      >
+        <table className="hidden min-w-full rounded-md text-gray-900 md:table">
+          <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
+            <tr>
+              <th scope="col" className="px-4 py-3 font-medium sm:pl-6">
+                Nome
+              </th>
+              <th scope="col" className="px-4 py-3 font-medium sm:pl-6">
+                Razão social
+              </th>
+              <th scope="col" className="px-3 py-3 font-medium">
+                Documento
+              </th>
+              <th scope="col" className="px-3 py-3 font-medium">
+                Data de criação
+              </th>
+              <th scope="col" className="px-3 py-3 font-medium">
+                Status
+              </th>
+              <th scope="col" className="px-3 py-3 font-medium">
+                Ações
+              </th>
+            </tr>
+          </thead>
 
-      <ContractorsSearchBar
-        setIsCreationModalOpen={setIsCreateModalOpen}
-        setIsFilterModalOpen={setIsFilterModalOpen}
-      />
+          <tbody className="divide-y divide-gray-200 text-gray-900">
+            {contractors?.result.map((contractor) => (
+              <tr
+                key={contractor.contractor_id}
+                className="group cursor-pointer"
+                onClick={() => handleRowClick(contractor.contractor_id)}
+              >
+                <td className="whitespace-nowrap bg-white py-3 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md group-hover:bg-gray-100 sm:pl-6">
+                  <div className="flex items-center gap-3">
+                    <p>{`${contractor.company_name}`}</p>
+                  </div>
+                </td>
+                <td className="whitespace-nowrap bg-white py-3 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md group-hover:bg-gray-100 sm:pl-6">
+                  <div className="flex items-center gap-3">
+                    <p>{`${contractor.legal_name}`}</p>
+                  </div>
+                </td>
+                <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
+                  {parseDocument(contractor.document)}
+                </td>
+                <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
+                  {parseDateTime(contractor.created_at)}
+                </td>
+                <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
+                  <Pill
+                    text={contractor.active ? 'Ativo' : 'Inativo'}
+                    color={contractor.active ? 'success' : 'neutral'}
+                  />
+                </td>
+                <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
+                  <div
+                    className="flex items-center gap-3"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <IconButton
+                      color="info"
+                      icon={<PencilIcon className="h-5 w-5 md:h-6 md:w-6" />}
+                      onClick={() => handleEdit(contractor.contractor_id)}
+                    />
 
-      <div className="mt-6 flow-root">
-        <div className="overflow-x-auto">
-          <div className="inline-block min-w-full align-middle">
-            <div className="overflow-hidden rounded-md bg-gray-50 p-2 md:pt-0">
-              <table className="hidden min-w-full rounded-md text-gray-900 md:table">
-                <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
-                  <tr>
-                    <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                      Nome
-                    </th>
-                    <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                      Razão social
-                    </th>
-                    <th scope="col" className="px-3 py-5 font-medium">
-                      Documento
-                    </th>
-                    <th scope="col" className="px-3 py-5 font-medium">
-                      Data de criação
-                    </th>
-                    <th scope="col" className="px-3 py-5 font-medium">
-                      Status
-                    </th>
-                    <th scope="col" className="px-3 py-5 font-medium">
-                      Ações
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody className="divide-y divide-gray-200 text-gray-900">
-                  {contractors?.result.map((contractor) => (
-                    <tr key={contractor.contractor_id} className="group">
-                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
-                        <div className="flex items-center gap-3">
-                          <p>{`${contractor.company_name}`}</p>
-                        </div>
-                      </td>
-                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
-                        <div className="flex items-center gap-3">
-                          <p>{`${contractor.legal_name}`}</p>
-                        </div>
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {parseDocument(contractor.document)}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {parseDateTime(contractor.created_at)}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {contractor.active ? 'Ativo' : 'Inativo'}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        <div className="flex items-center gap-3">
-                          <button
-                            className="text-green-500 hover:text-green-700"
-                            onClick={() =>
-                              handleRowClick(contractor.contractor_id)
-                            }
-                          >
-                            <EyeIcon className="h-5 w-5" />
-                          </button>
-
-                          <button
-                            className="text-blue-500 hover:text-blue-700"
-                            onClick={() => handleEdit(contractor.contractor_id)}
-                          >
-                            <PencilIcon className="h-5 w-5" />
-                          </button>
-
-                          {contractor.active && (
-                            <button
-                              className="text-red-600 hover:text-red-900"
-                              onClick={() =>
-                                handleDelete(contractor.contractor_id)
-                              }
-                            >
-                              <TrashIcon className="w-5 md:w-6" />
-                            </button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-2">
-        <Pagination
-          onChange={handleChangePage}
-          siblings={3}
-          showControls
-          total={Math.ceil(
-            Number(
-              (contractors?.paging.total || 1) /
-                (contractors?.paging.limit || 1)
-            )
-          )}
-          page={Number(initialPage || 1)}
-        />
-      </div>
+                    {contractor.active && (
+                      <IconButton
+                        color="error"
+                        icon={<TrashIcon className="h-5 w-5 md:h-6 md:w-6" />}
+                        onClick={() => handleDelete(contractor.contractor_id)}
+                      />
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </ListPageLayout>
 
       {isFilterModalOpen && (
         <Modal
@@ -196,6 +171,6 @@ export default function ContractorsTable({
           contractorID={contractorID}
         />
       )}
-    </div>
+    </>
   );
 }

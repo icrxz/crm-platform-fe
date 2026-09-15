@@ -14,33 +14,49 @@ beforeEach(() => {
 
 describe('NavLinks', () => {
   it('should render links available to every role', () => {
-    render(<NavLinks userRole={UserRole.OPERATOR} />);
+    render(<NavLinks userRole={UserRole.OPERATOR} isCollapsed={false} />);
 
-    expect(screen.getByText('Home')).toBeInTheDocument();
-    expect(screen.getByText('Casos')).toBeInTheDocument();
-    expect(screen.getByText('Meu Perfil')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Home' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Casos' })).toBeInTheDocument();
+  });
+
+  it('should not render a Meu Perfil item (accessed via the sidebar avatar instead)', () => {
+    render(<NavLinks userRole={UserRole.ADMIN} isCollapsed={false} />);
+
+    expect(
+      screen.queryByRole('link', { name: 'Meu Perfil' })
+    ).not.toBeInTheDocument();
   });
 
   it('should hide admin-only links for an operator', () => {
-    render(<NavLinks userRole={UserRole.OPERATOR} />);
+    render(<NavLinks userRole={UserRole.OPERATOR} isCollapsed={false} />);
 
-    expect(screen.queryByText('Usuários')).not.toBeInTheDocument();
-    expect(screen.queryByText('Gamificação')).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('link', { name: 'Usuários' })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('link', { name: 'Gamificação' })
+    ).not.toBeInTheDocument();
   });
 
   it('should show admin-only links for an admin', () => {
-    render(<NavLinks userRole={UserRole.ADMIN} />);
+    render(<NavLinks userRole={UserRole.ADMIN} isCollapsed={false} />);
 
-    expect(screen.getByText('Usuários')).toBeInTheDocument();
-    expect(screen.getByText('Gamificação')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Usuários' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: 'Gamificação' })
+    ).toBeInTheDocument();
   });
 
-  it('should link the profile item to /profile for every role', () => {
-    render(<NavLinks userRole={UserRole.OPERATOR} />);
+  it('should not render tooltip text when expanded', () => {
+    render(<NavLinks userRole={UserRole.OPERATOR} isCollapsed={false} />);
 
-    expect(screen.getByText('Meu Perfil').closest('a')).toHaveAttribute(
-      'href',
-      '/profile'
-    );
+    expect(screen.queryAllByText('Casos')).toHaveLength(1);
+  });
+
+  it('should render tooltip text when collapsed', () => {
+    render(<NavLinks userRole={UserRole.OPERATOR} isCollapsed />);
+
+    expect(screen.queryAllByText('Casos')).toHaveLength(2);
   });
 });
