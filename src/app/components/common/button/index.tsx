@@ -4,7 +4,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
-  color?: 'success' | 'error' | 'warning' | 'info';
+  color?: 'success' | 'error' | 'warning' | 'info' | 'neutral';
   scheme?: 'loud' | 'quiet';
 }
 
@@ -23,6 +23,8 @@ const buttonColors = {
     warning:
       'bg-orange-500 hover:bg-orange-400 text-white focus-visible:outline-orange-500 active:bg-orange-600',
     info: 'bg-blue-500 hover:bg-blue-400 text-white focus-visible:outline-blue-500 active:bg-blue-600',
+    neutral:
+      'bg-gray-500 hover:bg-gray-400 text-white focus-visible:outline-gray-500 active:bg-gray-600',
   },
   quiet: {
     success:
@@ -32,6 +34,8 @@ const buttonColors = {
     warning:
       'bg-orange-100 hover:bg-orange-200 text-orange-700 focus-visible:outline-orange-500 active:bg-orange-300',
     info: 'bg-blue-100 hover:bg-blue-200 text-blue-700 focus-visible:outline-blue-500 active:bg-blue-300',
+    neutral:
+      'bg-gray-200 hover:bg-gray-300 text-gray-700 focus-visible:outline-gray-500 active:bg-gray-400',
   },
 };
 

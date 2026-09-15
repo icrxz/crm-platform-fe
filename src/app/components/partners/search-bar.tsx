@@ -53,7 +53,9 @@ export default function PartnersSearchBar({
 
       <div className="flex flex-wrap items-center gap-4">
         <Button
-          className="rounded-lg bg-gray-500 p-2 text-white hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
+          color="neutral"
+          scheme="quiet"
+          className="rounded-lg p-2"
           onClick={() => setShowFilterModal(true)}
         >
           Filtros
