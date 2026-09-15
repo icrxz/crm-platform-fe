@@ -72,7 +72,7 @@ export default function SideNav({ userRole, userName }: SideNavProps) {
         </div>
       </Link>
 
-      <div className="flex grow flex-row justify-between gap-2 md:flex-col">
+      <div className="flex min-h-0 grow flex-row justify-between gap-2 overflow-y-auto md:flex-col">
         <NavLinks userRole={userRole} isCollapsed={isCollapsed} />
 
         <div className="hidden h-auto w-full grow rounded-md md:block"></div>

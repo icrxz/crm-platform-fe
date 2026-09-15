@@ -56,8 +56,8 @@ export default function PaymentTable({
         Pagamentos
       </h1>
 
-      <div className="flex min-h-0 flex-1 flex-col items-center justify-center overflow-y-auto overflow-x-hidden">
-        <div className="flex w-full flex-col gap-4">
+      <div className="flex min-h-0 flex-1 flex-col items-center overflow-y-auto overflow-x-hidden">
+        <div className="my-auto flex w-full flex-col gap-4">
           <PaymentsSearchBar partners={partners} />
 
           <div className="flow-root">
