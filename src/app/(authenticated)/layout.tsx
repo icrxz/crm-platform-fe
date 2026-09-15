@@ -34,7 +34,9 @@ export default async function Layout({ children }: LayoutProps) {
           />
         </div>
 
-        <div className="grow p-6 md:overflow-y-auto md:p-12">{children}</div>
+        <div className="grow p-6 md:overflow-y-auto md:px-12 md:py-6">
+          {children}
+        </div>
 
         {/* {user.isFirstLogin && (
           <FirstLoginModal userId={user.user_id} />

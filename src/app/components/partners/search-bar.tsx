@@ -42,7 +42,7 @@ export default function PartnersSearchBar({
   };
 
   return (
-    <div className="flex w-full flex-wrap items-center justify-between gap-3 rounded-lg bg-gray-100 p-4 shadow-md">
+    <div className="flex w-full flex-wrap items-center justify-between gap-3 rounded-lg bg-gray-100 p-3 shadow-md">
       <div className="w-full max-w-md">
         <Search
           placeholder="Buscar técnicos pelo nome, cidade ou documento..."

@@ -12,8 +12,12 @@ const config: Config = {
   testEnvironment: 'jsdom',
   // Ficheiro executado antes de cada teste para configurar o DOM
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
-  // Ignora pastas que não contêm testes úteis
-  testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/'],
+  // Ignora pastas que não contêm testes úteis (e2e/ roda no Playwright, não no Jest)
+  testPathIgnorePatterns: [
+    '<rootDir>/.next/',
+    '<rootDir>/node_modules/',
+    '<rootDir>/e2e/',
+  ],
 };
 
 // createJestConfig exporta esta configuração da forma que o Next.js espera

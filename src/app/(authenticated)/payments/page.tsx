@@ -164,7 +164,7 @@ export default async function Page({ searchParams }: TransactionPageParams) {
   ]);
 
   return (
-    <main>
+    <main className="flex h-full flex-col">
       <PaymentTable
         transactions={payments || []}
         initialPage={page}

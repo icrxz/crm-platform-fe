@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Tailwind's font-size/spacing scale is rem-based, so scaling the root
+   font-size scales every text-*, p-*, gap-*, etc. utility with it.
+   0.875rem (14px) at 1280px viewport width, 1rem (16px) at 1920px+.
+   Bounds are in rem, not px, so a user's browser default font-size
+   (accessibility zoom, WCAG 1.4.4) still scales the clamp proportionally
+   instead of being overridden by a fixed pixel value. */
+html {
+  font-size: clamp(0.875rem, 0.625rem + 0.3125vw, 1rem);
+}
+
 input[type='number'] {
   -moz-appearance: textfield;
   appearance: textfield;

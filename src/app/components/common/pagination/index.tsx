@@ -22,7 +22,7 @@ export function Pagination({ paging, page, className }: PaginationProps) {
   }
 
   return (
-    <div className={className ? className : 'mt-2'}>
+    <div className={className ? className : 'mt-1'}>
       <HeroPagination
         onChange={handleChangePage}
         siblings={3}
