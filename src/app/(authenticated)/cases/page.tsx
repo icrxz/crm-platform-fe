@@ -93,7 +93,7 @@ export default async function Page({ searchParams }: CasePageParams) {
   );
 
   return (
-    <main>
+    <main className="flex h-full flex-col">
       {data && (
         <CasesTable cases={data} initialPage={page || 1} userRole={user.role} />
       )}

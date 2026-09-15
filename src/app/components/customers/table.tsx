@@ -47,7 +47,7 @@ export default function CustomersTable({
   }
 
   return (
-    <div className="w-full">
+    <div className="flex h-full w-full flex-col">
       <h1 className={`${roboto.className} mb-4 text-xl md:text-2xl`}>
         Clientes
       </h1>
@@ -57,80 +57,84 @@ export default function CustomersTable({
         setIsFilterModalOpen={setIsFilterModalOpen}
       />
 
-      <div className="mt-4 flow-root">
-        <div className="overflow-x-auto">
-          <div className="inline-block min-w-full align-middle">
-            <div className="overflow-hidden rounded-md bg-gray-50 p-2 md:pt-0">
-              <table className="hidden min-w-full rounded-md text-gray-900 md:table">
-                <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
-                  <tr>
-                    <th scope="col" className="px-4 py-3 font-medium sm:pl-6">
-                      Nome
-                    </th>
-                    <th scope="col" className="px-3 py-3 font-medium">
-                      Email
-                    </th>
-                    <th scope="col" className="px-3 py-3 font-medium">
-                      Documento
-                    </th>
-                    <th scope="col" className="px-3 py-3 font-medium">
-                      Data de criação
-                    </th>
-                    <th scope="col" className="px-3 py-3 font-medium">
-                      Ações
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody className="divide-y divide-gray-200 text-gray-900">
-                  {customers?.result.map((customer) => (
-                    <tr
-                      key={customer.customer_id}
-                      className="group cursor-pointer"
-                      onClick={() => handleRowClick(customer.customer_id)}
-                    >
-                      <td className="whitespace-nowrap bg-white py-3 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md group-hover:bg-gray-100 sm:pl-6">
-                        <div className="flex items-center gap-3">
-                          <p>{`${customer.first_name} ${customer.last_name}`}</p>
-                        </div>
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
-                        {customer.email || '-'}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
-                        {parseDocument(customer.document)}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
-                        {parseDateTime(customer.created_at)}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
-                        <div
-                          className="flex gap-2"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <IconButton
-                            color="info"
-                            icon={
-                              <PencilIcon className="h-5 w-5 md:h-6 md:w-6" />
-                            }
-                            onClick={() => handleEdit(customer.customer_id)}
-                          />
-
-                          {customer.active && (
-                            <IconButton
-                              color="error"
-                              icon={
-                                <TrashIcon className="h-5 w-5 md:h-6 md:w-6" />
-                              }
-                              onClick={() => handleDelete(customer.customer_id)}
-                            />
-                          )}
-                        </div>
-                      </td>
+      <div className="flex min-h-0 flex-1 flex-col justify-center overflow-y-auto">
+        <div className="mt-4 flow-root">
+          <div className="overflow-x-auto">
+            <div className="inline-block min-w-full align-middle">
+              <div className="overflow-hidden rounded-md bg-gray-50 p-2 md:pt-0">
+                <table className="hidden min-w-full rounded-md text-gray-900 md:table">
+                  <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
+                    <tr>
+                      <th scope="col" className="px-4 py-3 font-medium sm:pl-6">
+                        Nome
+                      </th>
+                      <th scope="col" className="px-3 py-3 font-medium">
+                        Email
+                      </th>
+                      <th scope="col" className="px-3 py-3 font-medium">
+                        Documento
+                      </th>
+                      <th scope="col" className="px-3 py-3 font-medium">
+                        Data de criação
+                      </th>
+                      <th scope="col" className="px-3 py-3 font-medium">
+                        Ações
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+
+                  <tbody className="divide-y divide-gray-200 text-gray-900">
+                    {customers?.result.map((customer) => (
+                      <tr
+                        key={customer.customer_id}
+                        className="group cursor-pointer"
+                        onClick={() => handleRowClick(customer.customer_id)}
+                      >
+                        <td className="whitespace-nowrap bg-white py-3 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md group-hover:bg-gray-100 sm:pl-6">
+                          <div className="flex items-center gap-3">
+                            <p>{`${customer.first_name} ${customer.last_name}`}</p>
+                          </div>
+                        </td>
+                        <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
+                          {customer.email || '-'}
+                        </td>
+                        <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
+                          {parseDocument(customer.document)}
+                        </td>
+                        <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
+                          {parseDateTime(customer.created_at)}
+                        </td>
+                        <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
+                          <div
+                            className="flex gap-2"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <IconButton
+                              color="info"
+                              icon={
+                                <PencilIcon className="h-5 w-5 md:h-6 md:w-6" />
+                              }
+                              onClick={() => handleEdit(customer.customer_id)}
+                            />
+
+                            {customer.active && (
+                              <IconButton
+                                color="error"
+                                icon={
+                                  <TrashIcon className="h-5 w-5 md:h-6 md:w-6" />
+                                }
+                                onClick={() =>
+                                  handleDelete(customer.customer_id)
+                                }
+                              />
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>

@@ -58,7 +58,7 @@ export default async function Page({ searchParams }: CustomerPageParams) {
   const data = await getData(documento || '', page || 1);
 
   return (
-    <main>
+    <main className="flex h-full flex-col">
       <CustomersTable customers={data} initialPage={page} />
     </main>
   );

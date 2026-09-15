@@ -51,144 +51,147 @@ export default function PaymentTable({
   }
 
   return (
-    <div className="w-full">
+    <div className="flex h-full w-full flex-col">
       <h1 className={`${roboto.className} mb-4 text-xl md:text-2xl`}>
         Pagamentos
       </h1>
 
       <PaymentsSearchBar partners={partners} />
 
-      <div className="mt-4 flow-root">
-        <div className="overflow-x-auto">
-          <div className="inline-block min-w-full align-middle">
-            <div className="overflow-hidden rounded-md bg-gray-50 p-2 md:pt-0">
-              <table className="hidden min-w-full rounded-md text-gray-900 md:table">
-                <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
-                  <tr>
-                    <th scope="col" className="px-4 py-3 font-medium sm:pl-6">
-                      Sinistro
-                    </th>
-                    <th scope="col" className="px-4 py-3 font-medium">
-                      Segurado
-                    </th>
-                    <th scope="col" className="px-4 py-3 font-medium">
-                      Técnico
-                    </th>
-                    <th scope="col" className="px-4 py-3 font-medium">
-                      PIX
-                    </th>
-                    <th scope="col" className="px-4 py-3 font-medium">
-                      MO
-                    </th>
-                    <th scope="col" className="px-4 py-3 font-medium">
-                      Deslocamento
-                    </th>
-                    <th scope="col" className="px-4 py-3 font-medium">
-                      Peças
-                    </th>
-                    <th scope="col" className="px-4 py-3 font-medium">
-                      Total
-                    </th>
-                    <th scope="col" className="px-4 py-3 font-medium">
-                      Status
-                    </th>
-                    <th scope="col" className="px-4 py-3 font-medium">
-                      Data de criação
-                    </th>
-                    <th scope="col" className="px-4 py-3 font-medium">
-                      Ações
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody className="divide-y divide-gray-200 text-gray-900">
-                  {transactions?.result.map((transaction) => (
-                    <tr key={transaction.case_id} className="group">
-                      <td className="whitespace-nowrap bg-white py-3 pl-4 pr-3 text-sm text-blue-500 group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
-                        <div className="flex items-center gap-3">
-                          <Link
-                            className="hover:text-blue-700"
-                            href={`/cases/${transaction.case_id}`}
-                          >
-                            {transaction.external_reference}
-                          </Link>
-                        </div>
-                      </td>
-                      <td className="whitespace-nowrap bg-white py-3 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
-                        <div className="flex items-center gap-3">
-                          <p>
-                            {transaction.customer_first_name
-                              ? `${transaction.customer_first_name} ${transaction.customer_last_name || ''}`.trim()
-                              : '-'}
-                          </p>
-                        </div>
-                      </td>
-                      <td className="whitespace-nowrap bg-white py-3 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
-                        <div className="flex items-center gap-3">
-                          {transaction.partner_id ? (
-                            <Link
-                              className="text-blue-500 hover:text-blue-700"
-                              href={`/partners/${transaction.partner_id}`}
-                            >
-                              {transaction.partner_name}
-                            </Link>
-                          ) : (
-                            <p>{transaction.partner_name}</p>
-                          )}
-                        </div>
-                      </td>
-                      <td className="whitespace-pre-wrap bg-white py-3 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
-                        <div className="flex items-center gap-3">
-                          <p>{transaction.partner_account}</p>
-                        </div>
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-3 text-sm">
-                        {parseToCurrency(transaction.mo.value)}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-3 text-sm">
-                        {parseToCurrency(transaction.transport.value)}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-3 text-sm">
-                        {parseToCurrency(transaction.parts.value)}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-3 text-sm">
-                        {parseToCurrency(transaction.total)}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-3 text-sm">
-                        {transactionStatusTranslate[transaction.status]}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-3 text-sm">
-                        {parseDateTime(transaction.created_at)}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-3 text-sm">
-                        <div className="flex gap-2">
-                          {transaction.status == TransactionStatus.PENDING && (
-                            <>
-                              <IconButton
-                                color="success"
-                                icon={
-                                  <CheckIcon className="h-5 w-5 md:h-6 md:w-6" />
-                                }
-                                onClick={() =>
-                                  handleConfirmPayment(transaction)
-                                }
-                              />
-
-                              <IconButton
-                                color="info"
-                                icon={
-                                  <PencilIcon className="h-5 w-5 md:h-6 md:w-6" />
-                                }
-                                onClick={() => handleEditPayment(transaction)}
-                              />
-                            </>
-                          )}
-                        </div>
-                      </td>
+      <div className="flex min-h-0 flex-1 flex-col justify-center overflow-y-auto">
+        <div className="mt-4 flow-root">
+          <div className="overflow-x-auto">
+            <div className="inline-block min-w-full align-middle">
+              <div className="overflow-hidden rounded-md bg-gray-50 p-2 md:pt-0">
+                <table className="hidden min-w-full rounded-md text-gray-900 md:table">
+                  <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
+                    <tr>
+                      <th scope="col" className="px-4 py-3 font-medium sm:pl-6">
+                        Sinistro
+                      </th>
+                      <th scope="col" className="px-4 py-3 font-medium">
+                        Segurado
+                      </th>
+                      <th scope="col" className="px-4 py-3 font-medium">
+                        Técnico
+                      </th>
+                      <th scope="col" className="px-4 py-3 font-medium">
+                        PIX
+                      </th>
+                      <th scope="col" className="px-4 py-3 font-medium">
+                        MO
+                      </th>
+                      <th scope="col" className="px-4 py-3 font-medium">
+                        Deslocamento
+                      </th>
+                      <th scope="col" className="px-4 py-3 font-medium">
+                        Peças
+                      </th>
+                      <th scope="col" className="px-4 py-3 font-medium">
+                        Total
+                      </th>
+                      <th scope="col" className="px-4 py-3 font-medium">
+                        Status
+                      </th>
+                      <th scope="col" className="px-4 py-3 font-medium">
+                        Data de criação
+                      </th>
+                      <th scope="col" className="px-4 py-3 font-medium">
+                        Ações
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+
+                  <tbody className="divide-y divide-gray-200 text-gray-900">
+                    {transactions?.result.map((transaction) => (
+                      <tr key={transaction.case_id} className="group">
+                        <td className="whitespace-nowrap bg-white py-3 pl-4 pr-3 text-sm text-blue-500 group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                          <div className="flex items-center gap-3">
+                            <Link
+                              className="hover:text-blue-700"
+                              href={`/cases/${transaction.case_id}`}
+                            >
+                              {transaction.external_reference}
+                            </Link>
+                          </div>
+                        </td>
+                        <td className="whitespace-nowrap bg-white py-3 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                          <div className="flex items-center gap-3">
+                            <p>
+                              {transaction.customer_first_name
+                                ? `${transaction.customer_first_name} ${transaction.customer_last_name || ''}`.trim()
+                                : '-'}
+                            </p>
+                          </div>
+                        </td>
+                        <td className="whitespace-nowrap bg-white py-3 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                          <div className="flex items-center gap-3">
+                            {transaction.partner_id ? (
+                              <Link
+                                className="text-blue-500 hover:text-blue-700"
+                                href={`/partners/${transaction.partner_id}`}
+                              >
+                                {transaction.partner_name}
+                              </Link>
+                            ) : (
+                              <p>{transaction.partner_name}</p>
+                            )}
+                          </div>
+                        </td>
+                        <td className="whitespace-pre-wrap bg-white py-3 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                          <div className="flex items-center gap-3">
+                            <p>{transaction.partner_account}</p>
+                          </div>
+                        </td>
+                        <td className="whitespace-nowrap bg-white px-4 py-3 text-sm">
+                          {parseToCurrency(transaction.mo.value)}
+                        </td>
+                        <td className="whitespace-nowrap bg-white px-4 py-3 text-sm">
+                          {parseToCurrency(transaction.transport.value)}
+                        </td>
+                        <td className="whitespace-nowrap bg-white px-4 py-3 text-sm">
+                          {parseToCurrency(transaction.parts.value)}
+                        </td>
+                        <td className="whitespace-nowrap bg-white px-4 py-3 text-sm">
+                          {parseToCurrency(transaction.total)}
+                        </td>
+                        <td className="whitespace-nowrap bg-white px-4 py-3 text-sm">
+                          {transactionStatusTranslate[transaction.status]}
+                        </td>
+                        <td className="whitespace-nowrap bg-white px-4 py-3 text-sm">
+                          {parseDateTime(transaction.created_at)}
+                        </td>
+                        <td className="whitespace-nowrap bg-white px-4 py-3 text-sm">
+                          <div className="flex gap-2">
+                            {transaction.status ==
+                              TransactionStatus.PENDING && (
+                              <>
+                                <IconButton
+                                  color="success"
+                                  icon={
+                                    <CheckIcon className="h-5 w-5 md:h-6 md:w-6" />
+                                  }
+                                  onClick={() =>
+                                    handleConfirmPayment(transaction)
+                                  }
+                                />
+
+                                <IconButton
+                                  color="info"
+                                  icon={
+                                    <PencilIcon className="h-5 w-5 md:h-6 md:w-6" />
+                                  }
+                                  onClick={() => handleEditPayment(transaction)}
+                                />
+                              </>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>

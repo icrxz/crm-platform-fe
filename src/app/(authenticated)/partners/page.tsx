@@ -100,7 +100,7 @@ export default async function Page({ searchParams }: PartnerPageParams) {
   const data = await getData(filters);
 
   return (
-    <main>
+    <main className="flex h-full flex-col">
       <PartnersTable partners={data} initialPage={filters?.page} />
     </main>
   );
