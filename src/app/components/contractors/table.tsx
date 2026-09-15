@@ -6,10 +6,11 @@ import { SearchResponse } from '@/app/types/search_response';
 import { EyeIcon } from '@heroicons/react/24/outline';
 import PencilIcon from '@heroicons/react/24/outline/PencilIcon';
 import TrashIcon from '@heroicons/react/24/outline/TrashIcon';
-import { Pagination } from '@heroui/pagination';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Modal from '../../components/common/modal';
+import { IconButton } from '../../components/common/icon-button';
+import { Pagination } from '../../components/common/pagination';
 import ContractorsSearchBar from '../../components/contractors/search-bar';
 import { roboto } from '../../ui/fonts';
 import CreateContractorModal from './create-contractor';
@@ -44,10 +45,6 @@ export default function ContractorsTable({
 
   function handleRowClick(partnerID: string) {
     router.push(`/contractors/${partnerID}`);
-  }
-
-  function handleChangePage(value: number) {
-    router.push(`?page=${value}`);
   }
 
   return (
@@ -113,31 +110,32 @@ export default function ContractorsTable({
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                         <div className="flex items-center gap-3">
-                          <button
-                            className="text-green-500 hover:text-green-700"
+                          <IconButton
+                            color="success"
+                            icon={<EyeIcon className="h-5 w-5 md:h-6 md:w-6" />}
                             onClick={() =>
                               handleRowClick(contractor.contractor_id)
                             }
-                          >
-                            <EyeIcon className="h-5 w-5" />
-                          </button>
+                          />
 
-                          <button
-                            className="text-blue-500 hover:text-blue-700"
+                          <IconButton
+                            color="info"
+                            icon={
+                              <PencilIcon className="h-5 w-5 md:h-6 md:w-6" />
+                            }
                             onClick={() => handleEdit(contractor.contractor_id)}
-                          >
-                            <PencilIcon className="h-5 w-5" />
-                          </button>
+                          />
 
                           {contractor.active && (
-                            <button
-                              className="text-red-600 hover:text-red-900"
+                            <IconButton
+                              color="error"
+                              icon={
+                                <TrashIcon className="h-5 w-5 md:h-6 md:w-6" />
+                              }
                               onClick={() =>
                                 handleDelete(contractor.contractor_id)
                               }
-                            >
-                              <TrashIcon className="w-5 md:w-6" />
-                            </button>
+                            />
                           )}
                         </div>
                       </td>
@@ -150,20 +148,7 @@ export default function ContractorsTable({
         </div>
       </div>
 
-      <div className="mt-2">
-        <Pagination
-          onChange={handleChangePage}
-          siblings={3}
-          showControls
-          total={Math.ceil(
-            Number(
-              (contractors?.paging.total || 1) /
-                (contractors?.paging.limit || 1)
-            )
-          )}
-          page={Number(initialPage || 1)}
-        />
-      </div>
+      <Pagination paging={contractors?.paging} page={initialPage} />
 
       {isFilterModalOpen && (
         <Modal

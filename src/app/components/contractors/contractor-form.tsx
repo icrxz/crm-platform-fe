@@ -6,6 +6,7 @@ import { Dispatch, SetStateAction, useEffect } from 'react';
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Button } from '../common/button';
+import { TextInput } from '../common/text-input/text-input';
 import { parseDocument } from '@/app/libs/parser';
 
 interface ContractorFormProps {
@@ -47,47 +48,21 @@ export function ContractorForm({
 
         <div className="w-full">
           <div className="mb-4 columns-3">
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="company_name"
-              >
-                Nome da empresa
-              </label>
+            <TextInput
+              label="Nome da empresa"
+              name="company_name"
+              placeholder="Digite o nome da empresa"
+              required
+              defaultValue={contractor?.company_name || ''}
+            />
 
-              <div className="relative">
-                <input
-                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                  id="company_name"
-                  type="text"
-                  name="company_name"
-                  placeholder="Digite o nome da empresa"
-                  required
-                  defaultValue={contractor?.company_name || ''}
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="legal_name"
-              >
-                Razão Social
-              </label>
-
-              <div className="relative">
-                <input
-                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                  id="legal_name"
-                  type="text"
-                  name="legal_name"
-                  placeholder="Digite a razão social"
-                  required
-                  defaultValue={contractor?.legal_name || ''}
-                />
-              </div>
-            </div>
+            <TextInput
+              label="Razão Social"
+              name="legal_name"
+              placeholder="Digite a razão social"
+              required
+              defaultValue={contractor?.legal_name || ''}
+            />
 
             <div>
               <label
@@ -115,47 +90,20 @@ export function ContractorForm({
           <hr />
 
           <div className="my-4 columns-2">
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="phone"
-              >
-                Telefone
-              </label>
+            <TextInput
+              label="Telefone"
+              name="phone"
+              placeholder="Digite o telefone do representante"
+              defaultValue={contractor?.business_contact?.phone_number || ''}
+            />
 
-              <div className="relative">
-                <input
-                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                  id="phone"
-                  type="text"
-                  name="phone"
-                  placeholder="Digite o telefone do representante"
-                  defaultValue={
-                    contractor?.business_contact?.phone_number || ''
-                  }
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                className="mb-3 block text-xs font-medium text-gray-900"
-                htmlFor="email"
-              >
-                Email
-              </label>
-
-              <div className="relative">
-                <input
-                  className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-                  id="email"
-                  type="email"
-                  name="email"
-                  placeholder="Digite o email do representante"
-                  defaultValue={contractor?.business_contact?.email || ''}
-                />
-              </div>
-            </div>
+            <TextInput
+              label="Email"
+              name="email"
+              type="email"
+              placeholder="Digite o email do representante"
+              defaultValue={contractor?.business_contact?.email || ''}
+            />
           </div>
         </div>
 

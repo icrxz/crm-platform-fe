@@ -3,16 +3,17 @@ import { parseDateTime } from '@/app/libs/date';
 import { parseDocument, parseToCurrency } from '@/app/libs/parser';
 import { SearchResponse } from '@/app/types/search_response';
 import { CheckIcon, PencilIcon } from '@heroicons/react/24/outline';
-import { Pagination } from '@heroui/pagination';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { TransactionItem, TransactionStatus } from '../../types/transaction';
 import { roboto } from '../../ui/fonts';
+import { Pagination } from '../common/pagination';
 import { ConfirmPaymentModal } from './confirm-payment';
 import { EditPaymentModal } from './edit-payment';
 import { Partner } from '@/app/types/partner';
 import PaymentsSearchBar from './search-bar';
+import { IconButton } from '../common/icon-button';
 
 interface PaymentTableProps {
   transactions: SearchResponse<TransactionItem>;
@@ -30,7 +31,6 @@ export default function PaymentTable({
   partners,
 }: PaymentTableProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [isConfirmPaymentModal, setIsConfirmPaymentModal] = useState(false);
   const [isEditPaymentModal, setIsEditPaymentModal] = useState(false);
   const [selectedTransaction, setSelectedTransaction] =
@@ -38,12 +38,6 @@ export default function PaymentTable({
 
   function handleRowClick(paymentID: string) {
     router.push(`/payments/${paymentID}`);
-  }
-
-  function handleChangePage(value: number) {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('page', String(value));
-    router.push(`?${params.toString()}`);
   }
 
   function handleConfirmPayment(transaction: TransactionItem) {
@@ -167,21 +161,23 @@ export default function PaymentTable({
                         <div className="flex gap-2">
                           {transaction.status == TransactionStatus.PENDING && (
                             <>
-                              <button
-                                className="text-green-500 hover:text-green-700"
+                              <IconButton
+                                color="success"
+                                icon={
+                                  <CheckIcon className="h-5 w-5 md:h-6 md:w-6" />
+                                }
                                 onClick={() =>
                                   handleConfirmPayment(transaction)
                                 }
-                              >
-                                <CheckIcon className="w-5 md:w-6" />
-                              </button>
+                              />
 
-                              <button
-                                className="text-blue-600 hover:text-blue-900"
+                              <IconButton
+                                color="info"
+                                icon={
+                                  <PencilIcon className="h-5 w-5 md:h-6 md:w-6" />
+                                }
                                 onClick={() => handleEditPayment(transaction)}
-                              >
-                                <PencilIcon className="w-5 md:w-6" />
-                              </button>
+                              />
                             </>
                           )}
                         </div>
@@ -195,20 +191,7 @@ export default function PaymentTable({
         </div>
       </div>
 
-      <div className="mt-2">
-        <Pagination
-          onChange={handleChangePage}
-          siblings={3}
-          showControls
-          total={Math.ceil(
-            Number(
-              (transactions?.paging.total || 1) /
-                (transactions?.paging.limit || 1)
-            )
-          )}
-          page={Number(initialPage || 1)}
-        />
-      </div>
+      <Pagination paging={transactions?.paging} page={initialPage} />
 
       {isConfirmPaymentModal && (
         <ConfirmPaymentModal

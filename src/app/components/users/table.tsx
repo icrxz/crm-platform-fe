@@ -4,9 +4,10 @@ import { UserRole } from '@/app/types/user';
 import { SearchResponse } from '@/app/types/search_response';
 import { roleLabels } from '@/app/utils/roles';
 import { EyeIcon } from '@heroicons/react/24/outline';
-import { Pagination } from '@heroui/pagination';
 import { useRouter } from 'next/navigation';
 import { roboto } from '../../ui/fonts';
+import { IconButton } from '../common/icon-button';
+import { Pagination } from '../common/pagination';
 
 interface UsersTableProps {
   users?: SearchResponse<UserListItem>;
@@ -21,10 +22,6 @@ export default function UsersTable({
 
   function handleRowClick(userID: string) {
     router.push(`/users/${userID}`);
-  }
-
-  function handleChangePage(value: number) {
-    router.push(`?page=${value}`);
   }
 
   return (
@@ -85,13 +82,14 @@ export default function UsersTable({
                         </td>
                         <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                           <div className="flex gap-2">
-                            <button
+                            <IconButton
+                              color="info"
                               disabled={!user.active}
-                              className="text-blue-500 hover:text-blue-700"
+                              icon={
+                                <EyeIcon className="h-5 w-5 md:h-6 md:w-6" />
+                              }
                               onClick={() => handleRowClick(user.user_id)}
-                            >
-                              <EyeIcon className="h-5 w-5" />
-                            </button>
+                            />
                           </div>
                         </td>
                       </tr>
@@ -103,17 +101,7 @@ export default function UsersTable({
         </div>
       </div>
 
-      <div className="mt-2">
-        <Pagination
-          onChange={handleChangePage}
-          siblings={3}
-          showControls
-          total={Math.ceil(
-            Number((users?.paging.total || 1) / (users?.paging.limit || 1))
-          )}
-          page={Number(initialPage || 1)}
-        />
-      </div>
+      <Pagination paging={users?.paging} page={initialPage} />
 
       {/* {isDeleteModalOpen && <DeletePartnerModal isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)} partnerID={partnerID} />} */}
     </div>

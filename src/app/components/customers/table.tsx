@@ -6,11 +6,12 @@ import { SearchResponse } from '@/app/types/search_response';
 import EyeIcon from '@heroicons/react/24/outline/EyeIcon';
 import PencilIcon from '@heroicons/react/24/outline/PencilIcon';
 import TrashIcon from '@heroicons/react/24/outline/TrashIcon';
-import { Pagination } from '@heroui/pagination';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { roboto } from '../../ui/fonts';
+import { IconButton } from '../common/icon-button';
 import Modal from '../common/modal';
+import { Pagination } from '../common/pagination';
 import CreateCustomerModal from './create-customer';
 import { DeleteCustomerModal } from './delete-customer';
 import EditCustomerModal from './edit-customer';
@@ -44,10 +45,6 @@ export default function CustomersTable({
 
   function handleRowClick(costumerID: string) {
     router.push(`/customers/${costumerID}`);
-  }
-
-  function handleChangePage(value: number) {
-    router.push(`?page=${value}`);
   }
 
   return (
@@ -105,27 +102,28 @@ export default function CustomersTable({
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                         <div className="flex gap-2">
-                          <button
-                            className="text-green-500 hover:text-green-700"
+                          <IconButton
+                            color="success"
+                            icon={<EyeIcon className="h-5 w-5 md:h-6 md:w-6" />}
                             onClick={() => handleRowClick(customer.customer_id)}
-                          >
-                            <EyeIcon className="h-5 w-5" />
-                          </button>
+                          />
 
-                          <button
-                            className="text-blue-600 hover:text-blue-900"
+                          <IconButton
+                            color="info"
+                            icon={
+                              <PencilIcon className="h-5 w-5 md:h-6 md:w-6" />
+                            }
                             onClick={() => handleEdit(customer.customer_id)}
-                          >
-                            <PencilIcon className="w-5 md:w-6" />
-                          </button>
+                          />
 
                           {customer.active && (
-                            <button
-                              className="text-red-600 hover:text-red-900"
+                            <IconButton
+                              color="error"
+                              icon={
+                                <TrashIcon className="h-5 w-5 md:h-6 md:w-6" />
+                              }
                               onClick={() => handleDelete(customer.customer_id)}
-                            >
-                              <TrashIcon className="w-5 md:w-6" />
-                            </button>
+                            />
                           )}
                         </div>
                       </td>
@@ -138,19 +136,7 @@ export default function CustomersTable({
         </div>
       </div>
 
-      <div className="mt-2">
-        <Pagination
-          onChange={handleChangePage}
-          siblings={3}
-          showControls
-          total={Math.ceil(
-            Number(
-              (customers?.paging.total || 1) / (customers?.paging.limit || 1)
-            )
-          )}
-          page={Number(initialPage || 1)}
-        />
-      </div>
+      <Pagination paging={customers?.paging} page={initialPage} />
 
       {isFilterModalOpen && (
         <Modal

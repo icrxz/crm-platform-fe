@@ -1,11 +1,13 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { UserRole } from '@/app/types/user';
 import { UserListItem } from '@/app/types/user-list-item';
 import UsersTable from '../table';
 
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
+  usePathname: jest.fn(),
+  useSearchParams: jest.fn(),
 }));
 
 jest.mock('@heroui/pagination', () => ({
@@ -57,6 +59,8 @@ const mockUsers: UserListItem[] = [
 beforeEach(() => {
   jest.clearAllMocks();
   (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
+  (usePathname as jest.Mock).mockReturnValue('/users');
+  (useSearchParams as jest.Mock).mockReturnValue(new URLSearchParams());
 });
 
 describe('UsersTable', () => {
@@ -132,7 +136,7 @@ describe('UsersTable', () => {
 
     fireEvent.click(screen.getByLabelText('next-page'));
 
-    expect(mockPush).toHaveBeenCalledWith('?page=2');
+    expect(mockPush).toHaveBeenCalledWith('/users?page=2');
   });
 
   it('should render without crashing when there are no users', () => {

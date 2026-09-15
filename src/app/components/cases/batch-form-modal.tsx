@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Button } from '../common/button';
+import { Dropdown } from '../common/dropdown/dropdown';
 import { ErrorMessage } from '../common/error-message';
 import Modal from '../common/modal';
 import { Contractor } from '@/app/types/contractor';
@@ -63,54 +64,29 @@ export function CreateCaseBatchModal({
           Criar casos em lote
         </h1>
 
-        <div>
-          <label
-            className="mb-3 block text-xs font-medium text-gray-900"
-            htmlFor="company"
-          >
-            Seguradora
-          </label>
+        <Dropdown
+          label="Seguradora"
+          name="company"
+          placeholder="Selecione a seguradora"
+          required
+          options={contractors.map((contractor) => ({
+            id: contractor.contractor_id,
+            value: contractor.company_name,
+            label: contractor.company_name,
+          }))}
+        />
 
-          <select
-            className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-            id="company"
-            name="company"
-            required
-          >
-            <option value="">Selecione a seguradora</option>
-            {contractors.map((contractor) => (
-              <option
-                key={contractor.contractor_id}
-                value={contractor.company_name}
-              >
-                {contractor.company_name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label
-            className="mb-3 block text-xs font-medium text-gray-900"
-            htmlFor="category"
-          >
-            Categoria
-          </label>
-
-          <select
-            className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
-            id="category"
-            name="category"
-            required
-          >
-            <option value="">Selecione a categoria</option>
-            {Object.values(CaseCategory).map((category) => (
-              <option key={category} value={category}>
-                {caseCategoryMap[category]}
-              </option>
-            ))}
-          </select>
-        </div>
+        <Dropdown
+          label="Categoria"
+          name="category"
+          placeholder="Selecione a categoria"
+          required
+          options={Object.values(CaseCategory).map((category) => ({
+            id: category,
+            value: category,
+            label: caseCategoryMap[category],
+          }))}
+        />
 
         <div className="flex flex-col items-center gap-4">
           <label>Adicione o documento nos formatos .csv, .xlsx</label>
