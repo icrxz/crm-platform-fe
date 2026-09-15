@@ -9,6 +9,7 @@ import { SearchResponse } from '@/app/types/search_response';
 import { roboto } from '../../ui/fonts';
 import { IconButton } from '../common/icon-button';
 import { Pagination } from '../common/pagination';
+import { Pill } from '../common/pill';
 import CreatePartnerModal from './create-partner';
 import { DeletePartnerModal } from './delete-partner';
 import EditPartnerModal from './edit-partner';
@@ -104,7 +105,10 @@ export default function PartnersTable({
                         {partner.state}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {partner.active ? 'Ativo' : 'Inativo'}
+                        <Pill
+                          text={partner.active ? 'Ativo' : 'Inativo'}
+                          color={partner.active ? 'success' : 'neutral'}
+                        />
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                         <div className="flex gap-2">
