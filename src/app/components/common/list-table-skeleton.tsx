@@ -1,4 +1,4 @@
-import { roboto } from '../../ui/fonts';
+import { ListPageLayout } from './list-page-layout';
 import { shimmer, SkeletonBlock } from './skeleton-block';
 
 interface ListTableSkeletonProps {
@@ -32,41 +32,32 @@ export function ListTableSkeleton({
   rows = 8,
 }: ListTableSkeletonProps) {
   return (
-    <div className="w-full">
-      <h1 className={`${roboto.className} mb-4 text-xl md:text-2xl`}>
-        {title}
-      </h1>
-
-      <div className={`${shimmer} h-16 w-full rounded-lg bg-gray-100`} />
-
-      <div className="mt-4 flow-root">
-        <div className="overflow-x-auto">
-          <div className="inline-block min-w-full align-middle">
-            <div className="overflow-hidden rounded-md bg-gray-50 p-2 md:pt-0">
-              <table className="hidden min-w-full rounded-md text-gray-900 md:table">
-                <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
-                  <tr>
-                    {columns.map((header, index) => (
-                      <th
-                        key={header}
-                        scope="col"
-                        className={`px-4 py-3 font-medium ${index === 0 ? 'sm:pl-6' : ''}`}
-                      >
-                        {header}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="bg-white">
-                  {Array.from({ length: rows }).map((_, index) => (
-                    <ListRowSkeleton key={index} columns={columns.length} />
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <ListPageLayout
+      title={title}
+      searchBar={
+        <div className={`${shimmer} h-16 w-full rounded-lg bg-gray-100`} />
+      }
+    >
+      <table className="hidden min-w-full rounded-md text-gray-900 md:table">
+        <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
+          <tr>
+            {columns.map((header, index) => (
+              <th
+                key={header}
+                scope="col"
+                className={`px-4 py-3 font-medium ${index === 0 ? 'sm:pl-6' : ''}`}
+              >
+                {header}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody className="bg-white">
+          {Array.from({ length: rows }).map((_, index) => (
+            <ListRowSkeleton key={index} columns={columns.length} />
+          ))}
+        </tbody>
+      </table>
+    </ListPageLayout>
   );
 }

@@ -6,6 +6,19 @@ on:
       - main
       - develop
 
+# Compartilhado por todos os jobs (build da app precisa deles em qualquer
+# job): evita repetir o mesmo bloco de placeholders em cada job.
+env:
+  CRM_CORE_ENDPOINT: ${{ secrets.CRM_CORE_ENDPOINT || 'http://localhost:8080' }}
+  CRM_CORE_API_KEY: ${{ secrets.CRM_CORE_API_KEY || 'ci-placeholder' }}
+  NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL || 'http://localhost:3000' }}
+  NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET || 'ci-placeholder-secret' }}
+  AUTH_SECRET: ${{ secrets.AUTH_SECRET || 'ci-placeholder-auth-secret' }}
+  AWS_S3_BUCKET_NAME: ${{ secrets.AWS_S3_BUCKET_NAME || 'ci-placeholder-bucket' }}
+  AWS_REGION: ${{ secrets.AWS_REGION || 'us-east-1' }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID || 'ci-placeholder' }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY || 'ci-placeholder' }}
+
 jobs:
   build-lint-test:
     name: Lint, Test and Build
@@ -32,16 +45,6 @@ jobs:
 
       - name: Validar Build da Aplicação
         run: npm run build
-        env:
-          CRM_CORE_ENDPOINT: ${{ secrets.CRM_CORE_ENDPOINT || 'http://localhost:8080' }}
-          CRM_CORE_API_KEY: ${{ secrets.CRM_CORE_API_KEY || 'ci-placeholder' }}
-          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL || 'http://localhost:3000' }}
-          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET || 'ci-placeholder-secret' }}
-          AUTH_SECRET: ${{ secrets.AUTH_SECRET || 'ci-placeholder-auth-secret' }}
-          AWS_S3_BUCKET_NAME: ${{ secrets.AWS_S3_BUCKET_NAME || 'ci-placeholder-bucket' }}
-          AWS_REGION: ${{ secrets.AWS_REGION || 'us-east-1' }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID || 'ci-placeholder' }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY || 'ci-placeholder' }}
 
   visual-regression:
     name: Testes Visuais (Playwright)
@@ -69,15 +72,6 @@ jobs:
         run: npm run test:visual
         env:
           CI: "true"
-          CRM_CORE_ENDPOINT: ${{ secrets.CRM_CORE_ENDPOINT || 'http://localhost:8080' }}
-          CRM_CORE_API_KEY: ${{ secrets.CRM_CORE_API_KEY || 'ci-placeholder' }}
-          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL || 'http://localhost:3000' }}
-          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET || 'ci-placeholder-secret' }}
-          AUTH_SECRET: ${{ secrets.AUTH_SECRET || 'ci-placeholder-auth-secret' }}
-          AWS_S3_BUCKET_NAME: ${{ secrets.AWS_S3_BUCKET_NAME || 'ci-placeholder-bucket' }}
-          AWS_REGION: ${{ secrets.AWS_REGION || 'us-east-1' }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID || 'ci-placeholder' }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY || 'ci-placeholder' }}
 
       - name: Publicar relatório de falhas
         if: failure()
