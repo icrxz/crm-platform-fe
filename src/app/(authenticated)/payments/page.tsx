@@ -2,7 +2,6 @@
 import PaymentTable from '@/app/components/payments/table';
 import { fetchCasesFull } from '@/app/services/cases';
 import { fetchPartners } from '@/app/services/partners';
-import { fetchTransactions } from '@/app/services/transactions';
 import { Partner, paymentOptionMap } from '@/app/types/partner';
 import { SearchResponse } from '@/app/types/search_response';
 import {
@@ -54,15 +53,13 @@ async function getData(
     );
   });
 
-  const outgoingCasesTransactions = await Promise.all(
-    casesInReceipt.result.map(async (caseItem): Promise<TransactionItem> => {
+  const outgoingCasesTransactions = casesInReceipt.result.map(
+    (caseItem): TransactionItem => {
       const partner = caseItem.partner || null;
 
-      const outgoingTransactions = await fetchTransactions(
-        `case_id=${caseItem.case_id}&type=${TransactionType.OUTGOING}`
-      ).then((resp) => {
-        return resp.data || [];
-      });
+      const outgoingTransactions = (caseItem.transactions || []).filter(
+        (t) => t.type === TransactionType.OUTGOING
+      );
 
       const transactionVal = outgoingTransactions.reduce(
         (acc, transaction) => acc + transaction.value,
@@ -125,7 +122,7 @@ async function getData(
             )[0]?.value || 0,
         },
       } as TransactionItem;
-    })
+    }
   );
 
   return {
@@ -161,8 +158,10 @@ export default async function Page({ searchParams }: TransactionPageParams) {
     redirect('/home');
   }
 
-  const payments = await getData(resolvedParams);
-  const partners = await getPartners();
+  const [payments, partners] = await Promise.all([
+    getData(resolvedParams),
+    getPartners(),
+  ]);
 
   return (
     <main>

@@ -3,7 +3,6 @@ import { parseDateTime } from '@/app/libs/date';
 import { parseDocument } from '@/app/libs/parser';
 import { ContractorListItem } from '@/app/types/contractor-list-item';
 import { SearchResponse } from '@/app/types/search_response';
-import { EyeIcon } from '@heroicons/react/24/outline';
 import PencilIcon from '@heroicons/react/24/outline/PencilIcon';
 import TrashIcon from '@heroicons/react/24/outline/TrashIcon';
 import { useRouter } from 'next/navigation';
@@ -11,6 +10,7 @@ import { useState } from 'react';
 import Modal from '../../components/common/modal';
 import { IconButton } from '../../components/common/icon-button';
 import { Pagination } from '../../components/common/pagination';
+import { Pill } from '../../components/common/pill';
 import ContractorsSearchBar from '../../components/contractors/search-bar';
 import { roboto } from '../../ui/fonts';
 import CreateContractorModal from './create-contractor';
@@ -88,36 +88,38 @@ export default function ContractorsTable({
 
                 <tbody className="divide-y divide-gray-200 text-gray-900">
                   {contractors?.result.map((contractor) => (
-                    <tr key={contractor.contractor_id} className="group">
-                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                    <tr
+                      key={contractor.contractor_id}
+                      className="group cursor-pointer"
+                      onClick={() => handleRowClick(contractor.contractor_id)}
+                    >
+                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md group-hover:bg-gray-100 sm:pl-6">
                         <div className="flex items-center gap-3">
                           <p>{`${contractor.company_name}`}</p>
                         </div>
                       </td>
-                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md group-hover:bg-gray-100 sm:pl-6">
                         <div className="flex items-center gap-3">
                           <p>{`${contractor.legal_name}`}</p>
                         </div>
                       </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-hover:bg-gray-100">
                         {parseDocument(contractor.document)}
                       </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-hover:bg-gray-100">
                         {parseDateTime(contractor.created_at)}
                       </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {contractor.active ? 'Ativo' : 'Inativo'}
+                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-hover:bg-gray-100">
+                        <Pill
+                          text={contractor.active ? 'Ativo' : 'Inativo'}
+                          color={contractor.active ? 'success' : 'neutral'}
+                        />
                       </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        <div className="flex items-center gap-3">
-                          <IconButton
-                            color="success"
-                            icon={<EyeIcon className="h-5 w-5 md:h-6 md:w-6" />}
-                            onClick={() =>
-                              handleRowClick(contractor.contractor_id)
-                            }
-                          />
-
+                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-hover:bg-gray-100">
+                        <div
+                          className="flex items-center gap-3"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <IconButton
                             color="info"
                             icon={

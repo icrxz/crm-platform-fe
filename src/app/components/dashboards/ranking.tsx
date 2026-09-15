@@ -3,32 +3,8 @@ import {
   fetchRankingData,
   RankingAgent,
 } from '@/app/services/cases/fetch_ranking';
+import { getAvatarColor, getInitials } from '@/app/utils/avatar';
 import { TrophyIcon } from '@heroicons/react/24/outline';
-
-const AVATAR_COLORS = [
-  'bg-blue-500',
-  'bg-emerald-500',
-  'bg-violet-500',
-  'bg-rose-500',
-  'bg-amber-600',
-  'bg-cyan-600',
-];
-
-function getAvatarColor(name: string): string {
-  const hash = name
-    .split('')
-    .reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  return AVATAR_COLORS[hash % AVATAR_COLORS.length];
-}
-
-function getInitials(name: string): string {
-  return name
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
-}
 
 const MEDAL: Record<number, string> = { 0: '🥇', 1: '🥈', 2: '🥉' };
 

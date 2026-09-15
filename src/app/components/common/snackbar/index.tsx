@@ -1,6 +1,15 @@
-"use client";
+'use client';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useEffect } from 'react';
 import { useSnackbar } from '../../../context/SnackbarProvider';
+import { IconButton } from '../icon-button';
+
+const snackbarColors = {
+  success: 'bg-green-500',
+  error: 'bg-red-500',
+  warning: 'bg-orange-500',
+  info: 'bg-blue-500',
+};
 
 const Snackbar = () => {
   const { snackbar, closeSnackbar } = useSnackbar();
@@ -16,26 +25,17 @@ const Snackbar = () => {
 
   if (!snackbar.open) return null;
 
-  const getSnackbarStyles = () => {
-    switch (snackbar.type) {
-      case 'success':
-        return 'bg-green-500';
-      case 'error':
-        return 'bg-red-500';
-      case 'warning':
-        return 'bg-yellow-500';
-      case 'info':
-      default:
-        return 'bg-blue-500';
-    }
-  };
-
   return (
-    <div className={`fixed bottom-4 left-4 p-4 rounded shadow-lg text-white ${getSnackbarStyles()}`}>
+    <div
+      className={`fixed bottom-4 left-4 flex items-center gap-4 rounded p-4 text-white shadow-lg ${snackbarColors[snackbar.type]}`}
+    >
       {snackbar.message}
-      <button onClick={closeSnackbar} className="ml-4">
-        X
-      </button>
+      <IconButton
+        icon={<XMarkIcon className="h-5 w-5" />}
+        color="white"
+        onClick={closeSnackbar}
+        title="Fechar"
+      />
     </div>
   );
 };

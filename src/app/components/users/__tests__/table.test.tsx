@@ -105,7 +105,7 @@ describe('UsersTable', () => {
     expect(screen.getByText('Inativo')).toBeInTheDocument();
   });
 
-  it('should navigate to the user detail page when the row action is clicked', () => {
+  it('should navigate to the user detail page when the row is clicked', () => {
     render(
       <UsersTable
         users={{
@@ -115,12 +115,24 @@ describe('UsersTable', () => {
       />
     );
 
-    const [firstActionButton] = screen.getAllByRole('button', {
-      hidden: false,
-    });
-    fireEvent.click(firstActionButton);
+    fireEvent.click(screen.getByText('João Silva').closest('tr')!);
 
     expect(mockPush).toHaveBeenCalledWith('/users/user-1');
+  });
+
+  it('should not navigate when an inactive user row is clicked', () => {
+    render(
+      <UsersTable
+        users={{
+          result: mockUsers,
+          paging: { total: 3, limit: 10, offset: 0 },
+        }}
+      />
+    );
+
+    fireEvent.click(screen.getByText('Maria Souza').closest('tr')!);
+
+    expect(mockPush).not.toHaveBeenCalled();
   });
 
   it('should navigate with the new page when pagination changes', () => {

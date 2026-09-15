@@ -50,7 +50,7 @@ export default function PaymentsSearchBar({
   };
 
   return (
-    <div className="flex w-full items-center gap-4 rounded-lg bg-gray-100 p-4 shadow-md">
+    <div className="flex w-full items-center gap-2 rounded-lg bg-gray-100 p-4 shadow-md">
       <div className="w-96 shrink-0">
         <Search
           placeholder="Buscar pagamentos pelo sinistro"
