@@ -11,7 +11,6 @@ import {
   WrenchIcon,
   Square3Stack3DIcon,
   TrophyIcon,
-  UserCircleIcon,
 } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import Link from 'next/link';
@@ -57,12 +56,6 @@ const links = [
     href: '/dashboards',
     icon: TrophyIcon,
     onlyAdmin: true,
-  },
-  {
-    name: 'Meu Perfil',
-    href: '/profile',
-    icon: UserCircleIcon,
-    onlyAdmin: false,
   },
 ];
 

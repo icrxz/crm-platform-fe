@@ -18,9 +18,14 @@ describe('NavLinks', () => {
 
     expect(screen.getByRole('link', { name: 'Home' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Casos' })).toBeInTheDocument();
+  });
+
+  it('should not render a Meu Perfil item (accessed via the sidebar avatar instead)', () => {
+    render(<NavLinks userRole={UserRole.ADMIN} />);
+
     expect(
-      screen.getByRole('link', { name: 'Meu Perfil' })
-    ).toBeInTheDocument();
+      screen.queryByRole('link', { name: 'Meu Perfil' })
+    ).not.toBeInTheDocument();
   });
 
   it('should hide admin-only links for an operator', () => {
@@ -41,14 +46,5 @@ describe('NavLinks', () => {
     expect(
       screen.getByRole('link', { name: 'Gamificação' })
     ).toBeInTheDocument();
-  });
-
-  it('should link the profile item to /profile for every role', () => {
-    render(<NavLinks userRole={UserRole.OPERATOR} />);
-
-    expect(screen.getByRole('link', { name: 'Meu Perfil' })).toHaveAttribute(
-      'href',
-      '/profile'
-    );
   });
 });

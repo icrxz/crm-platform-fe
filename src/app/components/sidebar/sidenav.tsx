@@ -16,6 +16,7 @@ import {
 } from './constants';
 import logoPic from './logo-rd.jpg';
 import NavLinks from './nav-links';
+import { Tooltip } from '../common/tooltip';
 
 interface SideNavProps {
   userRole: UserRole;
@@ -72,16 +73,26 @@ export default function SideNav({ userRole, userName }: SideNavProps) {
       </div>
 
       <div className="sidebar-footer hidden items-center justify-between gap-3 border-t border-blue-400 pt-3 md:flex">
-        <div className="flex min-w-0 items-center gap-3">
-          <div
-            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${getAvatarColor(userName)}`}
+        <Tooltip
+          content="Meu Perfil"
+          position="right"
+          textSize="base"
+          className="min-w-0"
+        >
+          <Link
+            href="/profile"
+            className="flex min-w-0 items-center gap-3 rounded-md p-1 hover:bg-blue-400"
           >
-            {getInitials(userName)}
-          </div>
-          <p className="sidebar-expand-only min-w-0 truncate text-sm font-medium text-blue-900">
-            {userName}
-          </p>
-        </div>
+            <div
+              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${getAvatarColor(userName)}`}
+            >
+              {getInitials(userName)}
+            </div>
+            <p className="sidebar-expand-only min-w-0 truncate text-sm font-medium text-blue-900">
+              {userName}
+            </p>
+          </Link>
+        </Tooltip>
 
         <button
           type="button"
