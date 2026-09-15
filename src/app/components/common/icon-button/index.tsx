@@ -2,7 +2,7 @@
 
 interface IconButtonProps {
   icon: React.ReactNode;
-  color: 'success' | 'info' | 'error';
+  color: 'success' | 'info' | 'error' | 'white';
   onClick: () => void;
   disabled?: boolean;
   title?: string;
@@ -12,6 +12,7 @@ const iconButtonColors = {
   success: 'text-green-500 hover:text-green-700',
   info: 'text-blue-600 hover:text-blue-900',
   error: 'text-red-600 hover:text-red-900',
+  white: 'text-white hover:text-gray-200',
 };
 
 export function IconButton({
