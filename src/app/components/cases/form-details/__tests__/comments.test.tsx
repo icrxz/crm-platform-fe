@@ -14,6 +14,10 @@ jest.mock('../edit-comment-modal', () => ({
   },
 }));
 
+jest.mock('../../../common/image-carousel', () => ({
+  ImageCarousel: () => <div data-testid="image-carousel" />,
+}));
+
 function buildCase(overrides: Partial<CaseFull> = {}): CaseFull {
   return {
     case_id: 'case-1',

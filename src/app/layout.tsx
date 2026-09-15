@@ -9,7 +9,6 @@ import { roboto } from './ui/fonts';
 
 import '@uppy/core/dist/style.min.css';
 import '@uppy/file-input/dist/style.css';
-import 'react-multi-carousel/lib/styles.css';
 import './ui/global.css';
 
 export const metadata: Metadata = {
