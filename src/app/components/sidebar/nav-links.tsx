@@ -59,7 +59,12 @@ const links = [
   },
 ];
 
-export default function NavLinks({ userRole }: { userRole: UserRole }) {
+interface NavLinksProps {
+  userRole: UserRole;
+  isCollapsed: boolean;
+}
+
+export default function NavLinks({ userRole, isCollapsed }: NavLinksProps) {
   const pathname = usePathname();
 
   return (
@@ -71,6 +76,33 @@ export default function NavLinks({ userRole }: { userRole: UserRole }) {
 
         const LinkIcon = link.icon;
         const isActive = pathname === link.href;
+        const linkContent = (
+          <Link
+            href={link.href}
+            className={clsx(
+              'sidebar-nav-item flex h-[48px] w-full items-center justify-center gap-2 rounded-md p-3 text-sm font-medium text-blue-900 hover:bg-white/40 md:justify-start md:p-2 md:px-3',
+              {
+                'bg-blue-500 text-white hover:bg-blue-500': isActive,
+              }
+            )}
+          >
+            <LinkIcon className="w-6 shrink-0" />
+            <p
+              className={`sidebar-expand-only hidden md:block ${roboto.className}`}
+            >
+              {link.name}
+            </p>
+          </Link>
+        );
+
+        if (!isCollapsed) {
+          return (
+            <div key={link.name} className="flex w-full grow md:flex-none">
+              {linkContent}
+            </div>
+          );
+        }
+
         return (
           <Tooltip
             key={link.name}
@@ -79,22 +111,7 @@ export default function NavLinks({ userRole }: { userRole: UserRole }) {
             textSize="base"
             className="flex w-full grow md:flex-none"
           >
-            <Link
-              href={link.href}
-              className={clsx(
-                'sidebar-nav-item flex h-[48px] w-full items-center justify-center gap-2 rounded-md p-3 text-sm font-medium text-blue-900 hover:bg-blue-400 md:justify-start md:p-2 md:px-3',
-                {
-                  'bg-blue-500 text-white hover:bg-blue-500': isActive,
-                }
-              )}
-            >
-              <LinkIcon className="w-6 shrink-0" />
-              <p
-                className={`sidebar-expand-only hidden md:block ${roboto.className}`}
-              >
-                {link.name}
-              </p>
-            </Link>
+            {linkContent}
           </Tooltip>
         );
       })}
