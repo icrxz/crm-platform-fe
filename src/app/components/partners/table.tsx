@@ -1,14 +1,14 @@
 'use client';
 import { parseDocument } from '@/app/libs/parser';
 import { EyeIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { Pagination } from '@heroui/pagination';
-import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { PartnerListItem } from '@/app/types/partner-list-item';
 import { SearchResponse } from '@/app/types/search_response';
 import { roboto } from '../../ui/fonts';
 import { IconButton } from '../common/icon-button';
+import { Pagination } from '../common/pagination';
 import CreatePartnerModal from './create-partner';
 import { DeletePartnerModal } from './delete-partner';
 import EditPartnerModal from './edit-partner';
@@ -23,9 +23,7 @@ export default function PartnersTable({
   partners,
   initialPage = 1,
 }: PartnersTableProps) {
-  const searchParams = useSearchParams();
   const router = useRouter();
-  const pathname = usePathname();
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -44,14 +42,6 @@ export default function PartnersTable({
 
   function handleRowClick(partnerID: string) {
     router.push(`/partners/${partnerID}`);
-  }
-
-  function handleChangePage(value: number) {
-    const params = new URLSearchParams(searchParams.toString());
-
-    params.set('page', value.toString());
-
-    router.push(pathname + '?' + params.toString());
   }
 
   return (
@@ -156,19 +146,7 @@ export default function PartnersTable({
         </div>
       </div>
 
-      <div className="mt-2">
-        <Pagination
-          onChange={handleChangePage}
-          siblings={3}
-          showControls
-          total={Math.ceil(
-            Number(
-              (partners?.paging.total || 1) / (partners?.paging.limit || 1)
-            )
-          )}
-          page={Number(initialPage || 1)}
-        />
-      </div>
+      <Pagination paging={partners?.paging} page={initialPage} />
 
       {isCreateModalOpen && (
         <CreatePartnerModal
