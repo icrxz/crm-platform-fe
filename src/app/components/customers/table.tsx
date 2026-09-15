@@ -48,11 +48,11 @@ export default function CustomersTable({
 
   return (
     <div className="flex h-full w-full flex-col">
-      <h1 className={`${roboto.className} mb-4 text-xl md:text-2xl`}>
+      <h1 className={`${roboto.className} mb-4 mt-4 text-xl md:text-2xl`}>
         Clientes
       </h1>
 
-      <div className="flex min-h-0 flex-1 flex-col items-center justify-center overflow-y-auto">
+      <div className="flex min-h-0 flex-1 flex-col items-center justify-center overflow-y-auto overflow-x-hidden">
         <div className="flex w-full flex-col gap-4">
           <CustomersSearchBar
             setIsCreationModalOpen={setIsCreateModalOpen}
