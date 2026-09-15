@@ -15,6 +15,11 @@ const iconButtonColors = {
   white: 'text-white hover:text-gray-200',
 };
 
+// p-2 grows the tap target toward the ~40-44px touch-target guideline
+// (icons are h-5/h-6, 20-24px). Real padding, not a negative-margin
+// trick, on purpose: this button renders inside all kinds of containers
+// (table cells, cards, modals) and a negative margin has previously
+// leaked into a parent's overflow-x calculation (see ListPageLayout).
 export function IconButton({
   icon,
   color,
@@ -25,7 +30,7 @@ export function IconButton({
   return (
     <button
       type="button"
-      className={iconButtonColors[color]}
+      className={`p-2 ${iconButtonColors[color]}`}
       onClick={onClick}
       disabled={disabled}
       title={title}

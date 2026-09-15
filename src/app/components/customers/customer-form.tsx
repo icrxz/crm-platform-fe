@@ -61,7 +61,7 @@ export default function CustomerForm({
         </h1>
 
         <div className="w-full">
-          <div className="mb-4 columns-3">
+          <div className="mb-4 columns-1 sm:columns-3">
             <TextInput
               label="Nome"
               name="first_name"
@@ -103,7 +103,7 @@ export default function CustomerForm({
 
           <hr />
 
-          <div className="my-4 columns-3">
+          <div className="my-4 columns-1 sm:columns-3">
             <TextInput
               label="Endereço"
               name="address"
@@ -128,7 +128,7 @@ export default function CustomerForm({
             />
           </div>
 
-          <div className="mb-4 columns-3">
+          <div className="mb-4 columns-1 sm:columns-3">
             <TextInput
               label="Cidade"
               name="city"
@@ -173,7 +173,7 @@ export default function CustomerForm({
 
           <hr />
 
-          <div className="my-4 columns-2">
+          <div className="my-4 columns-1 sm:columns-2">
             <div>
               <label
                 className="mb-3 block text-xs font-medium text-gray-900"
