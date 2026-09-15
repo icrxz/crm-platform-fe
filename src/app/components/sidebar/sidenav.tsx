@@ -43,9 +43,9 @@ export default function SideNav({ userRole, userName }: SideNavProps) {
   }
 
   return (
-    <div className="flex h-full flex-col gap-2 bg-emerald-200 px-3 py-4 md:px-2">
+    <div className="flex h-full flex-col gap-2 bg-blue-200 px-3 py-4 md:px-2">
       <Link href="/home" className="sidebar-expand-only mb-2 block">
-        <div className="relative aspect-square w-full">
+        <div className="relative h-16 w-full">
           <Image
             src={logoPic}
             fill
@@ -62,7 +62,7 @@ export default function SideNav({ userRole, userName }: SideNavProps) {
 
         <div className="flex w-full grow md:flex-none">
           <button
-            className="sidebar-nav-item flex h-[48px] w-full items-center justify-center gap-2 rounded-md p-3 text-sm font-medium text-emerald-900 hover:bg-emerald-300 md:justify-start md:p-2 md:px-3"
+            className="sidebar-nav-item flex h-[48px] w-full items-center justify-center gap-2 rounded-md p-3 text-sm font-medium text-blue-900 hover:bg-blue-300 md:justify-start md:p-2 md:px-3"
             onClick={() => signOut({ callbackUrl: '/login' })}
           >
             <PowerIcon className="w-6 shrink-0" />
@@ -71,14 +71,14 @@ export default function SideNav({ userRole, userName }: SideNavProps) {
         </div>
       </div>
 
-      <div className="sidebar-footer hidden items-center justify-between gap-3 border-t border-emerald-300 pt-3 md:flex">
+      <div className="sidebar-footer hidden items-center justify-between gap-3 border-t border-blue-300 pt-3 md:flex">
         <div className="flex min-w-0 items-center gap-3">
           <div
             className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${getAvatarColor(userName)}`}
           >
             {getInitials(userName)}
           </div>
-          <p className="sidebar-expand-only min-w-0 truncate text-sm font-medium text-emerald-900">
+          <p className="sidebar-expand-only min-w-0 truncate text-sm font-medium text-blue-900">
             {userName}
           </p>
         </div>
@@ -88,7 +88,7 @@ export default function SideNav({ userRole, userName }: SideNavProps) {
           onClick={toggleCollapsed}
           aria-label={isCollapsed ? 'Expandir menu' : 'Recolher menu'}
           aria-expanded={!isCollapsed}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-emerald-800 transition-colors hover:bg-emerald-300 hover:text-emerald-900"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-blue-800 transition-colors hover:bg-blue-300 hover:text-blue-900"
         >
           <ChevronDoubleLeftIcon className="sidebar-expand-only h-4 w-4" />
           <ChevronDoubleRightIcon className="sidebar-collapse-only h-4 w-4" />
