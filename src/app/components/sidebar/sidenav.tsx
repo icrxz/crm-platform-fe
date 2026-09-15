@@ -46,23 +46,23 @@ export default function SideNav({ userRole, userName }: SideNavProps) {
   const avatarLink = (
     <Link
       href="/profile"
-      className="flex min-w-0 items-center gap-3 rounded-md p-1 hover:bg-white/40"
+      className="flex min-w-0 items-center gap-3 rounded-md p-1 hover:bg-gray-200"
     >
       <div
         className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${getAvatarColor(userName)}`}
       >
         {getInitials(userName)}
       </div>
-      <p className="sidebar-expand-only min-w-0 truncate text-sm font-medium text-blue-900">
+      <p className="sidebar-expand-only min-w-0 truncate text-sm font-medium text-gray-900">
         {userName}
       </p>
     </Link>
   );
 
   return (
-    <div className="flex h-full flex-col gap-2 bg-blue-400 px-3 py-4 md:px-2">
+    <div className="flex h-full flex-col gap-2 bg-gray-100 px-3 py-4 md:px-2">
       <Link href="/home" className="sidebar-expand-only mb-2 block">
-        <div className="relative h-28 w-full">
+        <div className="relative h-36 w-full">
           <Image
             src={logoPic}
             fill
@@ -79,7 +79,7 @@ export default function SideNav({ userRole, userName }: SideNavProps) {
 
         <div className="flex w-full grow md:flex-none">
           <button
-            className="sidebar-nav-item flex h-[48px] w-full items-center justify-center gap-2 rounded-md p-3 text-sm font-medium text-blue-900 hover:bg-white/40 md:justify-start md:p-2 md:px-3"
+            className="sidebar-nav-item flex h-[48px] w-full items-center justify-center gap-2 rounded-md p-3 text-sm font-medium text-gray-900 hover:bg-gray-200 md:justify-start md:p-2 md:px-3"
             onClick={() => signOut({ callbackUrl: '/login' })}
           >
             <PowerIcon className="w-6 shrink-0" />
@@ -88,7 +88,7 @@ export default function SideNav({ userRole, userName }: SideNavProps) {
         </div>
       </div>
 
-      <div className="sidebar-footer hidden items-center justify-between gap-3 border-t border-blue-500 pt-3 md:flex">
+      <div className="sidebar-footer hidden items-center justify-between gap-3 border-t border-gray-300 pt-3 md:flex">
         {isCollapsed ? (
           <Tooltip
             content="Meu Perfil"
@@ -107,7 +107,7 @@ export default function SideNav({ userRole, userName }: SideNavProps) {
           onClick={toggleCollapsed}
           aria-label={isCollapsed ? 'Expandir menu' : 'Recolher menu'}
           aria-expanded={!isCollapsed}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-blue-800 transition-colors hover:bg-white/40 hover:text-blue-900"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-gray-600 transition-colors hover:bg-gray-200 hover:text-gray-900"
         >
           <ChevronDoubleLeftIcon className="sidebar-expand-only h-4 w-4" />
           <ChevronDoubleRightIcon className="sidebar-collapse-only h-4 w-4" />

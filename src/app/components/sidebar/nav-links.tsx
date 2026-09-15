@@ -80,9 +80,9 @@ export default function NavLinks({ userRole, isCollapsed }: NavLinksProps) {
           <Link
             href={link.href}
             className={clsx(
-              'sidebar-nav-item flex h-[48px] w-full items-center justify-center gap-2 rounded-md p-3 text-sm font-medium text-blue-900 hover:bg-white/40 md:justify-start md:p-2 md:px-3',
+              'sidebar-nav-item flex h-[48px] w-full items-center justify-center gap-2 rounded-md p-3 text-sm font-medium text-gray-900 hover:bg-gray-200 md:justify-start md:p-2 md:px-3',
               {
-                'bg-blue-500 text-white hover:bg-blue-500': isActive,
+                'bg-gray-700 text-white hover:bg-gray-700': isActive,
               }
             )}
           >
