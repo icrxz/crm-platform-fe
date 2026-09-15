@@ -52,50 +52,50 @@ export default function PaymentTable({
 
   return (
     <div className="w-full">
-      <h1 className={`${roboto.className} mb-8 text-xl md:text-2xl`}>
+      <h1 className={`${roboto.className} mb-4 text-xl md:text-2xl`}>
         Pagamentos
       </h1>
 
       <PaymentsSearchBar partners={partners} />
 
-      <div className="mt-6 flow-root">
+      <div className="mt-4 flow-root">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
             <div className="overflow-hidden rounded-md bg-gray-50 p-2 md:pt-0">
               <table className="hidden min-w-full rounded-md text-gray-900 md:table">
                 <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
                   <tr>
-                    <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
+                    <th scope="col" className="px-4 py-3 font-medium sm:pl-6">
                       Sinistro
                     </th>
-                    <th scope="col" className="px-4 py-5 font-medium">
+                    <th scope="col" className="px-4 py-3 font-medium">
                       Segurado
                     </th>
-                    <th scope="col" className="px-4 py-5 font-medium">
+                    <th scope="col" className="px-4 py-3 font-medium">
                       Técnico
                     </th>
-                    <th scope="col" className="px-4 py-5 font-medium">
+                    <th scope="col" className="px-4 py-3 font-medium">
                       PIX
                     </th>
-                    <th scope="col" className="px-4 py-5 font-medium">
+                    <th scope="col" className="px-4 py-3 font-medium">
                       MO
                     </th>
-                    <th scope="col" className="px-4 py-5 font-medium">
+                    <th scope="col" className="px-4 py-3 font-medium">
                       Deslocamento
                     </th>
-                    <th scope="col" className="px-4 py-5 font-medium">
+                    <th scope="col" className="px-4 py-3 font-medium">
                       Peças
                     </th>
-                    <th scope="col" className="px-4 py-5 font-medium">
+                    <th scope="col" className="px-4 py-3 font-medium">
                       Total
                     </th>
-                    <th scope="col" className="px-4 py-5 font-medium">
+                    <th scope="col" className="px-4 py-3 font-medium">
                       Status
                     </th>
-                    <th scope="col" className="px-4 py-5 font-medium">
+                    <th scope="col" className="px-4 py-3 font-medium">
                       Data de criação
                     </th>
-                    <th scope="col" className="px-4 py-5 font-medium">
+                    <th scope="col" className="px-4 py-3 font-medium">
                       Ações
                     </th>
                   </tr>
@@ -104,7 +104,7 @@ export default function PaymentTable({
                 <tbody className="divide-y divide-gray-200 text-gray-900">
                   {transactions?.result.map((transaction) => (
                     <tr key={transaction.case_id} className="group">
-                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-blue-500 group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                      <td className="whitespace-nowrap bg-white py-3 pl-4 pr-3 text-sm text-blue-500 group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
                           <Link
                             className="hover:text-blue-700"
@@ -114,7 +114,7 @@ export default function PaymentTable({
                           </Link>
                         </div>
                       </td>
-                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                      <td className="whitespace-nowrap bg-white py-3 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
                           <p>
                             {transaction.customer_first_name
@@ -123,7 +123,7 @@ export default function PaymentTable({
                           </p>
                         </div>
                       </td>
-                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                      <td className="whitespace-nowrap bg-white py-3 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
                           {transaction.partner_id ? (
                             <Link
@@ -137,30 +137,30 @@ export default function PaymentTable({
                           )}
                         </div>
                       </td>
-                      <td className="whitespace-pre-wrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                      <td className="whitespace-pre-wrap bg-white py-3 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
                           <p>{transaction.partner_account}</p>
                         </div>
                       </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                      <td className="whitespace-nowrap bg-white px-4 py-3 text-sm">
                         {parseToCurrency(transaction.mo.value)}
                       </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                      <td className="whitespace-nowrap bg-white px-4 py-3 text-sm">
                         {parseToCurrency(transaction.transport.value)}
                       </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                      <td className="whitespace-nowrap bg-white px-4 py-3 text-sm">
                         {parseToCurrency(transaction.parts.value)}
                       </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                      <td className="whitespace-nowrap bg-white px-4 py-3 text-sm">
                         {parseToCurrency(transaction.total)}
                       </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                      <td className="whitespace-nowrap bg-white px-4 py-3 text-sm">
                         {transactionStatusTranslate[transaction.status]}
                       </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                      <td className="whitespace-nowrap bg-white px-4 py-3 text-sm">
                         {parseDateTime(transaction.created_at)}
                       </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                      <td className="whitespace-nowrap bg-white px-4 py-3 text-sm">
                         <div className="flex gap-2">
                           {transaction.status == TransactionStatus.PENDING && (
                             <>

@@ -26,30 +26,30 @@ export default function UsersTable({
 
   return (
     <div className="w-full">
-      <h1 className={`${roboto.className} mb-8 text-xl md:text-2xl`}>
+      <h1 className={`${roboto.className} mb-4 text-xl md:text-2xl`}>
         Usuários
       </h1>
 
-      <div className="mt-6 flow-root">
+      <div className="mt-4 flow-root">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
             <div className="overflow-hidden rounded-md bg-gray-50 p-2 md:pt-0">
               <table className="hidden min-w-full rounded-md text-gray-900 md:table">
                 <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
                   <tr>
-                    <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
+                    <th scope="col" className="px-4 py-3 font-medium sm:pl-6">
                       Nome
                     </th>
-                    <th scope="col" className="px-3 py-5 font-medium">
+                    <th scope="col" className="px-3 py-3 font-medium">
                       Username
                     </th>
-                    <th scope="col" className="px-3 py-5 font-medium">
+                    <th scope="col" className="px-3 py-3 font-medium">
                       Email
                     </th>
-                    <th scope="col" className="px-3 py-5 font-medium">
+                    <th scope="col" className="px-3 py-3 font-medium">
                       Cargo
                     </th>
-                    <th scope="col" className="px-3 py-5 font-medium">
+                    <th scope="col" className="px-3 py-3 font-medium">
                       Status
                     </th>
                   </tr>
@@ -71,7 +71,7 @@ export default function UsersTable({
                       >
                         <td
                           className={clsx(
-                            'whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6',
+                            'whitespace-nowrap bg-white py-3 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6',
                             user.active && 'group-hover:bg-gray-100'
                           )}
                         >
@@ -81,7 +81,7 @@ export default function UsersTable({
                         </td>
                         <td
                           className={clsx(
-                            'whitespace-nowrap bg-white px-4 py-5 text-sm',
+                            'whitespace-nowrap bg-white px-4 py-3 text-sm',
                             user.active && 'group-hover:bg-gray-100'
                           )}
                         >
@@ -89,7 +89,7 @@ export default function UsersTable({
                         </td>
                         <td
                           className={clsx(
-                            'whitespace-nowrap bg-white px-4 py-5 text-sm',
+                            'whitespace-nowrap bg-white px-4 py-3 text-sm',
                             user.active && 'group-hover:bg-gray-100'
                           )}
                         >
@@ -97,7 +97,7 @@ export default function UsersTable({
                         </td>
                         <td
                           className={clsx(
-                            'whitespace-nowrap bg-white px-4 py-5 text-sm',
+                            'whitespace-nowrap bg-white px-4 py-3 text-sm',
                             user.active && 'group-hover:bg-gray-100'
                           )}
                         >
@@ -105,7 +105,7 @@ export default function UsersTable({
                         </td>
                         <td
                           className={clsx(
-                            'whitespace-nowrap bg-white px-4 py-5 text-sm',
+                            'whitespace-nowrap bg-white px-4 py-3 text-sm',
                             user.active && 'group-hover:bg-gray-100'
                           )}
                         >

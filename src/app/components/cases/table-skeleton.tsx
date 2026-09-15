@@ -24,7 +24,7 @@ function CasesRowSkeleton() {
       {columnWidths.map((width, index) => (
         <td
           key={index}
-          className={`whitespace-nowrap px-4 py-5 ${index === 0 ? 'sm:pl-6' : ''}`}
+          className={`whitespace-nowrap px-4 py-3 ${index === 0 ? 'sm:pl-6' : ''}`}
         >
           <Block className={`h-4 ${width}`} />
         </td>
@@ -36,11 +36,11 @@ function CasesRowSkeleton() {
 export function CasesTableSkeleton() {
   return (
     <div className="w-full">
-      <h1 className={`${roboto.className} mb-8 text-xl md:text-2xl`}>Casos</h1>
+      <h1 className={`${roboto.className} mb-4 text-xl md:text-2xl`}>Casos</h1>
 
       <div className={`${shimmer} h-16 w-full rounded-lg bg-gray-100`} />
 
-      <div className="mt-6 flow-root">
+      <div className="mt-4 flow-root">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
             <div className="overflow-hidden rounded-md bg-gray-50 p-2 md:pt-0">
@@ -60,7 +60,7 @@ export function CasesTableSkeleton() {
                       <th
                         key={header}
                         scope="col"
-                        className={`px-4 py-5 font-medium ${index === 0 ? 'sm:pl-6' : ''}`}
+                        className={`px-4 py-3 font-medium ${index === 0 ? 'sm:pl-6' : ''}`}
                       >
                         {header}
                       </th>

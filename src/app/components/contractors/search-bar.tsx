@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import { Dispatch, SetStateAction } from 'react';
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
@@ -10,7 +10,10 @@ interface ContractorsSearchBarProps {
   setIsCreationModalOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function ContractorsSearchBar({ setIsCreationModalOpen, setIsFilterModalOpen }: ContractorsSearchBarProps) {
+export default function ContractorsSearchBar({
+  setIsCreationModalOpen,
+  setIsFilterModalOpen,
+}: ContractorsSearchBarProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -21,15 +24,19 @@ export default function ContractorsSearchBar({ setIsCreationModalOpen, setIsFilt
     params.set('page', '1');
 
     router.push(pathname + '?' + params.toString());
-  }
+  };
 
   return (
-    <div className="flex w-full p-4 bg-gray-100 rounded-lg shadow-md">
-      <Search placeholder="Buscar contratantes..." initialValue={searchParams.get('nome') || ''} handleSearch={handleSearch} />
+    <div className="flex w-full rounded-lg bg-gray-100 p-3 shadow-md">
+      <Search
+        placeholder="Buscar contratantes..."
+        initialValue={searchParams.get('nome') || ''}
+        handleSearch={handleSearch}
+      />
 
-      <div className='flex w-1/2 justify-end'>
+      <div className="flex w-1/2 justify-end">
         <Button
-          className="p-2 text-white bg-green-500 rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
+          className="rounded-lg bg-green-500 p-2 text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
           onClick={() => setIsCreationModalOpen(true)}
         >
           Criar

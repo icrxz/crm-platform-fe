@@ -41,7 +41,7 @@ function PaymentsRowSkeleton() {
       {columnWidths.map((width, index) => (
         <td
           key={index}
-          className={`whitespace-nowrap py-5 pl-4 pr-3 ${index === 0 ? 'sm:pl-6' : ''}`}
+          className={`whitespace-nowrap py-3 pl-4 pr-3 ${index === 0 ? 'sm:pl-6' : ''}`}
         >
           <Block className={`h-4 ${width}`} />
         </td>
@@ -53,13 +53,13 @@ function PaymentsRowSkeleton() {
 export function PaymentsTableSkeleton() {
   return (
     <div className="w-full">
-      <h1 className={`${roboto.className} mb-8 text-xl md:text-2xl`}>
+      <h1 className={`${roboto.className} mb-4 text-xl md:text-2xl`}>
         Pagamentos
       </h1>
 
       <div className={`${shimmer} h-16 w-full rounded-lg bg-gray-100`} />
 
-      <div className="mt-6 flow-root">
+      <div className="mt-4 flow-root">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
             <div className="overflow-hidden rounded-md bg-gray-50 p-2 md:pt-0">
@@ -70,7 +70,7 @@ export function PaymentsTableSkeleton() {
                       <th
                         key={header}
                         scope="col"
-                        className={`px-4 py-5 font-medium ${index === 0 ? 'sm:pl-6' : ''}`}
+                        className={`px-4 py-3 font-medium ${index === 0 ? 'sm:pl-6' : ''}`}
                       >
                         {header}
                       </th>

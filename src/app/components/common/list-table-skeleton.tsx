@@ -15,7 +15,7 @@ function ListRowSkeleton({ columns }: { columns: number }) {
       {Array.from({ length: columns }).map((_, index) => (
         <td
           key={index}
-          className={`whitespace-nowrap px-4 py-5 ${index === 0 ? 'sm:pl-6' : ''}`}
+          className={`whitespace-nowrap px-4 py-3 ${index === 0 ? 'sm:pl-6' : ''}`}
         >
           <SkeletonBlock
             className={`h-4 ${rowWidths[index % rowWidths.length]}`}
@@ -33,13 +33,13 @@ export function ListTableSkeleton({
 }: ListTableSkeletonProps) {
   return (
     <div className="w-full">
-      <h1 className={`${roboto.className} mb-8 text-xl md:text-2xl`}>
+      <h1 className={`${roboto.className} mb-4 text-xl md:text-2xl`}>
         {title}
       </h1>
 
       <div className={`${shimmer} h-16 w-full rounded-lg bg-gray-100`} />
 
-      <div className="mt-6 flow-root">
+      <div className="mt-4 flow-root">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
             <div className="overflow-hidden rounded-md bg-gray-50 p-2 md:pt-0">
@@ -50,7 +50,7 @@ export function ListTableSkeleton({
                       <th
                         key={header}
                         scope="col"
-                        className={`px-4 py-5 font-medium ${index === 0 ? 'sm:pl-6' : ''}`}
+                        className={`px-4 py-3 font-medium ${index === 0 ? 'sm:pl-6' : ''}`}
                       >
                         {header}
                       </th>

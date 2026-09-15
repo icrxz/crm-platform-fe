@@ -49,7 +49,7 @@ export default function ContractorsTable({
 
   return (
     <div className="w-full">
-      <h1 className={`${roboto.className} mb-8 text-xl md:text-2xl`}>
+      <h1 className={`${roboto.className} mb-4 text-xl md:text-2xl`}>
         Seguradoras
       </h1>
 
@@ -58,29 +58,29 @@ export default function ContractorsTable({
         setIsFilterModalOpen={setIsFilterModalOpen}
       />
 
-      <div className="mt-6 flow-root">
+      <div className="mt-4 flow-root">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
             <div className="overflow-hidden rounded-md bg-gray-50 p-2 md:pt-0">
               <table className="hidden min-w-full rounded-md text-gray-900 md:table">
                 <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
                   <tr>
-                    <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
+                    <th scope="col" className="px-4 py-3 font-medium sm:pl-6">
                       Nome
                     </th>
-                    <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
+                    <th scope="col" className="px-4 py-3 font-medium sm:pl-6">
                       Razão social
                     </th>
-                    <th scope="col" className="px-3 py-5 font-medium">
+                    <th scope="col" className="px-3 py-3 font-medium">
                       Documento
                     </th>
-                    <th scope="col" className="px-3 py-5 font-medium">
+                    <th scope="col" className="px-3 py-3 font-medium">
                       Data de criação
                     </th>
-                    <th scope="col" className="px-3 py-5 font-medium">
+                    <th scope="col" className="px-3 py-3 font-medium">
                       Status
                     </th>
-                    <th scope="col" className="px-3 py-5 font-medium">
+                    <th scope="col" className="px-3 py-3 font-medium">
                       Ações
                     </th>
                   </tr>
@@ -93,29 +93,29 @@ export default function ContractorsTable({
                       className="group cursor-pointer"
                       onClick={() => handleRowClick(contractor.contractor_id)}
                     >
-                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md group-hover:bg-gray-100 sm:pl-6">
+                      <td className="whitespace-nowrap bg-white py-3 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md group-hover:bg-gray-100 sm:pl-6">
                         <div className="flex items-center gap-3">
                           <p>{`${contractor.company_name}`}</p>
                         </div>
                       </td>
-                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md group-hover:bg-gray-100 sm:pl-6">
+                      <td className="whitespace-nowrap bg-white py-3 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md group-hover:bg-gray-100 sm:pl-6">
                         <div className="flex items-center gap-3">
                           <p>{`${contractor.legal_name}`}</p>
                         </div>
                       </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-hover:bg-gray-100">
+                      <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
                         {parseDocument(contractor.document)}
                       </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-hover:bg-gray-100">
+                      <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
                         {parseDateTime(contractor.created_at)}
                       </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-hover:bg-gray-100">
+                      <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
                         <Pill
                           text={contractor.active ? 'Ativo' : 'Inativo'}
                           color={contractor.active ? 'success' : 'neutral'}
                         />
                       </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-hover:bg-gray-100">
+                      <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
                         <div
                           className="flex items-center gap-3"
                           onClick={(e) => e.stopPropagation()}
