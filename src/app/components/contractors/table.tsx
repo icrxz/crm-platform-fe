@@ -8,6 +8,10 @@ import TrashIcon from '@heroicons/react/24/outline/TrashIcon';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { IconButton } from '../../components/common/icon-button';
+import {
+  ListItemCard,
+  ListItemCardGroup,
+} from '../../components/common/list-item-card';
 import { ListPageLayout } from '../../components/common/list-page-layout';
 import Modal from '../../components/common/modal';
 import { Pagination } from '../../components/common/pagination';
@@ -61,6 +65,52 @@ export default function ContractorsTable({
           <Pagination paging={contractors?.paging} page={initialPage} />
         }
       >
+        <ListItemCardGroup>
+          {contractors?.result.map((contractor) => (
+            <ListItemCard
+              key={contractor.contractor_id}
+              onClick={() => handleRowClick(contractor.contractor_id)}
+              title={contractor.company_name}
+              fields={[
+                { label: 'Razão social', value: contractor.legal_name },
+                {
+                  label: 'Documento',
+                  value: parseDocument(contractor.document),
+                },
+                {
+                  label: 'Data de criação',
+                  value: parseDateTime(contractor.created_at),
+                },
+                {
+                  label: 'Status',
+                  value: (
+                    <Pill
+                      text={contractor.active ? 'Ativo' : 'Inativo'}
+                      color={contractor.active ? 'success' : 'neutral'}
+                    />
+                  ),
+                },
+              ]}
+              actions={
+                <>
+                  <IconButton
+                    color="info"
+                    icon={<PencilIcon className="h-5 w-5" />}
+                    onClick={() => handleEdit(contractor.contractor_id)}
+                  />
+                  {contractor.active && (
+                    <IconButton
+                      color="error"
+                      icon={<TrashIcon className="h-5 w-5" />}
+                      onClick={() => handleDelete(contractor.contractor_id)}
+                    />
+                  )}
+                </>
+              }
+            />
+          ))}
+        </ListItemCardGroup>
+
         <table className="hidden min-w-full rounded-md text-gray-900 md:table">
           <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
             <tr>

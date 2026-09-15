@@ -46,6 +46,13 @@ jest.mock('../../common/pagination', () => ({
 
 const mockPush = jest.fn();
 
+// The mobile card list duplicates every row's content outside the desktop
+// <table> (see ListItemCardGroup) — scope row/cell assertions to the table
+// so they don't match both.
+function getTable() {
+  return within(screen.getByRole('table'));
+}
+
 function buildContractor(
   overrides: Partial<ContractorListItem> = {}
 ): ContractorListItem {
@@ -91,9 +98,9 @@ describe('ContractorsTable', () => {
       <ContractorsTable contractors={buildSearchResponse([contractor])} />
     );
 
-    expect(screen.getByText('Seguradora ABC')).toBeInTheDocument();
-    expect(screen.getByText('Seguradora ABC Ltda')).toBeInTheDocument();
-    expect(screen.getByText('Ativo')).toBeInTheDocument();
+    expect(getTable().getByText('Seguradora ABC')).toBeInTheDocument();
+    expect(getTable().getByText('Seguradora ABC Ltda')).toBeInTheDocument();
+    expect(getTable().getByText('Ativo')).toBeInTheDocument();
   });
 
   it('should render Inativo for inactive contractors', () => {
@@ -102,7 +109,7 @@ describe('ContractorsTable', () => {
       <ContractorsTable contractors={buildSearchResponse([contractor])} />
     );
 
-    expect(screen.getByText('Inativo')).toBeInTheDocument();
+    expect(getTable().getByText('Inativo')).toBeInTheDocument();
   });
 
   it('should navigate to the contractor detail page when the row is clicked', () => {
@@ -111,7 +118,7 @@ describe('ContractorsTable', () => {
       <ContractorsTable contractors={buildSearchResponse([contractor])} />
     );
 
-    fireEvent.click(screen.getByText('Seguradora ABC').closest('tr')!);
+    fireEvent.click(getTable().getByText('Seguradora ABC').closest('tr')!);
 
     expect(mockPush).toHaveBeenCalledWith('/contractors/contractor-001');
   });

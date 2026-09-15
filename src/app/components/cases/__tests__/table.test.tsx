@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import CasesTable from '../table';
 import {
@@ -78,6 +78,13 @@ jest.mock('../batch-form-modal', () => ({
 
 const mockPush = jest.fn();
 
+// The mobile card list duplicates every row's content outside the desktop
+// <table> (see ListItemCardGroup) — scope row/cell assertions to the table
+// so they don't match both.
+function getTable() {
+  return within(screen.getByRole('table'));
+}
+
 function setupMocks(
   searchParamsEntries: Record<string, string | string[]> = {}
 ) {
@@ -143,10 +150,10 @@ describe('CasesTable', () => {
       render(<CasesTable cases={cases} />);
 
       // Assert
-      expect(screen.getByText('Status')).toBeInTheDocument();
+      expect(getTable().getByText('Status')).toBeInTheDocument();
       expect(screen.queryByText('Estado')).not.toBeInTheDocument();
-      expect(screen.getByText('SIN-001')).toBeInTheDocument();
-      expect(screen.getByText('Em andamento')).toBeInTheDocument();
+      expect(getTable().getByText('SIN-001')).toBeInTheDocument();
+      expect(getTable().getByText('Em andamento')).toBeInTheDocument();
     });
 
     it('should render the category column with the mapped label', () => {
@@ -159,8 +166,8 @@ describe('CasesTable', () => {
       render(<CasesTable cases={cases} />);
 
       // Assert
-      expect(screen.getByText('Categoria')).toBeInTheDocument();
-      expect(screen.getByText('D+')).toBeInTheDocument();
+      expect(getTable().getByText('Categoria')).toBeInTheDocument();
+      expect(getTable().getByText('D+')).toBeInTheDocument();
     });
 
     it('should render the técnico name as a link to the partner detail page', () => {
@@ -176,7 +183,7 @@ describe('CasesTable', () => {
       render(<CasesTable cases={cases} />);
 
       // Assert
-      const link = screen.getByText('Maria').closest('a');
+      const link = getTable().getByText('Maria').closest('a');
       expect(link).toHaveAttribute('href', '/partners/partner-123');
     });
 
@@ -193,7 +200,7 @@ describe('CasesTable', () => {
       render(<CasesTable cases={cases} />);
 
       // Assert
-      expect(screen.getByText('Maria').closest('a')).toBeNull();
+      expect(getTable().getByText('Maria').closest('a')).toBeNull();
     });
 
     it('should render a dash when category is missing', () => {
@@ -206,7 +213,7 @@ describe('CasesTable', () => {
       render(<CasesTable cases={cases} />);
 
       // Assert
-      const row = screen.getByText(item.external_reference).closest('tr');
+      const row = getTable().getByText(item.external_reference).closest('tr');
       expect(row).toHaveTextContent('-');
     });
 

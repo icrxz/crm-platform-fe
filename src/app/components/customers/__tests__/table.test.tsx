@@ -46,6 +46,13 @@ jest.mock('../../common/pagination', () => ({
 
 const mockPush = jest.fn();
 
+// The mobile card list duplicates every row's content outside the desktop
+// <table> (see ListItemCardGroup) — scope row/cell assertions to the table
+// so they don't match both.
+function getTable() {
+  return within(screen.getByRole('table'));
+}
+
 function buildCustomer(
   overrides: Partial<CustomerListItem> = {}
 ): CustomerListItem {
@@ -90,15 +97,15 @@ describe('CustomersTable', () => {
     const customer = buildCustomer({ email: undefined });
     render(<CustomersTable customers={buildSearchResponse([customer])} />);
 
-    expect(screen.getByText('João Silva')).toBeInTheDocument();
-    expect(screen.getByText('-')).toBeInTheDocument();
+    expect(getTable().getByText('João Silva')).toBeInTheDocument();
+    expect(getTable().getByText('-')).toBeInTheDocument();
   });
 
   it('should navigate to the customer detail page when the row is clicked', () => {
     const customer = buildCustomer();
     render(<CustomersTable customers={buildSearchResponse([customer])} />);
 
-    fireEvent.click(screen.getByText('João Silva').closest('tr')!);
+    fireEvent.click(getTable().getByText('João Silva').closest('tr')!);
 
     expect(mockPush).toHaveBeenCalledWith('/customers/customer-001');
   });

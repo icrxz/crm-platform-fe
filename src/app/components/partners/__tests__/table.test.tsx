@@ -43,6 +43,13 @@ jest.mock('../../common/pagination', () => ({
 
 const mockPush = jest.fn();
 
+// The mobile card list duplicates every row's content outside the desktop
+// <table> (see ListItemCardGroup) — scope row/cell assertions to the table
+// so they don't match both.
+function getTable() {
+  return within(screen.getByRole('table'));
+}
+
 function buildPartner(
   overrides: Partial<PartnerListItem> = {}
 ): PartnerListItem {
@@ -88,23 +95,23 @@ describe('PartnersTable', () => {
     const partner = buildPartner();
     render(<PartnersTable partners={buildSearchResponse([partner])} />);
 
-    expect(screen.getByText('Maria Souza')).toBeInTheDocument();
-    expect(screen.getByText('São Paulo')).toBeInTheDocument();
-    expect(screen.getByText('Ativo')).toBeInTheDocument();
+    expect(getTable().getByText('Maria Souza')).toBeInTheDocument();
+    expect(getTable().getByText('São Paulo')).toBeInTheDocument();
+    expect(getTable().getByText('Ativo')).toBeInTheDocument();
   });
 
   it('should render Inativo for inactive partners', () => {
     const partner = buildPartner({ active: false });
     render(<PartnersTable partners={buildSearchResponse([partner])} />);
 
-    expect(screen.getByText('Inativo')).toBeInTheDocument();
+    expect(getTable().getByText('Inativo')).toBeInTheDocument();
   });
 
   it('should navigate to the partner detail page when the row is clicked', () => {
     const partner = buildPartner();
     render(<PartnersTable partners={buildSearchResponse([partner])} />);
 
-    fireEvent.click(screen.getByText('Maria Souza').closest('tr')!);
+    fireEvent.click(getTable().getByText('Maria Souza').closest('tr')!);
 
     expect(mockPush).toHaveBeenCalledWith('/partners/partner-001');
   });

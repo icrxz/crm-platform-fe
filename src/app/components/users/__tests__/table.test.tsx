@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { UserRole } from '@/app/types/user';
 import { UserListItem } from '@/app/types/user-list-item';
@@ -56,6 +56,13 @@ const mockUsers: UserListItem[] = [
   },
 ];
 
+// The mobile card list duplicates every row's content outside the desktop
+// <table> (see ListItemCardGroup) — scope row/cell assertions to the table
+// so they don't match both.
+function getTable() {
+  return within(screen.getByRole('table'));
+}
+
 beforeEach(() => {
   jest.clearAllMocks();
   (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
@@ -74,8 +81,8 @@ describe('UsersTable', () => {
       />
     );
 
-    expect(screen.getByText('Operador')).toBeInTheDocument();
-    expect(screen.getByText('Administrador')).toBeInTheDocument();
+    expect(getTable().getByText('Operador')).toBeInTheDocument();
+    expect(getTable().getByText('Administrador')).toBeInTheDocument();
   });
 
   it('should hide thavanna_admin users from the list', () => {
@@ -102,7 +109,7 @@ describe('UsersTable', () => {
     );
 
     expect(screen.getAllByText('Ativo').length).toBeGreaterThan(0);
-    expect(screen.getByText('Inativo')).toBeInTheDocument();
+    expect(getTable().getByText('Inativo')).toBeInTheDocument();
   });
 
   it('should navigate to the user detail page when the row is clicked', () => {
@@ -115,7 +122,7 @@ describe('UsersTable', () => {
       />
     );
 
-    fireEvent.click(screen.getByText('João Silva').closest('tr')!);
+    fireEvent.click(getTable().getByText('João Silva').closest('tr')!);
 
     expect(mockPush).toHaveBeenCalledWith('/users/user-1');
   });
@@ -130,7 +137,7 @@ describe('UsersTable', () => {
       />
     );
 
-    fireEvent.click(screen.getByText('Maria Souza').closest('tr')!);
+    fireEvent.click(getTable().getByText('Maria Souza').closest('tr')!);
 
     expect(mockPush).not.toHaveBeenCalled();
   });
