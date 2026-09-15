@@ -1,14 +1,20 @@
-import { format, Locale, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { formatInTimeZone } from 'date-fns-tz';
 
 export const PATTERN_DEFAULT = 'dd/MM/yyyy HH:mm';
 export const API_PATTERN_DEFAULT = 'yyyy-MM-ddTHH:mm:ss.SSSSSS';
 export const ONLY_DATE_PATTERN = 'dd/MM/yyyy';
 
-const locales: Record<string, Locale> = { ptBR };
+// The backend stores timestamps in a timezone-less column and returns them
+// tagged as UTC, but they should always be displayed in Brazil's local time
+// regardless of the server/browser's own timezone (e.g. Vercel's UTC runtime).
+const APP_TIMEZONE = 'America/Sao_Paulo';
 
 function getFormat(date: string, pattern = PATTERN_DEFAULT) {
-  return format(parseISO(date), pattern, { locale: locales["ptBR"] });
+  return formatInTimeZone(parseISO(date), APP_TIMEZONE, pattern, {
+    locale: ptBR,
+  });
 }
 
 export function parseDateTime(date: string, pattern: string = PATTERN_DEFAULT) {

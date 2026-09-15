@@ -56,8 +56,9 @@ describe('toPartnerBookCaseItem', () => {
     expect(result.payment_status).toBe('pending');
   });
 
-  it('marks as paid only when all technician transactions are approved', () => {
+  it('marks as paid only when all technician transactions are approved, using the case closed_at as paid_at', () => {
     const crmCase = buildCaseFull({
+      closed_at: '2024-05-05T10:00:00Z',
       transactions: [
         {
           transaction_id: 't1',
@@ -65,7 +66,6 @@ describe('toPartnerBookCaseItem', () => {
           description: 'MO',
           value: 200,
           status: TransactionStatus.APPROVED,
-          updated_at: '2024-05-01T10:00:00Z',
         },
         {
           transaction_id: 't2',
@@ -73,7 +73,6 @@ describe('toPartnerBookCaseItem', () => {
           description: 'Deslocamento Técnico',
           value: 20,
           status: TransactionStatus.APPROVED,
-          updated_at: '2024-05-03T10:00:00Z',
         },
       ] as never,
     });
@@ -81,7 +80,7 @@ describe('toPartnerBookCaseItem', () => {
     const result = toPartnerBookCaseItem(crmCase);
 
     expect(result.payment_status).toBe('paid');
-    expect(result.paid_at).toBe('2024-05-03T10:00:00Z');
+    expect(result.paid_at).toBe('2024-05-05T10:00:00Z');
   });
 
   it('marks as pending when at least one technician transaction is not approved', () => {
