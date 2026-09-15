@@ -1,6 +1,6 @@
 'use client';
 import { parseDocument } from '@/app/libs/parser';
-import { EyeIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -86,38 +86,39 @@ export default function PartnersTable({
 
                 <tbody className="divide-y divide-gray-200 text-gray-900">
                   {partners?.result.map((partner) => (
-                    <tr key={partner.partner_id} className="group">
-                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                    <tr
+                      key={partner.partner_id}
+                      className="group cursor-pointer"
+                      onClick={() => handleRowClick(partner.partner_id)}
+                    >
+                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md group-hover:bg-gray-100 sm:pl-6">
                         <div className="flex items-center gap-3">
                           <p>{`${partner.first_name} ${partner.last_name}`}</p>
                         </div>
                       </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-hover:bg-gray-100">
                         {partner.partner_type}
                       </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-hover:bg-gray-100">
                         {parseDocument(partner.document) || '-'}
                       </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-hover:bg-gray-100">
                         {partner.city}
                       </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-hover:bg-gray-100">
                         {partner.state}
                       </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-hover:bg-gray-100">
                         <Pill
                           text={partner.active ? 'Ativo' : 'Inativo'}
                           color={partner.active ? 'success' : 'neutral'}
                         />
                       </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        <div className="flex gap-2">
-                          <IconButton
-                            color="success"
-                            icon={<EyeIcon className="h-5 w-5 md:h-6 md:w-6" />}
-                            onClick={() => handleRowClick(partner.partner_id)}
-                          />
-
+                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-hover:bg-gray-100">
+                        <div
+                          className="flex gap-2"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <IconButton
                             color="info"
                             icon={

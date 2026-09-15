@@ -105,14 +105,13 @@ describe('ContractorsTable', () => {
     expect(screen.getByText('Inativo')).toBeInTheDocument();
   });
 
-  it('should navigate to the contractor detail page when the view action is clicked', () => {
+  it('should navigate to the contractor detail page when the row is clicked', () => {
     const contractor = buildContractor();
     render(
       <ContractorsTable contractors={buildSearchResponse([contractor])} />
     );
 
-    const table = screen.getByRole('table');
-    fireEvent.click(within(table).getAllByRole('button')[0]);
+    fireEvent.click(screen.getByText('Seguradora ABC').closest('tr')!);
 
     expect(mockPush).toHaveBeenCalledWith('/contractors/contractor-001');
   });
@@ -124,7 +123,7 @@ describe('ContractorsTable', () => {
     );
 
     const table = screen.getByRole('table');
-    expect(within(table).getAllByRole('button')).toHaveLength(2);
+    expect(within(table).getAllByRole('button')).toHaveLength(1);
   });
 
   it('should open the edit modal when the edit action is clicked', () => {
@@ -134,7 +133,7 @@ describe('ContractorsTable', () => {
     );
 
     const table = screen.getByRole('table');
-    fireEvent.click(within(table).getAllByRole('button')[1]);
+    fireEvent.click(within(table).getAllByRole('button')[0]);
 
     expect(screen.getByTestId('edit-contractor-modal')).toBeInTheDocument();
   });
@@ -146,7 +145,7 @@ describe('ContractorsTable', () => {
     );
 
     const table = screen.getByRole('table');
-    fireEvent.click(within(table).getAllByRole('button')[2]);
+    fireEvent.click(within(table).getAllByRole('button')[1]);
 
     expect(screen.getByTestId('delete-contractor-modal')).toBeInTheDocument();
   });

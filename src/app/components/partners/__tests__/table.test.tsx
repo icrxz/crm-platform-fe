@@ -100,12 +100,11 @@ describe('PartnersTable', () => {
     expect(screen.getByText('Inativo')).toBeInTheDocument();
   });
 
-  it('should navigate to the partner detail page when the view action is clicked', () => {
+  it('should navigate to the partner detail page when the row is clicked', () => {
     const partner = buildPartner();
     render(<PartnersTable partners={buildSearchResponse([partner])} />);
 
-    const table = screen.getByRole('table');
-    fireEvent.click(within(table).getAllByRole('button')[0]);
+    fireEvent.click(screen.getByText('Maria Souza').closest('tr')!);
 
     expect(mockPush).toHaveBeenCalledWith('/partners/partner-001');
   });
@@ -115,7 +114,7 @@ describe('PartnersTable', () => {
     render(<PartnersTable partners={buildSearchResponse([partner])} />);
 
     const table = screen.getByRole('table');
-    expect(within(table).getAllByRole('button')).toHaveLength(2);
+    expect(within(table).getAllByRole('button')).toHaveLength(1);
   });
 
   it('should open the edit modal when the edit action is clicked', () => {
@@ -123,7 +122,7 @@ describe('PartnersTable', () => {
     render(<PartnersTable partners={buildSearchResponse([partner])} />);
 
     const table = screen.getByRole('table');
-    fireEvent.click(within(table).getAllByRole('button')[1]);
+    fireEvent.click(within(table).getAllByRole('button')[0]);
 
     expect(screen.getByTestId('edit-partner-modal')).toBeInTheDocument();
   });
@@ -133,7 +132,7 @@ describe('PartnersTable', () => {
     render(<PartnersTable partners={buildSearchResponse([partner])} />);
 
     const table = screen.getByRole('table');
-    fireEvent.click(within(table).getAllByRole('button')[2]);
+    fireEvent.click(within(table).getAllByRole('button')[1]);
 
     expect(screen.getByTestId('delete-partner-modal')).toBeInTheDocument();
   });

@@ -109,9 +109,12 @@ export default function CasesTable({
                 <tbody className="divide-y divide-gray-200 text-gray-900">
                   {cases.result.map((crmCase) => (
                     <tr key={crmCase.case_id} className="group">
-                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-blue-500 underline group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                      <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-blue-500 group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
-                          <Link href={`/cases/${crmCase.case_id}`}>
+                          <Link
+                            className="hover:text-blue-700"
+                            href={`/cases/${crmCase.case_id}`}
+                          >
                             {crmCase.external_reference}
                           </Link>
                         </div>
@@ -137,7 +140,7 @@ export default function CasesTable({
                         {crmCase.partner_first_name ? (
                           crmCase.partner_id ? (
                             <Link
-                              className="text-blue-500 underline"
+                              className="text-blue-500 hover:text-blue-700"
                               href={`/partners/${crmCase.partner_id}`}
                             >
                               {crmCase.partner_first_name}

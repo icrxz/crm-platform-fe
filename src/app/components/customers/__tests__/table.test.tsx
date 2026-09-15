@@ -94,12 +94,11 @@ describe('CustomersTable', () => {
     expect(screen.getByText('-')).toBeInTheDocument();
   });
 
-  it('should navigate to the customer detail page when the view action is clicked', () => {
+  it('should navigate to the customer detail page when the row is clicked', () => {
     const customer = buildCustomer();
     render(<CustomersTable customers={buildSearchResponse([customer])} />);
 
-    const table = screen.getByRole('table');
-    fireEvent.click(within(table).getAllByRole('button')[0]);
+    fireEvent.click(screen.getByText('João Silva').closest('tr')!);
 
     expect(mockPush).toHaveBeenCalledWith('/customers/customer-001');
   });
@@ -109,7 +108,7 @@ describe('CustomersTable', () => {
     render(<CustomersTable customers={buildSearchResponse([customer])} />);
 
     const table = screen.getByRole('table');
-    expect(within(table).getAllByRole('button')).toHaveLength(2);
+    expect(within(table).getAllByRole('button')).toHaveLength(1);
   });
 
   it('should open the edit modal when the edit action is clicked', () => {
@@ -117,7 +116,7 @@ describe('CustomersTable', () => {
     render(<CustomersTable customers={buildSearchResponse([customer])} />);
 
     const table = screen.getByRole('table');
-    fireEvent.click(within(table).getAllByRole('button')[1]);
+    fireEvent.click(within(table).getAllByRole('button')[0]);
 
     expect(screen.getByTestId('edit-customer-modal')).toBeInTheDocument();
   });
@@ -127,9 +126,19 @@ describe('CustomersTable', () => {
     render(<CustomersTable customers={buildSearchResponse([customer])} />);
 
     const table = screen.getByRole('table');
-    fireEvent.click(within(table).getAllByRole('button')[2]);
+    fireEvent.click(within(table).getAllByRole('button')[1]);
 
     expect(screen.getByTestId('delete-customer-modal')).toBeInTheDocument();
+  });
+
+  it('should not navigate when the edit or delete action is clicked (row click is stopped)', () => {
+    const customer = buildCustomer();
+    render(<CustomersTable customers={buildSearchResponse([customer])} />);
+
+    const table = screen.getByRole('table');
+    fireEvent.click(within(table).getAllByRole('button')[0]);
+
+    expect(mockPush).not.toHaveBeenCalled();
   });
 
   it('should open the create modal when the search bar requests it', () => {
