@@ -199,8 +199,12 @@ describe('PaymentTable', () => {
       render(<PaymentTable transactions={transactions} initialPage={1} />);
 
       // Assert
-      expect(screen.getByTestId('pagination-total').textContent).toBe('2');
-      expect(screen.getByTestId('pagination-current').textContent).toBe('1');
+      expect(screen.getAllByTestId('pagination-total')[0].textContent).toBe(
+        '2'
+      );
+      expect(screen.getAllByTestId('pagination-current')[0].textContent).toBe(
+        '1'
+      );
     });
 
     it('should render partner list inside the search bar', () => {
@@ -225,7 +229,7 @@ describe('PaymentTable', () => {
       render(<PaymentTable transactions={transactions} />);
 
       // Act
-      fireEvent.click(screen.getByText('Go to page 2'));
+      fireEvent.click(screen.getAllByText('Go to page 2')[0]);
 
       // Assert
       expect(mockPush).toHaveBeenCalledWith(
@@ -240,7 +244,7 @@ describe('PaymentTable', () => {
       render(<PaymentTable transactions={transactions} />);
 
       // Act
-      fireEvent.click(screen.getByText('Go to page 3'));
+      fireEvent.click(screen.getAllByText('Go to page 3')[0]);
 
       // Assert
       expect(mockPush).toHaveBeenCalledWith('/payments?page=3');
@@ -253,7 +257,7 @@ describe('PaymentTable', () => {
       render(<PaymentTable transactions={transactions} />);
 
       // Act
-      fireEvent.click(screen.getByText('Go to page 2'));
+      fireEvent.click(screen.getAllByText('Go to page 2')[0]);
 
       // Assert
       expect(mockPush).toHaveBeenCalledWith(

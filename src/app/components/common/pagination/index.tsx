@@ -21,15 +21,33 @@ export function Pagination({ paging, page, className }: PaginationProps) {
     router.push(pathname + '?' + params.toString());
   }
 
+  const total = Math.ceil(Number((paging?.total || 1) / (paging?.limit || 1)));
+  const currentPage = Number(page || 1);
+
   return (
     <div className={className ? className : 'mt-1'}>
-      <HeroPagination
-        onChange={handleChangePage}
-        siblings={3}
-        showControls
-        total={Math.ceil(Number((paging?.total || 1) / (paging?.limit || 1)))}
-        page={Number(page || 1)}
-      />
+      {/* siblings={3} overflows horizontally on phone-width screens (10+
+          page buttons); shown/hidden by breakpoint instead of a resize
+          listener since HeroUI's own page-button count isn't reactive to
+          prop changes mid-render either way. */}
+      <div className="hidden md:block">
+        <HeroPagination
+          onChange={handleChangePage}
+          siblings={3}
+          showControls
+          total={total}
+          page={currentPage}
+        />
+      </div>
+      <div className="md:hidden">
+        <HeroPagination
+          onChange={handleChangePage}
+          siblings={0}
+          showControls
+          total={total}
+          page={currentPage}
+        />
+      </div>
     </div>
   );
 }

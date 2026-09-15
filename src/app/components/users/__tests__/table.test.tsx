@@ -153,7 +153,7 @@ describe('UsersTable', () => {
       />
     );
 
-    fireEvent.click(screen.getByLabelText('next-page'));
+    fireEvent.click(screen.getAllByLabelText('next-page')[0]);
 
     expect(mockPush).toHaveBeenCalledWith('/users?page=2');
   });

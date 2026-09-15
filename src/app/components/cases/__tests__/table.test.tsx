@@ -229,7 +229,9 @@ describe('CasesTable', () => {
       render(<CasesTable cases={cases} initialPage={1} />);
 
       // Assert
-      expect(screen.getByTestId('pagination-total').textContent).toBe('3');
+      expect(screen.getAllByTestId('pagination-total')[0].textContent).toBe(
+        '3'
+      );
     });
   });
 
@@ -241,7 +243,7 @@ describe('CasesTable', () => {
       render(<CasesTable cases={cases} />);
 
       // Act
-      fireEvent.click(screen.getByText('Go to page 2'));
+      fireEvent.click(screen.getAllByText('Go to page 2')[0]);
 
       // Assert
       expect(mockPush).toHaveBeenCalledWith('/cases?sinistro=SIN-001&page=2');
