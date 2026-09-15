@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { roboto } from '../../ui/fonts';
 import { IconButton } from '../common/icon-button';
 import { Pagination } from '../common/pagination';
+import { Pill } from '../common/pill';
 
 interface UsersTableProps {
   users?: SearchResponse<UserListItem>;
@@ -78,7 +79,10 @@ export default function UsersTable({
                           {roleLabels[user.role]}
                         </td>
                         <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                          {user.active ? 'Ativo' : 'Inativo'}
+                          <Pill
+                            text={user.active ? 'Ativo' : 'Inativo'}
+                            color={user.active ? 'success' : 'neutral'}
+                          />
                         </td>
                         <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                           <div className="flex gap-2">

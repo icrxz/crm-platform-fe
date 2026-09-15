@@ -11,6 +11,7 @@ import { useState } from 'react';
 import Modal from '../../components/common/modal';
 import { IconButton } from '../../components/common/icon-button';
 import { Pagination } from '../../components/common/pagination';
+import { Pill } from '../../components/common/pill';
 import ContractorsSearchBar from '../../components/contractors/search-bar';
 import { roboto } from '../../ui/fonts';
 import CreateContractorModal from './create-contractor';
@@ -106,7 +107,10 @@ export default function ContractorsTable({
                         {parseDateTime(contractor.created_at)}
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {contractor.active ? 'Ativo' : 'Inativo'}
+                        <Pill
+                          text={contractor.active ? 'Ativo' : 'Inativo'}
+                          color={contractor.active ? 'success' : 'neutral'}
+                        />
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                         <div className="flex items-center gap-3">
