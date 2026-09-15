@@ -1,8 +1,12 @@
 import { defineConfig } from '@playwright/test';
 
-// executablePath pins Playwright to the system Chromium instead of
-// downloading its own browser binary, matching what CI/sandboxed
-// environments already have available.
+// Escape hatch for ad-hoc local runs (e.g. `npx playwright test`) in an
+// environment without the system libs `npx playwright install` needs.
+// Do NOT use this to generate/update committed baselines — a different
+// Chromium build renders fonts with slightly different anti-aliasing,
+// which fails ~every screenshot in CI even with no real layout change
+// (see CLAUDE.md). Baselines must come from the same Chromium build CI
+// uses: unset this var, or run inside the official Docker image.
 const executablePath = process.env.PLAYWRIGHT_CHROMIUM_PATH;
 
 export default defineConfig({
