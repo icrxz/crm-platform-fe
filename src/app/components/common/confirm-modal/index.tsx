@@ -9,10 +9,13 @@ import { useFormStatus } from 'react-dom';
 import { Button } from '../button';
 import Modal from '../modal';
 
+type ConfirmModalColor = 'success' | 'error' | 'warning' | 'info';
+
 interface ConfirmModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
+  description?: string;
   action: (
     currentState: unknown,
     formData: FormData
@@ -20,6 +23,8 @@ interface ConfirmModalProps {
   hiddenFields?: Record<string, string>;
   confirmLabel?: string;
   cancelLabel?: string;
+  confirmColor?: ConfirmModalColor;
+  cancelColor?: ConfirmModalColor;
   onSuccess?: () => void;
 }
 
@@ -27,10 +32,13 @@ export function ConfirmModal({
   isOpen,
   onClose,
   title,
+  description,
   action,
   hiddenFields,
   confirmLabel = 'Sim',
   cancelLabel = 'Não',
+  confirmColor = 'info',
+  cancelColor = 'info',
   onSuccess,
 }: ConfirmModalProps) {
   const [state, dispatch] = useActionState(action, null);
@@ -61,16 +69,34 @@ export function ConfirmModal({
       <form action={dispatch} className="space-y-3">
         <h1 className={`${roboto.className} mx-5 my-5 text-xl`}>{title}</h1>
 
+        {description && (
+          <p className={`${roboto.className} text-md mx-5 mb-5`}>
+            {description}
+          </p>
+        )}
+
         {hiddenFields &&
           Object.entries(hiddenFields).map(([name, value]) => (
             <input key={name} type="hidden" name={name} value={value} />
           ))}
 
         <div className="flex justify-center space-x-2">
-          <Button type="submit" isLoading={pending} aria-disabled={pending}>
+          <Button
+            type="submit"
+            color={confirmColor}
+            scheme="quiet"
+            isLoading={pending}
+            aria-disabled={pending}
+          >
             {confirmLabel}
           </Button>
-          <Button onClick={onClose} isLoading={pending} aria-disabled={pending}>
+          <Button
+            onClick={onClose}
+            color={cancelColor}
+            scheme="loud"
+            isLoading={pending}
+            aria-disabled={pending}
+          >
             {cancelLabel}
           </Button>
         </div>

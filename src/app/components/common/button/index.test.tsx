@@ -67,6 +67,25 @@ describe('Button', () => {
     expect(screen.getByRole('button')).toHaveClass('bg-blue-500');
   });
 
+  it('defaults to the loud scheme, with white text', () => {
+    render(<Button>Salvar</Button>);
+
+    expect(screen.getByRole('button')).toHaveClass('text-white');
+  });
+
+  it('applies the quiet scheme as a light background with colored text', () => {
+    render(
+      <Button color="error" scheme="quiet">
+        Cancelar
+      </Button>
+    );
+
+    expect(screen.getByRole('button')).toHaveClass(
+      'bg-red-100',
+      'text-red-700'
+    );
+  });
+
   it('applies disabled visual styling when disabled', () => {
     render(<Button disabled>Salvar</Button>);
 
