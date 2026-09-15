@@ -1,41 +1,101 @@
 'use client';
 import { UserRole } from '@/app/types/user';
-import { PowerIcon } from '@heroicons/react/24/outline';
+import { getAvatarColor, getInitials } from '@/app/utils/avatar';
+import {
+  ChevronDoubleLeftIcon,
+  ChevronDoubleRightIcon,
+  PowerIcon,
+} from '@heroicons/react/24/outline';
 import { signOut } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState } from 'react';
+import {
+  SIDEBAR_COLLAPSED_CLASS,
+  SIDEBAR_COLLAPSED_STORAGE_KEY,
+} from './constants';
 import logoPic from './logo-rd.jpg';
 import NavLinks from './nav-links';
 
 interface SideNavProps {
-  className?: string;
   userRole: UserRole;
+  userName: string;
 }
 
-export default function SideNav({ userRole }: SideNavProps) {
+export default function SideNav({ userRole, userName }: SideNavProps) {
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    if (typeof document === 'undefined') return false;
+    return document.documentElement.classList.contains(SIDEBAR_COLLAPSED_CLASS);
+  });
+
+  function toggleCollapsed() {
+    const next = !document.documentElement.classList.contains(
+      SIDEBAR_COLLAPSED_CLASS
+    );
+    document.documentElement.classList.toggle(SIDEBAR_COLLAPSED_CLASS, next);
+    try {
+      localStorage.setItem(SIDEBAR_COLLAPSED_STORAGE_KEY, String(next));
+    } catch {
+      // localStorage unavailable (private mode, blocked storage) — the
+      // toggle still works for the rest of this session via the DOM class.
+    }
+    setIsCollapsed(next);
+  }
+
   return (
-    <div className="flex h-full flex-col px-3 py-4 md:px-2">
-      <Link
-        className="mb-2 flex h-20 items-end justify-start rounded-md bg-gray-100 p-2 md:h-40"
-        href="/home"
-      >
-        <div className="relative h-full w-full">
-          <Image src={logoPic} fill alt="rd logo png image" />
-        </div>
-      </Link>
-
-      <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
-        <NavLinks userRole={userRole} />
-
-        <div className="hidden h-auto w-full grow rounded-md bg-gray-50 md:block"></div>
+    <div className="flex h-full flex-col gap-2 bg-slate-900 px-3 py-4 md:px-2">
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <Link
+          href="/home"
+          className="sidebar-expand-only min-w-0 flex-1 rounded-xl border border-slate-700 bg-white p-2 shadow-sm"
+        >
+          <div className="relative mx-auto aspect-square w-full max-w-24">
+            <Image
+              src={logoPic}
+              fill
+              alt="Logo RD"
+              className="rounded-lg object-contain"
+            />
+          </div>
+        </Link>
 
         <button
-          className="flex h-[48px] w-full grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3"
-          onClick={() => signOut({ callbackUrl: '/login' })}
+          type="button"
+          onClick={toggleCollapsed}
+          aria-label={isCollapsed ? 'Expandir menu' : 'Recolher menu'}
+          aria-expanded={!isCollapsed}
+          className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-slate-800 hover:text-white md:flex"
         >
-          <PowerIcon className="w-6" />
-          <div className="hidden md:block">Sair</div>
+          <ChevronDoubleLeftIcon className="sidebar-expand-only h-4 w-4" />
+          <ChevronDoubleRightIcon className="sidebar-collapse-only h-4 w-4" />
         </button>
+      </div>
+
+      <div className="flex grow flex-row justify-between gap-2 md:flex-col">
+        <NavLinks userRole={userRole} />
+
+        <div className="hidden h-auto w-full grow rounded-md md:block"></div>
+
+        <div className="flex w-full grow md:flex-none">
+          <button
+            className="sidebar-nav-item flex h-[48px] w-full items-center justify-center gap-2 rounded-md p-3 text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white md:justify-start md:p-2 md:px-3"
+            onClick={() => signOut({ callbackUrl: '/login' })}
+          >
+            <PowerIcon className="w-6 shrink-0" />
+            <p className="sidebar-expand-only hidden md:block">Sair</p>
+          </button>
+        </div>
+      </div>
+
+      <div className="hidden items-center gap-3 border-t border-slate-800 pt-3 md:flex">
+        <div
+          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${getAvatarColor(userName)}`}
+        >
+          {getInitials(userName)}
+        </div>
+        <p className="sidebar-expand-only min-w-0 truncate text-sm font-medium text-white">
+          {userName}
+        </p>
       </div>
     </div>
   );

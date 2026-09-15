@@ -16,29 +16,37 @@ describe('NavLinks', () => {
   it('should render links available to every role', () => {
     render(<NavLinks userRole={UserRole.OPERATOR} />);
 
-    expect(screen.getByText('Home')).toBeInTheDocument();
-    expect(screen.getByText('Casos')).toBeInTheDocument();
-    expect(screen.getByText('Meu Perfil')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Home' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Casos' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: 'Meu Perfil' })
+    ).toBeInTheDocument();
   });
 
   it('should hide admin-only links for an operator', () => {
     render(<NavLinks userRole={UserRole.OPERATOR} />);
 
-    expect(screen.queryByText('Usuários')).not.toBeInTheDocument();
-    expect(screen.queryByText('Gamificação')).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('link', { name: 'Usuários' })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('link', { name: 'Gamificação' })
+    ).not.toBeInTheDocument();
   });
 
   it('should show admin-only links for an admin', () => {
     render(<NavLinks userRole={UserRole.ADMIN} />);
 
-    expect(screen.getByText('Usuários')).toBeInTheDocument();
-    expect(screen.getByText('Gamificação')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Usuários' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: 'Gamificação' })
+    ).toBeInTheDocument();
   });
 
   it('should link the profile item to /profile for every role', () => {
     render(<NavLinks userRole={UserRole.OPERATOR} />);
 
-    expect(screen.getByText('Meu Perfil').closest('a')).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Meu Perfil' })).toHaveAttribute(
       'href',
       '/profile'
     );

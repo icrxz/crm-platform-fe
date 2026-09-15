@@ -70,6 +70,8 @@ export const authOptions: NextAuthOptions = {
         token.role = user.role;
         token.username = user.username;
         token.is_first_login = user.is_first_login;
+        token.first_name = user.first_name;
+        token.last_name = user.last_name;
       }
       return token;
     },
@@ -79,6 +81,8 @@ export const authOptions: NextAuthOptions = {
         session.user.role = token.role as UserRole;
         session.user.username = token.username as string;
         session.user.isFirstLogin = token.is_first_login as boolean;
+        session.user.first_name = token.first_name as string;
+        session.user.last_name = token.last_name as string;
       }
       return session;
     },

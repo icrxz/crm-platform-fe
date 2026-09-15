@@ -29,3 +29,26 @@ html.is-navigating,
 html.is-navigating * {
   cursor: progress !important;
 }
+
+/* Set synchronously (before hydration) by an inline script in the root
+   layout, from localStorage, so the sidebar renders already-collapsed on
+   load instead of flashing open then snapping shut. Collapse is a desktop
+   (md+) concept only — the mobile nav bar is unaffected. */
+@media (min-width: 768px) {
+  html.sidebar-collapsed #app-sidebar {
+    width: 5rem;
+  }
+
+  html.sidebar-collapsed .sidebar-expand-only {
+    display: none;
+  }
+
+  html:not(.sidebar-collapsed) .sidebar-collapse-only {
+    display: none;
+  }
+
+  html.sidebar-collapsed .sidebar-nav-item {
+    justify-content: center;
+    padding: 0.75rem;
+  }
+}
