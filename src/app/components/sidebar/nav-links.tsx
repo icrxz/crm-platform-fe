@@ -83,12 +83,13 @@ export default function NavLinks({ userRole }: { userRole: UserRole }) {
             key={link.name}
             content={link.name}
             position="right"
+            textSize="base"
             className="flex w-full grow md:flex-none"
           >
             <Link
               href={link.href}
               className={clsx(
-                'sidebar-nav-item flex h-[48px] w-full items-center justify-center gap-2 rounded-md p-3 text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white md:justify-start md:p-2 md:px-3',
+                'sidebar-nav-item flex h-[48px] w-full items-center justify-center gap-2 rounded-md p-3 text-sm font-medium text-emerald-900 hover:bg-emerald-300 md:justify-start md:p-2 md:px-3',
                 {
                   'bg-blue-600 text-white hover:bg-blue-600': isActive,
                 }

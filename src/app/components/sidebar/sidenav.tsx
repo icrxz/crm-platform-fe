@@ -43,33 +43,17 @@ export default function SideNav({ userRole, userName }: SideNavProps) {
   }
 
   return (
-    <div className="flex h-full flex-col gap-2 bg-slate-900 px-3 py-4 md:px-2">
-      <div className="mb-2 flex items-center justify-between gap-2">
-        <Link
-          href="/home"
-          className="sidebar-expand-only min-w-0 flex-1 rounded-xl border border-slate-700 bg-white p-2 shadow-sm"
-        >
-          <div className="relative mx-auto aspect-square w-full max-w-24">
-            <Image
-              src={logoPic}
-              fill
-              alt="Logo RD"
-              className="rounded-lg object-contain"
-            />
-          </div>
-        </Link>
-
-        <button
-          type="button"
-          onClick={toggleCollapsed}
-          aria-label={isCollapsed ? 'Expandir menu' : 'Recolher menu'}
-          aria-expanded={!isCollapsed}
-          className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-slate-800 hover:text-white md:flex"
-        >
-          <ChevronDoubleLeftIcon className="sidebar-expand-only h-4 w-4" />
-          <ChevronDoubleRightIcon className="sidebar-collapse-only h-4 w-4" />
-        </button>
-      </div>
+    <div className="flex h-full flex-col gap-2 bg-emerald-200 px-3 py-4 md:px-2">
+      <Link href="/home" className="sidebar-expand-only mb-2 block">
+        <div className="relative aspect-square w-full">
+          <Image
+            src={logoPic}
+            fill
+            alt="Logo RD"
+            className="rounded-xl object-cover"
+          />
+        </div>
+      </Link>
 
       <div className="flex grow flex-row justify-between gap-2 md:flex-col">
         <NavLinks userRole={userRole} />
@@ -78,7 +62,7 @@ export default function SideNav({ userRole, userName }: SideNavProps) {
 
         <div className="flex w-full grow md:flex-none">
           <button
-            className="sidebar-nav-item flex h-[48px] w-full items-center justify-center gap-2 rounded-md p-3 text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white md:justify-start md:p-2 md:px-3"
+            className="sidebar-nav-item flex h-[48px] w-full items-center justify-center gap-2 rounded-md p-3 text-sm font-medium text-emerald-900 hover:bg-emerald-300 md:justify-start md:p-2 md:px-3"
             onClick={() => signOut({ callbackUrl: '/login' })}
           >
             <PowerIcon className="w-6 shrink-0" />
@@ -87,15 +71,28 @@ export default function SideNav({ userRole, userName }: SideNavProps) {
         </div>
       </div>
 
-      <div className="hidden items-center gap-3 border-t border-slate-800 pt-3 md:flex">
-        <div
-          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${getAvatarColor(userName)}`}
-        >
-          {getInitials(userName)}
+      <div className="sidebar-footer hidden items-center justify-between gap-3 border-t border-emerald-300 pt-3 md:flex">
+        <div className="flex min-w-0 items-center gap-3">
+          <div
+            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${getAvatarColor(userName)}`}
+          >
+            {getInitials(userName)}
+          </div>
+          <p className="sidebar-expand-only min-w-0 truncate text-sm font-medium text-emerald-900">
+            {userName}
+          </p>
         </div>
-        <p className="sidebar-expand-only min-w-0 truncate text-sm font-medium text-white">
-          {userName}
-        </p>
+
+        <button
+          type="button"
+          onClick={toggleCollapsed}
+          aria-label={isCollapsed ? 'Expandir menu' : 'Recolher menu'}
+          aria-expanded={!isCollapsed}
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-emerald-800 transition-colors hover:bg-emerald-300 hover:text-emerald-900"
+        >
+          <ChevronDoubleLeftIcon className="sidebar-expand-only h-4 w-4" />
+          <ChevronDoubleRightIcon className="sidebar-collapse-only h-4 w-4" />
+        </button>
       </div>
     </div>
   );

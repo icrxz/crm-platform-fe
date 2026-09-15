@@ -51,4 +51,10 @@ html.is-navigating * {
     justify-content: center;
     padding: 0.75rem;
   }
+
+  html.sidebar-collapsed .sidebar-footer {
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.5rem;
+  }
 }

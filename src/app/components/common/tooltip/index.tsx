@@ -5,8 +5,18 @@ interface TooltipProps {
   children: ReactNode;
   theme?: 'light' | 'dark';
   position?: 'top' | 'bottom' | 'right';
+  textSize?: 'xs' | 'sm' | 'base';
   className?: string;
 }
+
+const TEXT_SIZE_CLASSES: Record<
+  NonNullable<TooltipProps['textSize']>,
+  string
+> = {
+  xs: 'text-[11px]',
+  sm: 'text-xs',
+  base: 'text-sm',
+};
 
 const THEME_CLASSES: Record<NonNullable<TooltipProps['theme']>, string> = {
   dark: 'bg-gray-900 text-white',
@@ -27,13 +37,14 @@ export function Tooltip({
   children,
   theme = 'dark',
   position = 'top',
+  textSize = 'xs',
   className,
 }: TooltipProps) {
   return (
     <div className={`group relative ${className ?? ''}`}>
       {children}
       <div
-        className={`pointer-events-none absolute z-50 hidden whitespace-nowrap rounded px-2 py-1 text-[11px] font-normal opacity-0 shadow-lg transition-opacity group-hover:block group-hover:opacity-100 ${POSITION_CLASSES[position]} ${THEME_CLASSES[theme]}`}
+        className={`pointer-events-none absolute z-50 hidden whitespace-nowrap rounded px-2 py-1 font-normal opacity-0 shadow-lg transition-opacity group-hover:block group-hover:opacity-100 ${TEXT_SIZE_CLASSES[textSize]} ${POSITION_CLASSES[position]} ${THEME_CLASSES[theme]}`}
       >
         {content}
       </div>

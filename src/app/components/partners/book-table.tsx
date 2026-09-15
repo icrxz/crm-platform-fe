@@ -98,8 +98,11 @@ export default function PartnerBookTable({ cases }: PartnerBookTableProps) {
                     ? `${crmCase.customer_first_name} ${crmCase.customer_last_name}`
                     : '-'}
                 </td>
-                <td className="whitespace-nowrap bg-white py-5 pl-6 text-sm text-blue-500 underline">
-                  <Link href={`/cases/${crmCase.case_id}`}>
+                <td className="whitespace-nowrap bg-white py-5 pl-6 text-sm text-blue-500">
+                  <Link
+                    className="hover:text-blue-700"
+                    href={`/cases/${crmCase.case_id}`}
+                  >
                     {crmCase.external_reference}
                   </Link>
                 </td>
