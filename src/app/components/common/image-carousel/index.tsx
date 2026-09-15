@@ -6,7 +6,7 @@ import {
   ChevronRightIcon,
 } from '@heroicons/react/24/outline';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Lightbox, { useLightboxState } from 'yet-another-react-lightbox';
 import Counter from 'yet-another-react-lightbox/plugins/counter';
 import 'yet-another-react-lightbox/styles.css';
@@ -23,8 +23,40 @@ interface ImageCarouselProps {
   maxVisible?: number;
 }
 
-const ITEM_SIZE = 96;
+const ITEM_SIZE = 128;
 const ITEM_GAP = 8;
+const ARROW_WIDTH = 28;
+const ABSOLUTE_MAX_VISIBLE = 8;
+const DEFAULT_VISIBLE_BEFORE_MEASURE = 6;
+
+function useAutoVisibleCount(
+  containerRef: React.RefObject<HTMLDivElement | null>,
+  explicitMax?: number
+) {
+  const [autoCount, setAutoCount] = useState(DEFAULT_VISIBLE_BEFORE_MEASURE);
+
+  useEffect(() => {
+    if (explicitMax !== undefined) return;
+
+    const container = containerRef.current;
+    if (!container) return;
+
+    const recompute = () => {
+      const available = container.clientWidth - ARROW_WIDTH * 2 - ITEM_GAP * 2;
+      const fit = Math.floor((available + ITEM_GAP) / (ITEM_SIZE + ITEM_GAP));
+      setAutoCount(Math.max(1, Math.min(ABSOLUTE_MAX_VISIBLE, fit)));
+    };
+
+    recompute();
+    if (typeof ResizeObserver === 'undefined') return;
+
+    const observer = new ResizeObserver(recompute);
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [containerRef, explicitMax]);
+
+  return explicitMax ?? autoCount;
+}
 
 function OpenInNewTabButton() {
   const { currentSlide } = useLightboxState();
@@ -45,21 +77,24 @@ function OpenInNewTabButton() {
   );
 }
 
-export function ImageCarousel({ images, maxVisible = 5 }: ImageCarouselProps) {
+export function ImageCarousel({ images, maxVisible }: ImageCarouselProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autoVisible = useAutoVisibleCount(containerRef, maxVisible);
   const [startIndex, setStartIndex] = useState(0);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   if (images.length === 0) return null;
 
-  const visibleCount = Math.min(maxVisible, images.length);
+  const visibleCount = Math.min(autoVisible, images.length);
   const maxStartIndex = Math.max(0, images.length - visibleCount);
-  const canGoPrev = startIndex > 0;
-  const canGoNext = startIndex < maxStartIndex;
+  const clampedStartIndex = Math.min(startIndex, maxStartIndex);
+  const canGoPrev = clampedStartIndex > 0;
+  const canGoNext = clampedStartIndex < maxStartIndex;
   const viewportWidth =
     visibleCount * ITEM_SIZE + (visibleCount - 1) * ITEM_GAP;
 
   return (
-    <div className="flex items-center gap-2">
+    <div ref={containerRef} className="flex w-full items-center gap-2">
       <button
         type="button"
         aria-label="Imagens anteriores"
@@ -75,7 +110,7 @@ export function ImageCarousel({ images, maxVisible = 5 }: ImageCarouselProps) {
           className="flex transition-transform duration-300 ease-out"
           style={{
             gap: ITEM_GAP,
-            transform: `translateX(-${startIndex * (ITEM_SIZE + ITEM_GAP)}px)`,
+            transform: `translateX(-${clampedStartIndex * (ITEM_SIZE + ITEM_GAP)}px)`,
           }}
         >
           {images.map((image, index) => (
