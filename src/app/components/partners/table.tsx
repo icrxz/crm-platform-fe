@@ -51,109 +51,114 @@ export default function PartnersTable({
         Técnicos
       </h1>
 
-      <PartnersSearchBar setIsCreationModalOpen={setIsCreateModalOpen} />
+      <div className="flex min-h-0 flex-1 flex-col items-center justify-center overflow-y-auto">
+        <div className="flex w-full flex-col gap-4">
+          <PartnersSearchBar setIsCreationModalOpen={setIsCreateModalOpen} />
 
-      <div className="flex min-h-0 flex-1 flex-col justify-center overflow-y-auto">
-        <div className="mt-4 flow-root">
-          <div className="overflow-x-auto">
-            <div className="inline-block min-w-full align-middle">
-              <div className="overflow-hidden rounded-md bg-gray-50 p-2 md:pt-0">
-                <table className="hidden min-w-full rounded-md text-gray-900 md:table">
-                  <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
-                    <tr>
-                      <th scope="col" className="px-4 py-3 font-medium sm:pl-6">
-                        Nome
-                      </th>
-                      <th scope="col" className="px-3 py-3 font-medium">
-                        Tipo
-                      </th>
-                      <th scope="col" className="px-3 py-3 font-medium">
-                        Documento
-                      </th>
-                      <th scope="col" className="px-3 py-3 font-medium">
-                        Cidade
-                      </th>
-                      <th scope="col" className="px-3 py-3 font-medium">
-                        Estado
-                      </th>
-                      <th scope="col" className="px-3 py-3 font-medium">
-                        Status
-                      </th>
-                      <th scope="col" className="px-3 py-3 font-medium">
-                        Ações
-                      </th>
-                    </tr>
-                  </thead>
+          <div className="flow-root">
+            <div className="overflow-x-auto">
+              <div className="inline-block min-w-full align-middle">
+                <div className="overflow-hidden rounded-md bg-gray-50 p-2 md:pt-0">
+                  <table className="hidden min-w-full rounded-md text-gray-900 md:table">
+                    <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
+                      <tr>
+                        <th
+                          scope="col"
+                          className="px-4 py-3 font-medium sm:pl-6"
+                        >
+                          Nome
+                        </th>
+                        <th scope="col" className="px-3 py-3 font-medium">
+                          Tipo
+                        </th>
+                        <th scope="col" className="px-3 py-3 font-medium">
+                          Documento
+                        </th>
+                        <th scope="col" className="px-3 py-3 font-medium">
+                          Cidade
+                        </th>
+                        <th scope="col" className="px-3 py-3 font-medium">
+                          Estado
+                        </th>
+                        <th scope="col" className="px-3 py-3 font-medium">
+                          Status
+                        </th>
+                        <th scope="col" className="px-3 py-3 font-medium">
+                          Ações
+                        </th>
+                      </tr>
+                    </thead>
 
-                  <tbody className="divide-y divide-gray-200 text-gray-900">
-                    {partners?.result.map((partner) => (
-                      <tr
-                        key={partner.partner_id}
-                        className="group cursor-pointer"
-                        onClick={() => handleRowClick(partner.partner_id)}
-                      >
-                        <td className="whitespace-nowrap bg-white py-3 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md group-hover:bg-gray-100 sm:pl-6">
-                          <div className="flex items-center gap-3">
-                            <p>{`${partner.first_name} ${partner.last_name}`}</p>
-                          </div>
-                        </td>
-                        <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
-                          {partner.partner_type}
-                        </td>
-                        <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
-                          {parseDocument(partner.document) || '-'}
-                        </td>
-                        <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
-                          {partner.city}
-                        </td>
-                        <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
-                          {partner.state}
-                        </td>
-                        <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
-                          <Pill
-                            text={partner.active ? 'Ativo' : 'Inativo'}
-                            color={partner.active ? 'success' : 'neutral'}
-                          />
-                        </td>
-                        <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
-                          <div
-                            className="flex gap-2"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <IconButton
-                              color="info"
-                              icon={
-                                <PencilIcon className="h-5 w-5 md:h-6 md:w-6" />
-                              }
-                              onClick={() =>
-                                handlePartnerEdit(partner.partner_id)
-                              }
+                    <tbody className="divide-y divide-gray-200 text-gray-900">
+                      {partners?.result.map((partner) => (
+                        <tr
+                          key={partner.partner_id}
+                          className="group cursor-pointer"
+                          onClick={() => handleRowClick(partner.partner_id)}
+                        >
+                          <td className="whitespace-nowrap bg-white py-3 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md group-hover:bg-gray-100 sm:pl-6">
+                            <div className="flex items-center gap-3">
+                              <p>{`${partner.first_name} ${partner.last_name}`}</p>
+                            </div>
+                          </td>
+                          <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
+                            {partner.partner_type}
+                          </td>
+                          <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
+                            {parseDocument(partner.document) || '-'}
+                          </td>
+                          <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
+                            {partner.city}
+                          </td>
+                          <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
+                            {partner.state}
+                          </td>
+                          <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
+                            <Pill
+                              text={partner.active ? 'Ativo' : 'Inativo'}
+                              color={partner.active ? 'success' : 'neutral'}
                             />
-
-                            {partner.active && (
+                          </td>
+                          <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
+                            <div
+                              className="flex gap-2"
+                              onClick={(e) => e.stopPropagation()}
+                            >
                               <IconButton
-                                color="error"
+                                color="info"
                                 icon={
-                                  <TrashIcon className="h-5 w-5 md:h-6 md:w-6" />
+                                  <PencilIcon className="h-5 w-5 md:h-6 md:w-6" />
                                 }
                                 onClick={() =>
-                                  handlePartnerDelete(partner.partner_id)
+                                  handlePartnerEdit(partner.partner_id)
                                 }
                               />
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+
+                              {partner.active && (
+                                <IconButton
+                                  color="error"
+                                  icon={
+                                    <TrashIcon className="h-5 w-5 md:h-6 md:w-6" />
+                                  }
+                                  onClick={() =>
+                                    handlePartnerDelete(partner.partner_id)
+                                  }
+                                />
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
+
+          <Pagination paging={partners?.paging} page={initialPage} />
         </div>
       </div>
-
-      <Pagination paging={partners?.paging} page={initialPage} />
 
       {isCreateModalOpen && (
         <CreatePartnerModal

@@ -66,111 +66,119 @@ export default function CasesTable({
     <div className="flex h-full w-full flex-col">
       <h1 className={`${roboto.className} mb-4 text-xl md:text-2xl`}>Casos</h1>
 
-      <CasesSearchBar
-        setIsCreationModalOpen={setIsCreateModalOpen}
-        setIsFilterModalOpen={setIsFilterModalOpen}
-        setIsCreationBatchModalOpen={setIsCreateBatchModalOpen}
-      />
+      <div className="flex min-h-0 flex-1 flex-col items-center justify-center overflow-y-auto">
+        <div className="flex w-full flex-col gap-4">
+          <CasesSearchBar
+            setIsCreationModalOpen={setIsCreateModalOpen}
+            setIsFilterModalOpen={setIsFilterModalOpen}
+            setIsCreationBatchModalOpen={setIsCreateBatchModalOpen}
+          />
 
-      <div className="flex min-h-0 flex-1 flex-col justify-center overflow-y-auto">
-        <div className="mt-4 flow-root">
-          <div className="overflow-x-auto">
-            <div className="inline-block min-w-full align-middle">
-              <div className="overflow-hidden rounded-md bg-gray-50 p-2 md:pt-0">
-                <table className="hidden min-w-full rounded-md text-gray-900 md:table">
-                  <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
-                    <tr>
-                      <th scope="col" className="px-4 py-3 font-medium sm:pl-6">
-                        Sinistro
-                      </th>
-                      <th scope="col" className="px-4 py-3 font-medium sm:pl-6">
-                        Cliente
-                      </th>
-                      <th scope="col" className="px-3 py-3 font-medium">
-                        Cidade
-                      </th>
-                      <th scope="col" className="px-3 py-3 font-medium">
-                        Seguradora
-                      </th>
-                      <th scope="col" className="px-3 py-3 font-medium">
-                        Categoria
-                      </th>
-                      <th scope="col" className="px-4 py-3 font-medium">
-                        Técnico
-                      </th>
-                      <th scope="col" className="px-4 py-3 font-medium">
-                        Status
-                      </th>
-                      <th scope="col" className="px-4 py-3 font-medium">
-                        Vencimento
-                      </th>
-                    </tr>
-                  </thead>
-
-                  <tbody className="divide-y divide-gray-200 text-gray-900">
-                    {cases.result.map((crmCase) => (
-                      <tr key={crmCase.case_id} className="group">
-                        <td className="whitespace-nowrap bg-white py-3 pl-4 pr-3 text-sm text-blue-500 group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
-                          <div className="flex items-center gap-3">
-                            <Link
-                              className="hover:text-blue-700"
-                              href={`/cases/${crmCase.case_id}`}
-                            >
-                              {crmCase.external_reference}
-                            </Link>
-                          </div>
-                        </td>
-                        <td className="whitespace-nowrap bg-white py-3 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
-                          <div className="flex items-center gap-3">
-                            <p>{`${crmCase.customer_first_name || '-'} ${crmCase.customer_last_name || ''}`}</p>
-                          </div>
-                        </td>
-                        <td className="whitespace-nowrap bg-white px-4 py-3 text-sm">
-                          {crmCase.customer_city || '-'}
-                        </td>
-                        <td className="whitespace-nowrap bg-white px-4 py-3 text-sm">
-                          {crmCase.contractor_company_name || '-'}
-                        </td>
-                        <td className="whitespace-nowrap bg-white px-4 py-3 text-sm">
-                          {crmCase.category
-                            ? caseCategoryMap[
-                                crmCase.category as CaseCategory
-                              ] || crmCase.category
-                            : '-'}
-                        </td>
-                        <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                          {crmCase.partner_first_name ? (
-                            crmCase.partner_id ? (
-                              <Link
-                                className="text-blue-500 hover:text-blue-700"
-                                href={`/partners/${crmCase.partner_id}`}
-                              >
-                                {crmCase.partner_first_name}
-                              </Link>
-                            ) : (
-                              crmCase.partner_first_name
-                            )
-                          ) : (
-                            '-'
-                          )}
-                        </td>
-                        <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                          {caseStatusMap[crmCase.status]}
-                        </td>
-                        <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                          {parseDateTime(crmCase.due_date, 'dd/MM/yyyy')}
-                        </td>
+          <div className="flow-root">
+            <div className="overflow-x-auto">
+              <div className="inline-block min-w-full align-middle">
+                <div className="overflow-hidden rounded-md bg-gray-50 p-2 md:pt-0">
+                  <table className="hidden min-w-full rounded-md text-gray-900 md:table">
+                    <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
+                      <tr>
+                        <th
+                          scope="col"
+                          className="px-4 py-3 font-medium sm:pl-6"
+                        >
+                          Sinistro
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-4 py-3 font-medium sm:pl-6"
+                        >
+                          Cliente
+                        </th>
+                        <th scope="col" className="px-3 py-3 font-medium">
+                          Cidade
+                        </th>
+                        <th scope="col" className="px-3 py-3 font-medium">
+                          Seguradora
+                        </th>
+                        <th scope="col" className="px-3 py-3 font-medium">
+                          Categoria
+                        </th>
+                        <th scope="col" className="px-4 py-3 font-medium">
+                          Técnico
+                        </th>
+                        <th scope="col" className="px-4 py-3 font-medium">
+                          Status
+                        </th>
+                        <th scope="col" className="px-4 py-3 font-medium">
+                          Vencimento
+                        </th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+
+                    <tbody className="divide-y divide-gray-200 text-gray-900">
+                      {cases.result.map((crmCase) => (
+                        <tr key={crmCase.case_id} className="group">
+                          <td className="whitespace-nowrap bg-white py-3 pl-4 pr-3 text-sm text-blue-500 group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                            <div className="flex items-center gap-3">
+                              <Link
+                                className="hover:text-blue-700"
+                                href={`/cases/${crmCase.case_id}`}
+                              >
+                                {crmCase.external_reference}
+                              </Link>
+                            </div>
+                          </td>
+                          <td className="whitespace-nowrap bg-white py-3 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+                            <div className="flex items-center gap-3">
+                              <p>{`${crmCase.customer_first_name || '-'} ${crmCase.customer_last_name || ''}`}</p>
+                            </div>
+                          </td>
+                          <td className="whitespace-nowrap bg-white px-4 py-3 text-sm">
+                            {crmCase.customer_city || '-'}
+                          </td>
+                          <td className="whitespace-nowrap bg-white px-4 py-3 text-sm">
+                            {crmCase.contractor_company_name || '-'}
+                          </td>
+                          <td className="whitespace-nowrap bg-white px-4 py-3 text-sm">
+                            {crmCase.category
+                              ? caseCategoryMap[
+                                  crmCase.category as CaseCategory
+                                ] || crmCase.category
+                              : '-'}
+                          </td>
+                          <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
+                            {crmCase.partner_first_name ? (
+                              crmCase.partner_id ? (
+                                <Link
+                                  className="text-blue-500 hover:text-blue-700"
+                                  href={`/partners/${crmCase.partner_id}`}
+                                >
+                                  {crmCase.partner_first_name}
+                                </Link>
+                              ) : (
+                                crmCase.partner_first_name
+                              )
+                            ) : (
+                              '-'
+                            )}
+                          </td>
+                          <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
+                            {caseStatusMap[crmCase.status]}
+                          </td>
+                          <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
+                            {parseDateTime(crmCase.due_date, 'dd/MM/yyyy')}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
+
+          <Pagination paging={cases?.paging} page={initialPage} />
         </div>
       </div>
-
-      <Pagination paging={cases?.paging} page={initialPage} />
 
       {isFilterModalOpen && (
         <FilterModal
