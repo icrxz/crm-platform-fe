@@ -51,13 +51,11 @@ export default function PaymentsSearchBar({
 
   return (
     <div className="flex w-full flex-wrap items-center gap-3 rounded-lg bg-gray-100 p-3 shadow-md">
-      <div className="w-full sm:w-96">
-        <Search
-          placeholder="Buscar pagamentos pelo sinistro"
-          handleSearch={handleSearch}
-          initialValue={searchParams.get('sinistro') || ''}
-        />
-      </div>
+      <Search
+        placeholder="Buscar pagamentos pelo sinistro"
+        handleSearch={handleSearch}
+        initialValue={searchParams.get('sinistro') || ''}
+      />
 
       <div className="w-full sm:w-80">
         <Autocomplete

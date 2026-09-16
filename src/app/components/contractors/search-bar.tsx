@@ -27,14 +27,14 @@ export default function ContractorsSearchBar({
   };
 
   return (
-    <div className="flex w-full rounded-lg bg-gray-100 p-3 shadow-md">
+    <div className="flex w-full flex-wrap items-center justify-between gap-3 rounded-lg bg-gray-100 p-3 shadow-md">
       <Search
         placeholder="Buscar contratantes..."
         initialValue={searchParams.get('nome') || ''}
         handleSearch={handleSearch}
       />
 
-      <div className="flex w-1/2 justify-end">
+      <div className="flex flex-wrap items-center gap-4">
         <Button
           className="rounded-lg bg-green-500 p-2 text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
           onClick={() => setIsCreationModalOpen(true)}
