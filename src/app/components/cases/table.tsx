@@ -18,6 +18,7 @@ import { adminRoles } from '../../utils/roles';
 import { ListItemCard, ListItemCardGroup } from '../common/list-item-card';
 import { ListPageLayout } from '../common/list-page-layout';
 import { Pagination } from '../common/pagination';
+import { Table, TableColumn } from '../common/table';
 import { CreateCaseBatchModal } from './batch-form-modal';
 import CreateCaseModal from './create-case';
 import { FilterModal } from './filter-modal';
@@ -62,6 +63,83 @@ export default function CasesTable({
     router.push(pathname + '?' + params.toString());
     setIsFilterModalOpen(false);
   }
+
+  const columns: TableColumn<CaseListItem>[] = [
+    {
+      key: 'external_reference',
+      header: 'Sinistro',
+      skeletonWidth: 'w-20',
+      render: (crmCase) => (
+        <Link
+          className="text-blue-500 hover:text-blue-700"
+          href={`/cases/${crmCase.case_id}`}
+        >
+          {crmCase.external_reference}
+        </Link>
+      ),
+    },
+    {
+      key: 'customer',
+      header: 'Cliente',
+      skeletonWidth: 'w-32',
+      render: (crmCase) =>
+        `${crmCase.customer_first_name || '-'} ${crmCase.customer_last_name || ''}`,
+    },
+    {
+      key: 'city',
+      header: 'Cidade',
+      skeletonWidth: 'w-24',
+      render: (crmCase) => crmCase.customer_city || '-',
+    },
+    {
+      key: 'contractor',
+      header: 'Seguradora',
+      skeletonWidth: 'w-28',
+      render: (crmCase) => crmCase.contractor_company_name || '-',
+    },
+    {
+      key: 'category',
+      header: 'Categoria',
+      skeletonWidth: 'w-16',
+      render: (crmCase) =>
+        crmCase.category
+          ? caseCategoryMap[crmCase.category as CaseCategory] ||
+            crmCase.category
+          : '-',
+    },
+    {
+      key: 'partner',
+      header: 'Técnico',
+      skeletonWidth: 'w-20',
+      render: (crmCase) =>
+        crmCase.partner_first_name ? (
+          crmCase.partner_id ? (
+            <Link
+              className="text-blue-500 hover:text-blue-700"
+              href={`/partners/${crmCase.partner_id}`}
+            >
+              {crmCase.partner_first_name}
+            </Link>
+          ) : (
+            crmCase.partner_first_name
+          )
+        ) : (
+          '-'
+        ),
+    },
+    {
+      key: 'status',
+      header: 'Status',
+      skeletonWidth: 'w-20',
+      render: (crmCase) => caseStatusMap[crmCase.status],
+    },
+    {
+      key: 'due_date',
+      header: 'Vencimento',
+      skeletonWidth: 'w-20',
+      render: (crmCase) => parseDateTime(crmCase.due_date, 'dd/MM/yyyy'),
+    },
+  ];
 
   return (
     <>
@@ -135,92 +213,11 @@ export default function CasesTable({
           ))}
         </ListItemCardGroup>
 
-        <table className="hidden min-w-full rounded-md text-gray-900 md:table">
-          <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
-            <tr>
-              <th scope="col" className="px-4 py-3 font-medium sm:pl-6">
-                Sinistro
-              </th>
-              <th scope="col" className="px-4 py-3 font-medium sm:pl-6">
-                Cliente
-              </th>
-              <th scope="col" className="px-3 py-3 font-medium">
-                Cidade
-              </th>
-              <th scope="col" className="px-3 py-3 font-medium">
-                Seguradora
-              </th>
-              <th scope="col" className="px-3 py-3 font-medium">
-                Categoria
-              </th>
-              <th scope="col" className="px-4 py-3 font-medium">
-                Técnico
-              </th>
-              <th scope="col" className="px-4 py-3 font-medium">
-                Status
-              </th>
-              <th scope="col" className="px-4 py-3 font-medium">
-                Vencimento
-              </th>
-            </tr>
-          </thead>
-
-          <tbody className="divide-y divide-gray-200 text-gray-900">
-            {cases.result.map((crmCase) => (
-              <tr key={crmCase.case_id} className="group">
-                <td className="whitespace-nowrap bg-white py-3 pl-4 pr-3 text-sm text-blue-500 group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
-                  <div className="flex items-center gap-3">
-                    <Link
-                      className="hover:text-blue-700"
-                      href={`/cases/${crmCase.case_id}`}
-                    >
-                      {crmCase.external_reference}
-                    </Link>
-                  </div>
-                </td>
-                <td className="whitespace-nowrap bg-white py-3 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
-                  <div className="flex items-center gap-3">
-                    <p>{`${crmCase.customer_first_name || '-'} ${crmCase.customer_last_name || ''}`}</p>
-                  </div>
-                </td>
-                <td className="whitespace-nowrap bg-white px-4 py-3 text-sm">
-                  {crmCase.customer_city || '-'}
-                </td>
-                <td className="whitespace-nowrap bg-white px-4 py-3 text-sm">
-                  {crmCase.contractor_company_name || '-'}
-                </td>
-                <td className="whitespace-nowrap bg-white px-4 py-3 text-sm">
-                  {crmCase.category
-                    ? caseCategoryMap[crmCase.category as CaseCategory] ||
-                      crmCase.category
-                    : '-'}
-                </td>
-                <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                  {crmCase.partner_first_name ? (
-                    crmCase.partner_id ? (
-                      <Link
-                        className="text-blue-500 hover:text-blue-700"
-                        href={`/partners/${crmCase.partner_id}`}
-                      >
-                        {crmCase.partner_first_name}
-                      </Link>
-                    ) : (
-                      crmCase.partner_first_name
-                    )
-                  ) : (
-                    '-'
-                  )}
-                </td>
-                <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                  {caseStatusMap[crmCase.status]}
-                </td>
-                <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                  {parseDateTime(crmCase.due_date, 'dd/MM/yyyy')}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <Table
+          columns={columns}
+          data={cases.result}
+          rowKey={(crmCase) => crmCase.case_id}
+        />
       </ListPageLayout>
 
       {isFilterModalOpen && (
