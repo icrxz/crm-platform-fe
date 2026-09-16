@@ -67,7 +67,7 @@ export default function PartnerForm({
         </h1>
 
         <div className="w-full">
-          <div className="mb-4 columns-4">
+          <div className="mb-4 columns-1 sm:columns-4">
             <TextInput
               label="Nome"
               name="first_name"
@@ -150,7 +150,7 @@ export default function PartnerForm({
             />
           </div>
 
-          <div className="mb-4 columns-2">
+          <div className="mb-4 columns-1 sm:columns-2">
             <TextInput
               label="Chave PIX"
               name="payment_key"
@@ -199,7 +199,7 @@ export default function PartnerForm({
 
           <hr />
 
-          <div className="my-4 columns-2">
+          <div className="my-4 columns-1 sm:columns-2">
             <TextInput
               label="Cidade"
               name="city"
@@ -221,7 +221,7 @@ export default function PartnerForm({
 
           <hr />
 
-          <div className="my-4 columns-2">
+          <div className="my-4 columns-1 sm:columns-2">
             <div>
               <label
                 className="mb-3 block text-xs font-medium text-gray-900"

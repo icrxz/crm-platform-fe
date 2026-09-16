@@ -13,9 +13,10 @@ import { UserRole } from '@/app/types/user';
 import { roboto } from '@/app/ui/fonts';
 import { onlyAdminStatuses, showReportStatus } from '@/app/utils/case_status';
 import { adminRoles } from '@/app/utils/roles';
-import { ArrowRightIcon } from '@heroicons/react/24/outline';
+import { ArrowDownIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 
+import { Accordion } from '../common/accordion';
 import { Card } from '../common/card';
 import { CardText } from '../common/card/card-text';
 import { DownloadReportButton } from './download-report-button';
@@ -62,30 +63,68 @@ export default function CaseDetails({ crmCase, userRole }: CaseDetailsProps) {
     return colorVar;
   }
 
+  function renderStatusSteps(direction: 'row' | 'column') {
+    return caseStatusList.map((status, idx) => {
+      const isLast = idx === caseStatusList.length - 1;
+      return (
+        <div
+          key={status}
+          className={
+            direction === 'row'
+              ? 'flex items-center'
+              : 'flex flex-col items-start'
+          }
+        >
+          <p
+            className={`${roboto.className} ${getStatusColor(status, crmCase.status)}`}
+          >
+            {status}
+          </p>
+
+          {!isLast &&
+            (direction === 'row' ? (
+              <ArrowRightIcon className="ml-2 h-5 w-5 pt-1 text-gray-700" />
+            ) : (
+              <ArrowDownIcon className="my-1 h-5 w-5 text-gray-700" />
+            ))}
+        </div>
+      );
+    });
+  }
+
+  const currentStatusLabel = caseStatusMap[crmCase.status];
+
   return (
     <>
       <div className="flex justify-center">
-        <div className="mb-6 flex w-full justify-center gap-4 rounded-xl bg-gray-50 p-4 shadow-sm">
-          {caseStatusList.map((status, idx) => {
-            return (
-              <div key={status} className="flex">
+        <div className="mb-6 w-full rounded-xl bg-gray-50 p-4 shadow-sm">
+          {/* Below md: closed accordion showing only the current status,
+              expands to the full vertical stepper. Above md: unchanged
+              always-visible horizontal row. */}
+          <div className="md:hidden">
+            <Accordion
+              summary={
                 <p
-                  className={`${roboto.className} ${getStatusColor(status, crmCase.status)}`}
+                  className={`${roboto.className} font-medium ${getStatusColor(currentStatusLabel, crmCase.status)}`}
                 >
-                  {status}
+                  {currentStatusLabel}
                 </p>
-
-                {idx !== caseStatusList.length - 1 && (
-                  <ArrowRightIcon className="ml-2 h-5 w-5 pt-1 text-gray-700" />
-                )}
+              }
+            >
+              <div className="flex flex-col items-start gap-2 pt-2">
+                {renderStatusSteps('column')}
               </div>
-            );
-          })}
+            </Accordion>
+          </div>
+
+          <div className="hidden md:flex md:items-center md:justify-center md:gap-4">
+            {renderStatusSteps('row')}
+          </div>
         </div>
       </div>
 
-      <div className="mb-8 flex gap-6">
-        <div className="h-fill w-1/3">
+      <div className="mb-8 flex flex-col gap-6 md:flex-row">
+        <div className="h-fill w-full md:w-1/3">
           <Card title="Dados do caso" titleSize="xl">
             <div className="ml-4 items-center gap-8">
               <CardText title="Sinistro:" text={crmCase.external_reference} />
@@ -151,7 +190,7 @@ export default function CaseDetails({ crmCase, userRole }: CaseDetailsProps) {
           </Card>
         </div>
 
-        <div className="h-fit w-2/3">
+        <div className="h-fit w-full md:w-2/3">
           {crmCase.status && <FormDetails crmCase={crmCase} />}
         </div>
       </div>
@@ -160,8 +199,8 @@ export default function CaseDetails({ crmCase, userRole }: CaseDetailsProps) {
         <CommentDetails crmCase={crmCase} userRole={userRole} />
       </div>
 
-      <div className="mb-8 flex gap-6">
-        <div className="h-fill w-1/2">
+      <div className="mb-8 flex flex-col gap-6 md:flex-row">
+        <div className="h-fill w-full md:w-1/2">
           <Card title="Cliente" titleSize="xl">
             <div className="ml-4 items-center gap-8">
               <CardText
@@ -203,7 +242,7 @@ export default function CaseDetails({ crmCase, userRole }: CaseDetailsProps) {
           </Card>
         </div>
 
-        <div className="h-fill w-1/2">
+        <div className="h-fill w-full md:w-1/2">
           <Card title="Produto" titleSize="xl">
             <div className="ml-4 items-center gap-8">
               <CardText

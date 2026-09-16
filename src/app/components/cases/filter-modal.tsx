@@ -4,7 +4,12 @@ import { roboto } from '@/app/ui/fonts';
 import { Select, SelectItem, Selection } from '@heroui/react';
 import { useEffect, useState } from 'react';
 import { CaseFilters } from '../../libs/case-filters-storage';
-import { CaseStatus, caseStatusMap } from '../../types/case';
+import {
+  CaseCategory,
+  caseCategoryMap,
+  CaseStatus,
+  caseStatusMap,
+} from '../../types/case';
 import { Contractor } from '../../types/contractor';
 import { UserRole } from '../../types/user';
 import { adminRoles } from '../../utils/roles';
@@ -18,6 +23,7 @@ interface FilterModalProps {
   onApply(filters: CaseFilters): void;
   initialStatus: string[];
   initialContractorId: string[];
+  initialCategory: string[];
   userRole?: UserRole;
 }
 
@@ -27,6 +33,7 @@ export function FilterModal({
   onApply,
   initialStatus,
   initialContractorId,
+  initialCategory,
   userRole,
 }: FilterModalProps) {
   const isAdmin = userRole !== undefined && adminRoles.includes(userRole);
@@ -43,6 +50,9 @@ export function FilterModal({
   const [contractorId, setContractorId] = useState<Set<string>>(
     new Set(initialContractorId)
   );
+  const [category, setCategory] = useState<Set<string>>(
+    new Set(initialCategory)
+  );
   const [contractors, setContractors] = useState<Contractor[]>([]);
 
   useEffect(() => {
@@ -56,6 +66,7 @@ export function FilterModal({
     onApply({
       status: Array.from(status),
       contractorId: Array.from(contractorId),
+      category: Array.from(category),
     });
   }
 
@@ -104,6 +115,20 @@ export function FilterModal({
                 <SelectItem key={contractor.contractor_id}>
                   {contractor.company_name}
                 </SelectItem>
+              ))}
+            </Select>
+
+            <Select
+              label="Categoria"
+              placeholder="Todas"
+              selectionMode="multiple"
+              selectedKeys={category}
+              onSelectionChange={(keys) => setCategory(toStringSet(keys))}
+              renderValue={() => renderSelectionCount(category.size, 'Todas')}
+              classNames={{ trigger: 'min-h-10 h-10' }}
+            >
+              {Object.values(CaseCategory).map((value) => (
+                <SelectItem key={value}>{caseCategoryMap[value]}</SelectItem>
               ))}
             </Select>
           </div>

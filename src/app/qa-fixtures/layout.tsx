@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import { SnackbarProvider } from '../context/SnackbarProvider';
 
 // Several fixtured components (e.g. CasesTable) call useSearchParams(),
 // which requires either a Suspense boundary or opting out of static
@@ -20,5 +21,8 @@ export default function Layout({ children }: LayoutProps) {
     notFound();
   }
 
-  return children;
+  // Mirrors (authenticated)/layout.tsx's provider so components that call
+  // useSnackbar() (e.g. create/edit modals) don't crash when a fixture
+  // interacts with them, not just renders them statically.
+  return <SnackbarProvider>{children}</SnackbarProvider>;
 }

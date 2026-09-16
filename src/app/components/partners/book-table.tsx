@@ -3,6 +3,8 @@ import { parseDateTime, ONLY_DATE_PATTERN } from '@/app/libs/date';
 import { parseToCurrency } from '@/app/libs/parser';
 import { PartnerBookCaseItem } from '@/app/types/partner-book-item';
 import { SearchResponse } from '@/app/types/search_response';
+import { ListItemCard, ListItemCardGroup } from '../common/list-item-card';
+import { Table, TableColumn } from '../common/table';
 
 interface PartnerBookTableProps {
   cases: SearchResponse<PartnerBookCaseItem>;
@@ -43,93 +45,151 @@ export default function PartnerBookTable({ cases }: PartnerBookTableProps) {
       .map(([doc]) => doc)
   );
 
-  return (
-    <div className="mt-6 overflow-x-auto rounded-md bg-gray-50 p-2">
-      <table className="hidden min-w-full table-auto rounded-md text-gray-900 md:table">
-        <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
-          <tr>
-            <th scope="col" className="py-5 font-medium sm:pl-6">
-              Data
-            </th>
-            <th scope="col" className="py-5 font-medium sm:pl-6">
-              Cidade
-            </th>
-            <th scope="col" className="py-5 font-medium sm:pl-6">
-              Segurado
-            </th>
-            <th scope="col" className="py-5 font-medium sm:pl-6">
-              Sinistro
-            </th>
-            <th scope="col" className="py-5 font-medium sm:pl-6">
-              Serviço
-            </th>
-            <th scope="col" className="py-5 font-medium sm:pl-6">
-              Valor a pagar
-            </th>
-            <th scope="col" className="py-5 font-medium sm:pl-6">
-              Status
-            </th>
-            <th scope="col" className="py-5 font-medium sm:pl-6">
-              Data de pagamento
-            </th>
-          </tr>
-        </thead>
+  const columns: TableColumn<PartnerBookCaseItem>[] = [
+    {
+      key: 'created_at',
+      header: 'Data',
+      skeletonWidth: 'w-20',
+      render: (crmCase) => parseDateTime(crmCase.created_at),
+    },
+    {
+      key: 'city',
+      header: 'Cidade',
+      skeletonWidth: 'w-20',
+      render: (crmCase) => crmCase.customer_city || '-',
+    },
+    {
+      key: 'customer',
+      header: 'Segurado',
+      skeletonWidth: 'w-28',
+      render: (crmCase) => {
+        const isDuplicate = duplicateDocuments.has(
+          crmCase.customer_document || ''
+        );
+        return (
+          <span className={isDuplicate ? 'text-red-500' : ''}>
+            {crmCase.customer_first_name
+              ? `${crmCase.customer_first_name} ${crmCase.customer_last_name}`
+              : '-'}
+          </span>
+        );
+      },
+    },
+    {
+      key: 'external_reference',
+      header: 'Sinistro',
+      skeletonWidth: 'w-20',
+      render: (crmCase) => (
+        <Link
+          className="text-blue-500 hover:text-blue-700"
+          href={`/cases/${crmCase.case_id}`}
+        >
+          {crmCase.external_reference}
+        </Link>
+      ),
+    },
+    {
+      key: 'type',
+      header: 'Serviço',
+      skeletonWidth: 'w-12',
+      render: (crmCase) => serviceTypeMap[crmCase.type] || '-',
+    },
+    {
+      key: 'payment_total',
+      header: 'Valor a pagar',
+      skeletonWidth: 'w-16',
+      render: (crmCase) => parseToCurrency(crmCase.payment_total),
+    },
+    {
+      key: 'payment_status',
+      header: 'Status',
+      skeletonWidth: 'w-16',
+      render: (crmCase) => (
+        <span
+          className={`font-medium ${paymentStatusClassMap[crmCase.payment_status]}`}
+        >
+          {paymentStatusMap[crmCase.payment_status]}
+        </span>
+      ),
+    },
+    {
+      key: 'paid_at',
+      header: 'Data de pagamento',
+      skeletonWidth: 'w-20',
+      render: (crmCase) =>
+        crmCase.paid_at
+          ? parseDateTime(crmCase.paid_at, ONLY_DATE_PATTERN)
+          : '-',
+    },
+  ];
 
-        <tbody className="divide-y divide-gray-200 text-gray-900">
-          {(cases?.result || []).map((crmCase) => {
-            const isDuplicate = duplicateDocuments.has(
-              crmCase.customer_document || ''
-            );
-            return (
-              <tr key={crmCase.case_id} className="group">
-                <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                  {parseDateTime(crmCase.created_at)}
-                </td>
-                <td className="whitespace-nowrap bg-white py-5 pl-6 text-sm">
-                  {crmCase.customer_city || '-'}
-                </td>
-                <td
-                  className={
-                    'whitespace-nowrap bg-white py-5 pl-6 text-sm' +
-                    (isDuplicate ? ' text-red-500' : '')
-                  }
+  return (
+    <div className="mt-6 rounded-md bg-gray-50 p-2">
+      <ListItemCardGroup>
+        {(cases?.result || []).map((crmCase) => {
+          const isDuplicate = duplicateDocuments.has(
+            crmCase.customer_document || ''
+          );
+
+          return (
+            <ListItemCard
+              key={crmCase.case_id}
+              title={
+                <Link
+                  className="text-blue-500 hover:text-blue-700"
+                  href={`/cases/${crmCase.case_id}`}
                 >
-                  {crmCase.customer_first_name
-                    ? `${crmCase.customer_first_name} ${crmCase.customer_last_name}`
-                    : '-'}
-                </td>
-                <td className="whitespace-nowrap bg-white py-5 pl-6 text-sm text-blue-500">
-                  <Link
-                    className="hover:text-blue-700"
-                    href={`/cases/${crmCase.case_id}`}
-                  >
-                    {crmCase.external_reference}
-                  </Link>
-                </td>
-                <td className="whitespace-nowrap bg-white py-5 pl-6 text-sm">
-                  {serviceTypeMap[crmCase.type] || '-'}
-                </td>
-                <td className="whitespace-nowrap bg-white py-5 pl-6 text-sm">
-                  {parseToCurrency(crmCase.payment_total)}
-                </td>
-                <td
-                  className={
-                    'whitespace-nowrap bg-white py-5 pl-6 text-sm font-medium ' +
-                    paymentStatusClassMap[crmCase.payment_status]
-                  }
-                >
-                  {paymentStatusMap[crmCase.payment_status]}
-                </td>
-                <td className="whitespace-nowrap bg-white py-5 pl-6 text-sm">
-                  {crmCase.paid_at
+                  {crmCase.external_reference}
+                </Link>
+              }
+              fields={[
+                { label: 'Data', value: parseDateTime(crmCase.created_at) },
+                { label: 'Cidade', value: crmCase.customer_city || '-' },
+                {
+                  label: 'Segurado',
+                  value: (
+                    <span className={isDuplicate ? 'text-red-500' : ''}>
+                      {crmCase.customer_first_name
+                        ? `${crmCase.customer_first_name} ${crmCase.customer_last_name}`
+                        : '-'}
+                    </span>
+                  ),
+                },
+                {
+                  label: 'Serviço',
+                  value: serviceTypeMap[crmCase.type] || '-',
+                },
+                {
+                  label: 'Valor a pagar',
+                  value: parseToCurrency(crmCase.payment_total),
+                },
+                {
+                  label: 'Status',
+                  value: (
+                    <span
+                      className={`font-medium ${paymentStatusClassMap[crmCase.payment_status]}`}
+                    >
+                      {paymentStatusMap[crmCase.payment_status]}
+                    </span>
+                  ),
+                },
+                {
+                  label: 'Data de pagamento',
+                  value: crmCase.paid_at
                     ? parseDateTime(crmCase.paid_at, ONLY_DATE_PATTERN)
-                    : '-'}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+                    : '-',
+                },
+              ]}
+            />
+          );
+        })}
+      </ListItemCardGroup>
+
+      <Table
+        columns={columns}
+        data={cases?.result}
+        rowKey={(crmCase) => crmCase.case_id}
+      />
     </div>
   );
 }

@@ -20,6 +20,7 @@ type CasePageParams = {
     sinistro?: string;
     status?: string | string[];
     contractor_id?: string | string[];
+    category?: string | string[];
     only_mine?: string;
     page?: number;
   }>;
@@ -31,10 +32,25 @@ function toQueryParts(key: string, value?: string | string[]): string[] {
   return values.filter(Boolean).map((v) => `${key}=${v}`);
 }
 
+// category isn't a top-level case field — it lives under metadata (see
+// Case['metadata']), so the API expects metadata[category]=value the same
+// way the dashboards filters already query it (fetch_dashboard_kpis.ts,
+// fetch_ranking.ts, etc.) rather than a plain category=value. Encoded
+// explicitly since '+' (CaseCategory.D_PLUS = 'd+') needs it and this
+// string is hand-built, not passed through URLSearchParams.
+function toMetadataCategoryQueryParts(value?: string | string[]): string[] {
+  if (!value) return [];
+  const values = Array.isArray(value) ? value : [value];
+  return values
+    .filter(Boolean)
+    .map((v) => `metadata[category]=${encodeURIComponent(v)}`);
+}
+
 async function getData(
   sinistro: string,
   status: string | string[] | undefined,
   contractorId: string | string[] | undefined,
+  category: string | string[] | undefined,
   ownerId: string,
   userRole: UserRole | undefined,
   page: number
@@ -58,6 +74,7 @@ async function getData(
     ...(sinistro ? [`external_reference=${sinistro}`] : []),
     ...allowedStatuses.map((s) => `status=${s}`),
     ...toQueryParts('contractor_id', contractorId),
+    ...toMetadataCategoryQueryParts(category),
     ...(ownerId ? [`owner_id=${ownerId}`] : []),
   ];
   const query = queryParts.join('&');
@@ -74,7 +91,7 @@ async function getData(
 }
 
 export default async function Page({ searchParams }: CasePageParams) {
-  const { sinistro, status, contractor_id, only_mine, page } =
+  const { sinistro, status, contractor_id, category, only_mine, page } =
     await searchParams;
   const user = await getCurrentUser();
   if (!user) {
@@ -87,6 +104,7 @@ export default async function Page({ searchParams }: CasePageParams) {
     sinistro || '',
     status,
     contractor_id,
+    category,
     ownerId,
     user?.role,
     page || 1

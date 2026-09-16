@@ -178,6 +178,26 @@ describe('Cases Page', () => {
       expect(query).toContain('contractor_id=contractor-2');
     });
 
+    it('should include category as a metadata[category] param, not a top-level one', async () => {
+      // Arrange: category lives under Case.metadata, not as a top-level
+      // field — same query shape the dashboards filters already use
+      // (fetch_dashboard_kpis.ts, fetch_ranking.ts).
+      setupAuthenticatedSession();
+      setupCases();
+      const searchParams = Promise.resolve({
+        category: ['d+', 'furniture'],
+      });
+
+      // Act
+      await Page({ searchParams });
+
+      // Assert
+      const query = mockFetchCasesFull.mock.calls[0][0] as string;
+      expect(query).toContain('metadata[category]=d%2B');
+      expect(query).toContain('metadata[category]=furniture');
+      expect(query).not.toMatch(/(?<!\[)category=/);
+    });
+
     it('should include owner_id when only_mine is true', async () => {
       // Arrange
       setupAuthenticatedSession({ user_id: 'user-42' });

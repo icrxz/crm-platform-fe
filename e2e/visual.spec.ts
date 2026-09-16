@@ -13,6 +13,7 @@ const routes = [
   'payments',
   'users',
   'sidebar',
+  'case-details',
 ];
 
 for (const route of routes) {

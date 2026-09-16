@@ -137,7 +137,7 @@ export function TransactionStatusForm({ crmCase }: TransactionStatusFormProps) {
       <form action={dispatch} className="px-5">
         <div className="mb-4">
           <h2>Técnico</h2>
-          <div className="mt-2 grid grid-cols-3 gap-4">
+          <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-3">
             {caseTransactions
               .filter((tr) => tr.type === TransactionType.OUTGOING)
               .map((transaction) => (
@@ -182,7 +182,7 @@ export function TransactionStatusForm({ crmCase }: TransactionStatusFormProps) {
 
         <div className="mb-4">
           <h2>Seguradora</h2>
-          <div className="mt-2 grid grid-cols-3 gap-4">
+          <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-3">
             {caseTransactions
               .filter((tr) => tr.type === TransactionType.INCOMING)
               .map((transaction) => (
