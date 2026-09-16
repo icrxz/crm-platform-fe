@@ -50,8 +50,8 @@ export default function PaymentsSearchBar({
   };
 
   return (
-    <div className="flex w-full items-center gap-2 rounded-lg bg-gray-100 p-3 shadow-md">
-      <div className="w-96 shrink-0">
+    <div className="flex w-full flex-wrap items-center gap-3 rounded-lg bg-gray-100 p-3 shadow-md">
+      <div className="w-full sm:w-96">
         <Search
           placeholder="Buscar pagamentos pelo sinistro"
           handleSearch={handleSearch}
@@ -59,7 +59,7 @@ export default function PaymentsSearchBar({
         />
       </div>
 
-      <div className="w-80 shrink-0">
+      <div className="w-full sm:w-80">
         <Autocomplete
           aria-label="Técnico responsável"
           placeholder="Selecione um técnico"

@@ -16,6 +16,7 @@ import { ListPageLayout } from '../../components/common/list-page-layout';
 import Modal from '../../components/common/modal';
 import { Pagination } from '../../components/common/pagination';
 import { Pill } from '../../components/common/pill';
+import { Table, TableColumn } from '../../components/common/table';
 import ContractorsSearchBar from '../../components/contractors/search-bar';
 import CreateContractorModal from './create-contractor';
 import { DeleteContractorModal } from './delete-contractor';
@@ -51,6 +52,71 @@ export default function ContractorsTable({
     router.push(`/contractors/${partnerID}`);
   }
 
+  const columns: TableColumn<ContractorListItem>[] = [
+    {
+      key: 'company_name',
+      header: 'Nome',
+      skeletonWidth: 'w-28',
+      render: (contractor) => contractor.company_name,
+    },
+    {
+      key: 'legal_name',
+      header: 'Razão social',
+      skeletonWidth: 'w-40',
+      render: (contractor) => contractor.legal_name,
+    },
+    {
+      key: 'document',
+      header: 'Documento',
+      skeletonWidth: 'w-24',
+      render: (contractor) => parseDocument(contractor.document),
+    },
+    {
+      key: 'created_at',
+      header: 'Data de criação',
+      skeletonWidth: 'w-20',
+      render: (contractor) => parseDateTime(contractor.created_at),
+    },
+    {
+      key: 'status',
+      header: 'Status',
+      skeletonWidth: 'w-16',
+      render: (contractor) => (
+        <Pill
+          text={contractor.active ? 'Ativo' : 'Inativo'}
+          color={contractor.active ? 'success' : 'neutral'}
+        />
+      ),
+    },
+    {
+      key: 'actions',
+      header: 'Ações',
+      skeletonWidth: 'w-16',
+      render: (contractor) => (
+        <div
+          className="flex items-center gap-3"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <IconButton
+            size="sm"
+            color="info"
+            icon={<PencilIcon className="h-5 w-5" />}
+            onClick={() => handleEdit(contractor.contractor_id)}
+          />
+
+          {contractor.active && (
+            <IconButton
+              size="sm"
+              color="error"
+              icon={<TrashIcon className="h-5 w-5" />}
+              onClick={() => handleDelete(contractor.contractor_id)}
+            />
+          )}
+        </div>
+      ),
+    },
+  ];
+
   return (
     <>
       <ListPageLayout
@@ -64,6 +130,9 @@ export default function ContractorsTable({
         pagination={
           <Pagination paging={contractors?.paging} page={initialPage} />
         }
+        isEmpty={!contractors?.result.length}
+        emptyMessage="Nenhuma seguradora encontrada."
+        onRefresh={() => router.refresh()}
       >
         <ListItemCardGroup>
           {contractors?.result.map((contractor) => (
@@ -111,83 +180,12 @@ export default function ContractorsTable({
           ))}
         </ListItemCardGroup>
 
-        <table className="hidden min-w-full rounded-md text-gray-900 md:table">
-          <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
-            <tr>
-              <th scope="col" className="px-4 py-3 font-medium sm:pl-6">
-                Nome
-              </th>
-              <th scope="col" className="px-4 py-3 font-medium sm:pl-6">
-                Razão social
-              </th>
-              <th scope="col" className="px-3 py-3 font-medium">
-                Documento
-              </th>
-              <th scope="col" className="px-3 py-3 font-medium">
-                Data de criação
-              </th>
-              <th scope="col" className="px-3 py-3 font-medium">
-                Status
-              </th>
-              <th scope="col" className="px-3 py-3 font-medium">
-                Ações
-              </th>
-            </tr>
-          </thead>
-
-          <tbody className="divide-y divide-gray-200 text-gray-900">
-            {contractors?.result.map((contractor) => (
-              <tr
-                key={contractor.contractor_id}
-                className="group cursor-pointer"
-                onClick={() => handleRowClick(contractor.contractor_id)}
-              >
-                <td className="whitespace-nowrap bg-white py-3 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md group-hover:bg-gray-100 sm:pl-6">
-                  <div className="flex items-center gap-3">
-                    <p>{`${contractor.company_name}`}</p>
-                  </div>
-                </td>
-                <td className="whitespace-nowrap bg-white py-3 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md group-hover:bg-gray-100 sm:pl-6">
-                  <div className="flex items-center gap-3">
-                    <p>{`${contractor.legal_name}`}</p>
-                  </div>
-                </td>
-                <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
-                  {parseDocument(contractor.document)}
-                </td>
-                <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
-                  {parseDateTime(contractor.created_at)}
-                </td>
-                <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
-                  <Pill
-                    text={contractor.active ? 'Ativo' : 'Inativo'}
-                    color={contractor.active ? 'success' : 'neutral'}
-                  />
-                </td>
-                <td className="whitespace-nowrap bg-white px-4 py-3 text-sm group-hover:bg-gray-100">
-                  <div
-                    className="flex items-center gap-3"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <IconButton
-                      color="info"
-                      icon={<PencilIcon className="h-5 w-5 md:h-6 md:w-6" />}
-                      onClick={() => handleEdit(contractor.contractor_id)}
-                    />
-
-                    {contractor.active && (
-                      <IconButton
-                        color="error"
-                        icon={<TrashIcon className="h-5 w-5 md:h-6 md:w-6" />}
-                        onClick={() => handleDelete(contractor.contractor_id)}
-                      />
-                    )}
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <Table
+          columns={columns}
+          data={contractors?.result}
+          rowKey={(contractor) => contractor.contractor_id}
+          onRowClick={(contractor) => handleRowClick(contractor.contractor_id)}
+        />
       </ListPageLayout>
 
       {isFilterModalOpen && (

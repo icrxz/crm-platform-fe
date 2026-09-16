@@ -2,7 +2,12 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { FilterModal } from '../filter-modal';
 import { fetchContractors } from '../../../services/contractors';
 import { buildContractor, buildSearchResponse } from '../__fixtures__/builders';
-import { CaseStatus, caseStatusMap } from '../../../types/case';
+import {
+  CaseCategory,
+  caseCategoryMap,
+  CaseStatus,
+  caseStatusMap,
+} from '../../../types/case';
 import { UserRole } from '../../../types/user';
 import { onlyAdminStatuses } from '../../../utils/case_status';
 
@@ -55,7 +60,7 @@ beforeEach(() => {
 
 describe('FilterModal', () => {
   describe('rendering', () => {
-    it('should render the Status and Seguradora selects', () => {
+    it('should render the Status, Seguradora and Categoria selects', () => {
       // Arrange & Act
       render(
         <FilterModal
@@ -64,12 +69,14 @@ describe('FilterModal', () => {
           onApply={jest.fn()}
           initialStatus={[]}
           initialContractorId={[]}
+          initialCategory={[]}
         />
       );
 
       // Assert
       expect(screen.getByText('Status')).toBeInTheDocument();
       expect(screen.getByText('Seguradora')).toBeInTheDocument();
+      expect(screen.getByText('Categoria')).toBeInTheDocument();
     });
 
     it('should fetch active contractors on mount', async () => {
@@ -81,6 +88,7 @@ describe('FilterModal', () => {
           onApply={jest.fn()}
           initialStatus={[]}
           initialContractorId={[]}
+          initialCategory={[]}
         />
       );
 
@@ -103,6 +111,7 @@ describe('FilterModal', () => {
           onApply={jest.fn()}
           initialStatus={[]}
           initialContractorId={[]}
+          initialCategory={[]}
         />
       );
 
@@ -122,6 +131,7 @@ describe('FilterModal', () => {
           onApply={onApply}
           initialStatus={[CaseStatus.NEW, CaseStatus.ONGOING]}
           initialContractorId={['contractor-1']}
+          initialCategory={['d+']}
         />
       );
 
@@ -132,6 +142,7 @@ describe('FilterModal', () => {
       expect(onApply).toHaveBeenCalledWith({
         status: [CaseStatus.NEW, CaseStatus.ONGOING],
         contractorId: ['contractor-1'],
+        category: ['d+'],
       });
     });
 
@@ -145,6 +156,7 @@ describe('FilterModal', () => {
           onApply={onApply}
           initialStatus={[]}
           initialContractorId={[]}
+          initialCategory={[]}
         />
       );
 
@@ -152,7 +164,50 @@ describe('FilterModal', () => {
       fireEvent.click(screen.getByText('Buscar'));
 
       // Assert
-      expect(onApply).toHaveBeenCalledWith({ status: [], contractorId: [] });
+      expect(onApply).toHaveBeenCalledWith({
+        status: [],
+        contractorId: [],
+        category: [],
+      });
+    });
+  });
+
+  describe('category options', () => {
+    it('should render every case category', () => {
+      render(
+        <FilterModal
+          isModalOpen
+          onClose={jest.fn()}
+          onApply={jest.fn()}
+          initialStatus={[]}
+          initialContractorId={[]}
+          initialCategory={[]}
+        />
+      );
+
+      Object.values(CaseCategory).forEach((category) => {
+        expect(screen.getByText(caseCategoryMap[category])).toBeInTheDocument();
+      });
+    });
+
+    it('should call onApply with all categories selected by default', () => {
+      const onApply = jest.fn();
+      render(
+        <FilterModal
+          isModalOpen
+          onClose={jest.fn()}
+          onApply={onApply}
+          initialStatus={[]}
+          initialContractorId={[]}
+          initialCategory={Object.values(CaseCategory)}
+        />
+      );
+
+      fireEvent.click(screen.getByText('Buscar'));
+
+      expect(onApply).toHaveBeenCalledWith(
+        expect.objectContaining({ category: Object.values(CaseCategory) })
+      );
     });
   });
 
@@ -165,6 +220,7 @@ describe('FilterModal', () => {
           onApply={jest.fn()}
           initialStatus={[]}
           initialContractorId={[]}
+          initialCategory={[]}
           userRole={UserRole.OPERATOR}
         />
       );
@@ -184,6 +240,7 @@ describe('FilterModal', () => {
           onApply={jest.fn()}
           initialStatus={[]}
           initialContractorId={[]}
+          initialCategory={[]}
           userRole={UserRole.ADMIN}
         />
       );
@@ -201,6 +258,7 @@ describe('FilterModal', () => {
           onApply={jest.fn()}
           initialStatus={[]}
           initialContractorId={[]}
+          initialCategory={[]}
         />
       );
 

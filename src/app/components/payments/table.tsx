@@ -11,6 +11,7 @@ import { IconButton } from '../common/icon-button';
 import { ListItemCard, ListItemCardGroup } from '../common/list-item-card';
 import { ListPageLayout } from '../common/list-page-layout';
 import { Pagination } from '../common/pagination';
+import { Table, TableColumn } from '../common/table';
 import { ConfirmPaymentModal } from './confirm-payment';
 import { EditPaymentModal } from './edit-payment';
 import { Partner } from '@/app/types/partner';
@@ -37,10 +38,6 @@ export default function PaymentTable({
   const [selectedTransaction, setSelectedTransaction] =
     useState<TransactionItem>();
 
-  function handleRowClick(paymentID: string) {
-    router.push(`/payments/${paymentID}`);
-  }
-
   function handleConfirmPayment(transaction: TransactionItem) {
     setSelectedTransaction(transaction);
     setIsConfirmPaymentModal(true);
@@ -51,6 +48,116 @@ export default function PaymentTable({
     setIsEditPaymentModal(true);
   }
 
+  const columns: TableColumn<TransactionItem>[] = [
+    {
+      key: 'external_reference',
+      header: 'Sinistro',
+      skeletonWidth: 'w-20',
+      render: (transaction) => (
+        <Link
+          className="text-blue-500 hover:text-blue-700"
+          href={`/cases/${transaction.case_id}`}
+        >
+          {transaction.external_reference}
+        </Link>
+      ),
+    },
+    {
+      key: 'customer',
+      header: 'Segurado',
+      skeletonWidth: 'w-28',
+      render: (transaction) =>
+        transaction.customer_first_name
+          ? `${transaction.customer_first_name} ${transaction.customer_last_name || ''}`.trim()
+          : '-',
+    },
+    {
+      key: 'partner',
+      header: 'Técnico',
+      skeletonWidth: 'w-24',
+      render: (transaction) =>
+        transaction.partner_id ? (
+          <Link
+            className="text-blue-500 hover:text-blue-700"
+            href={`/partners/${transaction.partner_id}`}
+          >
+            {transaction.partner_name}
+          </Link>
+        ) : (
+          transaction.partner_name
+        ),
+    },
+    {
+      key: 'pix',
+      header: 'PIX',
+      className: 'whitespace-pre-wrap',
+      skeletonWidth: 'w-24',
+      render: (transaction) => transaction.partner_account,
+    },
+    {
+      key: 'mo',
+      header: 'MO',
+      skeletonWidth: 'w-12',
+      render: (transaction) => parseToCurrency(transaction.mo.value),
+    },
+    {
+      key: 'transport',
+      header: 'Deslocamento',
+      skeletonWidth: 'w-16',
+      render: (transaction) => parseToCurrency(transaction.transport.value),
+    },
+    {
+      key: 'parts',
+      header: 'Peças',
+      skeletonWidth: 'w-12',
+      render: (transaction) => parseToCurrency(transaction.parts.value),
+    },
+    {
+      key: 'total',
+      header: 'Total',
+      skeletonWidth: 'w-16',
+      render: (transaction) => parseToCurrency(transaction.total),
+    },
+    {
+      key: 'status',
+      header: 'Status',
+      skeletonWidth: 'w-16',
+      render: (transaction) => transactionStatusTranslate[transaction.status],
+    },
+    {
+      key: 'created_at',
+      header: 'Data de criação',
+      skeletonWidth: 'w-20',
+      render: (transaction) => parseDateTime(transaction.created_at),
+    },
+    {
+      key: 'actions',
+      header: 'Ações',
+      skeletonWidth: 'w-16',
+      render: (transaction) => (
+        <div className="flex gap-2">
+          {transaction.status == TransactionStatus.PENDING && (
+            <>
+              <IconButton
+                size="sm"
+                color="success"
+                icon={<CheckIcon className="h-5 w-5" />}
+                onClick={() => handleConfirmPayment(transaction)}
+              />
+
+              <IconButton
+                size="sm"
+                color="info"
+                icon={<PencilIcon className="h-5 w-5" />}
+                onClick={() => handleEditPayment(transaction)}
+              />
+            </>
+          )}
+        </div>
+      ),
+    },
+  ];
+
   return (
     <>
       <ListPageLayout
@@ -59,14 +166,14 @@ export default function PaymentTable({
         pagination={
           <Pagination paging={transactions?.paging} page={initialPage} />
         }
+        isEmpty={!transactions?.result.length}
+        emptyMessage="Nenhum pagamento encontrado."
+        onRefresh={() => router.refresh()}
       >
-        {/* 11 columns don't fit at 1280px even with this reduced padding
-            (px-2 vs. px-4 on every other table) — accepted tradeoff, the
-            table keeps horizontal scroll (from ListPageLayout's
-            overflow-x-auto) to reach the last columns. Don't "fix" this
-            back to px-4/pr-3 to match the other tables; see
-            payments/table-skeleton.tsx, which matches this padding so the
-            loading state doesn't shift once real data lands. */}
+        {/* density="compact" below: 11 columns don't fit at 1280px even with
+            reduced padding (px-2 vs. px-4 on every other table) — accepted
+            tradeoff, the table keeps horizontal scroll (from
+            ListPageLayout's overflow-x-auto) to reach the last columns. */}
         <ListItemCardGroup>
           {transactions?.result.map((transaction) => (
             <ListItemCard
@@ -139,129 +246,12 @@ export default function PaymentTable({
           ))}
         </ListItemCardGroup>
 
-        <table className="hidden min-w-full rounded-md text-gray-900 md:table">
-          <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
-            <tr>
-              <th scope="col" className="px-2 py-3 font-medium sm:pl-6">
-                Sinistro
-              </th>
-              <th scope="col" className="px-2 py-3 font-medium">
-                Segurado
-              </th>
-              <th scope="col" className="px-2 py-3 font-medium">
-                Técnico
-              </th>
-              <th scope="col" className="px-2 py-3 font-medium">
-                PIX
-              </th>
-              <th scope="col" className="px-2 py-3 font-medium">
-                MO
-              </th>
-              <th scope="col" className="px-2 py-3 font-medium">
-                Deslocamento
-              </th>
-              <th scope="col" className="px-2 py-3 font-medium">
-                Peças
-              </th>
-              <th scope="col" className="px-2 py-3 font-medium">
-                Total
-              </th>
-              <th scope="col" className="px-2 py-3 font-medium">
-                Status
-              </th>
-              <th scope="col" className="px-2 py-3 font-medium">
-                Data de criação
-              </th>
-              <th scope="col" className="px-2 py-3 font-medium">
-                Ações
-              </th>
-            </tr>
-          </thead>
-
-          <tbody className="divide-y divide-gray-200 text-gray-900">
-            {transactions?.result.map((transaction) => (
-              <tr key={transaction.case_id} className="group">
-                <td className="whitespace-nowrap bg-white py-3 pl-4 pr-2 text-sm text-blue-500 group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
-                  <div className="flex items-center gap-3">
-                    <Link
-                      className="hover:text-blue-700"
-                      href={`/cases/${transaction.case_id}`}
-                    >
-                      {transaction.external_reference}
-                    </Link>
-                  </div>
-                </td>
-                <td className="whitespace-nowrap bg-white py-3 pl-4 pr-2 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
-                  <div className="flex items-center gap-3">
-                    <p>
-                      {transaction.customer_first_name
-                        ? `${transaction.customer_first_name} ${transaction.customer_last_name || ''}`.trim()
-                        : '-'}
-                    </p>
-                  </div>
-                </td>
-                <td className="whitespace-nowrap bg-white py-3 pl-4 pr-2 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
-                  <div className="flex items-center gap-3">
-                    {transaction.partner_id ? (
-                      <Link
-                        className="text-blue-500 hover:text-blue-700"
-                        href={`/partners/${transaction.partner_id}`}
-                      >
-                        {transaction.partner_name}
-                      </Link>
-                    ) : (
-                      <p>{transaction.partner_name}</p>
-                    )}
-                  </div>
-                </td>
-                <td className="whitespace-pre-wrap bg-white py-3 pl-4 pr-2 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
-                  <div className="flex items-center gap-3">
-                    <p>{transaction.partner_account}</p>
-                  </div>
-                </td>
-                <td className="whitespace-nowrap bg-white px-2 py-3 text-sm">
-                  {parseToCurrency(transaction.mo.value)}
-                </td>
-                <td className="whitespace-nowrap bg-white px-2 py-3 text-sm">
-                  {parseToCurrency(transaction.transport.value)}
-                </td>
-                <td className="whitespace-nowrap bg-white px-2 py-3 text-sm">
-                  {parseToCurrency(transaction.parts.value)}
-                </td>
-                <td className="whitespace-nowrap bg-white px-2 py-3 text-sm">
-                  {parseToCurrency(transaction.total)}
-                </td>
-                <td className="whitespace-nowrap bg-white px-2 py-3 text-sm">
-                  {transactionStatusTranslate[transaction.status]}
-                </td>
-                <td className="whitespace-nowrap bg-white px-2 py-3 text-sm">
-                  {parseDateTime(transaction.created_at)}
-                </td>
-                <td className="whitespace-nowrap bg-white px-2 py-3 text-sm">
-                  <div className="flex gap-2">
-                    {transaction.status == TransactionStatus.PENDING && (
-                      <>
-                        <IconButton
-                          color="success"
-                          icon={<CheckIcon className="h-5 w-5 md:h-6 md:w-6" />}
-                          onClick={() => handleConfirmPayment(transaction)}
-                        />
-
-                        <IconButton
-                          color="info"
-                          icon={
-                            <PencilIcon className="h-5 w-5 md:h-6 md:w-6" />
-                          }
-                          onClick={() => handleEditPayment(transaction)}
-                        />
-                      </>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <Table
+          columns={columns}
+          data={transactions?.result}
+          rowKey={(transaction) => transaction.case_id}
+          density="compact"
+        />
       </ListPageLayout>
 
       {isConfirmPaymentModal && (

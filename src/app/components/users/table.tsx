@@ -1,5 +1,4 @@
 'use client';
-import clsx from 'clsx';
 import { UserListItem } from '@/app/types/user-list-item';
 import { UserRole } from '@/app/types/user';
 import { SearchResponse } from '@/app/types/search_response';
@@ -9,6 +8,7 @@ import { ListItemCard, ListItemCardGroup } from '../common/list-item-card';
 import { ListPageLayout } from '../common/list-page-layout';
 import { Pagination } from '../common/pagination';
 import { Pill } from '../common/pill';
+import { Table, TableColumn } from '../common/table';
 
 interface UsersTableProps {
   users?: SearchResponse<UserListItem>;
@@ -29,10 +29,51 @@ export default function UsersTable({
     (user) => user.role != UserRole.THAVANNA_ADMIN
   );
 
+  const columns: TableColumn<UserListItem>[] = [
+    {
+      key: 'name',
+      header: 'Nome',
+      skeletonWidth: 'w-28',
+      render: (user) => `${user.first_name} ${user.last_name}`,
+    },
+    {
+      key: 'username',
+      header: 'Username',
+      skeletonWidth: 'w-24',
+      render: (user) => user.username,
+    },
+    {
+      key: 'email',
+      header: 'Email',
+      skeletonWidth: 'w-40',
+      render: (user) => user.email,
+    },
+    {
+      key: 'role',
+      header: 'Cargo',
+      skeletonWidth: 'w-20',
+      render: (user) => roleLabels[user.role],
+    },
+    {
+      key: 'status',
+      header: 'Status',
+      skeletonWidth: 'w-16',
+      render: (user) => (
+        <Pill
+          text={user.active ? 'Ativo' : 'Inativo'}
+          color={user.active ? 'success' : 'neutral'}
+        />
+      ),
+    },
+  ];
+
   return (
     <ListPageLayout
       title="Usuários"
       pagination={<Pagination paging={users?.paging} page={initialPage} />}
+      isEmpty={!visibleUsers?.length}
+      emptyMessage="Nenhum usuário encontrado."
+      onRefresh={() => router.refresh()}
     >
       <ListItemCardGroup>
         {visibleUsers?.map((user) => (
@@ -60,83 +101,13 @@ export default function UsersTable({
         ))}
       </ListItemCardGroup>
 
-      <table className="hidden min-w-full rounded-md text-gray-900 md:table">
-        <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
-          <tr>
-            <th scope="col" className="px-4 py-3 font-medium sm:pl-6">
-              Nome
-            </th>
-            <th scope="col" className="px-3 py-3 font-medium">
-              Username
-            </th>
-            <th scope="col" className="px-3 py-3 font-medium">
-              Email
-            </th>
-            <th scope="col" className="px-3 py-3 font-medium">
-              Cargo
-            </th>
-            <th scope="col" className="px-3 py-3 font-medium">
-              Status
-            </th>
-          </tr>
-        </thead>
-
-        <tbody className="divide-y divide-gray-200 text-gray-900">
-          {visibleUsers?.map((user) => (
-            <tr
-              key={user.user_id}
-              className={clsx('group', user.active && 'cursor-pointer')}
-              onClick={() => user.active && handleRowClick(user.user_id)}
-            >
-              <td
-                className={clsx(
-                  'whitespace-nowrap bg-white py-3 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6',
-                  user.active && 'group-hover:bg-gray-100'
-                )}
-              >
-                <div className="flex items-center gap-3">
-                  <p>{`${user.first_name} ${user.last_name}`}</p>
-                </div>
-              </td>
-              <td
-                className={clsx(
-                  'whitespace-nowrap bg-white px-4 py-3 text-sm',
-                  user.active && 'group-hover:bg-gray-100'
-                )}
-              >
-                {user.username}
-              </td>
-              <td
-                className={clsx(
-                  'whitespace-nowrap bg-white px-4 py-3 text-sm',
-                  user.active && 'group-hover:bg-gray-100'
-                )}
-              >
-                {user.email}
-              </td>
-              <td
-                className={clsx(
-                  'whitespace-nowrap bg-white px-4 py-3 text-sm',
-                  user.active && 'group-hover:bg-gray-100'
-                )}
-              >
-                {roleLabels[user.role]}
-              </td>
-              <td
-                className={clsx(
-                  'whitespace-nowrap bg-white px-4 py-3 text-sm',
-                  user.active && 'group-hover:bg-gray-100'
-                )}
-              >
-                <Pill
-                  text={user.active ? 'Ativo' : 'Inativo'}
-                  color={user.active ? 'success' : 'neutral'}
-                />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Table
+        columns={columns}
+        data={visibleUsers}
+        rowKey={(user) => user.user_id}
+        onRowClick={(user) => handleRowClick(user.user_id)}
+        isRowClickable={(user) => user.active}
+      />
     </ListPageLayout>
   );
 }
