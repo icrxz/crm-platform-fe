@@ -54,6 +54,9 @@ export default function PartnersTable({
           <PartnersSearchBar setIsCreationModalOpen={setIsCreateModalOpen} />
         }
         pagination={<Pagination paging={partners?.paging} page={initialPage} />}
+        isEmpty={!partners?.result.length}
+        emptyMessage="Nenhum técnico encontrado."
+        onRefresh={() => router.refresh()}
       >
         <ListItemCardGroup>
           {partners?.result.map((partner) => (

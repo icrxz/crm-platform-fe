@@ -59,6 +59,9 @@ export default function PaymentTable({
         pagination={
           <Pagination paging={transactions?.paging} page={initialPage} />
         }
+        isEmpty={!transactions?.result.length}
+        emptyMessage="Nenhum pagamento encontrado."
+        onRefresh={() => router.refresh()}
       >
         {/* 11 columns don't fit at 1280px even with this reduced padding
             (px-2 vs. px-4 on every other table) — accepted tradeoff, the

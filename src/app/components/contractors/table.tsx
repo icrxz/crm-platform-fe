@@ -64,6 +64,9 @@ export default function ContractorsTable({
         pagination={
           <Pagination paging={contractors?.paging} page={initialPage} />
         }
+        isEmpty={!contractors?.result.length}
+        emptyMessage="Nenhuma seguradora encontrada."
+        onRefresh={() => router.refresh()}
       >
         <ListItemCardGroup>
           {contractors?.result.map((contractor) => (

@@ -60,6 +60,9 @@ export default function CustomersTable({
         pagination={
           <Pagination paging={customers?.paging} page={initialPage} />
         }
+        isEmpty={!customers?.result.length}
+        emptyMessage="Nenhum cliente encontrado."
+        onRefresh={() => router.refresh()}
       >
         <ListItemCardGroup>
           {customers?.result.map((customer) => (

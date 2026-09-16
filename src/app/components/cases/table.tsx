@@ -75,6 +75,9 @@ export default function CasesTable({
           />
         }
         pagination={<Pagination paging={cases?.paging} page={initialPage} />}
+        isEmpty={cases.result.length === 0}
+        emptyMessage="Nenhum caso encontrado."
+        onRefresh={() => router.refresh()}
       >
         <ListItemCardGroup>
           {cases.result.map((crmCase) => (

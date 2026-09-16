@@ -33,6 +33,9 @@ export default function UsersTable({
     <ListPageLayout
       title="Usuários"
       pagination={<Pagination paging={users?.paging} page={initialPage} />}
+      isEmpty={!visibleUsers?.length}
+      emptyMessage="Nenhum usuário encontrado."
+      onRefresh={() => router.refresh()}
     >
       <ListItemCardGroup>
         {visibleUsers?.map((user) => (
