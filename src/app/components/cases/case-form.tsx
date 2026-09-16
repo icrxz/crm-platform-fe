@@ -76,7 +76,7 @@ export default function CaseForm({
         <h1 className={`${roboto.className} mb-5 text-2xl`}>Criar caso</h1>
 
         <div className="w-full">
-          <div className="mb-4 columns-2">
+          <div className="mb-4 columns-1 sm:columns-2">
             <TextInput
               label="Sinistro"
               name="claim"
@@ -113,7 +113,7 @@ export default function CaseForm({
 
           <hr />
 
-          <div className="my-4 columns-3">
+          <div className="my-4 columns-1 sm:columns-3">
             <TextInput
               label="Marca"
               name="brand"
@@ -213,7 +213,7 @@ export default function CaseForm({
             </div>
           </div>
 
-          <div className="my-4 columns-2">
+          <div className="my-4 columns-1 sm:columns-2">
             <TextInput
               label="Nome"
               name="first_name"
@@ -233,7 +233,7 @@ export default function CaseForm({
             />
           </div>
 
-          <div className="my-4 columns-2">
+          <div className="my-4 columns-1 sm:columns-2">
             <TextInput
               label="Cidade"
               name="city"

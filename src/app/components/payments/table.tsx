@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { TransactionItem, TransactionStatus } from '../../types/transaction';
 import { IconButton } from '../common/icon-button';
+import { ListItemCard, ListItemCardGroup } from '../common/list-item-card';
 import { ListPageLayout } from '../common/list-page-layout';
 import { Pagination } from '../common/pagination';
 import { ConfirmPaymentModal } from './confirm-payment';
@@ -66,6 +67,78 @@ export default function PaymentTable({
             back to px-4/pr-3 to match the other tables; see
             payments/table-skeleton.tsx, which matches this padding so the
             loading state doesn't shift once real data lands. */}
+        <ListItemCardGroup>
+          {transactions?.result.map((transaction) => (
+            <ListItemCard
+              key={transaction.case_id}
+              title={
+                <Link
+                  className="text-blue-500 hover:text-blue-700"
+                  href={`/cases/${transaction.case_id}`}
+                >
+                  {transaction.external_reference}
+                </Link>
+              }
+              fields={[
+                {
+                  label: 'Segurado',
+                  value: transaction.customer_first_name
+                    ? `${transaction.customer_first_name} ${transaction.customer_last_name || ''}`.trim()
+                    : '-',
+                },
+                {
+                  label: 'Técnico',
+                  value: transaction.partner_id ? (
+                    <Link
+                      className="text-blue-500 hover:text-blue-700"
+                      href={`/partners/${transaction.partner_id}`}
+                    >
+                      {transaction.partner_name}
+                    </Link>
+                  ) : (
+                    transaction.partner_name
+                  ),
+                },
+                { label: 'PIX', value: transaction.partner_account },
+                { label: 'MO', value: parseToCurrency(transaction.mo.value) },
+                {
+                  label: 'Deslocamento',
+                  value: parseToCurrency(transaction.transport.value),
+                },
+                {
+                  label: 'Peças',
+                  value: parseToCurrency(transaction.parts.value),
+                },
+                { label: 'Total', value: parseToCurrency(transaction.total) },
+                {
+                  label: 'Status',
+                  value: transactionStatusTranslate[transaction.status],
+                },
+                {
+                  label: 'Data de criação',
+                  value: parseDateTime(transaction.created_at),
+                },
+              ]}
+              actions={
+                transaction.status == TransactionStatus.PENDING && (
+                  <>
+                    <IconButton
+                      color="success"
+                      icon={<CheckIcon className="h-5 w-5" />}
+                      onClick={() => handleConfirmPayment(transaction)}
+                    />
+                    <IconButton
+                      color="info"
+                      icon={<PencilIcon className="h-5 w-5" />}
+                      onClick={() => handleEditPayment(transaction)}
+                    />
+                  </>
+                )
+              }
+            />
+          ))}
+        </ListItemCardGroup>
+
         <table className="hidden min-w-full rounded-md text-gray-900 md:table">
           <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
             <tr>

@@ -47,7 +47,7 @@ export function ContractorForm({
         </h1>
 
         <div className="w-full">
-          <div className="mb-4 columns-3">
+          <div className="mb-4 columns-1 sm:columns-3">
             <TextInput
               label="Nome da empresa"
               name="company_name"
@@ -89,7 +89,7 @@ export function ContractorForm({
 
           <hr />
 
-          <div className="my-4 columns-2">
+          <div className="my-4 columns-1 sm:columns-2">
             <TextInput
               label="Telefone"
               name="phone"

@@ -38,25 +38,33 @@ describe('Pagination', () => {
     );
   });
 
+  // Pagination renders two HeroPagination instances (one per breakpoint,
+  // shown/hidden via CSS — see index.tsx) with identical props, so every
+  // query below matches both; assert on the first, either is equivalent.
+
   it('calculates total pages from paging.total/paging.limit', () => {
     render(<Pagination paging={{ total: 95, limit: 10 }} page={1} />);
-    expect(screen.getByTestId('pagination-total')).toHaveTextContent('10');
+    expect(screen.getAllByTestId('pagination-total')[0]).toHaveTextContent(
+      '10'
+    );
   });
 
   it('defaults to a single page when paging is missing', () => {
     render(<Pagination page={1} />);
-    expect(screen.getByTestId('pagination-total')).toHaveTextContent('1');
+    expect(screen.getAllByTestId('pagination-total')[0]).toHaveTextContent('1');
   });
 
   it('defaults to page 1 when page is missing', () => {
     render(<Pagination paging={{ total: 20, limit: 10 }} />);
-    expect(screen.getByTestId('pagination-current')).toHaveTextContent('1');
+    expect(screen.getAllByTestId('pagination-current')[0]).toHaveTextContent(
+      '1'
+    );
   });
 
   it('preserves existing query params when changing page', () => {
     render(<Pagination paging={{ total: 95, limit: 10 }} page={1} />);
 
-    fireEvent.click(screen.getByText('Go to page 2'));
+    fireEvent.click(screen.getAllByText('Go to page 2')[0]);
 
     expect(push).toHaveBeenCalledWith('/customers?sinistro=abc&page=2');
   });

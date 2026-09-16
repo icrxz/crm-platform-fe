@@ -117,7 +117,7 @@ export function DraftStatusForm({ crmCase }: DraftStatusFormProps) {
 
         <hr />
 
-        <div className="my-4 columns-3">
+        <div className="my-4 columns-1 sm:columns-3">
           <div>
             <label
               className="mb-3 block text-xs font-medium text-gray-900"
@@ -228,7 +228,7 @@ export function DraftStatusForm({ crmCase }: DraftStatusFormProps) {
           </div>
         </div>
 
-        <div className="my-4 columns-2">
+        <div className="my-4 columns-1 sm:columns-2">
           <div>
             <label
               className="mb-3 block text-xs font-medium text-gray-900"
@@ -270,7 +270,7 @@ export function DraftStatusForm({ crmCase }: DraftStatusFormProps) {
           </div>
         </div>
 
-        <div className="my-4 columns-2">
+        <div className="my-4 columns-1 sm:columns-2">
           <div>
             <label
               className="mb-3 block text-xs font-medium text-gray-900"

@@ -80,16 +80,14 @@ export default function NavLinks({ userRole, isCollapsed }: NavLinksProps) {
           <Link
             href={link.href}
             className={clsx(
-              'sidebar-nav-item flex h-[48px] w-full items-center justify-center gap-2 rounded-md p-3 text-sm font-medium text-gray-900 hover:bg-gray-200 md:justify-start md:p-2 md:px-3',
+              'sidebar-nav-item flex h-[48px] w-full items-center justify-start gap-2 rounded-md p-2 px-3 text-sm font-medium text-gray-900 hover:bg-gray-200',
               {
                 'bg-gray-700 text-white hover:bg-gray-700': isActive,
               }
             )}
           >
             <LinkIcon className="w-6 shrink-0" />
-            <p
-              className={`sidebar-expand-only hidden md:block ${roboto.className}`}
-            >
+            <p className={`sidebar-expand-only block ${roboto.className}`}>
               {link.name}
             </p>
           </Link>
@@ -97,7 +95,7 @@ export default function NavLinks({ userRole, isCollapsed }: NavLinksProps) {
 
         if (!isCollapsed) {
           return (
-            <div key={link.name} className="flex w-full grow md:flex-none">
+            <div key={link.name} className="flex w-full flex-none">
               {linkContent}
             </div>
           );
@@ -109,7 +107,7 @@ export default function NavLinks({ userRole, isCollapsed }: NavLinksProps) {
             content={link.name}
             position="right"
             textSize="base"
-            className="flex w-full grow md:flex-none"
+            className="flex w-full flex-none"
           >
             {linkContent}
           </Tooltip>

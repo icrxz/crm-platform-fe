@@ -8,6 +8,7 @@ import TrashIcon from '@heroicons/react/24/outline/TrashIcon';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { IconButton } from '../common/icon-button';
+import { ListItemCard, ListItemCardGroup } from '../common/list-item-card';
 import { ListPageLayout } from '../common/list-page-layout';
 import Modal from '../common/modal';
 import { Pagination } from '../common/pagination';
@@ -60,6 +61,43 @@ export default function CustomersTable({
           <Pagination paging={customers?.paging} page={initialPage} />
         }
       >
+        <ListItemCardGroup>
+          {customers?.result.map((customer) => (
+            <ListItemCard
+              key={customer.customer_id}
+              onClick={() => handleRowClick(customer.customer_id)}
+              title={`${customer.first_name} ${customer.last_name}`}
+              fields={[
+                { label: 'Email', value: customer.email || '-' },
+                {
+                  label: 'Documento',
+                  value: parseDocument(customer.document),
+                },
+                {
+                  label: 'Data de criação',
+                  value: parseDateTime(customer.created_at),
+                },
+              ]}
+              actions={
+                <>
+                  <IconButton
+                    color="info"
+                    icon={<PencilIcon className="h-5 w-5" />}
+                    onClick={() => handleEdit(customer.customer_id)}
+                  />
+                  {customer.active && (
+                    <IconButton
+                      color="error"
+                      icon={<TrashIcon className="h-5 w-5" />}
+                      onClick={() => handleDelete(customer.customer_id)}
+                    />
+                  )}
+                </>
+              }
+            />
+          ))}
+        </ListItemCardGroup>
+
         <table className="hidden min-w-full rounded-md text-gray-900 md:table">
           <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
             <tr>

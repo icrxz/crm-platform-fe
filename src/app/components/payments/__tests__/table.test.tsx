@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import PaymentTable from '../table';
 import {
@@ -46,6 +46,13 @@ jest.mock('../edit-payment', () => ({
 }));
 
 const mockPush = jest.fn();
+
+// The mobile card list duplicates every row's content outside the desktop
+// <table> (see ListItemCardGroup) — scope row/cell assertions to the table
+// so they don't match both.
+function getTable() {
+  return within(screen.getByRole('table'));
+}
 
 function setupMocks(searchParamsEntries: Record<string, string> = {}) {
   const params = new URLSearchParams(searchParamsEntries);
@@ -102,9 +109,9 @@ describe('PaymentTable', () => {
       render(<PaymentTable transactions={transactions} />);
 
       // Assert
-      expect(screen.getByText('SIN-001')).toBeInTheDocument();
-      expect(screen.getByText('João Silva')).toBeInTheDocument();
-      expect(screen.getByText('Maria Souza')).toBeInTheDocument();
+      expect(getTable().getByText('SIN-001')).toBeInTheDocument();
+      expect(getTable().getByText('João Silva')).toBeInTheDocument();
+      expect(getTable().getByText('Maria Souza')).toBeInTheDocument();
     });
 
     it('should render the Sinistro as a link to the case', () => {
@@ -120,7 +127,7 @@ describe('PaymentTable', () => {
       render(<PaymentTable transactions={transactions} />);
 
       // Assert
-      expect(screen.getByText('SIN-001').closest('a')).toHaveAttribute(
+      expect(getTable().getByText('SIN-001').closest('a')).toHaveAttribute(
         'href',
         '/cases/case-abc'
       );
@@ -139,7 +146,7 @@ describe('PaymentTable', () => {
       render(<PaymentTable transactions={transactions} />);
 
       // Assert
-      expect(screen.getByText('João Silva').closest('a')).toHaveAttribute(
+      expect(getTable().getByText('João Silva').closest('a')).toHaveAttribute(
         'href',
         '/partners/partner-123'
       );
@@ -158,7 +165,7 @@ describe('PaymentTable', () => {
       render(<PaymentTable transactions={transactions} />);
 
       // Assert
-      expect(screen.getByText('João Silva').closest('a')).toBeNull();
+      expect(getTable().getByText('João Silva').closest('a')).toBeNull();
     });
 
     it('should render a dash when the segurado name is missing', () => {
@@ -174,7 +181,7 @@ describe('PaymentTable', () => {
       render(<PaymentTable transactions={transactions} />);
 
       // Assert
-      const row = screen
+      const row = getTable()
         .getByText(transaction.external_reference)
         .closest('tr');
       expect(row).toHaveTextContent('-');
@@ -192,8 +199,12 @@ describe('PaymentTable', () => {
       render(<PaymentTable transactions={transactions} initialPage={1} />);
 
       // Assert
-      expect(screen.getByTestId('pagination-total').textContent).toBe('2');
-      expect(screen.getByTestId('pagination-current').textContent).toBe('1');
+      expect(screen.getAllByTestId('pagination-total')[0].textContent).toBe(
+        '2'
+      );
+      expect(screen.getAllByTestId('pagination-current')[0].textContent).toBe(
+        '1'
+      );
     });
 
     it('should render partner list inside the search bar', () => {
@@ -218,7 +229,7 @@ describe('PaymentTable', () => {
       render(<PaymentTable transactions={transactions} />);
 
       // Act
-      fireEvent.click(screen.getByText('Go to page 2'));
+      fireEvent.click(screen.getAllByText('Go to page 2')[0]);
 
       // Assert
       expect(mockPush).toHaveBeenCalledWith(
@@ -233,7 +244,7 @@ describe('PaymentTable', () => {
       render(<PaymentTable transactions={transactions} />);
 
       // Act
-      fireEvent.click(screen.getByText('Go to page 3'));
+      fireEvent.click(screen.getAllByText('Go to page 3')[0]);
 
       // Assert
       expect(mockPush).toHaveBeenCalledWith('/payments?page=3');
@@ -246,7 +257,7 @@ describe('PaymentTable', () => {
       render(<PaymentTable transactions={transactions} />);
 
       // Act
-      fireEvent.click(screen.getByText('Go to page 2'));
+      fireEvent.click(screen.getAllByText('Go to page 2')[0]);
 
       // Assert
       expect(mockPush).toHaveBeenCalledWith(

@@ -15,6 +15,7 @@ import { parseDateTime } from '../../libs/date';
 import { caseCategoryMap, caseStatusMap, CaseCategory } from '../../types/case';
 import { getDefaultCaseStatuses } from '../../utils/case_status';
 import { adminRoles } from '../../utils/roles';
+import { ListItemCard, ListItemCardGroup } from '../common/list-item-card';
 import { ListPageLayout } from '../common/list-page-layout';
 import { Pagination } from '../common/pagination';
 import { CreateCaseBatchModal } from './batch-form-modal';
@@ -75,6 +76,62 @@ export default function CasesTable({
         }
         pagination={<Pagination paging={cases?.paging} page={initialPage} />}
       >
+        <ListItemCardGroup>
+          {cases.result.map((crmCase) => (
+            <ListItemCard
+              key={crmCase.case_id}
+              title={
+                <Link
+                  className="text-blue-500 hover:text-blue-700"
+                  href={`/cases/${crmCase.case_id}`}
+                >
+                  {crmCase.external_reference}
+                </Link>
+              }
+              fields={[
+                {
+                  label: 'Cliente',
+                  value: `${crmCase.customer_first_name || '-'} ${crmCase.customer_last_name || ''}`,
+                },
+                { label: 'Cidade', value: crmCase.customer_city || '-' },
+                {
+                  label: 'Seguradora',
+                  value: crmCase.contractor_company_name || '-',
+                },
+                {
+                  label: 'Categoria',
+                  value: crmCase.category
+                    ? caseCategoryMap[crmCase.category as CaseCategory] ||
+                      crmCase.category
+                    : '-',
+                },
+                {
+                  label: 'Técnico',
+                  value: crmCase.partner_first_name ? (
+                    crmCase.partner_id ? (
+                      <Link
+                        className="text-blue-500 hover:text-blue-700"
+                        href={`/partners/${crmCase.partner_id}`}
+                      >
+                        {crmCase.partner_first_name}
+                      </Link>
+                    ) : (
+                      crmCase.partner_first_name
+                    )
+                  ) : (
+                    '-'
+                  ),
+                },
+                { label: 'Status', value: caseStatusMap[crmCase.status] },
+                {
+                  label: 'Vencimento',
+                  value: parseDateTime(crmCase.due_date, 'dd/MM/yyyy'),
+                },
+              ]}
+            />
+          ))}
+        </ListItemCardGroup>
+
         <table className="hidden min-w-full rounded-md text-gray-900 md:table">
           <thead className="rounded-md bg-gray-50 text-left text-sm font-normal">
             <tr>
