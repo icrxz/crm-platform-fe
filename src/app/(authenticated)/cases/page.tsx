@@ -20,6 +20,7 @@ type CasePageParams = {
     sinistro?: string;
     status?: string | string[];
     contractor_id?: string | string[];
+    category?: string | string[];
     only_mine?: string;
     page?: number;
   }>;
@@ -35,6 +36,7 @@ async function getData(
   sinistro: string,
   status: string | string[] | undefined,
   contractorId: string | string[] | undefined,
+  category: string | string[] | undefined,
   ownerId: string,
   userRole: UserRole | undefined,
   page: number
@@ -58,6 +60,7 @@ async function getData(
     ...(sinistro ? [`external_reference=${sinistro}`] : []),
     ...allowedStatuses.map((s) => `status=${s}`),
     ...toQueryParts('contractor_id', contractorId),
+    ...toQueryParts('category', category),
     ...(ownerId ? [`owner_id=${ownerId}`] : []),
   ];
   const query = queryParts.join('&');
@@ -74,7 +77,7 @@ async function getData(
 }
 
 export default async function Page({ searchParams }: CasePageParams) {
-  const { sinistro, status, contractor_id, only_mine, page } =
+  const { sinistro, status, contractor_id, category, only_mine, page } =
     await searchParams;
   const user = await getCurrentUser();
   if (!user) {
@@ -87,6 +90,7 @@ export default async function Page({ searchParams }: CasePageParams) {
     sinistro || '',
     status,
     contractor_id,
+    category,
     ownerId,
     user?.role,
     page || 1

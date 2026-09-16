@@ -49,16 +49,19 @@ export default function CasesTable({
     const params = new URLSearchParams(searchParams.toString());
     params.delete('status');
     params.delete('contractor_id');
+    params.delete('category');
     filters.status?.forEach((value) => params.append('status', value));
     filters.contractorId?.forEach((value) =>
       params.append('contractor_id', value)
     );
+    filters.category?.forEach((value) => params.append('category', value));
     params.set('page', '1');
 
     setStoredCaseFilters({
       ...getStoredCaseFilters(),
       status: filters.status,
       contractorId: filters.contractorId,
+      category: filters.category,
     });
     router.push(pathname + '?' + params.toString());
     setIsFilterModalOpen(false);
@@ -231,6 +234,11 @@ export default function CasesTable({
               : getDefaultCaseStatuses(isAdmin)
           }
           initialContractorId={searchParams.getAll('contractor_id')}
+          initialCategory={
+            searchParams.has('category')
+              ? searchParams.getAll('category')
+              : Object.values(CaseCategory)
+          }
           userRole={userRole}
         />
       )}
