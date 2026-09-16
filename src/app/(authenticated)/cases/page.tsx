@@ -32,6 +32,20 @@ function toQueryParts(key: string, value?: string | string[]): string[] {
   return values.filter(Boolean).map((v) => `${key}=${v}`);
 }
 
+// category isn't a top-level case field — it lives under metadata (see
+// Case['metadata']), so the API expects metadata[category]=value the same
+// way the dashboards filters already query it (fetch_dashboard_kpis.ts,
+// fetch_ranking.ts, etc.) rather than a plain category=value. Encoded
+// explicitly since '+' (CaseCategory.D_PLUS = 'd+') needs it and this
+// string is hand-built, not passed through URLSearchParams.
+function toMetadataCategoryQueryParts(value?: string | string[]): string[] {
+  if (!value) return [];
+  const values = Array.isArray(value) ? value : [value];
+  return values
+    .filter(Boolean)
+    .map((v) => `metadata[category]=${encodeURIComponent(v)}`);
+}
+
 async function getData(
   sinistro: string,
   status: string | string[] | undefined,
@@ -60,7 +74,7 @@ async function getData(
     ...(sinistro ? [`external_reference=${sinistro}`] : []),
     ...allowedStatuses.map((s) => `status=${s}`),
     ...toQueryParts('contractor_id', contractorId),
-    ...toQueryParts('category', category),
+    ...toMetadataCategoryQueryParts(category),
     ...(ownerId ? [`owner_id=${ownerId}`] : []),
   ];
   const query = queryParts.join('&');
