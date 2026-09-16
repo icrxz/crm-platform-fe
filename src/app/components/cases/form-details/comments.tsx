@@ -46,7 +46,7 @@ export function CommentDetails({ crmCase, userRole }: CommentDetailsProps) {
                     className="ml-2 mt-4 rounded-xl bg-white px-3 py-2"
                   >
                     <div className="mt-2 items-center gap-8">
-                      <div className="flex items-center gap-4">
+                      <div className="flex flex-wrap items-center gap-4">
                         <CardText
                           title="Data de criação:"
                           text={parseDateTime(comment.created_at)}
