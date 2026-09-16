@@ -80,15 +80,17 @@ export default function CustomersTable({
       render: (customer) => (
         <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
           <IconButton
+            size="sm"
             color="info"
-            icon={<PencilIcon className="h-5 w-5 md:h-6 md:w-6" />}
+            icon={<PencilIcon className="h-5 w-5" />}
             onClick={() => handleEdit(customer.customer_id)}
           />
 
           {customer.active && (
             <IconButton
+              size="sm"
               color="error"
-              icon={<TrashIcon className="h-5 w-5 md:h-6 md:w-6" />}
+              icon={<TrashIcon className="h-5 w-5" />}
               onClick={() => handleDelete(customer.customer_id)}
             />
           )}

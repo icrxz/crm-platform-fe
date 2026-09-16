@@ -139,14 +139,16 @@ export default function PaymentTable({
           {transaction.status == TransactionStatus.PENDING && (
             <>
               <IconButton
+                size="sm"
                 color="success"
-                icon={<CheckIcon className="h-5 w-5 md:h-6 md:w-6" />}
+                icon={<CheckIcon className="h-5 w-5" />}
                 onClick={() => handleConfirmPayment(transaction)}
               />
 
               <IconButton
+                size="sm"
                 color="info"
-                icon={<PencilIcon className="h-5 w-5 md:h-6 md:w-6" />}
+                icon={<PencilIcon className="h-5 w-5" />}
                 onClick={() => handleEditPayment(transaction)}
               />
             </>

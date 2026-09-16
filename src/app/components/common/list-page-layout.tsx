@@ -12,10 +12,12 @@ interface ListPageLayoutProps {
   onRefresh?: () => void;
 }
 
-// ~8 rows + header, matching the loading skeletons' row count — keeps the
-// table/card area a consistent height across loading, populated (few
-// rows) and empty states instead of visibly shrinking to fit content.
-const MIN_CONTENT_HEIGHT = 'min-h-[420px]';
+// ~8 rows + header at the tallest real row height (a table with an Ações
+// column of icon buttons, ~56px/row) — keeps the table/card area a
+// consistent height across loading, populated (few rows) and empty states
+// instead of visibly shrinking to fit content, and close enough to a full
+// icon-heavy table's real height that it doesn't look empty by comparison.
+const MIN_CONTENT_HEIGHT = 'min-h-[480px]';
 
 // Shared shell for every listing page (and its loading skeleton — see
 // ListTableSkeleton/CasesTableSkeleton/PaymentsTableSkeleton): fills the

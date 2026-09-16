@@ -98,15 +98,17 @@ export default function ContractorsTable({
           onClick={(e) => e.stopPropagation()}
         >
           <IconButton
+            size="sm"
             color="info"
-            icon={<PencilIcon className="h-5 w-5 md:h-6 md:w-6" />}
+            icon={<PencilIcon className="h-5 w-5" />}
             onClick={() => handleEdit(contractor.contractor_id)}
           />
 
           {contractor.active && (
             <IconButton
+              size="sm"
               color="error"
-              icon={<TrashIcon className="h-5 w-5 md:h-6 md:w-6" />}
+              icon={<TrashIcon className="h-5 w-5" />}
               onClick={() => handleDelete(contractor.contractor_id)}
             />
           )}

@@ -96,15 +96,17 @@ export default function PartnersTable({
       render: (partner) => (
         <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
           <IconButton
+            size="sm"
             color="info"
-            icon={<PencilIcon className="h-5 w-5 md:h-6 md:w-6" />}
+            icon={<PencilIcon className="h-5 w-5" />}
             onClick={() => handlePartnerEdit(partner.partner_id)}
           />
 
           {partner.active && (
             <IconButton
+              size="sm"
               color="error"
-              icon={<TrashIcon className="h-5 w-5 md:h-6 md:w-6" />}
+              icon={<TrashIcon className="h-5 w-5" />}
               onClick={() => handlePartnerDelete(partner.partner_id)}
             />
           )}
