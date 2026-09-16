@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import PartnerBookTable from '../book-table';
 import { PartnerBookCaseItem } from '@/app/types/partner-book-item';
 import { SearchResponse } from '@/app/types/search_response';
@@ -39,19 +39,26 @@ function buildResponse(
   return { result, paging: { total: result.length, limit: 10, offset: 0 } };
 }
 
+// The mobile card list duplicates every row's content outside the desktop
+// <table> (see ListItemCardGroup) — scope row/cell assertions to the table
+// so they don't match both.
+function getTable() {
+  return within(screen.getByRole('table'));
+}
+
 describe('PartnerBookTable', () => {
   it('renders the Sinistro column as a link to the case', () => {
     render(<PartnerBookTable cases={buildResponse([buildItem()])} />);
 
-    const link = screen.getByText('SIN-001').closest('a');
+    const link = getTable().getByText('SIN-001').closest('a');
     expect(link).toHaveAttribute('href', '/cases/case-001');
   });
 
   it('shows the customer name and city', () => {
     render(<PartnerBookTable cases={buildResponse([buildItem()])} />);
 
-    expect(screen.getByText('Maria Santos')).toBeInTheDocument();
-    expect(screen.getByText('São Paulo')).toBeInTheDocument();
+    expect(getTable().getByText('Maria Santos')).toBeInTheDocument();
+    expect(getTable().getByText('São Paulo')).toBeInTheDocument();
   });
 
   it('does not render a Seguradora column', () => {
@@ -67,7 +74,7 @@ describe('PartnerBookTable', () => {
       />
     );
 
-    expect(screen.getByText('R$ 230,00')).toBeInTheDocument();
+    expect(getTable().getByText('R$ 230,00')).toBeInTheDocument();
   });
 
   it('shows "Pago" and the payment date when paid', () => {
@@ -82,8 +89,8 @@ describe('PartnerBookTable', () => {
       />
     );
 
-    expect(screen.getByText('Pago')).toBeInTheDocument();
-    expect(screen.getByText('03/05/2024')).toBeInTheDocument();
+    expect(getTable().getByText('Pago')).toBeInTheDocument();
+    expect(getTable().getByText('03/05/2024')).toBeInTheDocument();
   });
 
   it('shows "Pendente" and no payment date when not paid', () => {
@@ -93,7 +100,7 @@ describe('PartnerBookTable', () => {
       />
     );
 
-    expect(screen.getByText('Pendente')).toBeInTheDocument();
+    expect(getTable().getByText('Pendente')).toBeInTheDocument();
   });
 
   it('highlights duplicate customer documents', () => {
@@ -106,7 +113,7 @@ describe('PartnerBookTable', () => {
       />
     );
 
-    const names = screen.getAllByText('Maria Santos');
+    const names = getTable().getAllByText('Maria Santos');
     expect(names[0]).toHaveClass('text-red-500');
     expect(names[1]).toHaveClass('text-red-500');
   });
