@@ -16,6 +16,7 @@ import { adminRoles } from '@/app/utils/roles';
 import { ArrowDownIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 
+import { Accordion } from '../common/accordion';
 import { Card } from '../common/card';
 import { CardText } from '../common/card/card-text';
 import { DownloadReportButton } from './download-report-button';
@@ -62,34 +63,63 @@ export default function CaseDetails({ crmCase, userRole }: CaseDetailsProps) {
     return colorVar;
   }
 
+  function renderStatusSteps(direction: 'row' | 'column') {
+    return caseStatusList.map((status, idx) => {
+      const isLast = idx === caseStatusList.length - 1;
+      return (
+        <div
+          key={status}
+          className={
+            direction === 'row'
+              ? 'flex items-center'
+              : 'flex flex-col items-start'
+          }
+        >
+          <p
+            className={`${roboto.className} ${getStatusColor(status, crmCase.status)}`}
+          >
+            {status}
+          </p>
+
+          {!isLast &&
+            (direction === 'row' ? (
+              <ArrowRightIcon className="ml-2 h-5 w-5 pt-1 text-gray-700" />
+            ) : (
+              <ArrowDownIcon className="my-1 h-5 w-5 text-gray-700" />
+            ))}
+        </div>
+      );
+    });
+  }
+
+  const currentStatusLabel = caseStatusMap[crmCase.status];
+
   return (
     <>
       <div className="flex justify-center">
-        {/* Below md this becomes a vertical stepper (down arrows) instead of
-            wrapping the 9 status labels into an unreadable horizontal jumble. */}
-        <div className="mb-6 flex w-full flex-col items-start gap-2 rounded-xl bg-gray-50 p-4 shadow-sm md:flex-row md:items-center md:justify-center md:gap-4">
-          {caseStatusList.map((status, idx) => {
-            const isLast = idx === caseStatusList.length - 1;
-            return (
-              <div
-                key={status}
-                className="flex flex-col items-start md:flex-row md:items-center"
-              >
+        <div className="mb-6 w-full rounded-xl bg-gray-50 p-4 shadow-sm">
+          {/* Below md: closed accordion showing only the current status,
+              expands to the full vertical stepper. Above md: unchanged
+              always-visible horizontal row. */}
+          <div className="md:hidden">
+            <Accordion
+              summary={
                 <p
-                  className={`${roboto.className} ${getStatusColor(status, crmCase.status)}`}
+                  className={`${roboto.className} font-medium ${getStatusColor(currentStatusLabel, crmCase.status)}`}
                 >
-                  {status}
+                  {currentStatusLabel}
                 </p>
-
-                {!isLast && (
-                  <>
-                    <ArrowDownIcon className="my-1 h-5 w-5 text-gray-700 md:hidden" />
-                    <ArrowRightIcon className="ml-2 hidden h-5 w-5 pt-1 text-gray-700 md:block" />
-                  </>
-                )}
+              }
+            >
+              <div className="flex flex-col items-start gap-2 pt-2">
+                {renderStatusSteps('column')}
               </div>
-            );
-          })}
+            </Accordion>
+          </div>
+
+          <div className="hidden md:flex md:items-center md:justify-center md:gap-4">
+            {renderStatusSteps('row')}
+          </div>
         </div>
       </div>
 
