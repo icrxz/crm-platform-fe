@@ -128,21 +128,22 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
     >
       <form action={dispatch} className="gap-4 px-5">
         {isBeforeTargetDate ? (
-          <div className="mb-2 flex items-center space-x-2">
+          <div className="mb-2 flex flex-wrap items-center gap-2">
             <p className="text-sm font-medium text-gray-500">Data agendada:</p>
-            <p className="ml-4 text-sm font-medium text-gray-900">
+            <p className="text-sm font-medium text-gray-900">
               {parseDateTime(crmCase.target_date || '', ONLY_DATE_PATTERN)}
             </p>
             <Button
               type="button"
               size="sm"
+              className="shrink-0"
               onClick={() => setOpenTargetDateModal(true)}
             >
               Alterar data de visita
             </Button>
           </div>
         ) : (
-          <div className="mb-2 flex items-center space-x-2">
+          <div className="mb-2 flex flex-wrap items-center gap-2">
             <p className="text-sm font-medium text-gray-500">
               Tempo decorrido:
             </p>
@@ -152,6 +153,7 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
             <Button
               type="button"
               size="sm"
+              className="shrink-0"
               onClick={() => setOpenTargetDateModal(true)}
             >
               Alterar data de visita
@@ -205,7 +207,7 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
 
         {errorMessage && <ErrorMessage message={errorMessage} />}
 
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-4">
           <Button
             type="button"
             onClick={handleAddComment}
