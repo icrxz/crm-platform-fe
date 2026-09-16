@@ -13,7 +13,7 @@ import { UserRole } from '@/app/types/user';
 import { roboto } from '@/app/ui/fonts';
 import { onlyAdminStatuses, showReportStatus } from '@/app/utils/case_status';
 import { adminRoles } from '@/app/utils/roles';
-import { ArrowRightIcon } from '@heroicons/react/24/outline';
+import { ArrowDownIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 
 import { Card } from '../common/card';
@@ -65,18 +65,27 @@ export default function CaseDetails({ crmCase, userRole }: CaseDetailsProps) {
   return (
     <>
       <div className="flex justify-center">
-        <div className="mb-6 flex w-full justify-center gap-4 rounded-xl bg-gray-50 p-4 shadow-sm">
+        {/* Below md this becomes a vertical stepper (down arrows) instead of
+            wrapping the 9 status labels into an unreadable horizontal jumble. */}
+        <div className="mb-6 flex w-full flex-col items-start gap-2 rounded-xl bg-gray-50 p-4 shadow-sm md:flex-row md:items-center md:justify-center md:gap-4">
           {caseStatusList.map((status, idx) => {
+            const isLast = idx === caseStatusList.length - 1;
             return (
-              <div key={status} className="flex">
+              <div
+                key={status}
+                className="flex flex-col items-start md:flex-row md:items-center"
+              >
                 <p
                   className={`${roboto.className} ${getStatusColor(status, crmCase.status)}`}
                 >
                   {status}
                 </p>
 
-                {idx !== caseStatusList.length - 1 && (
-                  <ArrowRightIcon className="ml-2 h-5 w-5 pt-1 text-gray-700" />
+                {!isLast && (
+                  <>
+                    <ArrowDownIcon className="my-1 h-5 w-5 text-gray-700 md:hidden" />
+                    <ArrowRightIcon className="ml-2 hidden h-5 w-5 pt-1 text-gray-700 md:block" />
+                  </>
                 )}
               </div>
             );
@@ -84,8 +93,8 @@ export default function CaseDetails({ crmCase, userRole }: CaseDetailsProps) {
         </div>
       </div>
 
-      <div className="mb-8 flex gap-6">
-        <div className="h-fill w-1/3">
+      <div className="mb-8 flex flex-col gap-6 md:flex-row">
+        <div className="h-fill w-full md:w-1/3">
           <Card title="Dados do caso" titleSize="xl">
             <div className="ml-4 items-center gap-8">
               <CardText title="Sinistro:" text={crmCase.external_reference} />
@@ -151,7 +160,7 @@ export default function CaseDetails({ crmCase, userRole }: CaseDetailsProps) {
           </Card>
         </div>
 
-        <div className="h-fit w-2/3">
+        <div className="h-fit w-full md:w-2/3">
           {crmCase.status && <FormDetails crmCase={crmCase} />}
         </div>
       </div>
@@ -160,8 +169,8 @@ export default function CaseDetails({ crmCase, userRole }: CaseDetailsProps) {
         <CommentDetails crmCase={crmCase} userRole={userRole} />
       </div>
 
-      <div className="mb-8 flex gap-6">
-        <div className="h-fill w-1/2">
+      <div className="mb-8 flex flex-col gap-6 md:flex-row">
+        <div className="h-fill w-full md:w-1/2">
           <Card title="Cliente" titleSize="xl">
             <div className="ml-4 items-center gap-8">
               <CardText
@@ -203,7 +212,7 @@ export default function CaseDetails({ crmCase, userRole }: CaseDetailsProps) {
           </Card>
         </div>
 
-        <div className="h-fill w-1/2">
+        <div className="h-fill w-full md:w-1/2">
           <Card title="Produto" titleSize="xl">
             <div className="ml-4 items-center gap-8">
               <CardText
