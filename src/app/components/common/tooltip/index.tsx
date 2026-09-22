@@ -1,7 +1,25 @@
 'use client';
 
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import {
+  ReactNode,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from 'react';
 import { createPortal } from 'react-dom';
+
+function subscribeNoop() {
+  return () => {};
+}
+
+function getClientSnapshot() {
+  return true;
+}
+
+function getServerSnapshot() {
+  return false;
+}
 
 interface TooltipProps {
   content: string;
@@ -85,6 +103,17 @@ export function Tooltip({
   const triggerRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [coords, setCoords] = useState<Coords | null>(null);
+  // Server has no `document`, so the portal must stay unrendered through the
+  // client's first (hydration) pass too — this only flips to true once
+  // React re-checks the snapshot after mount, keeping that first render
+  // identical to the SSR output. Checking `typeof document` directly in the
+  // render body instead diverges immediately on the client and causes a
+  // hydration mismatch.
+  const isMounted = useSyncExternalStore(
+    subscribeNoop,
+    getClientSnapshot,
+    getServerSnapshot
+  );
 
   useEffect(() => {
     const measure = () => {
@@ -114,7 +143,7 @@ export function Tooltip({
     >
       {children}
 
-      {typeof document !== 'undefined' &&
+      {isMounted &&
         createPortal(
           <div
             style={{
