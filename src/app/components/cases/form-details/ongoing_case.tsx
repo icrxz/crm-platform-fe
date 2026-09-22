@@ -1,10 +1,14 @@
 'use client';
 import { useSnackbar } from '@/app/context/SnackbarProvider';
 import { ONLY_DATE_PATTERN, parseDateTime, timeElapsed } from '@/app/libs/date';
-import { changeStatus } from '@/app/services/cases';
+import { changeStatus, updateCaseMetadata } from '@/app/services/cases';
 import { addComment } from '@/app/services/comments';
 import { CreateAttachment } from '@/app/types/attachments';
 import { CaseFull, CaseStatus } from '@/app/types/case';
+import {
+  ADVANCE_REQUESTED_METADATA_KEY,
+  ADVANCE_REQUESTED_METADATA_VALUE,
+} from '@/app/utils/case_metadata';
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import {
@@ -48,8 +52,13 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
   const fileUploaderRef = useRef<FileUploaderGenericRef>(null);
   const [content, setContent] = useState('');
   const [loadingComment, setLoadingComment] = useState(false);
+  const [loadingAdvance, setLoadingAdvance] = useState(false);
   const [openTargetDateModal, setOpenTargetDateModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
+  const advanceAlreadyRequested =
+    crmCase.metadata?.[ADVANCE_REQUESTED_METADATA_KEY] ===
+    ADVANCE_REQUESTED_METADATA_VALUE;
 
   const isBeforeTargetDate = new Date() < new Date(crmCase.target_date!!);
 
@@ -118,6 +127,42 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
       });
 
     setLoadingComment(false);
+  }
+
+  async function handleRequestAdvance() {
+    setLoadingAdvance(true);
+
+    const formData = new FormData();
+    formData.append('content', 'Solicitado adiantamento de peças');
+
+    addComment(crmCase.case_id, formData)
+      .then((response) => {
+        if (!response.success) {
+          if (response.unauthorized) {
+            signOut({ callbackUrl: '/login' });
+          }
+          showSnackbar(response.message, 'error');
+          return;
+        }
+
+        return updateCaseMetadata(crmCase.case_id, {
+          [ADVANCE_REQUESTED_METADATA_KEY]: ADVANCE_REQUESTED_METADATA_VALUE,
+        }).then((metadataResponse) => {
+          if (!metadataResponse.success) {
+            if (metadataResponse.unauthorized) {
+              signOut({ callbackUrl: '/login' });
+            }
+            showSnackbar(metadataResponse.message, 'error');
+            return;
+          }
+
+          showSnackbar('Adiantamento solicitado com sucesso', 'success');
+          refresh();
+        });
+      })
+      .finally(() => {
+        setLoadingAdvance(false);
+      });
   }
 
   return (
@@ -222,6 +267,16 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
             isLoading={loadingComment}
           >
             Adicionar comentário
+          </Button>
+          <Button
+            type="button"
+            onClick={handleRequestAdvance}
+            isLoading={loadingAdvance}
+            disabled={loadingComment || advanceAlreadyRequested}
+          >
+            {advanceAlreadyRequested
+              ? 'Adiantamento solicitado'
+              : 'Solicitar Adiantamento/Peça'}
           </Button>
           {!isBeforeTargetDate && (
             <Button type="submit" disabled={loadingComment}>

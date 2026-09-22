@@ -28,15 +28,6 @@ export function getDefaultCaseStatuses(isAdmin: boolean): CaseStatus[] {
 // open status implies the case has already been assigned to someone.
 export const unassignedCaseStatuses = [CaseStatus.DRAFT, CaseStatus.NEW];
 
-// Payment/Receipt are back-office steps handled from the payments screen,
-// not part of the "assigned, working the case" flow.
-export const assignedOpenCaseStatuses = [
-  CaseStatus.CUSTOMER_INFO,
-  CaseStatus.WAITING_PARTNER,
-  CaseStatus.ONGOING,
-  CaseStatus.REPORT,
-];
-
 export const operatorVisibleOpenCaseStatuses = defaultCaseStatuses.filter(
   (status) => !onlyAdminStatuses.includes(status)
 );

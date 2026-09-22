@@ -50,11 +50,13 @@ export default function CasesTable({
     params.delete('status');
     params.delete('contractor_id');
     params.delete('category');
+    params.delete('advance_requested');
     filters.status?.forEach((value) => params.append('status', value));
     filters.contractorId?.forEach((value) =>
       params.append('contractor_id', value)
     );
     filters.category?.forEach((value) => params.append('category', value));
+    if (filters.advanceRequested) params.set('advance_requested', 'true');
     params.set('page', '1');
 
     setStoredCaseFilters({
@@ -62,6 +64,7 @@ export default function CasesTable({
       status: filters.status,
       contractorId: filters.contractorId,
       category: filters.category,
+      advanceRequested: filters.advanceRequested,
     });
     router.push(pathname + '?' + params.toString());
     setIsFilterModalOpen(false);
@@ -238,6 +241,9 @@ export default function CasesTable({
             searchParams.has('category')
               ? searchParams.getAll('category')
               : Object.values(CaseCategory)
+          }
+          initialAdvanceRequested={
+            searchParams.get('advance_requested') === 'true'
           }
           userRole={userRole}
         />
