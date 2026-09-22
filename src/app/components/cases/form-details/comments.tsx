@@ -1,6 +1,7 @@
 'use client';
 import { parseDateTime } from '@/app/libs/date';
 import { CaseFull } from '@/app/types/case';
+import { commentTypeStageLabel } from '@/app/types/comment';
 import { UserRole } from '@/app/types/user';
 import { adminRoles } from '@/app/utils/roles';
 import { PencilIcon } from '@heroicons/react/24/outline';
@@ -54,6 +55,13 @@ export function CommentDetails({ crmCase, userRole }: CommentDetailsProps) {
                         <CardText
                           title="Criado por:"
                           text={comment.created_by}
+                        />
+                        <CardText
+                          title="Etapa:"
+                          text={
+                            commentTypeStageLabel[comment.comment_type] ??
+                            comment.comment_type
+                          }
                         />
                         {wasEdited && (
                           <span className="text-xs italic text-gray-400">

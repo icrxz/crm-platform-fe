@@ -16,6 +16,7 @@ import {
 import { useActionState } from 'react';
 import { Button } from '../../common/button';
 import { Card } from '../../common/card';
+import { FormTitleWithTooltip } from '../../common/form-title-tooltip';
 import dynamic from 'next/dynamic';
 import type {
   FileUploaderGenericRef,
@@ -122,9 +123,16 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
   return (
     <Card
       title={
-        isBeforeTargetDate ? 'Aguardando data da visita' : 'Caso em andamento'
+        <FormTitleWithTooltip
+          title={
+            isBeforeTargetDate
+              ? 'Aguardando data da visita'
+              : 'Caso em andamento'
+          }
+          tooltip="'Adicionar comentário' só registra o comentário. 'Enviar para laudo' insere as imagens anexadas aqui no laudo final."
+          titleSize="xl"
+        />
       }
-      titleSize="xl"
     >
       <form action={dispatch} className="gap-4 px-5">
         {isBeforeTargetDate ? (

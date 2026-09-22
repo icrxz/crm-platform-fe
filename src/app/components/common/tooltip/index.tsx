@@ -10,6 +10,10 @@ interface TooltipProps {
   position?: 'top' | 'bottom' | 'right';
   textSize?: 'xs' | 'sm' | 'base';
   className?: string;
+  // When true, wraps long content instead of forcing a single line, with a
+  // max-width that shrinks on narrow viewports so it never overflows the
+  // screen.
+  wrap?: boolean;
 }
 
 const TEXT_SIZE_CLASSES: Record<
@@ -76,6 +80,7 @@ export function Tooltip({
   position = 'top',
   textSize = 'xs',
   className,
+  wrap = false,
 }: TooltipProps) {
   const triggerRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -118,7 +123,7 @@ export function Tooltip({
               left: coords?.left ?? 0,
               transform: coords?.transform,
             }}
-            className={`pointer-events-none z-50 whitespace-nowrap rounded px-2 py-1 font-normal shadow-lg transition-opacity ${isVisible ? 'opacity-100' : 'opacity-0'} ${TEXT_SIZE_CLASSES[textSize]} ${THEME_CLASSES[theme]}`}
+            className={`pointer-events-none z-50 rounded px-2 py-1 font-normal shadow-lg transition-opacity ${wrap ? 'max-w-[85vw] whitespace-normal sm:max-w-[240px] md:max-w-xs' : 'whitespace-nowrap'} ${isVisible ? 'opacity-100' : 'opacity-0'} ${TEXT_SIZE_CLASSES[textSize]} ${THEME_CLASSES[theme]}`}
           >
             {content}
           </div>,

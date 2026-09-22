@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react';
 import { useActionState } from 'react';
 import { Button } from '../../common/button';
 import { Card } from '../../common/card';
+import { FormTitleWithTooltip } from '../../common/form-title-tooltip';
 
 interface PartnerInfoFormProps {
   crmCase: CaseFull;
@@ -88,7 +89,15 @@ export function PartnerInfoStatusForm({ crmCase }: PartnerInfoFormProps) {
   }
 
   return (
-    <Card title="Atribuir técnico" titleSize="xl">
+    <Card
+      title={
+        <FormTitleWithTooltip
+          title="Atribuir técnico"
+          tooltip="Não afeta o laudo final."
+          titleSize="xl"
+        />
+      }
+    >
       <form action={dispatch} className="px-5">
         <div className="mb-4">
           <Autocomplete
