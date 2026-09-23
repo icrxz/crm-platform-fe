@@ -4,7 +4,7 @@ import { ServiceResponse } from '@/app/types/service';
 import { roboto } from '@/app/ui/fonts';
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useActionState, useEffect } from 'react';
+import { useActionState, useEffect, useRef } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Button } from '../button';
 import Modal from '../modal';
@@ -46,10 +46,17 @@ export function ConfirmModal({
   const { showSnackbar } = useSnackbar();
   const { refresh } = useRouter();
 
+  // The effect below depends on callbacks owned by the caller (onClose,
+  // onSuccess) and by the snackbar context, so a caller that rebuilds them
+  // each render would re-fire it for a state that was already handled —
+  // replaying refresh() and the snackbar. Each settled state is handled once.
+  const handledStateRef = useRef<typeof state>(null);
+
   useEffect(() => {
-    if (!state) {
+    if (!state || handledStateRef.current === state) {
       return;
     }
+    handledStateRef.current = state;
 
     if (state.success) {
       showSnackbar(state.message, 'success');
