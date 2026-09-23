@@ -3,12 +3,18 @@ import { parseDateTime } from '@/app/libs/date';
 import { CaseFull } from '@/app/types/case';
 import { commentTypeStageLabel } from '@/app/types/comment';
 import { UserRole } from '@/app/types/user';
+import {
+  ADVANCE_REQUESTED_METADATA_KEY,
+  ADVANCE_REQUESTED_METADATA_VALUE,
+} from '@/app/utils/case_metadata';
 import { adminRoles } from '@/app/utils/roles';
 import { PencilIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
+import { Button } from '../../common/button';
 import { Card } from '../../common/card';
 import { CardText } from '../../common/card/card-text';
 import { ImageCarousel } from '../../common/image-carousel';
+import { AdvancePaymentModal } from './advance-payment-modal';
 import { EditCommentModal } from './edit-comment-modal';
 
 interface CommentDetailsProps {
@@ -19,10 +25,22 @@ interface CommentDetailsProps {
 export function CommentDetails({ crmCase, userRole }: CommentDetailsProps) {
   const isAdminRole = adminRoles.includes(userRole);
   const [editingCommentID, setEditingCommentID] = useState<string | null>(null);
+  const [showAdvancePaymentModal, setShowAdvancePaymentModal] = useState(false);
+
+  const advanceRequested =
+    crmCase.metadata?.[ADVANCE_REQUESTED_METADATA_KEY] ===
+    ADVANCE_REQUESTED_METADATA_VALUE;
 
   const editingComment = crmCase.comments?.find(
     (comment) => comment.comment_id === editingCommentID
   );
+
+  const sortedComments = crmCase.comments
+    ?.slice()
+    .sort(
+      (a, b) =>
+        new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+    );
 
   return (
     <div className="h-fill w-full">
@@ -34,11 +52,30 @@ export function CommentDetails({ crmCase, userRole }: CommentDetailsProps) {
             </p>
           </div>
 
-          {crmCase.comments && (
+          {advanceRequested && (
+            <div className="mt-3 flex flex-wrap items-center gap-3 rounded-lg bg-amber-50 px-3 py-2">
+              <span className="text-base font-semibold text-amber-700">
+                Adiantamento pendente
+              </span>
+              {isAdminRole && (
+                <Button
+                  type="button"
+                  size="sm"
+                  color="warning"
+                  scheme="quiet"
+                  onClick={() => setShowAdvancePaymentModal(true)}
+                >
+                  Marcar pagamento
+                </Button>
+              )}
+            </div>
+          )}
+
+          {sortedComments && (
             <div className="mt-4">
               <h2 className={`text-m font-semibold`}>Comentários</h2>
 
-              {crmCase.comments.map((comment) => {
+              {sortedComments.map((comment) => {
                 const wasEdited = comment.updated_at !== comment.created_at;
 
                 return (
@@ -112,6 +149,14 @@ export function CommentDetails({ crmCase, userRole }: CommentDetailsProps) {
           isOpen
           onClose={() => setEditingCommentID(null)}
           comment={editingComment}
+        />
+      )}
+
+      {showAdvancePaymentModal && (
+        <AdvancePaymentModal
+          isOpen={showAdvancePaymentModal}
+          onClose={() => setShowAdvancePaymentModal(false)}
+          caseId={crmCase.case_id}
         />
       )}
     </div>
