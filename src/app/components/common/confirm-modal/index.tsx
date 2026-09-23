@@ -80,13 +80,14 @@ export function ConfirmModal({
             <input key={name} type="hidden" name={name} value={value} />
           ))}
 
-        <div className="flex justify-center space-x-2">
+        <div className="flex justify-center space-x-4">
           <Button
             type="submit"
             color={confirmColor}
             scheme="quiet"
             isLoading={pending}
             aria-disabled={pending}
+            className="w-28 justify-center"
           >
             {confirmLabel}
           </Button>
@@ -96,6 +97,7 @@ export function ConfirmModal({
             scheme="loud"
             isLoading={pending}
             aria-disabled={pending}
+            className="w-28 justify-center"
           >
             {cancelLabel}
           </Button>
