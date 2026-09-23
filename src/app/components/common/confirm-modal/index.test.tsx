@@ -161,4 +161,39 @@ describe('ConfirmModal', () => {
     );
     expect(onClose).not.toHaveBeenCalled();
   });
+
+  it('handles a settled state once even when its callbacks change identity', async () => {
+    const mockActionFn = jest
+      .fn()
+      .mockResolvedValue({ success: true, message: 'resetado!' });
+    const { rerender } = render(
+      <ConfirmModal
+        isOpen
+        onClose={jest.fn()}
+        title="Confirmar?"
+        action={mockActionFn}
+      />
+    );
+
+    capturedDispatch!(new FormData());
+    await waitFor(() => expect(mockRefresh).toHaveBeenCalledTimes(1));
+
+    // Hand the effect brand-new callback identities on every render, which is
+    // what an unmemoized snackbar context and inline arrow props used to do.
+    // Re-running the effect here would replay refresh() into an endless loop
+    // of RSC requests.
+    for (let i = 0; i < 5; i += 1) {
+      mockUseSnackbar.mockReturnValue({ showSnackbar: jest.fn() });
+      rerender(
+        <ConfirmModal
+          isOpen
+          onClose={jest.fn()}
+          title="Confirmar?"
+          action={mockActionFn}
+        />
+      );
+    }
+
+    expect(mockRefresh).toHaveBeenCalledTimes(1);
+  });
 });
