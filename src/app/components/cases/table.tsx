@@ -237,11 +237,7 @@ export default function CasesTable({
               : getDefaultCaseStatuses(isAdmin)
           }
           initialContractorId={searchParams.getAll('contractor_id')}
-          initialCategory={
-            searchParams.has('category')
-              ? searchParams.getAll('category')
-              : Object.values(CaseCategory)
-          }
+          initialCategory={searchParams.getAll('category')}
           initialAdvanceRequested={
             searchParams.get('advance_requested') === 'true'
           }
