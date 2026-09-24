@@ -25,6 +25,7 @@ describe('CardWrapper', () => {
   it('shows the four admin cards with the counts for each query', async () => {
     mockFetchCases.mockImplementation((query: string) => {
       if (query === 'status=Draft&status=New') return totalFor(3);
+      if (query === 'status=Report') return totalFor(8);
       if (query.includes('status=Payment') && !query.includes('status=Receipt'))
         return totalFor(5);
       if (query === 'status=Receipt') return totalFor(2);
@@ -38,47 +39,30 @@ describe('CardWrapper', () => {
 
     expect(screen.getByText('3')).toBeInTheDocument();
     expect(screen.getByText('Casos sem responsável')).toBeInTheDocument();
-    expect(screen.getByText('11')).toBeInTheDocument();
-    expect(screen.getByText('Casos atribuídos pendentes')).toBeInTheDocument();
+    expect(screen.getByText('8')).toBeInTheDocument();
+    expect(screen.getByText('Pendente Laudo')).toBeInTheDocument();
     expect(screen.getByText('5')).toBeInTheDocument();
-    expect(screen.getByText('Pendentes de valores')).toBeInTheDocument();
+    expect(screen.getByText('Pendente Pagamento')).toBeInTheDocument();
     expect(screen.getByText('2')).toBeInTheDocument();
-    expect(screen.getByText('Pendentes de comprovante')).toBeInTheDocument();
+    expect(screen.getByText('Pendente Comprovante')).toBeInTheDocument();
+    expect(
+      screen.queryByText('Casos atribuídos pendentes')
+    ).not.toBeInTheDocument();
 
     expect(
       screen.getByText('Casos sem responsável').closest('a')
     ).toHaveAttribute('href', '/cases?status=Draft&status=New');
+    expect(screen.getByText('Pendente Laudo').closest('a')).toHaveAttribute(
+      'href',
+      '/cases?status=Report'
+    );
+    expect(screen.getByText('Pendente Pagamento').closest('a')).toHaveAttribute(
+      'href',
+      '/cases?status=Payment'
+    );
     expect(
-      screen.getByText('Pendentes de valores').closest('a')
-    ).toHaveAttribute('href', '/cases?status=Payment');
-    expect(
-      screen.getByText('Pendentes de comprovante').closest('a')
+      screen.getByText('Pendente Comprovante').closest('a')
     ).toHaveAttribute('href', '/payments');
-  });
-
-  it('scopes "atribuídos" to CustomerInfo through Report, excluding intake and back-office statuses', async () => {
-    mockFetchCases.mockResolvedValue(totalFor(0));
-
-    const jsx = await CardWrapper({
-      user: { user_id: 'user-1', role: UserRole.ADMIN },
-    });
-    render(jsx);
-
-    const assignedHref = screen
-      .getByText('Casos atribuídos pendentes')
-      .closest('a')
-      ?.getAttribute('href');
-
-    expect(assignedHref).not.toContain('status=Draft');
-    expect(assignedHref).not.toContain('status=New');
-    expect(assignedHref).not.toContain('status=Payment');
-    expect(assignedHref).not.toContain('status=Receipt');
-    expect(assignedHref).not.toContain('status=Closed');
-    expect(assignedHref).not.toContain('status=Canceled');
-    expect(assignedHref).toContain('status=CustomerInfo');
-    expect(assignedHref).toContain('status=WaitingPartner');
-    expect(assignedHref).toContain('status=Ongoing');
-    expect(assignedHref).toContain('status=Report');
   });
 
   it('shows only two cards for operators, scoped to their own cases', async () => {
@@ -99,9 +83,7 @@ describe('CardWrapper', () => {
     expect(
       screen.queryByText('Casos atribuídos pendentes')
     ).not.toBeInTheDocument();
-    expect(
-      screen.queryByText('Pendentes de comprovante')
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText('Pendente Comprovante')).not.toBeInTheDocument();
 
     expect(
       screen.getByText('Meus casos pendentes').closest('a')

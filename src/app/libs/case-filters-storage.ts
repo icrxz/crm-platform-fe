@@ -2,6 +2,7 @@ export type CaseFilters = {
   status?: string[];
   contractorId?: string[];
   category?: string[];
+  advanceRequested?: boolean;
   onlyMine?: boolean;
 };
 

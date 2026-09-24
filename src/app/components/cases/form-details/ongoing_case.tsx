@@ -1,10 +1,14 @@
 'use client';
 import { useSnackbar } from '@/app/context/SnackbarProvider';
 import { ONLY_DATE_PATTERN, parseDateTime, timeElapsed } from '@/app/libs/date';
-import { changeStatus } from '@/app/services/cases';
+import { changeStatus, updateCaseMetadata } from '@/app/services/cases';
 import { addComment } from '@/app/services/comments';
 import { CreateAttachment } from '@/app/types/attachments';
 import { CaseFull, CaseStatus } from '@/app/types/case';
+import {
+  ADVANCE_REQUESTED_METADATA_KEY,
+  ADVANCE_REQUESTED_METADATA_VALUE,
+} from '@/app/utils/case_metadata';
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import {
@@ -16,6 +20,7 @@ import {
 import { useActionState } from 'react';
 import { Button } from '../../common/button';
 import { Card } from '../../common/card';
+import { FormTitleWithTooltip } from '../../common/form-title-tooltip';
 import dynamic from 'next/dynamic';
 import type {
   FileUploaderGenericRef,
@@ -47,6 +52,7 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
   const fileUploaderRef = useRef<FileUploaderGenericRef>(null);
   const [content, setContent] = useState('');
   const [loadingComment, setLoadingComment] = useState(false);
+  const [loadingAdvance, setLoadingAdvance] = useState(false);
   const [openTargetDateModal, setOpenTargetDateModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -119,12 +125,69 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
     setLoadingComment(false);
   }
 
+  async function handleRequestAdvance() {
+    // Cada solicitação vira um comentário próprio, com o que o técnico
+    // escreveu — é o texto que diz qual peça/valor está sendo pedido, então
+    // um conteúdo fixo não serve. A flag no metadata é uma só: marcá-la de
+    // novo é idempotente e reabre o caso como pendente se o admin já tiver
+    // dado baixa num pedido anterior.
+    if (!content.trim()) {
+      setErrorMessage(
+        'Descreva a solicitação em "Informações adicionais" antes de solicitar o adiantamento.'
+      );
+      return;
+    }
+
+    setErrorMessage('');
+    setLoadingAdvance(true);
+
+    const formData = new FormData();
+    formData.append('content', content);
+
+    addComment(crmCase.case_id, formData)
+      .then((response) => {
+        if (!response.success) {
+          if (response.unauthorized) {
+            signOut({ callbackUrl: '/login' });
+          }
+          showSnackbar(response.message, 'error');
+          return;
+        }
+
+        return updateCaseMetadata(crmCase.case_id, {
+          [ADVANCE_REQUESTED_METADATA_KEY]: ADVANCE_REQUESTED_METADATA_VALUE,
+        }).then((metadataResponse) => {
+          if (!metadataResponse.success) {
+            if (metadataResponse.unauthorized) {
+              signOut({ callbackUrl: '/login' });
+            }
+            showSnackbar(metadataResponse.message, 'error');
+            return;
+          }
+
+          showSnackbar('Adiantamento solicitado com sucesso', 'success');
+          setContent('');
+          refresh();
+        });
+      })
+      .finally(() => {
+        setLoadingAdvance(false);
+      });
+  }
+
   return (
     <Card
       title={
-        isBeforeTargetDate ? 'Aguardando data da visita' : 'Caso em andamento'
+        <FormTitleWithTooltip
+          title={
+            isBeforeTargetDate
+              ? 'Aguardando data da visita'
+              : 'Caso em andamento'
+          }
+          tooltip="'Adicionar comentário' só registra o comentário. 'Enviar para laudo' insere as imagens anexadas aqui no laudo final."
+          titleSize="xl"
+        />
       }
-      titleSize="xl"
     >
       <form action={dispatch} className="gap-4 px-5">
         {isBeforeTargetDate ? (
@@ -214,6 +277,14 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
             isLoading={loadingComment}
           >
             Adicionar comentário
+          </Button>
+          <Button
+            type="button"
+            onClick={handleRequestAdvance}
+            isLoading={loadingAdvance}
+            disabled={loadingComment}
+          >
+            Solicitar Adiantamento/Peças
           </Button>
           {!isBeforeTargetDate && (
             <Button type="submit" disabled={loadingComment}>

@@ -28,14 +28,14 @@ const buttonColors = {
   },
   quiet: {
     success:
-      'bg-green-100 hover:bg-green-200 text-green-700 focus-visible:outline-green-500 active:bg-green-300',
+      'bg-transparent border border-green-500 hover:bg-green-50 text-green-700 focus-visible:outline-green-500 active:bg-green-100',
     error:
-      'bg-red-100 hover:bg-red-200 text-red-700 focus-visible:outline-red-500 active:bg-red-300',
+      'bg-transparent border border-red-500 hover:bg-red-50 text-red-700 focus-visible:outline-red-500 active:bg-red-100',
     warning:
-      'bg-orange-100 hover:bg-orange-200 text-orange-700 focus-visible:outline-orange-500 active:bg-orange-300',
-    info: 'bg-blue-100 hover:bg-blue-200 text-blue-700 focus-visible:outline-blue-500 active:bg-blue-300',
+      'bg-transparent border border-orange-500 hover:bg-orange-50 text-orange-700 focus-visible:outline-orange-500 active:bg-orange-100',
+    info: 'bg-transparent border border-blue-500 hover:bg-blue-50 text-blue-700 focus-visible:outline-blue-500 active:bg-blue-100',
     neutral:
-      'bg-gray-200 hover:bg-gray-300 text-gray-700 focus-visible:outline-gray-500 active:bg-gray-400',
+      'bg-transparent border border-gray-500 hover:bg-gray-50 text-gray-700 focus-visible:outline-gray-500 active:bg-gray-100',
   },
 };
 

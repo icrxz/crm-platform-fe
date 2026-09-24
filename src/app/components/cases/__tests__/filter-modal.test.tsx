@@ -70,6 +70,7 @@ describe('FilterModal', () => {
           initialStatus={[]}
           initialContractorId={[]}
           initialCategory={[]}
+          initialAdvanceRequested={false}
         />
       );
 
@@ -89,6 +90,7 @@ describe('FilterModal', () => {
           initialStatus={[]}
           initialContractorId={[]}
           initialCategory={[]}
+          initialAdvanceRequested={false}
         />
       );
 
@@ -112,6 +114,7 @@ describe('FilterModal', () => {
           initialStatus={[]}
           initialContractorId={[]}
           initialCategory={[]}
+          initialAdvanceRequested={false}
         />
       );
 
@@ -132,6 +135,7 @@ describe('FilterModal', () => {
           initialStatus={[CaseStatus.NEW, CaseStatus.ONGOING]}
           initialContractorId={['contractor-1']}
           initialCategory={['d+']}
+          initialAdvanceRequested={false}
         />
       );
 
@@ -143,6 +147,7 @@ describe('FilterModal', () => {
         status: [CaseStatus.NEW, CaseStatus.ONGOING],
         contractorId: ['contractor-1'],
         category: ['d+'],
+        advanceRequested: false,
       });
     });
 
@@ -157,6 +162,7 @@ describe('FilterModal', () => {
           initialStatus={[]}
           initialContractorId={[]}
           initialCategory={[]}
+          initialAdvanceRequested={false}
         />
       );
 
@@ -168,6 +174,7 @@ describe('FilterModal', () => {
         status: [],
         contractorId: [],
         category: [],
+        advanceRequested: false,
       });
     });
   });
@@ -182,6 +189,7 @@ describe('FilterModal', () => {
           initialStatus={[]}
           initialContractorId={[]}
           initialCategory={[]}
+          initialAdvanceRequested={false}
         />
       );
 
@@ -200,6 +208,7 @@ describe('FilterModal', () => {
           initialStatus={[]}
           initialContractorId={[]}
           initialCategory={Object.values(CaseCategory)}
+          initialAdvanceRequested={false}
         />
       );
 
@@ -221,6 +230,7 @@ describe('FilterModal', () => {
           initialStatus={[]}
           initialContractorId={[]}
           initialCategory={[]}
+          initialAdvanceRequested={false}
           userRole={UserRole.OPERATOR}
         />
       );
@@ -241,6 +251,7 @@ describe('FilterModal', () => {
           initialStatus={[]}
           initialContractorId={[]}
           initialCategory={[]}
+          initialAdvanceRequested={false}
           userRole={UserRole.ADMIN}
         />
       );
@@ -259,6 +270,7 @@ describe('FilterModal', () => {
           initialStatus={[]}
           initialContractorId={[]}
           initialCategory={[]}
+          initialAdvanceRequested={false}
         />
       );
 

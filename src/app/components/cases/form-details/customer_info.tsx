@@ -15,6 +15,7 @@ import { useActionState } from 'react';
 import { Button } from '../../common/button';
 import { Card } from '../../common/card';
 import { ErrorMessage } from '../../common/error-message';
+import { FormTitleWithTooltip } from '../../common/form-title-tooltip';
 import dynamic from 'next/dynamic';
 import type {
   FileUploaderGenericRef,
@@ -81,7 +82,15 @@ export function CustomerInfoStatusForm({
   }
 
   return (
-    <Card title="Detalhes" titleSize="xl">
+    <Card
+      title={
+        <FormTitleWithTooltip
+          title="Detalhes"
+          tooltip="Imagens anexadas aqui não vão pro laudo final. Só as de 'Enviar para laudo' vão."
+          titleSize="xl"
+        />
+      }
+    >
       <form action={dispatch} className="px-5">
         <div className="mb-2">
           <label
@@ -96,7 +105,7 @@ export function CustomerInfoStatusForm({
             name="content"
             className="h-32 w-full rounded-md border border-gray-300 p-2"
             rows={3}
-            placeholder="Descreva o problema relatado pelo cliente e selecione as imagens para o laudo"
+            placeholder="Descreva o problema relatado pelo cliente e selecione as imagens para anexar ao caso"
             required
           />
         </div>

@@ -26,10 +26,23 @@ indisponível), gere as baselines dentro do container oficial em vez disso,
 com a app já rodando em `localhost:3000` (`npm run build && npm run start`):
 
 ```bash
-docker run --rm --network host -v "$(pwd)":/work -w /work \
+docker run --rm --network host --user "$(id -u):$(id -g)" \
+  -v "$(pwd)":/work -w /work \
   mcr.microsoft.com/playwright:v1.63.0-noble \
   npx playwright test --update-snapshots
 ```
 
 (troque a tag `v1.63.0` pela versão de `@playwright/test` no `package.json`
 se ela mudar.)
+
+**Não omita o `--user`.** Sem ele o container roda como root e tudo que ele
+escreve no bind mount (`.next/`, `test-results/`, as baselines novas) fica com
+dono `root`. O próximo `npm run build` local então falha com
+`EACCES: permission denied, unlink '.../.next/build/package.json'`, e limpar
+exige `sudo` — que não funciona em sessão sem terminal interativo. Se isso já
+tiver acontecido, o mesmo container resolve:
+
+```bash
+docker run --rm -v "$(pwd)":/work -w /work \
+  mcr.microsoft.com/playwright:v1.63.0-noble rm -rf .next
+```

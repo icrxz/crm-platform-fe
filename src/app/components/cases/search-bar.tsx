@@ -31,7 +31,9 @@ export default function CasesSearchBar({
   const hasFilterParams =
     searchParams.has('status') ||
     searchParams.has('contractor_id') ||
-    searchParams.has('only_mine');
+    searchParams.has('category') ||
+    searchParams.has('only_mine') ||
+    searchParams.has('advance_requested');
 
   useEffect(() => {
     if (hasFilterParams) return;
@@ -40,7 +42,9 @@ export default function CasesSearchBar({
     if (
       !stored.status?.length &&
       !stored.contractorId?.length &&
-      !stored.onlyMine
+      !stored.category?.length &&
+      !stored.onlyMine &&
+      !stored.advanceRequested
     )
       return;
 
@@ -49,7 +53,9 @@ export default function CasesSearchBar({
     stored.contractorId?.forEach((value) =>
       params.append('contractor_id', value)
     );
+    stored.category?.forEach((value) => params.append('category', value));
     if (stored.onlyMine) params.set('only_mine', 'true');
+    if (stored.advanceRequested) params.set('advance_requested', 'true');
 
     router.replace(pathname + '?' + params.toString());
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -78,7 +84,9 @@ export default function CasesSearchBar({
     const params = new URLSearchParams(searchParams.toString());
     params.delete('status');
     params.delete('contractor_id');
+    params.delete('category');
     params.delete('only_mine');
+    params.delete('advance_requested');
     params.set('page', '1');
 
     clearStoredCaseFilters();

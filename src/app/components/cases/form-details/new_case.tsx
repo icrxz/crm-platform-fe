@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import { useActionState } from 'react';
 import { Button } from '../../common/button';
 import { Card } from '../../common/card';
+import { FormTitleWithTooltip } from '../../common/form-title-tooltip';
 
 interface NewCaseStatusFormProps {
   crmCase: CaseFull;
@@ -62,7 +63,15 @@ export function NewCaseStatusForm({ crmCase }: NewCaseStatusFormProps) {
   }, []);
 
   return (
-    <Card title="Novo caso" titleSize="xl">
+    <Card
+      title={
+        <FormTitleWithTooltip
+          title="Novo caso"
+          tooltip="Não afeta o laudo final."
+          titleSize="xl"
+        />
+      }
+    >
       <form action={dispatch} className="px-5">
         <div className="mb-4">
           <label
