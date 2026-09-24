@@ -3,8 +3,18 @@ import { useSnackbar } from '@/app/context/SnackbarProvider';
 import { ONLY_DATE_PATTERN, parseDateTime, timeElapsed } from '@/app/libs/date';
 import { changeStatus, updateCaseMetadata } from '@/app/services/cases';
 import { addComment } from '@/app/services/comments';
-import { CreateAttachment } from '@/app/types/attachments';
-import { CaseFull, CaseStatus } from '@/app/types/case';
+import {
+  AttachmentDocumentType,
+  attachmentDocumentTypeLabel,
+  CreateAttachment,
+} from '@/app/types/attachments';
+import {
+  CaseFull,
+  CaseServiceType,
+  CaseStatus,
+  parseCaseCategory,
+} from '@/app/types/case';
+import { requiredCaseDocuments } from '@/app/utils/case_documents';
 import {
   ADVANCE_REQUESTED_METADATA_KEY,
   ADVANCE_REQUESTED_METADATA_VALUE,
@@ -55,12 +65,24 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
   const [loadingAdvance, setLoadingAdvance] = useState(false);
   const [openTargetDateModal, setOpenTargetDateModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [serviceType, setServiceType] = useState<CaseServiceType>(
+    CaseServiceType.REPAIR
+  );
 
   const advanceAlreadyRequested =
     crmCase.metadata?.[ADVANCE_REQUESTED_METADATA_KEY] ===
     ADVANCE_REQUESTED_METADATA_VALUE;
 
   const isBeforeTargetDate = new Date() < new Date(crmCase.target_date!!);
+
+  // A papelada exigida muda com o tipo de serviço e a categoria, e é o técnico
+  // que escolhe o tipo aqui — por isso a lista é derivada do radio, não do
+  // crmCase.type (que só vira repair/inspection depois deste envio).
+  const requiredDocuments = requiredCaseDocuments(
+    serviceType,
+    parseCaseCategory(crmCase.metadata?.category)
+  );
+  const documentTypes = [AttachmentDocumentType.PHOTO, ...requiredDocuments];
 
   const placeholderInfo = isBeforeTargetDate
     ? 'Adicione comentários ao caso'
@@ -239,13 +261,15 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
             ref={fileUploaderRef}
             minFiles={isBeforeTargetDate ? 0 : 1}
             maxFiles={20}
+            documentTypes={documentTypes}
           />
         </div>
 
         <div>
           <RadioGroup
             label="Tipo de serviço"
-            defaultValue="repair"
+            value={serviceType}
+            onValueChange={(value) => setServiceType(value as CaseServiceType)}
             className="mb-4"
             orientation="horizontal"
             isRequired
@@ -253,9 +277,19 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
             id="type"
             name="type"
           >
-            <Radio value={'repair'}>Reparo</Radio>
-            <Radio value={'inspection'}>Vistoria</Radio>
+            <Radio value={CaseServiceType.REPAIR}>Reparo</Radio>
+            <Radio value={CaseServiceType.INSPECTION}>Vistoria</Radio>
           </RadioGroup>
+
+          {!isBeforeTargetDate && requiredDocuments.length > 0 && (
+            <p className="mb-4 text-sm text-gray-500">
+              Marque cada arquivo com o seu tipo. Este caso precisa de:{' '}
+              {requiredDocuments
+                .map((document) => attachmentDocumentTypeLabel[document])
+                .join(', ')}
+              .
+            </p>
+          )}
         </div>
 
         {errorMessage && <ErrorMessage message={errorMessage} />}
