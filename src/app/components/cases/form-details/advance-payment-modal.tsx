@@ -57,16 +57,13 @@ export function AdvancePaymentModal({
     setLoading(true);
     setErrorMessage('');
 
+    // Comprovante é opcional: o pagamento costuma ser dado como feito antes de
+    // o comprovante existir, e travar aqui deixaria o caso marcado como
+    // pendente de adiantamento sem necessidade.
     let attachments: CreateAttachment[] = [];
     await fileUploaderRef.current?.submit().then((response) => {
       attachments = response || [];
     });
-
-    if (attachments.length <= 0) {
-      setErrorMessage('Deve haver no mínimo 1 anexo.');
-      setLoading(false);
-      return;
-    }
 
     const formData = new FormData();
     formData.append('content', ADVANCE_PAYMENT_COMMENT_CONTENT);
@@ -113,12 +110,12 @@ export function AdvancePaymentModal({
           Registrar pagamento do adiantamento
         </h1>
         <p className="mx-1 mb-4 text-sm text-gray-600">
-          Anexe o comprovante do pagamento. O caso deixará de aparecer como
-          pendente de adiantamento.
+          Anexe o comprovante do pagamento, se já tiver. O caso deixará de
+          aparecer como pendente de adiantamento.
         </p>
 
         <div className="mb-4">
-          <GenericUploader ref={fileUploaderRef} minFiles={1} maxFiles={5} />
+          <GenericUploader ref={fileUploaderRef} minFiles={0} maxFiles={5} />
         </div>
 
         {errorMessage && <ErrorMessage message={errorMessage} />}
