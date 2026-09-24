@@ -56,10 +56,6 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
   const [openTargetDateModal, setOpenTargetDateModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const advanceAlreadyRequested =
-    crmCase.metadata?.[ADVANCE_REQUESTED_METADATA_KEY] ===
-    ADVANCE_REQUESTED_METADATA_VALUE;
-
   const isBeforeTargetDate = new Date() < new Date(crmCase.target_date!!);
 
   const placeholderInfo = isBeforeTargetDate
@@ -130,10 +126,23 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
   }
 
   async function handleRequestAdvance() {
+    // Cada solicitação vira um comentário próprio, com o que o técnico
+    // escreveu — é o texto que diz qual peça/valor está sendo pedido, então
+    // um conteúdo fixo não serve. A flag no metadata é uma só: marcá-la de
+    // novo é idempotente e reabre o caso como pendente se o admin já tiver
+    // dado baixa num pedido anterior.
+    if (!content.trim()) {
+      setErrorMessage(
+        'Descreva a solicitação em "Informações adicionais" antes de solicitar o adiantamento.'
+      );
+      return;
+    }
+
+    setErrorMessage('');
     setLoadingAdvance(true);
 
     const formData = new FormData();
-    formData.append('content', 'Solicitado adiantamento de peças');
+    formData.append('content', content);
 
     addComment(crmCase.case_id, formData)
       .then((response) => {
@@ -157,6 +166,7 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
           }
 
           showSnackbar('Adiantamento solicitado com sucesso', 'success');
+          setContent('');
           refresh();
         });
       })
@@ -272,11 +282,9 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
             type="button"
             onClick={handleRequestAdvance}
             isLoading={loadingAdvance}
-            disabled={loadingComment || advanceAlreadyRequested}
+            disabled={loadingComment}
           >
-            {advanceAlreadyRequested
-              ? 'Adiantamento solicitado'
-              : 'Solicitar Adiantamento/Peça'}
+            Solicitar Adiantamento/Peças
           </Button>
           {!isBeforeTargetDate && (
             <Button type="submit" disabled={loadingComment}>
