@@ -1,0 +1,69 @@
+'use server';
+import { getApiErrorMessage } from '@/app/libs/api-error';
+import { getCurrentUser } from '@/app/libs/session';
+import { ServiceResponse } from '@/app/types/service';
+import { UpdateCaseMetadata } from '@/app/types/update_case_metadata';
+import { cookies } from 'next/headers';
+import { crmCoreApiKey, crmCoreEndpoint } from '.';
+
+export async function updateCaseMetadata(
+  caseID: string,
+  data: Record<string, string>
+): Promise<ServiceResponse<any>> {
+  try {
+    if (!caseID) {
+      return {
+        success: false,
+        message: 'ID do caso não fornecido!',
+      };
+    }
+
+    const url = `${crmCoreEndpoint}/crm/core/api/v1/cases/${caseID}/metadata`;
+    const jwt = (await cookies()).get('jwt')?.value;
+
+    const session = await getCurrentUser();
+    const author = session?.username || '';
+
+    const payload: UpdateCaseMetadata = {
+      data,
+      updated_by: author,
+    };
+
+    const response = await fetch(url, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-Key': crmCoreApiKey || '',
+        Authorization: `Bearer ${jwt}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const unauthorized = response.status === 401;
+      const errorMessageDefault = unauthorized
+        ? 'usuário não autorizado'
+        : 'falha ao atualizar metadados do caso';
+      const errorMessage = await getApiErrorMessage(
+        response,
+        errorMessageDefault
+      );
+
+      return {
+        success: false,
+        message: errorMessage,
+        unauthorized: unauthorized,
+      };
+    }
+
+    return {
+      success: true,
+      message: 'metadados do caso atualizados com sucesso',
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: 'algo de errado aconteceu, contate o suporte!',
+    };
+  }
+}

@@ -19,6 +19,11 @@ const routes = [
 for (const route of routes) {
   test(`${route} renders with no clipped/hidden content`, async ({ page }) => {
     await page.goto(`/qa-fixtures/${route}`);
+    // Some forms dynamically import(...) client-only widgets (e.g. the file
+    // uploader in form-details, ssr:false) that mount after first paint —
+    // without this wait the screenshot can race that mount and flake
+    // (content shifting into/out of the viewport crop below).
+    await page.waitForLoadState('networkidle');
     await expect(page).toHaveScreenshot(`${route}.png`, { fullPage: false });
   });
 }

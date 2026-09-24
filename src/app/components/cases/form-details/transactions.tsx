@@ -17,6 +17,7 @@ import { useState } from 'react';
 import { useActionState } from 'react';
 import { Button } from '../../common/button';
 import { Card } from '../../common/card';
+import { FormTitleWithTooltip } from '../../common/form-title-tooltip';
 
 interface TransactionStatusFormProps {
   crmCase: CaseFull;
@@ -133,7 +134,15 @@ export function TransactionStatusForm({ crmCase }: TransactionStatusFormProps) {
   };
 
   return (
-    <Card title="Adicionar transações" titleSize="xl">
+    <Card
+      title={
+        <FormTitleWithTooltip
+          title="Adicionar transações"
+          tooltip="Não afeta o laudo final."
+          titleSize="xl"
+        />
+      }
+    >
       <form action={dispatch} className="px-5">
         <div className="mb-4">
           <h2>Técnico</h2>

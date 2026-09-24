@@ -1,6 +1,7 @@
 'use client';
 import { fetchContractors } from '@/app/services/contractors';
 import { roboto } from '@/app/ui/fonts';
+import { Checkbox } from '@heroui/checkbox';
 import { Select, SelectItem, Selection } from '@heroui/react';
 import { useEffect, useState } from 'react';
 import { CaseFilters } from '../../libs/case-filters-storage';
@@ -24,6 +25,7 @@ interface FilterModalProps {
   initialStatus: string[];
   initialContractorId: string[];
   initialCategory: string[];
+  initialAdvanceRequested: boolean;
   userRole?: UserRole;
 }
 
@@ -34,6 +36,7 @@ export function FilterModal({
   initialStatus,
   initialContractorId,
   initialCategory,
+  initialAdvanceRequested,
   userRole,
 }: FilterModalProps) {
   const isAdmin = userRole !== undefined && adminRoles.includes(userRole);
@@ -53,6 +56,9 @@ export function FilterModal({
   const [category, setCategory] = useState<Set<string>>(
     new Set(initialCategory)
   );
+  const [advanceRequested, setAdvanceRequested] = useState<boolean>(
+    initialAdvanceRequested
+  );
   const [contractors, setContractors] = useState<Contractor[]>([]);
 
   useEffect(() => {
@@ -67,6 +73,7 @@ export function FilterModal({
       status: Array.from(status),
       contractorId: Array.from(contractorId),
       category: Array.from(category),
+      advanceRequested,
     });
   }
 
@@ -131,6 +138,14 @@ export function FilterModal({
                 <SelectItem key={value}>{caseCategoryMap[value]}</SelectItem>
               ))}
             </Select>
+
+            <Checkbox
+              isSelected={advanceRequested}
+              onValueChange={setAdvanceRequested}
+              size="sm"
+            >
+              Solicitação de adiantamento
+            </Checkbox>
           </div>
 
           <div className="mt-6 flex justify-end space-x-8">

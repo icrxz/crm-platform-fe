@@ -1,7 +1,25 @@
 'use client';
 
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import {
+  ReactNode,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from 'react';
 import { createPortal } from 'react-dom';
+
+function subscribeNoop() {
+  return () => {};
+}
+
+function getClientSnapshot() {
+  return true;
+}
+
+function getServerSnapshot() {
+  return false;
+}
 
 interface TooltipProps {
   content: string;
@@ -10,6 +28,10 @@ interface TooltipProps {
   position?: 'top' | 'bottom' | 'right';
   textSize?: 'xs' | 'sm' | 'base';
   className?: string;
+  // When true, wraps long content instead of forcing a single line, with a
+  // max-width that shrinks on narrow viewports so it never overflows the
+  // screen.
+  wrap?: boolean;
 }
 
 const TEXT_SIZE_CLASSES: Record<
@@ -76,10 +98,22 @@ export function Tooltip({
   position = 'top',
   textSize = 'xs',
   className,
+  wrap = false,
 }: TooltipProps) {
   const triggerRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [coords, setCoords] = useState<Coords | null>(null);
+  // Server has no `document`, so the portal must stay unrendered through the
+  // client's first (hydration) pass too — this only flips to true once
+  // React re-checks the snapshot after mount, keeping that first render
+  // identical to the SSR output. Checking `typeof document` directly in the
+  // render body instead diverges immediately on the client and causes a
+  // hydration mismatch.
+  const isMounted = useSyncExternalStore(
+    subscribeNoop,
+    getClientSnapshot,
+    getServerSnapshot
+  );
 
   useEffect(() => {
     const measure = () => {
@@ -109,7 +143,7 @@ export function Tooltip({
     >
       {children}
 
-      {typeof document !== 'undefined' &&
+      {isMounted &&
         createPortal(
           <div
             style={{
@@ -118,7 +152,7 @@ export function Tooltip({
               left: coords?.left ?? 0,
               transform: coords?.transform,
             }}
-            className={`pointer-events-none z-50 whitespace-nowrap rounded px-2 py-1 font-normal shadow-lg transition-opacity ${isVisible ? 'opacity-100' : 'opacity-0'} ${TEXT_SIZE_CLASSES[textSize]} ${THEME_CLASSES[theme]}`}
+            className={`pointer-events-none z-50 rounded px-2 py-1 font-normal shadow-lg transition-opacity ${wrap ? 'max-w-[85vw] whitespace-normal sm:max-w-[240px] md:max-w-xs' : 'whitespace-nowrap'} ${isVisible ? 'opacity-100' : 'opacity-0'} ${TEXT_SIZE_CLASSES[textSize]} ${THEME_CLASSES[theme]}`}
           >
             {content}
           </div>,

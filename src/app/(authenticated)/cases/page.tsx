@@ -10,6 +10,7 @@ import {
   getDefaultCaseStatuses,
   onlyAdminStatuses,
 } from '@/app/utils/case_status';
+import { ADVANCE_REQUESTED_METADATA_KEY } from '@/app/utils/case_metadata';
 import { adminRoles } from '@/app/utils/roles';
 import { redirect } from 'next/navigation';
 import CasesTable from '../../components/cases/table';
@@ -21,6 +22,7 @@ type CasePageParams = {
     status?: string | string[];
     contractor_id?: string | string[];
     category?: string | string[];
+    advance_requested?: string;
     only_mine?: string;
     page?: number;
   }>;
@@ -46,11 +48,18 @@ function toMetadataCategoryQueryParts(value?: string | string[]): string[] {
     .map((v) => `metadata[category]=${encodeURIComponent(v)}`);
 }
 
+// Same metadata[key]=value convention as category, for the boolean
+// "Solicitar Adiantamento/Peça" flag set from ongoing_case.tsx.
+function toMetadataFlagQueryParts(key: string, value?: string): string[] {
+  return value === 'true' ? [`metadata[${key}]=true`] : [];
+}
+
 async function getData(
   sinistro: string,
   status: string | string[] | undefined,
   contractorId: string | string[] | undefined,
   category: string | string[] | undefined,
+  advanceRequested: string | undefined,
   ownerId: string,
   userRole: UserRole | undefined,
   page: number
@@ -75,6 +84,10 @@ async function getData(
     ...allowedStatuses.map((s) => `status=${s}`),
     ...toQueryParts('contractor_id', contractorId),
     ...toMetadataCategoryQueryParts(category),
+    ...toMetadataFlagQueryParts(
+      ADVANCE_REQUESTED_METADATA_KEY,
+      advanceRequested
+    ),
     ...(ownerId ? [`owner_id=${ownerId}`] : []),
   ];
   const query = queryParts.join('&');
@@ -91,8 +104,15 @@ async function getData(
 }
 
 export default async function Page({ searchParams }: CasePageParams) {
-  const { sinistro, status, contractor_id, category, only_mine, page } =
-    await searchParams;
+  const {
+    sinistro,
+    status,
+    contractor_id,
+    category,
+    advance_requested,
+    only_mine,
+    page,
+  } = await searchParams;
   const user = await getCurrentUser();
   if (!user) {
     redirect('/login');
@@ -105,6 +125,7 @@ export default async function Page({ searchParams }: CasePageParams) {
     status,
     contractor_id,
     category,
+    advance_requested,
     ownerId,
     user?.role,
     page || 1

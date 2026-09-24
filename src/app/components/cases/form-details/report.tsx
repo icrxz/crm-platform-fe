@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Button } from '../../common/button';
 import { Card } from '../../common/card';
+import { FormTitleWithTooltip } from '../../common/form-title-tooltip';
 import { useActionState } from 'react';
 
 interface ReportStatusFormProps {
@@ -44,7 +45,15 @@ export function ReportStatusForm({ crmCase }: ReportStatusFormProps) {
   }
 
   return (
-    <Card title="Gerar laudo" titleSize="xl">
+    <Card
+      title={
+        <FormTitleWithTooltip
+          title="Gerar laudo"
+          tooltip="Este texto vira a conclusão do laudo final."
+          titleSize="xl"
+        />
+      }
+    >
       <form action={dispatch} className="gap-4 px-5">
         <div className="mb-2">
           <label

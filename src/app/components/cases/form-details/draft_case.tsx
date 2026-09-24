@@ -16,6 +16,7 @@ import { useFormStatus } from 'react-dom';
 import { Button } from '../../common/button';
 import { Card } from '../../common/card';
 import { Dropdown } from '../../common/dropdown/dropdown';
+import { FormTitleWithTooltip } from '../../common/form-title-tooltip';
 
 interface DraftStatusFormProps {
   crmCase: CaseFull;
@@ -78,7 +79,15 @@ export function DraftStatusForm({ crmCase }: DraftStatusFormProps) {
   }
 
   return (
-    <Card title="Complete os dados do caso" titleSize="xl">
+    <Card
+      title={
+        <FormTitleWithTooltip
+          title="Complete os dados do caso"
+          tooltip="Não afeta o laudo final."
+          titleSize="xl"
+        />
+      }
+    >
       <form action={dispatch} className="gap-4 px-5">
         <div className="my-4">
           <label

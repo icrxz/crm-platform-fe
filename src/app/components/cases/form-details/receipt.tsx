@@ -18,6 +18,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { Button } from '../../common/button';
 import { Card } from '../../common/card';
+import { FormTitleWithTooltip } from '../../common/form-title-tooltip';
 
 interface ReceiptStatusFormProps {
   crmCase: CaseFull;
@@ -130,7 +131,15 @@ export function ReceiptStatusForm({ crmCase }: ReceiptStatusFormProps) {
   };
 
   return (
-    <Card title="Transações" titleSize="xl">
+    <Card
+      title={
+        <FormTitleWithTooltip
+          title="Transações"
+          tooltip="Não afeta o laudo final."
+          titleSize="xl"
+        />
+      }
+    >
       <form className="px-5">
         <div className="mb-2">
           <h2>Técnico</h2>

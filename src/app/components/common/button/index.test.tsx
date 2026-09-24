@@ -73,7 +73,7 @@ describe('Button', () => {
     expect(screen.getByRole('button')).toHaveClass('text-white');
   });
 
-  it('applies the quiet scheme as a light background with colored text', () => {
+  it('applies the quiet scheme as a transparent background with a colored border and text', () => {
     render(
       <Button color="error" scheme="quiet">
         Cancelar
@@ -81,7 +81,9 @@ describe('Button', () => {
     );
 
     expect(screen.getByRole('button')).toHaveClass(
-      'bg-red-100',
+      'bg-transparent',
+      'border',
+      'border-red-500',
       'text-red-700'
     );
   });

@@ -18,6 +18,10 @@ jest.mock('../../../common/image-carousel', () => ({
   ImageCarousel: () => <div data-testid="image-carousel" />,
 }));
 
+jest.mock('../advance-payment-modal', () => ({
+  AdvancePaymentModal: () => <div data-testid="advance-payment-modal" />,
+}));
+
 function buildCase(overrides: Partial<CaseFull> = {}): CaseFull {
   return {
     case_id: 'case-1',
@@ -87,5 +91,66 @@ describe('CommentDetails', () => {
 
     expect(screen.getByTestId('edit-comment-modal')).toBeInTheDocument();
     expect(capturedModalProps?.comment.comment_id).toBe('comment-2');
+  });
+
+  it('does not show the advance-requested badge when the flag is not set', () => {
+    render(
+      <SnackbarProvider>
+        <CommentDetails crmCase={buildCase()} userRole={UserRole.ADMIN} />
+      </SnackbarProvider>
+    );
+
+    expect(screen.queryByText('Adiantamento pendente')).not.toBeInTheDocument();
+  });
+
+  it('shows the advance-requested badge and a "Marcar pagamento" button for admins when the flag is set', () => {
+    render(
+      <SnackbarProvider>
+        <CommentDetails
+          crmCase={buildCase({ metadata: { advance_requested: 'true' } })}
+          userRole={UserRole.ADMIN}
+        />
+      </SnackbarProvider>
+    );
+
+    expect(screen.getByText('Adiantamento pendente')).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Marcar pagamento' })
+    ).toBeInTheDocument();
+  });
+
+  it('shows the advance-requested badge but not the button for non-admins', () => {
+    render(
+      <SnackbarProvider>
+        <CommentDetails
+          crmCase={buildCase({ metadata: { advance_requested: 'true' } })}
+          userRole={UserRole.OPERATOR}
+        />
+      </SnackbarProvider>
+    );
+
+    expect(screen.getByText('Adiantamento pendente')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Marcar pagamento' })
+    ).not.toBeInTheDocument();
+  });
+
+  it('opens the advance payment modal when the admin clicks "Marcar pagamento"', () => {
+    render(
+      <SnackbarProvider>
+        <CommentDetails
+          crmCase={buildCase({ metadata: { advance_requested: 'true' } })}
+          userRole={UserRole.ADMIN}
+        />
+      </SnackbarProvider>
+    );
+
+    expect(
+      screen.queryByTestId('advance-payment-modal')
+    ).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Marcar pagamento' }));
+
+    expect(screen.getByTestId('advance-payment-modal')).toBeInTheDocument();
   });
 });

@@ -1,16 +1,19 @@
 import {
+  ArrowUpCircleIcon,
   BanknotesIcon,
   ClipboardDocumentListIcon,
   DocumentArrowUpIcon,
+  DocumentTextIcon,
   UserIcon,
 } from '@heroicons/react/24/outline';
 import { fetchCases } from '@/app/services/cases';
 import { CaseStatus } from '@/app/types/case';
 import {
-  assignedOpenCaseStatuses,
+  defaultCaseStatuses,
   operatorVisibleOpenCaseStatuses,
   unassignedCaseStatuses,
 } from '@/app/utils/case_status';
+import { ADVANCE_REQUESTED_METADATA_KEY } from '@/app/utils/case_metadata';
 import { adminRoles } from '@/app/utils/roles';
 import { UserRole } from '@/app/types/user';
 import { StatCard } from './stat-card';
@@ -33,15 +36,22 @@ export default async function CardWrapper({ user }: CardWrapperProps) {
 
   if (isAdmin) {
     const unassignedQuery = statusQuery(unassignedCaseStatuses);
-    const assignedQuery = statusQuery(assignedOpenCaseStatuses);
+    const openStatusQuery = statusQuery(defaultCaseStatuses);
+    const pendingAdvanceQuery = `${openStatusQuery}&metadata[${ADVANCE_REQUESTED_METADATA_KEY}]=true`;
 
-    const [unassigned, assigned, pendingPayment, pendingReceipt] =
-      await Promise.all([
-        countCases(unassignedQuery),
-        countCases(assignedQuery),
-        countCases(`status=${CaseStatus.PAYMENT}`),
-        countCases(`status=${CaseStatus.RECEIPT}`),
-      ]);
+    const [
+      unassigned,
+      pendingReport,
+      pendingPayment,
+      pendingReceipt,
+      pendingAdvance,
+    ] = await Promise.all([
+      countCases(unassignedQuery),
+      countCases(`status=${CaseStatus.REPORT}`),
+      countCases(`status=${CaseStatus.PAYMENT}`),
+      countCases(`status=${CaseStatus.RECEIPT}`),
+      countCases(pendingAdvanceQuery),
+    ]);
 
     return (
       <>
@@ -52,19 +62,25 @@ export default async function CardWrapper({ user }: CardWrapperProps) {
           icon={ClipboardDocumentListIcon}
         />
         <StatCard
-          title="Casos atribuídos pendentes"
-          value={assigned}
-          href={`/cases?${assignedQuery}`}
-          icon={UserIcon}
+          title="Pendente Laudo"
+          value={pendingReport}
+          href={`/cases?status=${CaseStatus.REPORT}`}
+          icon={DocumentTextIcon}
         />
         <StatCard
-          title="Pendentes de valores"
+          title="Pendente Adiantamento"
+          value={pendingAdvance}
+          href={`/cases?${openStatusQuery}&advance_requested=true`}
+          icon={ArrowUpCircleIcon}
+        />
+        <StatCard
+          title="Pendente Pagamento"
           value={pendingPayment}
           href={`/cases?status=${CaseStatus.PAYMENT}`}
           icon={BanknotesIcon}
         />
         <StatCard
-          title="Pendentes de comprovante"
+          title="Pendente Comprovante"
           value={pendingReceipt}
           href="/payments"
           icon={DocumentArrowUpIcon}

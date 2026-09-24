@@ -92,6 +92,7 @@ export default function SideNav({ userRole, userName }: SideNavProps) {
             fill
             alt="Logo RD"
             className="rounded-xl object-fill"
+            priority
           />
         </div>
       </Link>
@@ -151,6 +152,7 @@ export default function SideNav({ userRole, userName }: SideNavProps) {
             fill
             alt="Logo RD"
             className="rounded-md object-contain object-left"
+            priority
           />
         </Link>
         <button

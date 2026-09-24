@@ -12,6 +12,7 @@ import { publishCase } from './publish_case';
 import { fetchCases } from './search_cases';
 import { fetchCasesFull } from './search_cases_full';
 import { resetStatus } from './reset_status';
+import { updateCaseMetadata } from './update_case_metadata';
 
 export const crmCoreEndpoint = process.env.CRM_CORE_ENDPOINT;
 export const crmCoreApiKey = process.env.CRM_CORE_API_KEY;
@@ -31,4 +32,5 @@ export {
   getCaseFullByID,
   fetchCasesFull,
   resetStatus,
+  updateCaseMetadata,
 };
