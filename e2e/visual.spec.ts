@@ -14,6 +14,7 @@ const routes = [
   'users',
   'sidebar',
   'case-details',
+  'case-details-v2',
 ];
 
 for (const route of routes) {
