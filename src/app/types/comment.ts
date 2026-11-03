@@ -6,6 +6,7 @@ export type CreateComment = {
   comment_type: CommentType;
   created_by: string;
   attachments?: CreateAttachment[];
+  metadata?: Record<string, string>;
 };
 
 export type Comment = {
@@ -18,6 +19,7 @@ export type Comment = {
   updated_by: string;
   updated_at: string;
   attachments?: Attachment[];
+  metadata?: Record<string, string>;
 };
 
 export enum CommentType {

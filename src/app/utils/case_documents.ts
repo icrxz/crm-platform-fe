@@ -1,5 +1,10 @@
-import { AttachmentDocumentType } from '../types/attachments';
+import {
+  Attachment,
+  AttachmentDocumentType,
+  parseAttachmentDocumentType,
+} from '../types/attachments';
 import { CaseCategory, CaseServiceType } from '../types/case';
+import { Comment, CommentType } from '../types/comment';
 
 const { SERVICE_ORDER, CUSTOMER_CONFIRMATION, WARRANTY_TERM } =
   AttachmentDocumentType;
@@ -34,4 +39,20 @@ export function requiredCaseDocuments(
   }
 
   return [];
+}
+
+// Attachments the technician already posted (Resolution comments) of a given
+// type — the same set case-moments shows under "Fotos Fornecidas pelo Técnico"
+// and the document blocks.
+export function partnerAttachmentsByType(
+  comments: Comment[] | undefined,
+  documentType: AttachmentDocumentType
+): Attachment[] {
+  return (comments ?? [])
+    .filter((comment) => comment.comment_type === CommentType.RESOLUTION)
+    .flatMap((comment) => comment.attachments ?? [])
+    .filter(
+      (attachment) =>
+        parseAttachmentDocumentType(attachment.document_type) === documentType
+    );
 }
