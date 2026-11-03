@@ -21,6 +21,7 @@ import { Card } from '../common/card';
 import { CardText } from '../common/card/card-text';
 import { DownloadReportButton } from './download-report-button';
 import { FormDetails } from './form-details';
+import { CaseMoments } from './form-details/case-moments';
 import { CommentDetails } from './form-details/comments';
 import { ResetCaseButton } from './form-details/reset_case';
 
@@ -193,6 +194,10 @@ export default function CaseDetails({ crmCase, userRole }: CaseDetailsProps) {
         <div className="h-fit w-full md:w-2/3">
           {crmCase.status && <FormDetails crmCase={crmCase} />}
         </div>
+      </div>
+
+      <div className="mb-8 flex gap-6">
+        <CaseMoments crmCase={crmCase} userRole={userRole} />
       </div>
 
       <div className="mb-8 flex gap-6">

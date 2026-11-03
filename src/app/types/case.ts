@@ -105,6 +105,26 @@ export const casePriorityMap: Record<CasePriority, string> = {
   High: 'Alta',
 };
 
+// O tipo do caso nasce como 'insurance' na abertura e só vira repair/inspection
+// quando o técnico envia o caso para laudo (ongoing_case.tsx -> changeStatus).
+export enum CaseServiceType {
+  REPAIR = 'repair',
+  INSPECTION = 'inspection',
+}
+
+export const caseServiceTypeMap: Record<CaseServiceType, string> = {
+  [CaseServiceType.REPAIR]: 'Reparo',
+  [CaseServiceType.INSPECTION]: 'Vistoria',
+};
+
+export function parseCaseServiceType(
+  value?: string
+): CaseServiceType | undefined {
+  return (Object.values(CaseServiceType) as string[]).includes(value ?? '')
+    ? (value as CaseServiceType)
+    : undefined;
+}
+
 export enum CaseCategory {
   D_PLUS = 'd+',
   FURNITURE = 'furniture',
