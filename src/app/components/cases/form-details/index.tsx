@@ -1,13 +1,18 @@
-"use client";
-import { CaseFull, CaseStatus } from "@/app/types/case";
-import { CustomerInfoStatusForm } from "./customer_info";
-import { NewCaseStatusForm } from "./new_case";
-import { OnGoingStatusForm } from "./ongoing_case";
-import { PartnerInfoStatusForm } from "./partner_info";
-import { ReceiptStatusForm } from "./receipt";
-import { ReportStatusForm } from "./report";
-import { TransactionStatusForm } from "./transactions";
-import { DraftStatusForm } from "./draft_case";
+'use client';
+import { CaseFull, CaseStatus } from '@/app/types/case';
+import { CustomerInfoStatusForm } from './customer_info';
+import { NewCaseStatusForm } from './new_case';
+import { OnGoingStatusForm } from './ongoing_case';
+import { OnGoingStatusFormV2 } from './ongoing_case_v2';
+import {
+  ONGOING_FLOW_VERSION_METADATA_KEY,
+  ONGOING_FLOW_VERSION_V2_VALUE,
+} from '@/app/utils/case_metadata';
+import { PartnerInfoStatusForm } from './partner_info';
+import { ReceiptStatusForm } from './receipt';
+import { ReportStatusForm } from './report';
+import { TransactionStatusForm } from './transactions';
+import { DraftStatusForm } from './draft_case';
 
 interface FormDetailsProps {
   crmCase: CaseFull;
@@ -24,7 +29,12 @@ export function FormDetails({ crmCase }: FormDetailsProps) {
     case CaseStatus.WAITING_PARTNER:
       return <PartnerInfoStatusForm crmCase={crmCase} />;
     case CaseStatus.ONGOING:
-      return <OnGoingStatusForm crmCase={crmCase} />;
+      return crmCase.metadata?.[ONGOING_FLOW_VERSION_METADATA_KEY] ===
+        ONGOING_FLOW_VERSION_V2_VALUE ? (
+        <OnGoingStatusFormV2 crmCase={crmCase} />
+      ) : (
+        <OnGoingStatusForm crmCase={crmCase} />
+      );
     case CaseStatus.REPORT:
       return <ReportStatusForm crmCase={crmCase} />;
     case CaseStatus.PAYMENT:

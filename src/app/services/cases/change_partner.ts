@@ -4,8 +4,13 @@ import { getCurrentUser } from '@/app/libs/session';
 import { CaseStatus } from '@/app/types/case';
 import { ChangePartner } from '@/app/types/change_partner';
 import { ServiceResponse } from '@/app/types/service';
+import {
+  ONGOING_FLOW_VERSION_METADATA_KEY,
+  ONGOING_FLOW_VERSION_V2_VALUE,
+} from '@/app/utils/case_metadata';
 import { cookies } from 'next/headers';
 import { crmCoreApiKey, crmCoreEndpoint } from '.';
+import { updateCaseMetadata } from './update_case_metadata';
 
 export async function changePartner(
   caseID: string,
@@ -56,6 +61,15 @@ export async function changePartner(
         message: errorMessage,
         unauthorized: unauthorized,
       };
+    }
+
+    // This is the only transition into Ongoing, so it's where a case gets
+    // pinned to the v2 wizard. Best effort: the partner is already assigned,
+    // and a case left unstamped just keeps the original form.
+    if (process.env.ONGOING_WIZARD_V2_ENABLED === 'true') {
+      await updateCaseMetadata(caseID, {
+        [ONGOING_FLOW_VERSION_METADATA_KEY]: ONGOING_FLOW_VERSION_V2_VALUE,
+      });
     }
 
     return {

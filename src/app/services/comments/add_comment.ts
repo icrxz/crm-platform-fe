@@ -11,7 +11,8 @@ export async function addComment(
   caseID: string,
   formData: FormData,
   attachments?: CreateAttachment[],
-  commentType: CommentType = CommentType.COMMENT
+  commentType: CommentType = CommentType.COMMENT,
+  metadata?: Record<string, string>
 ): Promise<ServiceResponse<Comment>> {
   try {
     if (!caseID) {
@@ -33,6 +34,7 @@ export async function addComment(
       comment_type: commentType,
       case_id: caseID,
       attachments: attachments,
+      metadata: metadata,
     };
 
     const response = await fetch(url, {
