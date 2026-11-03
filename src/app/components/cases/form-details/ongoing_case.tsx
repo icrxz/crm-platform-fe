@@ -44,23 +44,26 @@ interface OnGoingStatusFormProps {
   crmCase: CaseFull;
 }
 
+type OnGoingStep = 'attendance' | 'report';
+
 export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
   const { refresh } = useRouter();
   const { showSnackbar } = useSnackbar();
   const [_, dispatch] = useActionState(onSubmit, null);
 
   const fileUploaderRef = useRef<FileUploaderGenericRef>(null);
+  const commentFileUploaderRef = useRef<FileUploaderGenericRef>(null);
+  const [step, setStep] = useState<OnGoingStep>('attendance');
   const [content, setContent] = useState('');
+  const [reportContent, setReportContent] = useState('');
   const [loadingComment, setLoadingComment] = useState(false);
   const [loadingAdvance, setLoadingAdvance] = useState(false);
   const [openTargetDateModal, setOpenTargetDateModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
   const isBeforeTargetDate = new Date() < new Date(crmCase.target_date!!);
-
-  const placeholderInfo = isBeforeTargetDate
-    ? 'Adicione comentários ao caso'
-    : 'Adicione informações sobre o caso e selecione imagens para anexar ao laudo, clicando no botão "Enviar para laudo"';
+  const canAdvanceToReportStep = !isBeforeTargetDate;
+  const isReportStep = step === 'report' && canAdvanceToReportStep;
 
   async function onSubmit(_currentState: unknown, formData: FormData) {
     let attachments: CreateAttachment[] = [];
@@ -101,7 +104,7 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
 
     let attachments: CreateAttachment[] = [];
 
-    await fileUploaderRef.current?.submit().then((response) => {
+    await commentFileUploaderRef.current?.submit().then((response) => {
       attachments = response || [];
     });
 
@@ -175,6 +178,16 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
       });
   }
 
+  function handleAdvanceToReportStep() {
+    setErrorMessage('');
+    setStep('report');
+  }
+
+  function handleBackToAttendanceStep() {
+    setErrorMessage('');
+    setStep('attendance');
+  }
+
   return (
     <Card
       title={
@@ -182,9 +195,13 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
           title={
             isBeforeTargetDate
               ? 'Aguardando data da visita'
-              : 'Caso em andamento'
+              : `Caso em andamento${
+                  canAdvanceToReportStep
+                    ? ` — Etapa ${isReportStep ? '2' : '1'} de 2`
+                    : ''
+                }`
           }
-          tooltip="'Adicionar comentário' só registra o comentário. 'Enviar para laudo' insere as imagens anexadas aqui no laudo final."
+          tooltip="Etapa 1: registre comentários, solicitações e anexos durante o atendimento (esses anexos ficam só no comentário, não vão para o laudo). Etapa 2: preencha os dados que vão para o laudo e envie — as imagens anexadas aqui são as que entram no laudo final."
           titleSize="xl"
         />
       }
@@ -224,74 +241,123 @@ export function OnGoingStatusForm({ crmCase }: OnGoingStatusFormProps) {
           </div>
         )}
 
-        <div className="mb-2">
-          <label
-            className="mb-2 block text-sm font-medium text-gray-700"
-            htmlFor="content"
-          >
-            Informações adicionais
-          </label>
+        <div hidden={isReportStep}>
+          <div className="mb-2">
+            <label
+              className="mb-2 block text-sm font-medium text-gray-700"
+              htmlFor="content"
+            >
+              Informações adicionais
+            </label>
 
-          <textarea
-            id="content"
-            name="content"
-            className="h-32 w-full rounded-md border border-gray-300 p-2"
-            rows={3}
-            placeholder={placeholderInfo}
-            value={content}
-            onChange={(event) => setContent(event.target.value)}
-            required
-          />
+            <textarea
+              id="content"
+              className="h-32 w-full rounded-md border border-gray-300 p-2"
+              rows={3}
+              placeholder="Adicione comentários ao caso durante o atendimento"
+              value={content}
+              onChange={(event) => setContent(event.target.value)}
+              required={!isReportStep}
+            />
+          </div>
+
+          {/* Anexos daqui ficam presos ao comentário — não entram no laudo
+              (esses vêm do uploader da etapa 2, em "Enviar para laudo"). */}
+          <div className="mb-4">
+            <GenericUploader
+              ref={commentFileUploaderRef}
+              minFiles={0}
+              maxFiles={20}
+            />
+          </div>
+
+          <div className="mb-4 flex flex-wrap gap-4">
+            <Button
+              type="button"
+              onClick={handleAddComment}
+              isLoading={loadingComment}
+            >
+              Adicionar comentário
+            </Button>
+            <Button
+              type="button"
+              onClick={handleRequestAdvance}
+              isLoading={loadingAdvance}
+              disabled={loadingComment}
+            >
+              Solicitar Adiantamento/Peças
+            </Button>
+            {canAdvanceToReportStep && (
+              <Button type="button" onClick={handleAdvanceToReportStep}>
+                Avançar para dados do laudo
+              </Button>
+            )}
+          </div>
         </div>
 
-        <div className="mb-4">
-          <GenericUploader
-            ref={fileUploaderRef}
-            minFiles={isBeforeTargetDate ? 0 : 1}
-            maxFiles={20}
-          />
-        </div>
+        {/* O uploader e o seletor de tipo ficam sempre montados (só
+            escondidos via o atributo `hidden`) para não perder anexos/seleção
+            já feitos ao alternar entre as etapas. */}
+        <div hidden={!isReportStep}>
+          <div className="mb-2">
+            <label
+              className="mb-2 block text-sm font-medium text-gray-700"
+              htmlFor="report-content"
+            >
+              Conclusão do atendimento
+            </label>
 
-        <div>
-          <RadioGroup
-            label="Tipo de serviço"
-            defaultValue="repair"
-            className="mb-4"
-            orientation="horizontal"
-            isRequired
-            size="sm"
-            id="type"
-            name="type"
-          >
-            <Radio value={'repair'}>Reparo</Radio>
-            <Radio value={'inspection'}>Vistoria</Radio>
-          </RadioGroup>
-        </div>
+            <textarea
+              id="report-content"
+              name="content"
+              className="h-32 w-full rounded-md border border-gray-300 p-2"
+              rows={3}
+              placeholder='Descreva o que foi feito no atendimento para constar no laudo e selecione as imagens para anexar, clicando em "Enviar para laudo"'
+              value={reportContent}
+              onChange={(event) => setReportContent(event.target.value)}
+              required={isReportStep}
+            />
+          </div>
 
-        {errorMessage && <ErrorMessage message={errorMessage} />}
+          <div className="mb-4">
+            <GenericUploader
+              ref={fileUploaderRef}
+              minFiles={isBeforeTargetDate ? 0 : 1}
+              maxFiles={20}
+            />
+          </div>
 
-        <div className="flex flex-wrap gap-4">
-          <Button
-            type="button"
-            onClick={handleAddComment}
-            isLoading={loadingComment}
-          >
-            Adicionar comentário
-          </Button>
-          <Button
-            type="button"
-            onClick={handleRequestAdvance}
-            isLoading={loadingAdvance}
-            disabled={loadingComment}
-          >
-            Solicitar Adiantamento/Peças
-          </Button>
-          {!isBeforeTargetDate && (
+          <div>
+            <RadioGroup
+              label="Tipo de serviço"
+              defaultValue="repair"
+              className="mb-4"
+              orientation="horizontal"
+              isRequired={isReportStep}
+              size="sm"
+              id="type"
+              name="type"
+            >
+              <Radio value={'repair'}>Reparo</Radio>
+              <Radio value={'inspection'}>Vistoria</Radio>
+            </RadioGroup>
+          </div>
+
+          <div className="flex flex-wrap gap-4">
+            <Button type="button" onClick={handleBackToAttendanceStep}>
+              Voltar
+            </Button>
             <Button type="submit" disabled={loadingComment}>
               Enviar para laudo
             </Button>
-          )}
+          </div>
         </div>
+
+        {errorMessage && (
+          <div className="mb-4">
+            <ErrorMessage message={errorMessage} />
+          </div>
+        )}
       </form>
 
       {openTargetDateModal && (
