@@ -1,13 +1,12 @@
 'use client';
 import { CaseFull, CaseStatus } from '@/app/types/case';
+import { OngoingFlowVersion } from '@/app/utils/case_metadata';
+import { getOngoingFlowVersion } from '@/app/utils/ongoing_wizard';
+import { ComponentType } from 'react';
 import { CustomerInfoStatusForm } from './customer_info';
 import { NewCaseStatusForm } from './new_case';
 import { OnGoingStatusForm } from './ongoing_case';
 import { OnGoingStatusFormV2 } from './ongoing_case_v2';
-import {
-  ONGOING_FLOW_VERSION_METADATA_KEY,
-  ONGOING_FLOW_VERSION_V2_VALUE,
-} from '@/app/utils/case_metadata';
 import { PartnerInfoStatusForm } from './partner_info';
 import { ReceiptStatusForm } from './receipt';
 import { ReportStatusForm } from './report';
@@ -17,6 +16,14 @@ import { DraftStatusForm } from './draft_case';
 interface FormDetailsProps {
   crmCase: CaseFull;
 }
+
+const ongoingFormByVersion: Record<
+  OngoingFlowVersion,
+  ComponentType<FormDetailsProps>
+> = {
+  v1: OnGoingStatusForm,
+  v2: OnGoingStatusFormV2,
+};
 
 export function FormDetails({ crmCase }: FormDetailsProps) {
   switch (crmCase.status) {
@@ -28,13 +35,10 @@ export function FormDetails({ crmCase }: FormDetailsProps) {
       return <CustomerInfoStatusForm crmCase={crmCase} />;
     case CaseStatus.WAITING_PARTNER:
       return <PartnerInfoStatusForm crmCase={crmCase} />;
-    case CaseStatus.ONGOING:
-      return crmCase.metadata?.[ONGOING_FLOW_VERSION_METADATA_KEY] ===
-        ONGOING_FLOW_VERSION_V2_VALUE ? (
-        <OnGoingStatusFormV2 crmCase={crmCase} />
-      ) : (
-        <OnGoingStatusForm crmCase={crmCase} />
-      );
+    case CaseStatus.ONGOING: {
+      const OngoingForm = ongoingFormByVersion[getOngoingFlowVersion(crmCase)];
+      return <OngoingForm crmCase={crmCase} />;
+    }
     case CaseStatus.REPORT:
       return <ReportStatusForm crmCase={crmCase} />;
     case CaseStatus.PAYMENT:

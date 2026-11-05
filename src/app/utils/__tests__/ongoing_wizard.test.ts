@@ -3,6 +3,7 @@ import { Comment, CommentType } from '@/app/types/comment';
 import {
   buildWizardSteps,
   findStepComment,
+  getOngoingFlowVersion,
   isStepDone,
   missingForReport,
   REPORT_STEP,
@@ -161,5 +162,24 @@ describe('findStepComment', () => {
 
     expect(findStepComment(comments, 'service_order')).toBeUndefined();
     expect(findStepComment(undefined, 'service_order')).toBeUndefined();
+  });
+});
+
+describe('getOngoingFlowVersion', () => {
+  it('returns the version stamped on the case', () => {
+    expect(
+      getOngoingFlowVersion({ metadata: { ongoing_flow_version: 'v2' } })
+    ).toBe('v2');
+    expect(
+      getOngoingFlowVersion({ metadata: { ongoing_flow_version: 'v1' } })
+    ).toBe('v1');
+  });
+
+  it('falls back to v1 for an unstamped case or an unknown version', () => {
+    expect(getOngoingFlowVersion({ metadata: {} })).toBe('v1');
+    expect(getOngoingFlowVersion({})).toBe('v1');
+    expect(
+      getOngoingFlowVersion({ metadata: { ongoing_flow_version: 'v9' } })
+    ).toBe('v1');
   });
 });
