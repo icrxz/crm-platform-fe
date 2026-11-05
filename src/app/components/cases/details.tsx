@@ -12,10 +12,12 @@ import {
 import { UserRole } from '@/app/types/user';
 import { roboto } from '@/app/ui/fonts';
 import { onlyAdminStatuses, showReportStatus } from '@/app/utils/case_status';
-import { isOngoingFlowV2 } from '@/app/utils/ongoing_wizard';
+import { OngoingFlowVersion } from '@/app/utils/case_metadata';
+import { getOngoingFlowVersion } from '@/app/utils/ongoing_wizard';
 import { adminRoles } from '@/app/utils/roles';
 import { ArrowDownIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
+import { ComponentType } from 'react';
 
 import { Accordion } from '../common/accordion';
 import { Card } from '../common/card';
@@ -31,6 +33,30 @@ interface CaseDetailsProps {
   crmCase: CaseFull;
   userRole: UserRole;
 }
+
+// v1 keeps the single card with every comment; from v2 on, the case moments
+// come apart from the free comments.
+const detailsSectionByVersion: Record<
+  OngoingFlowVersion,
+  ComponentType<CaseDetailsProps>
+> = {
+  v1: ({ crmCase, userRole }) => (
+    <div className="mb-8 flex gap-6">
+      <CommentDetailsV1 crmCase={crmCase} userRole={userRole} />
+    </div>
+  ),
+  v2: ({ crmCase, userRole }) => (
+    <>
+      <div className="mb-8 flex gap-6">
+        <CaseMoments crmCase={crmCase} userRole={userRole} />
+      </div>
+
+      <div className="mb-8 flex gap-6">
+        <CommentDetails crmCase={crmCase} userRole={userRole} />
+      </div>
+    </>
+  ),
+};
 
 export default function CaseDetails({ crmCase, userRole }: CaseDetailsProps) {
   const { push } = useRouter();
@@ -96,6 +122,8 @@ export default function CaseDetails({ crmCase, userRole }: CaseDetailsProps) {
   }
 
   const currentStatusLabel = caseStatusMap[crmCase.status];
+  const DetailsSection =
+    detailsSectionByVersion[getOngoingFlowVersion(crmCase)];
 
   return (
     <>
@@ -198,23 +226,7 @@ export default function CaseDetails({ crmCase, userRole }: CaseDetailsProps) {
         </div>
       </div>
 
-      {/* Casos v2 separam os momentos do caso dos comentários livres; os
-          demais mantêm o card único com todos os comentários. */}
-      {isOngoingFlowV2(crmCase) ? (
-        <>
-          <div className="mb-8 flex gap-6">
-            <CaseMoments crmCase={crmCase} userRole={userRole} />
-          </div>
-
-          <div className="mb-8 flex gap-6">
-            <CommentDetails crmCase={crmCase} userRole={userRole} />
-          </div>
-        </>
-      ) : (
-        <div className="mb-8 flex gap-6">
-          <CommentDetailsV1 crmCase={crmCase} userRole={userRole} />
-        </div>
-      )}
+      <DetailsSection crmCase={crmCase} userRole={userRole} />
 
       <div className="mb-8 flex flex-col gap-6 md:flex-row">
         <div className="h-fill w-full md:w-1/2">

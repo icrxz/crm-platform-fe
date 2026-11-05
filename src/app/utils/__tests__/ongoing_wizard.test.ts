@@ -3,7 +3,7 @@ import { Comment, CommentType } from '@/app/types/comment';
 import {
   buildWizardSteps,
   findStepComment,
-  isOngoingFlowV2,
+  getOngoingFlowVersion,
   isStepDone,
   missingForReport,
   REPORT_STEP,
@@ -165,15 +165,21 @@ describe('findStepComment', () => {
   });
 });
 
-describe('isOngoingFlowV2', () => {
-  it('is on only for cases stamped with the v2 flow', () => {
-    expect(isOngoingFlowV2({ metadata: { ongoing_flow_version: 'v2' } })).toBe(
-      true
-    );
-    expect(isOngoingFlowV2({ metadata: { ongoing_flow_version: 'v1' } })).toBe(
-      false
-    );
-    expect(isOngoingFlowV2({ metadata: {} })).toBe(false);
-    expect(isOngoingFlowV2({})).toBe(false);
+describe('getOngoingFlowVersion', () => {
+  it('returns the version stamped on the case', () => {
+    expect(
+      getOngoingFlowVersion({ metadata: { ongoing_flow_version: 'v2' } })
+    ).toBe('v2');
+    expect(
+      getOngoingFlowVersion({ metadata: { ongoing_flow_version: 'v1' } })
+    ).toBe('v1');
+  });
+
+  it('falls back to v1 for an unstamped case or an unknown version', () => {
+    expect(getOngoingFlowVersion({ metadata: {} })).toBe('v1');
+    expect(getOngoingFlowVersion({})).toBe('v1');
+    expect(
+      getOngoingFlowVersion({ metadata: { ongoing_flow_version: 'v9' } })
+    ).toBe('v1');
   });
 });
