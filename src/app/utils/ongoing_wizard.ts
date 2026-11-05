@@ -1,10 +1,28 @@
 import { Attachment, AttachmentDocumentType } from '../types/attachments';
+import { CaseFull } from '../types/case';
 import { Comment, CommentType } from '../types/comment';
 import { partnerAttachmentsByType } from './case_documents';
-import { COMMENT_ONGOING_STEP_METADATA_KEY } from './case_metadata';
+import {
+  COMMENT_ONGOING_STEP_METADATA_KEY,
+  ONGOING_FLOW_VERSION_METADATA_KEY,
+  ONGOING_FLOW_VERSIONS,
+  OngoingFlowVersion,
+} from './case_metadata';
 
 const { PHOTO, SERVICE_ORDER, CUSTOMER_CONFIRMATION, WARRANTY_TERM } =
   AttachmentDocumentType;
+
+/**
+ * Versão do fluxo de andamento gravada no caso ao entrar em andamento. Decide
+ * tanto o formulário quanto a seção de detalhes. Casos sem marca, ou com um
+ * valor desconhecido, ficam na v1 para não mudarem de experiência.
+ */
+export function getOngoingFlowVersion(
+  crmCase: Pick<CaseFull, 'metadata'>
+): OngoingFlowVersion {
+  const saved = crmCase.metadata?.[ONGOING_FLOW_VERSION_METADATA_KEY];
+  return ONGOING_FLOW_VERSIONS.find((version) => version === saved) ?? 'v1';
+}
 
 export const TECHNICIAN_PHOTOS_STEP = 'technician_photos';
 export const REPORT_STEP = 'report';
