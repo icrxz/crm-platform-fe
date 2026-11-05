@@ -1,10 +1,27 @@
 import { Attachment, AttachmentDocumentType } from '../types/attachments';
+import { CaseFull } from '../types/case';
 import { Comment, CommentType } from '../types/comment';
 import { partnerAttachmentsByType } from './case_documents';
-import { COMMENT_ONGOING_STEP_METADATA_KEY } from './case_metadata';
+import {
+  COMMENT_ONGOING_STEP_METADATA_KEY,
+  ONGOING_FLOW_VERSION_METADATA_KEY,
+  ONGOING_FLOW_VERSION_V2_VALUE,
+} from './case_metadata';
 
 const { PHOTO, SERVICE_ORDER, CUSTOMER_CONFIRMATION, WARRANTY_TERM } =
   AttachmentDocumentType;
+
+/**
+ * O caso foi marcado para o fluxo v2 ao entrar em andamento com
+ * ONGOING_WIZARD_V2_ENABLED ligada. Decide tanto o formulário de andamento
+ * quanto a seção de detalhes, para casos antigos seguirem iguais.
+ */
+export function isOngoingFlowV2(crmCase: Pick<CaseFull, 'metadata'>): boolean {
+  return (
+    crmCase.metadata?.[ONGOING_FLOW_VERSION_METADATA_KEY] ===
+    ONGOING_FLOW_VERSION_V2_VALUE
+  );
+}
 
 export const TECHNICIAN_PHOTOS_STEP = 'technician_photos';
 export const REPORT_STEP = 'report';

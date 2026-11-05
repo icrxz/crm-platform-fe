@@ -12,6 +12,7 @@ import {
 import { UserRole } from '@/app/types/user';
 import { roboto } from '@/app/ui/fonts';
 import { onlyAdminStatuses, showReportStatus } from '@/app/utils/case_status';
+import { isOngoingFlowV2 } from '@/app/utils/ongoing_wizard';
 import { adminRoles } from '@/app/utils/roles';
 import { ArrowDownIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
@@ -23,6 +24,7 @@ import { DownloadReportButton } from './download-report-button';
 import { FormDetails } from './form-details';
 import { CaseMoments } from './form-details/case-moments';
 import { CommentDetails } from './form-details/comments';
+import { CommentDetailsV1 } from './form-details/comments_v1';
 import { ResetCaseButton } from './form-details/reset_case';
 
 interface CaseDetailsProps {
@@ -196,13 +198,23 @@ export default function CaseDetails({ crmCase, userRole }: CaseDetailsProps) {
         </div>
       </div>
 
-      <div className="mb-8 flex gap-6">
-        <CaseMoments crmCase={crmCase} userRole={userRole} />
-      </div>
+      {/* Casos v2 separam os momentos do caso dos comentários livres; os
+          demais mantêm o card único com todos os comentários. */}
+      {isOngoingFlowV2(crmCase) ? (
+        <>
+          <div className="mb-8 flex gap-6">
+            <CaseMoments crmCase={crmCase} userRole={userRole} />
+          </div>
 
-      <div className="mb-8 flex gap-6">
-        <CommentDetails crmCase={crmCase} userRole={userRole} />
-      </div>
+          <div className="mb-8 flex gap-6">
+            <CommentDetails crmCase={crmCase} userRole={userRole} />
+          </div>
+        </>
+      ) : (
+        <div className="mb-8 flex gap-6">
+          <CommentDetailsV1 crmCase={crmCase} userRole={userRole} />
+        </div>
+      )}
 
       <div className="mb-8 flex flex-col gap-6 md:flex-row">
         <div className="h-fill w-full md:w-1/2">

@@ -30,3 +30,15 @@ export enum CommentType {
   REJECTION = 'Rejection',
   PAYMENT_PROOF = 'PaymentProof',
 }
+
+// Etapa/ação do caso que originou o comentário, derivada do comment_type
+// atribuído pelo backend em case_actions_service.go (createChangeStatusComment).
+// Usado só pela seção de detalhes antiga (comments_v1.tsx).
+export const commentTypeStageLabel: Record<CommentType, string> = {
+  [CommentType.CONTENT]: 'Detalhes do caso',
+  [CommentType.COMMENT]: 'Comentário',
+  [CommentType.RESOLUTION]: 'Envio para laudo',
+  [CommentType.REPORT]: 'Conclusão do laudo',
+  [CommentType.REJECTION]: 'Reprovação',
+  [CommentType.PAYMENT_PROOF]: 'Comprovante de pagamento',
+};

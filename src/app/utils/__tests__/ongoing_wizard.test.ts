@@ -3,6 +3,7 @@ import { Comment, CommentType } from '@/app/types/comment';
 import {
   buildWizardSteps,
   findStepComment,
+  isOngoingFlowV2,
   isStepDone,
   missingForReport,
   REPORT_STEP,
@@ -161,5 +162,18 @@ describe('findStepComment', () => {
 
     expect(findStepComment(comments, 'service_order')).toBeUndefined();
     expect(findStepComment(undefined, 'service_order')).toBeUndefined();
+  });
+});
+
+describe('isOngoingFlowV2', () => {
+  it('is on only for cases stamped with the v2 flow', () => {
+    expect(isOngoingFlowV2({ metadata: { ongoing_flow_version: 'v2' } })).toBe(
+      true
+    );
+    expect(isOngoingFlowV2({ metadata: { ongoing_flow_version: 'v1' } })).toBe(
+      false
+    );
+    expect(isOngoingFlowV2({ metadata: {} })).toBe(false);
+    expect(isOngoingFlowV2({})).toBe(false);
   });
 });

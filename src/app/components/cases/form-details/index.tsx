@@ -4,10 +4,7 @@ import { CustomerInfoStatusForm } from './customer_info';
 import { NewCaseStatusForm } from './new_case';
 import { OnGoingStatusForm } from './ongoing_case';
 import { OnGoingStatusFormV2 } from './ongoing_case_v2';
-import {
-  ONGOING_FLOW_VERSION_METADATA_KEY,
-  ONGOING_FLOW_VERSION_V2_VALUE,
-} from '@/app/utils/case_metadata';
+import { isOngoingFlowV2 } from '@/app/utils/ongoing_wizard';
 import { PartnerInfoStatusForm } from './partner_info';
 import { ReceiptStatusForm } from './receipt';
 import { ReportStatusForm } from './report';
@@ -29,8 +26,7 @@ export function FormDetails({ crmCase }: FormDetailsProps) {
     case CaseStatus.WAITING_PARTNER:
       return <PartnerInfoStatusForm crmCase={crmCase} />;
     case CaseStatus.ONGOING:
-      return crmCase.metadata?.[ONGOING_FLOW_VERSION_METADATA_KEY] ===
-        ONGOING_FLOW_VERSION_V2_VALUE ? (
+      return isOngoingFlowV2(crmCase) ? (
         <OnGoingStatusFormV2 crmCase={crmCase} />
       ) : (
         <OnGoingStatusForm crmCase={crmCase} />

@@ -2,6 +2,10 @@ import { render, screen } from '@testing-library/react';
 import { useRouter } from 'next/navigation';
 import { CaseFull, CaseStatus } from '@/app/types/case';
 import { UserRole } from '@/app/types/user';
+import {
+  ONGOING_FLOW_VERSION_METADATA_KEY,
+  ONGOING_FLOW_VERSION_V2_VALUE,
+} from '@/app/utils/case_metadata';
 import { caseDetailsFixture } from '@/app/qa-fixtures/case-details/fixture';
 import CaseDetails from '../details';
 
@@ -19,6 +23,9 @@ jest.mock('../form-details/case-moments', () => ({
 }));
 jest.mock('../form-details/comments', () => ({
   CommentDetails: () => <div>comentários</div>,
+}));
+jest.mock('../form-details/comments_v1', () => ({
+  CommentDetailsV1: () => <div>detalhes com todos os comentários</div>,
 }));
 jest.mock('../form-details/reset_case', () => ({
   ResetCaseButton: () => <button>Resetar caso</button>,
@@ -48,8 +55,36 @@ describe('CaseDetails', () => {
     expect(screen.getByText('Carlos Eduardo Pereira')).toBeInTheDocument();
     expect(screen.getByText('Máquina de lavar')).toBeInTheDocument();
     expect(screen.getByText('formulário do status')).toBeInTheDocument();
+  });
+
+  it('keeps the single details card for a case outside the v2 flow', () => {
+    render(<CaseDetails crmCase={buildCase()} userRole={UserRole.ADMIN} />);
+
+    expect(
+      screen.getByText('detalhes com todos os comentários')
+    ).toBeInTheDocument();
+    expect(screen.queryByText('momentos do caso')).not.toBeInTheDocument();
+    expect(screen.queryByText('comentários')).not.toBeInTheDocument();
+  });
+
+  it('splits the details into moments and comments for a v2 case', () => {
+    render(
+      <CaseDetails
+        crmCase={buildCase({
+          metadata: {
+            ...caseDetailsFixture.metadata,
+            [ONGOING_FLOW_VERSION_METADATA_KEY]: ONGOING_FLOW_VERSION_V2_VALUE,
+          },
+        })}
+        userRole={UserRole.ADMIN}
+      />
+    );
+
     expect(screen.getByText('momentos do caso')).toBeInTheDocument();
     expect(screen.getByText('comentários')).toBeInTheDocument();
+    expect(
+      screen.queryByText('detalhes com todos os comentários')
+    ).not.toBeInTheDocument();
   });
 
   it('shows the scheduled visit only while the case is ongoing', () => {
